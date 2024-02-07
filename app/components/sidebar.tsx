@@ -10,9 +10,9 @@ const Sidebar: React.FC= () => {
     return(
     <aside
     id="gov-sidebar"
-    className="top-0 left-0 w-64 shadow-2xl"
+    className="top-0 left-0 w-80 shadow-2xl"
     >
-        <div className="h-screen px-2 bg-sky-600 shadow-lg rounded-r-lg">
+        <div className="h-screen px-2 bg-sky-400 shadow-lg rounded-r-lg">
             <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 w-48">
                 <Logo width={350} height={350}/>
             </div>

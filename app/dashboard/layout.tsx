@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Sidebar from "../components/sidebar";
+import Appbar from "../components/appbar";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -16,9 +17,12 @@ export default function DashboardLayout({
     children: React.ReactNode
   }) {
     return(
-    <section className="bg-white">
+    <section className="bg-white flex">
         <Sidebar/>
-        {children}    
+        <div className="w-full border-gray-800">
+          <Appbar/>
+          {children}   
+        </div>
     </section>
     );
 }

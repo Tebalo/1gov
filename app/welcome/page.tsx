@@ -12,7 +12,7 @@ export default function Welcome() {
         setIsLoginOpen(false);
     }
     return (
-        <main className="bg-sky-500 w-full h-screen">
+        <main className="bg-sky-400 w-full h-screen">
             <div className="flex md:justify-start justify-center md:py-10 py-0">
                 <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 md:w-72 w-48">
                     <Image
