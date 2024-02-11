@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from "react";
+import {FaChalkboardTeacher, FaPhone, FaEnvelope, FaMapMarkedAlt, FaMailBulk } from 'react-icons/fa';
 
 interface ModalProps {
   isOpen: boolean;
@@ -37,7 +38,80 @@ const Stepper = () => {
       );   
 }
 
+const CaseDetails = () => {
+    return(
+        <div className="p-2 w-96">
+            <DepartmentInfoCard/>
+            <ProfileInfo/>
+        </div>
+    );
+}
+const ProfileItems = (Label:any, Value:any) => {
+    return(
+    <div className="flex">
+        <div className="bg-gray-700 rounded-l-lg px-1"><span className="text-white text-xs">{Label}</span></div>
+        <div className="bg-white rounded-r-lg shadow-md"><span className="text-black text-xs">{Value}</span></div>
+    </div>
+    );
+}
+const ProfileInfo = () => {
+    return(
+        <div className="bg-white rounded-lg shadow-lg">
+            <div className="p-2 mx-3">
+                <div>
+                    <span className="text-gray-900 font-semibold">Profile Information</span>
+                </div>
+                <div>
+                    <span className="text-gray-900 text-sm text-wrap">The following information will be submitted along with your application.</span>
+                </div>
+            </div>
+            <div>
+                <ProfileItems Label="FirstName" Value="John"/>
+            </div>
+        </div>
+    );
+}
 
+const DepartmentInfoCard = () => {
+    return(
+        <div className="space-y-2">
+            <div className="bg-white shadow-lg p-2 rounded-lg">
+                <div className="space-y-2 mb-5">
+                    <div className="flex justify-center">
+                        <FaChalkboardTeacher style={{ fontSize: '5rem', color: '#66CCFF' }} />
+                    </div>
+                    <div className="flex justify-center">
+                        <span className="text-gray-900 font-semibold">Headquarters (BOTEPCO)</span>
+                    </div>
+                    <div className="flex justify-center">
+                        <span className="text-gray-900">Teacher Registration</span>
+                    </div>
+                </div>
+                <div className="space-y-2 m-2">
+                    <div className="flex space-x-10">
+                        <FaPhone style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <span className="text-gray-900">(+267) 3688200/8300</span>
+                    </div>
+                    <div className="flex space-x-10">
+                        <FaMailBulk style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <span className="text-gray-900">botepco@gov.bw</span>
+                    </div>
+                    <div className="flex space-x-10">
+                        <FaMapMarkedAlt style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <span className="text-gray-900">Plot Number 64535, CBD</span>
+                    </div>
+                    <div className="flex space-x-10">
+                        <FaEnvelope style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <span className="text-gray-900">Private Bag 04848 Gaborone Botswana</span>
+                    </div>
+                </div>
+            </div>
+            <div className="border rounded-lg">
+
+            </div>
+        </div>
+    );
+}
 const RadioOption: React.FC<{
   id: string;
   value: string;
@@ -76,117 +150,118 @@ const TeacherApplicationForm: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     "Secondary",
   ];
 
-  return (
-    <div
-      id="service-list-modal"
-      tabIndex={-1}
-      aria-hidden="true"
-      className={`shadow-lg fixed inset-0 border overflow-y-auto overflow-x-hidden z-50 flex items-center justify-center ${modalClass} transition-opacity duration-300 ease-in-out`}
-    >
+  return ( 
+        <div
+        id="service-list-modal"
+        tabIndex={-1}
+        aria-hidden="true"
+        className={`shadow-lg fixed inset-0 border overflow-y-auto overflow-x-hidden z-50 flex items-center justify-center ${modalClass} transition-opacity duration-300 ease-in-out`}
+        >
 
-      <div className="relative p-4">
-      <div className="relative bg-white border shadow-2xl rounded-lg h-96">
-        <div className="rounded-lg p-1 mx-10 mt-5">
-        <div className="mx-0">
-        <div className='py-2'>
-                <Stepper/>
-            </div>
-        </div>
-        <form>
-            <div className="grid gap-6 mb-6 md:grid-cols-2 sm:grid-cols-1">
-                <div className=''>
-                    <label htmlFor="citizenry" className="block mb-2 text-sm font-medium text-gray-900">Citizenry</label>
-                    <div className='flex-row space-y-2'>                  
-                        <div className="flex items-center">
-                            <input id="citizen" type="radio" value="citizen" name="citizenry" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"/>
-                            <label htmlFor="citizen" className="ms-2 text-sm font-medium text-gray-900">Citizen</label>
-                        </div>
-                        <div className="flex items-center">
-                            <input id="non-citizen" type="radio" value="non-citizen" name="citizenry" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"/>
-                            <label htmlFor="non-citizen" className="ms-2 text-sm font-medium text-gray-900">Non-Citizen</label>
-                        </div>
-                    </div>    
+        <div className="relative p-4">
+            <div className="relative bg-slate-200 shadow-2xl rounded-lg h-screen md:h-full  flex">
+                <CaseDetails/>
+                <div className="rounded-lg py-2 px-5 m-2 shadow-lg bg-white">
+                <div className="mx-0">
+                    <div className='py-2'>
+                        <Stepper/>
                     </div>
-                        <div className=''>
-                            <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900">Status</label>
-                            <div className='flex-row space-y-2'>
-                                <div className="flex items-center">
-                                    <input
-                                        id="newly-qualified"
-                                        type="radio"
-                                        value="Newly Qualified"
-                                        name="default-radio"
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                                        checked={selectedOption === 'Newly Qualified'}
-                                        onChange={() => handleRadioChange('Newly Qualified')}
-                                    />
-                                    <label htmlFor="newly-qualified" className="ms-2 text-sm font-medium text-gray-900">Newly Qualified</label>
+                    </div>
+                        <form>
+                            <div className="grid gap-6 mb-6 md:grid-cols-2 sm:grid-cols-1">
+                                <div className=''>
+                                    <label htmlFor="citizenry" className="block mb-2 text-sm font-medium text-gray-900">Citizenry</label>
+                                    <div className='flex-row space-y-2'>                  
+                                        <div className="flex items-center">
+                                            <input id="citizen" type="radio" value="citizen" name="citizenry" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"/>
+                                            <label htmlFor="citizen" className="ms-2 text-sm font-medium text-gray-900">Citizen</label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input id="non-citizen" type="radio" value="non-citizen" name="citizenry" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"/>
+                                            <label htmlFor="non-citizen" className="ms-2 text-sm font-medium text-gray-900">Non-Citizen</label>
+                                        </div>
+                                    </div>    
                                 </div>
-                                <div className="flex items-center">
-                                    <input
-                                        id="serving"
-                                        type="radio"
-                                        value="Serving"
-                                        name="default-radio"
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 "
-                                        checked={selectedOption === 'Serving'}
-                                        onChange={() => handleRadioChange('Serving')}
-                                    />
-                                    <label htmlFor="serving" className="ms-2 text-sm font-medium text-gray-900">Serving</label>
+                                <div className=''>
+                                    <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                                    <div className='flex-row space-y-2'>
+                                        <div className="flex items-center">
+                                            <input
+                                                id="newly-qualified"
+                                                type="radio"
+                                                value="Newly Qualified"
+                                                name="default-radio"
+                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                                                checked={selectedOption === 'Newly Qualified'}
+                                                onChange={() => handleRadioChange('Newly Qualified')}
+                                            />
+                                            <label htmlFor="newly-qualified" className="ms-2 text-sm font-medium text-gray-900">Newly Qualified</label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input
+                                                id="serving"
+                                                type="radio"
+                                                value="Serving"
+                                                name="default-radio"
+                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 "
+                                                checked={selectedOption === 'Serving'}
+                                                onChange={() => handleRadioChange('Serving')}
+                                            />
+                                            <label htmlFor="serving" className="ms-2 text-sm font-medium text-gray-900">Serving</label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input
+                                                id="retired"
+                                                type="radio"
+                                                value="Retired"
+                                                name="default-radio"
+                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                                                checked={selectedOption === 'Retired'}
+                                                onChange={() => handleRadioChange('Retired')}
+                                            />
+                                            <label htmlFor="retired" className="ms-2 text-sm font-medium text-gray-900">Retired</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex items-center">
-                                    <input
-                                        id="retired"
-                                        type="radio"
-                                        value="Retired"
-                                        name="default-radio"
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                                        checked={selectedOption === 'Retired'}
-                                        onChange={() => handleRadioChange('Retired')}
-                                    />
-                                    <label htmlFor="retired" className="ms-2 text-sm font-medium text-gray-900">Retired</label>
+                                <div className=''>
+                                    <label htmlFor="practice" className="block mb-2 text-sm font-medium text-gray-900">Area of Practice</label>
+                                    <select
+                                        id="default"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    >
+                                        <option selected>Choose practice</option>
+                                        <option value="Pre-Primary">Pre-Primary</option>
+                                        <option value="Primary">Primary</option>
+                                        <option value="Junior Secondary">Junior Secondary</option>
+                                        <option value="Secondary">Secondary</option>
+                                    </select>
+                                </div>  
+                                <div className=''>
+                                    <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900">Registration Category</label>
+                                    <select
+                                        id="default"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    >
+                                        <option selected>Choose category</option>
+                                        <option value="Teacher Aide">Teacher Aide</option>
+                                        <option value="Early Childhood Teacher">Early Childhood Teacher</option>
+                                        <option value="Primary School Teacher">Primary School Teacher</option>
+                                        <option value="Junior Secondary Teacher">Junior Secondary Teacher</option>
+                                        <option value="Senior Secondary Teacher">Senior Secondary Teacher</option>
+                                        <option value="Special Education/Guidance and Counselling Teacher">Special Education/Guidance and Counselling Teacher</option>
+                                        <option value="Education Administrator">Education Administrator</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
-                        <div className=''>
-                            <label htmlFor="practice" className="block mb-2 text-sm font-medium text-gray-900">Area of Practice</label>
-                            <select
-                                id="default"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            >
-                                <option selected>Choose practice</option>
-                                <option value="Pre-Primary">Pre-Primary</option>
-                                <option value="Primary">Primary</option>
-                                <option value="Junior Secondary">Junior Secondary</option>
-                                <option value="Secondary">Secondary</option>
-                            </select>
-                        </div>  
-                        <div className=''>
-                            <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900">Registration Category</label>
-                            <select
-                                id="default"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            >
-                                <option selected>Choose category</option>
-                                <option value="Teacher Aide">Teacher Aide</option>
-                                <option value="Early Childhood Teacher">Early Childhood Teacher</option>
-                                <option value="Primary School Teacher">Primary School Teacher</option>
-                                <option value="Junior Secondary Teacher">Junior Secondary Teacher</option>
-                                <option value="Senior Secondary Teacher">Senior Secondary Teacher</option>
-                                <option value="Special Education/Guidance and Counselling Teacher">Special Education/Guidance and Counselling Teacher</option>
-                                <option value="Education Administrator">Education Administrator</option>
-                            </select>
-                        </div>
+                            <div className='flex float-end space-x-2'>
+                                <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Save</button>
+                                <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Next</button>
+                            </div>
+                        </form>
                     </div>
-                    <div className='flex float-end space-x-2'>
-                        <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Save</button>
-                        <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Next</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-      </div>
-    </div>
   );
 };
 
