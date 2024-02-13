@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import {FaChalkboardTeacher, FaPhone, FaEnvelope, FaMapMarkedAlt, FaMailBulk } from 'react-icons/fa';
+import {FaChalkboardTeacher, FaPhone, FaEnvelope, FaMapMarkedAlt, FaMailBulk, FaLightbulb  } from 'react-icons/fa';
 
 interface ModalProps {
   isOpen: boolean;
@@ -46,27 +46,40 @@ const CaseDetails = () => {
         </div>
     );
 }
-const ProfileItems = (Label:any, Value:any) => {
+type ProfileItemsProps = {
+    Label: string;
+    Value: string;
+}
+
+const ProfileItems: React.FC<ProfileItemsProps>=({Label, Value}) =>{
     return(
-    <div className="flex">
+    <div className="flex m-1">
         <div className="bg-gray-700 rounded-l-lg px-1"><span className="text-white text-xs">{Label}</span></div>
-        <div className="bg-white rounded-r-lg shadow-md"><span className="text-black text-xs">{Value}</span></div>
+        <div className="bg-white rounded-r-lg px-1 border border-gray-400 shadow-md"><span className="text-black text-xs">{Value}</span></div>
     </div>
     );
 }
 const ProfileInfo = () => {
     return(
         <div className="bg-white rounded-lg shadow-lg">
-            <div className="p-2 mx-3">
+            <div className="p-2 mx-1">
                 <div>
                     <span className="text-gray-900 font-semibold">Profile Information</span>
                 </div>
-                <div>
+                <div className="flex items-center mb-1">
                     <span className="text-gray-900 text-sm text-wrap">The following information will be submitted along with your application.</span>
                 </div>
+                <div className="border flex items-center border-green-500 rounded-lg p-2 bg-green-300 space-x-2">
+                    <FaLightbulb style={{ fontSize: '2rem', color: '#66CCFF' }} />
+                    <span className="text-gray-900 text-xs text-wrap">Go to your profile page and add any missing information to your profile before proceeding with this application.</span>
+                </div>
             </div>
-            <div>
-                <ProfileItems Label="FirstName" Value="John"/>
+            <div className="mx-2 flex flex-wrap">    
+                <ProfileItems Label="First Name" Value="Michael"/>
+                <ProfileItems Label="Middle Name" Value="Doe"/>
+                <ProfileItems Label="Last Name" Value="Michael"/>
+                <ProfileItems Label="Primary Email Address" Value="michael@gmail.com"/>
+                <ProfileItems Label="Primary Phone Number" Value="+2677000000"/>
             </div>
         </div>
     );
@@ -83,11 +96,11 @@ const DepartmentInfoCard = () => {
                     <div className="flex justify-center">
                         <span className="text-gray-900 font-semibold">Headquarters (BOTEPCO)</span>
                     </div>
-                    <div className="flex justify-center">
+                    <div className="flex justify-center text-sm">
                         <span className="text-gray-900">Teacher Registration</span>
                     </div>
                 </div>
-                <div className="space-y-2 m-2">
+                <div className="space-y-2 m-2 text-sm">
                     <div className="flex space-x-10">
                         <FaPhone style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
                         <span className="text-gray-900">(+267) 3688200/8300</span>
@@ -163,6 +176,10 @@ const TeacherApplicationForm: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 <CaseDetails/>
                 <div className="rounded-lg py-2 px-5 m-2 shadow-lg bg-white">
                 <div className="mx-0">
+                    <div className="flex justify-center mb-2">
+                        <span className="font-bold text-3xl text-gray-700">Teacher Registration</span>
+                    </div>
+                    <div className="bg-sky-300 w-full h-1 px-20 rounded-lg mb-2"></div>
                     <div className='py-2'>
                         <Stepper/>
                     </div>

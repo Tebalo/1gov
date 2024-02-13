@@ -2,6 +2,7 @@
 import React,{useState} from "react";
 import {FaChalkboardTeacher, FaRegListAlt } from 'react-icons/fa';
 import TeacherApplicationForm from "./Registration";
+import ApplicationModal from "./ApplicationModal";
 
 interface ModalProps{
     isOpen: boolean;
@@ -85,7 +86,7 @@ const ServiceList: React.FC<ModalProps>= ({ isOpen, onClose}) => {
                     </div>
                 </div>
             </div>
-            <TeacherApplicationForm isOpen={isRegistrationOpen} onClose={handleCloseLoginServiceList}/>
+            <ApplicationModal isOpen={isRegistrationOpen} onClose={handleCloseLoginServiceList}/>
         </div>
     );
 }
