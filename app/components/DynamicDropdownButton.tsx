@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 interface Option {
     value: string;
@@ -13,6 +13,7 @@ interface SelectedProps {
 }
 
 export const DynamicDropdownButtons: React.FC<SelectedProps> = ({options, defaultPractice, onChange, name}) => {
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
     const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedPractice = event.target.value;
@@ -21,7 +22,7 @@ export const DynamicDropdownButtons: React.FC<SelectedProps> = ({options, defaul
     }
     return (
         <div>
-            <label htmlFor="practice" className="block mb-2 text-sm font-medium text-gray-900">{name}</label>
+            <label htmlFor="practice" className="block text-sm font-medium text-gray-900">{name}</label>
             <select
             id={name}
             className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"

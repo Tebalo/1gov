@@ -82,13 +82,13 @@ const ApplicationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         id="service-list-modal"
         tabIndex={-1}
         aria-hidden="true"
-        className={`shadow-lg fixed inset-0 border z-50 flex items-center justify-center ${modalClass} transition-opacity duration-300 ease-in-out`}
+        className={`shadow-lg w-screen fixed inset-0 border z-50 flex items-center justify-center ${modalClass} transition-opacity duration-300 ease-in-out`}
         >
 
           <div className="relative p-4">
-            <div className="relative bg-slate-200 shadow-2xl rounded-lg h-screen md:h-full  flex">
+            <div className="relative bg-slate-200 shadow-2xl rounded-lg h-screen md:h-full w-full flex">
                 <CaseDetails/>
-                <div className="rounded-lg py-2 px-5 m-2 shadow-lg bg-white ">
+                <div className="rounded-lg py-2 px-5 m-2 shadow-lg bg-white">
                   <div className="mx-0">
                     <div className="flex">
                       <div className="flex justify-center mb-2">
@@ -107,7 +107,9 @@ const ApplicationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                       </div>
                       <div className="bg-sky-300 w-full h-1 px-20 rounded-lg mb-2"></div>
                     </div>
-                    <RegistrationForm/>
+                    <div className="w-full">
+                      <RegistrationForm/>
+                    </div>
                 </div>
             </div>
           </div>

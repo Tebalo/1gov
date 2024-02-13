@@ -8,10 +8,12 @@ interface Option{
 interface DynamicRadioButtonsProps {
     options: Option[];
     name: string;
+    register: any;
+    errors: any;
     onSelect: (value: string) => void;
 }
 
-export const DynamicRadioButtons: React.FC<DynamicRadioButtonsProps> = ({options, onSelect, name}) => {
+export const DynamicRadioButtons: React.FC<DynamicRadioButtonsProps> = ({options, onSelect, name, register, errors}) => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
     const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,9 +31,15 @@ export const DynamicRadioButtons: React.FC<DynamicRadioButtonsProps> = ({options
                         id={option.value}
                         name={name}
                         value={option.value}
+                        {...register(option.value)}
                         checked={selectedOption === option.value}
                         onChange={handleOptionChange}
                     />
+                    {errors.firstName?.message && (
+                        <p className='text-sm text-red-600'>
+                            {errors.option.value.message}
+                        </p>
+                    )}
                     <label htmlFor={option.value} className='text-gray-900 mx-2 text-sm '>{option.label}</label>
                 </div>
             ))}
