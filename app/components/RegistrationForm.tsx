@@ -78,7 +78,7 @@ const institutionOptions = [
 ]
 
 const statusOptions = [
-    {label: 'Student', value: 'student'},
+    {label: 'Student-Teacher', value: 'student'},
     {label: 'Unemployed', value: 'unemployed'},
     {label: 'Serving', value: 'serving'},
     {label: 'Retired', value: 'retired'},
