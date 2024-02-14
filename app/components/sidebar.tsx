@@ -24,7 +24,7 @@ const Sidebar: React.FC= () => {
                             href="/dashboard/home"
                             className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/home' ? 'bg-sky-300' : 'text-gray-100'}`}
                         >
-                            <FaHome style={{fontSize: '2rem'}}/>
+                            <FaHome style={{fontSize: '2rem' , color: '#FFFFFF'}}/>
                             <span className="text-gray-100 text-lg">
                                 Home
                             </span>
@@ -35,7 +35,7 @@ const Sidebar: React.FC= () => {
                         <Link
                             href="/dashboard/my-applications"
                             className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/my-applications' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
-                            <FaCube style={{fontSize: '2rem'}}/>
+                            <FaCube style={{fontSize: '2rem', color: '#FFFFFF'}}/>
                             <span className="text-gray-100 text-lg">
                                 My Applications
                             </span>
@@ -46,7 +46,7 @@ const Sidebar: React.FC= () => {
                         <Link
                             href="/dashboard/profile"
                             className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/profile' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
-                            <FaUser style={{fontSize: '2rem'}}/>
+                            <FaUser style={{fontSize: '2rem', color: '#FFFFFF'}}/>
                             <span className="text-gray-100 text-lg">
                                 Profile
                             </span>
@@ -57,7 +57,7 @@ const Sidebar: React.FC= () => {
                         <Link
                             href="/dashboard/settings"
                             className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/settings' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
-                            <FaCogs style={{fontSize: '2rem'}}/>
+                            <FaCogs style={{fontSize: '2rem', color: '#FFFFFF'}}/>
                             <span className="text-gray-100 text-lg">
                                 Settings
                             </span>

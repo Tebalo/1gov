@@ -9,7 +9,7 @@ export const ProfileInfo = () => {
                     <span className="text-gray-900 font-semibold">Profile Information</span>
                 </div>
                 <div className="flex items-center mb-1">
-                    <span className="text-gray-900 text-sm text-wrap">The following information will be submitted along with your application.</span>
+                    <span className="text-gray-900 text-xs text-wrap">The following information will be submitted along with your application.</span>
                 </div>
                 <InformationCard Information='Go to your profile page and add any missing information to your profile before proceeding with this application.'/>
             </div>

@@ -15,21 +15,21 @@ export const DepartmentInfoCard = () => {
                         <span className="text-gray-900">Teacher Registration</span>
                     </div>
                 </div>
-                <div className="space-y-2 m-2 text-sm">
+                <div className="space-y-2 m-2 text-xs">
                     <div className="flex space-x-10">
-                        <FaPhone style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <FaPhone style={{ fontSize: '1rem', color: '#66CCFF' }}/>
                         <span className="text-gray-900">(+267) 3688200/8300</span>
                     </div>
                     <div className="flex space-x-10">
-                        <FaMailBulk style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <FaMailBulk style={{ fontSize: '1rem', color: '#66CCFF' }}/>
                         <span className="text-gray-900">botepco@gov.bw</span>
                     </div>
                     <div className="flex space-x-10">
-                        <FaMapMarkedAlt style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <FaMapMarkedAlt style={{ fontSize: '1rem', color: '#66CCFF' }}/>
                         <span className="text-gray-900">Plot Number 64535, CBD</span>
                     </div>
                     <div className="flex space-x-10">
-                        <FaEnvelope style={{ fontSize: '1.5rem', color: '#66CCFF' }}/>
+                        <FaEnvelope style={{ fontSize: '1rem', color: '#66CCFF' }}/>
                         <span className="text-gray-900">Private Bag 04848 Gaborone Botswana</span>
                     </div>
                 </div>
