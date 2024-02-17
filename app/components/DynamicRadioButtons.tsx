@@ -40,9 +40,9 @@ export const DynamicRadioButtons: React.FC<DynamicRadioButtonsProps> = ({options
                     <label htmlFor={option.value} className='text-gray-900 mx-2 text-sm '>{option.label}</label>
                 </div>
             ))}
-            {errors.schema_name?.message && (
+            {errors && errors[schema_name] && (
                 <p className='text-sm text-red-600'>
-                    {errors.schema_name.message}
+                    {errors[schema_name].message}
                 </p>
             )}
         </div>

@@ -239,6 +239,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
     const next = async () => {
         const fields = steps[currentStep].fields
         const output = await trigger(fields as FieldName[], {shouldFocus: true})
+        console.log(errors)
         if(!output) return
         if (currentStep < steps.length - 1){
             if(currentStep === steps.length - 2){

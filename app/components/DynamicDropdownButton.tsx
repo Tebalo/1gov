@@ -13,7 +13,14 @@ interface SelectedProps {
     onChange: (value: string) => void;
 }
 
-export const DynamicDropdownButtons: React.FC<SelectedProps> = ({options, defaultPractice, onChange,register, errors, name, schema_name}) => {
+export const DynamicDropdownButtons: React.FC<SelectedProps> = ({
+    options, 
+    defaultPractice, 
+    onChange,
+    register, 
+    errors, 
+    name, 
+    schema_name}) => {
     return (
         <div>
             <label htmlFor={schema_name} className="block text-sm font-medium text-gray-900">{name}</label>
@@ -31,9 +38,11 @@ export const DynamicDropdownButtons: React.FC<SelectedProps> = ({options, defaul
                 </option>
             ))}
         </select>
-        {errors.schema_name?.message && (
+        {/* Access errors dynamically*/}
+        {errors && errors[schema_name] && (
             <p className='text-sm text-red-600'>
-                {errors.schema_name.message}
+                {errors[schema_name].message}
+                Hello
             </p>
         )}
       </div>
