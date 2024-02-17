@@ -59,7 +59,7 @@ const steps = [
     },
     {
         id: 'Step 6',
-        name: 'CONSCENT'
+        name: 'CONSENT'
     },
     {
         id: 'Step 7',
@@ -122,6 +122,18 @@ const districtOptions = [
     {label: 'Southern District', value: 'Southern District'},
 ]
 
+const yearsOptions = [
+    {value:"2024"},
+    {value:"2023"},
+    {value:"2022"},
+    {value:"2021"},
+    {value:"2020"},
+    {value:"2019"},
+    {value:"2018"},
+    {value:"2017"},
+    {value:"2016"},
+    {value:"2015"},
+]
 const placeOptions = [
     {label: 'Gaborone', value: 'Gaborone'},
     {label: 'Maun', value: 'Maun'},
@@ -265,7 +277,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                         <div className="bg-slate-100 p-2 rounded-lg mb-2">
-                            <div className="grid gap-y-2 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
+                            <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
                                 <div className=''>
                                     <DynamicRadioButtons options={citizenOptions} onSelect={handleCitizenOptionSelect} name="Citizenry" register={register} errors={errors} schema_name="citizenry"/>
                                 </div>
@@ -290,7 +302,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                         <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2">
-                                <div className="grid gap-y-2 gap-x-10 mb-6 md:grid-cols-3 sm:grid-cols-1">
+                                <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-3 sm:grid-cols-1">
                                     <div className=''>
                                         <DynamicRadioButtons options={employmentOptions} onSelect={handleEmploymentOptionSelect} name="Employment status" register={register} errors={errors} schema_name="employment_status"/>
                                     </div>
@@ -337,11 +349,135 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2">
-                            <InformationCard Information="All the qualifications indicated below must be attached to the application and must be
-                                verified by the issuing institutions if they’re locally obtained and by the Botswana
-                                Qualifications Authority (BQA) if foreign obtained."/>
-                        </div>
+                            <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2 space-y-2">
+                                <InformationCard Information="All the qualifications indicated below must be attached to the application and must be
+                                    verified by the issuing institutions if they’re locally obtained and by the Botswana
+                                    Qualifications Authority (BQA) if foreign obtained."/>
+                                <div className="">
+                                    <label className="text-gray-900 text-sm">Select your Qualifications</label>
+                                    <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="certificate" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="certificate" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Certification</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="diploma" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="diploma" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Diploma</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="post-grad-diploma" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="post-grad-diploma" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Diploma</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="degree" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="degree" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Degree</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="post-grad-certificate" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="post-grad-certificate" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Certificate</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="masters" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="masters" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Masters</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input id="phd" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="phd" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">PhD</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="overflow-y-scroll">
+                                {/*Scroll Content - Add-Remove Form Items*/}
+                                <div className="flex">
+                                    <div className="">
+                                        <span className="text-gray-900 text-sm">How many Teaching diplomas do you have?</span>
+                                        <div className="flex items-center">
+                                            <button className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200" type="button">
+                                                <span className="sr-only">Quantity button</span>
+                                                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
+                                                </svg>
+                                            </button>
+                                            <div>
+                                                <input type="number" id="first_product" className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 " placeholder="1" required />
+                                            </div>
+                                            <button className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200" type="button">
+                                                <span className="sr-only">Quantity button</span>
+                                                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full grid grid-cols-3 gap-x-5 gap-y-2 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
+                                    <div>
+                                        <label className="text-gray-900 text-sm">Qualification</label>
+                                        <input
+                                            type="text"
+                                            id="diploma"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 block w-full p-2.5"
+                                            placeholder="Diploma title"
+                                            required
+                                            />
+                                    </div>
+                                    <div>
+                                        <label className="text-gray-900 text-sm">Awarding Institution</label>
+                                        <input
+                                            type="text"
+                                            id="diploma"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 block w-full p-2.5"
+                                            placeholder="Diploma title"
+                                            required
+                                            />
+                                    </div>
+                                    <div>
+                                        <label className="text-gray-900 text-sm">Teaching Subjects</label>
+                                        <input
+                                            type="text"
+                                            id="diploma"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 block w-full p-2.5"
+                                            placeholder="Diploma title"
+                                            required
+                                            />
+                                    </div>
+                                    <div className="">
+                                        <FileUploader
+                                            url={url}
+                                            acceptedFileTypes={[
+                                                "image/png",
+                                                "image/jpeg",
+                                            ]}
+                                            maxFileSize={100}
+                                            label="Max File Size: 1MB"
+                                            labelAlt="Accepted File Types: png, jpeg"
+                                            />
+                                    </div>
+                                    <div></div>
+                                    <div className="">
+                                        <button 
+                                        type="button" 
+                                        onClick={next}
+                                        className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
                         </motion.div>             
                     )}
                     {/*DISABILITY*/}
@@ -435,7 +571,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                 errors={errors}/>
                             <div className="mb-6 space-y-2">
                             <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900">Please attach a letter giving full details and any official documentation available regarding
-the matter.</label>
+                                the matter.</label>
                             <FileUploader
                                 url={url}
                                 acceptedFileTypes={[

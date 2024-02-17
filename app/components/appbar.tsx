@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { FaBell, FaSignOutAlt } from "react-icons/fa";
+import Link from "next/link";
 
 const Appbar: React.FC= () => {
     return(
@@ -26,9 +27,13 @@ const Appbar: React.FC= () => {
                 <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl py-1 px-1 hover:cursor-pointer">
                     <FaBell style={{fontSize: '2rem', color: '#66CCFF'}}/>
                 </div>
-                <div className="rounded-lg w-10 h-10 bg-red-600 py-1 shadow-xl px-1 hover:cursor-pointer">
-                    <FaSignOutAlt style={{fontSize: '2rem', color: '#FFFFFF'}}/>
-                </div>
+                <Link
+                href="/welcome"
+                >
+                    <div className="rounded-lg w-10 h-10 bg-red-600 py-1 shadow-xl px-1 hover:cursor-pointer">
+                        <FaSignOutAlt style={{fontSize: '2rem', color: '#FFFFFF'}}/>
+                    </div>
+                </Link>
             </div>
         </nav>      
     )

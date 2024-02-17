@@ -23,7 +23,7 @@ const Home: React.FC = () => {
                 <FaDiceFour style={{ fontSize: '2.5rem', color: '#66CCFF' }} />
                 <span className="text-lg text-gray-900 font-semibold">Service Categories</span>
             </div>
-            <div className="bg-gray-200 h-72 rounded-lg grid md:grid-cols-3 p-10">
+            <div className="bg-gray-200 h-auto rounded-lg grid md:grid-cols-3 p-10">
                 <div className="w-80 h-28 bg-white rounded-lg p-3 hover:cursor-pointer shadow-lg" onClick={handleToggleServiceList}>
                     <div className="flex  space-x-2 mb-2 items-center">
                         <div className="bg-sky-100 p-2 rounded-lg">

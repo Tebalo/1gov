@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import Link from "next/link";
+import {motion} from 'framer-motion';
+
 interface ModalProps{
     isOpen: boolean;
     onClose: () => void;
@@ -56,7 +59,7 @@ const OneGovID: React.FC = () => (
   export const Login: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const modalClass = isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none';
     const [activeTab, setActiveTab] = useState(1);
-  
+    const delta = activeTab
     const handleTabClick = (tabNumber: number) => {
       setActiveTab(tabNumber);
     };
@@ -72,7 +75,18 @@ const OneGovID: React.FC = () => (
           <div className="relative bg-white rounded-lg shadow">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
               <div className="flex flex-col">
+                <div className="flex space-x-2">
                 <h3 className="text-lg font-semibold text-gray-900">Login</h3>
+                  {/*Temporary to be removed*/}
+                  <Link
+                  href="/dashboard/home"
+                  className=""
+                  >
+                    <span className="inline-block text-black hover:border-gray-300 transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                      -&gt;
+                    </span>
+                </Link>
+                </div>
                 <div className="bg-sky-300 rounded-sm h-1 w-20"></div>
                 <h4 className="text-sm font-light text-gray-800">
                   Complete the form below to access your account
@@ -144,9 +158,38 @@ const OneGovID: React.FC = () => (
               </ul>
             </div>
             <div className="px-4">
-              {activeTab === 1 && <OneGovID />}
-              {activeTab === 2 && <Phone />}
-              {activeTab === 3 && <Email />}
+              {activeTab === 1 && 
+              (
+              <motion.div
+              initial={{x: delta >= 0 ? '10%' : '-10%', opacity: 0}}
+              animate={{x: 0, opacity: 1}}
+              transition={{duration: 0.3, ease: 'easeInOut'}}
+              >
+                <OneGovID />
+              </motion.div>
+              )
+              }
+              {activeTab === 2 && 
+              (
+                <motion.div
+                initial={{x: delta >= 0 ? '10%' : '-10%', opacity: 0}}
+                animate={{x: 0, opacity: 1}}
+                transition={{duration: 0.3, ease: 'easeInOut'}}
+                >
+              <Phone />
+              </motion.div>
+              )
+              }
+              {activeTab === 3 && 
+              (
+              <motion.div
+              initial={{x: delta >= 0 ? '10%' : '-10%', opacity: 0}}
+              animate={{x: 0, opacity: 1}}
+              transition={{duration: 0.3, ease: 'easeInOut'}}
+              >
+              <Email />
+              </motion.div>)
+              }
             </div>
           </div>
         </div>
