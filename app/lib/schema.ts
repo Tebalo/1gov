@@ -14,4 +14,7 @@ export const FormDataSchema = z.object({
   district: z.string().min(1,'Field is required'),
   place: z.string().min(1,'Field is required'),
   region: z.string().min(1,'Field is required'),
+  disability_specification: z.string().min(1,'Field is required'),
+  minor_conviction_specification: z.string().min(1,'Field is required'),
+  drugs_conviction_specification: z.string().min(1,'Field is required'),
 })

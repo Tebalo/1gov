@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import {Stepper } from "./Stepper";
 import { DynamicRadioButtons } from "./DynamicRadioButtons";
 import { DynamicDropdownButtons } from "./DynamicDropdownButton";
+import { DynamicTextInputArea, DynamicTextInputField } from "./DynamicTextInputControl";
 import {z} from 'zod'
 import {motion} from 'framer-motion';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,6 +86,7 @@ const statusOptions = [
 ]
 
 const areaOfPractice = [
+    {label: 'Select...', value: ''},
     {label: 'Pre-primary', value: 'student'},
     {label: 'Primary', value: 'primary'},
     {label: 'Junior Secondary', value: 'junior_secondary'},
@@ -92,6 +94,7 @@ const areaOfPractice = [
 ]
 
 const regionOptions = [
+    {label: 'Select...', value: ''},
     {label: 'Chobe', value: 'Chobe'},
     {label: 'Central', value: 'Central'},
     {label: 'City of Francistown', value: 'City of Francistown'},
@@ -111,6 +114,7 @@ const regionOptions = [
 ]
 
 const districtOptions = [
+    {label: 'Select...', value: ''},
     {label: 'Chobe District', value: 'Chobe District'},
     {label: 'Ghanzi District', value: 'Ghanzi District'},
     {label: 'Kgalagadi District', value: 'Kgalagadi District'},
@@ -135,6 +139,7 @@ const yearsOptions = [
     {value:"2015"},
 ]
 const placeOptions = [
+    {label: 'Select...', value: ''},
     {label: 'Gaborone', value: 'Gaborone'},
     {label: 'Maun', value: 'Maun'},
     {label: 'Orapa', value: 'Orapa'},
@@ -163,6 +168,7 @@ const convitionOptions = [
 
 
 const registrationCategory = [
+    {label: 'Select...', value: ''},
     {label: 'Teacher Aide', value: 'Teacher Aide'},
     {label: 'Early Childhood Teacher', value: 'Early Childhood Teacher'},
     {label: 'Primary School Teacher', value: 'Primary School Teacher'},
@@ -239,8 +245,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
     const next = async () => {
         const fields = steps[currentStep].fields
         const output = await trigger(fields as FieldName[], {shouldFocus: true})
-        console.log(errors)
+        
         if(!output) return
+        if(errors){
+            //console.log(errors)
+            //return
+        }
         if (currentStep < steps.length - 1){
             if(currentStep === steps.length - 2){
                 await handleSubmit(processForm)()
@@ -311,24 +321,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                         <DynamicRadioButtons options={institutionOptions} onSelect={handleInstitutionOptionSelect} name="Type of institution" register={register} errors={errors} schema_name="type_institution"/>
                                     </div>  
                                     <div className=''>
-                                        <div>
-                                            <label 
-                                            htmlFor="institution" 
-                                            className="block text-sm font-medium text-gray-900"
-                                            >Current station/Institution</label>
-                                            <input 
-                                            type="text" 
-                                            id="institution" 
-                                            {...register('institution')}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" 
-                                            placeholder="" 
-                                            required/>
-                                            {errors.institution?.message && (
-                                                <p className='mt-2 text-sm text-red-400'>
-                                                    {errors.institution.message}
-                                                </p>
-                                            )}
-                                        </div>
+                                        <DynamicTextInputField errors={errors} register={register} name="Current station/Institution" schema_name="institution"/>
                                     </div>
                                     <div className=''>
                                         <DynamicDropdownButtons options={regionOptions} schema_name="region" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="Region" register={register} errors={errors}/>
@@ -488,16 +481,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2">
+                        <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb">
                             <DynamicRadioButtons options={disabilityOptions} onSelect={handleDisabilityOptionSelect} name="Are you living with any form of Disability?" register={register} errors={errors} schema_name="disability_check"/>
-                            <div className="mb-6 space-y-2">
-                                <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900">Specify</label>
-                                <input 
-                                type="text" 
-                                id="large-input" 
-                                {...register('specify')}
-                                className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500"/>
-                            </div>
+                            <DynamicTextInputArea errors={errors} name="Specify" schema_name="disability_specification" register={register}/>
                         </div>
                         </motion.div>             
                     )}
@@ -517,13 +503,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                 register={register} 
                                 errors={errors} 
                                 schema_name="conviction"/>
-                            <div className="mb-6 space-y-2">
-                                <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900">Give full details about the incident</label>
-                                <input 
-                                type="text" 
-                                id="large-input" 
-                                className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500"/>
-                            </div>
+                            <DynamicTextInputArea errors={errors} name="Give full details about the incident" schema_name="minor_conviction_specification" register={register}/>
                             <DynamicRadioButtons 
                             options={convitionOptions} 
                             onSelect={handleConvictionOfDrugsOptionSelect} 
@@ -532,10 +512,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                 register={register} 
                                 schema_name="conviction"
                                 errors={errors}/>
-                            <div className="mb-6 space-y-2">
-                                <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900">Give full details about the incident</label>
-                                <input type="text" id="large-input" className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500"/>
-                            </div>
+                            <DynamicTextInputArea errors={errors} name="Give full details about the incident" schema_name="drugs_conviction_specification" register={register}/>
                             <DynamicRadioButtons
                              options={convitionOptions} 
                              onSelect={handleLicenseRevokedOptionSelect}

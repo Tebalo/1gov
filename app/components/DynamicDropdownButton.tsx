@@ -29,9 +29,8 @@ export const DynamicDropdownButtons: React.FC<SelectedProps> = ({
             {...register(schema_name)}
             autoComplete={schema_name}
             defaultValue={defaultPractice}
-            className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+            className="bg-gray-50 border border-gray-300 text-gray-900 mb-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
         >
-            <option disabled>Select...</option>
             {options.map((option)=>(
                 <option key={option.value} value={option.value}>
                     {option.label}
@@ -42,7 +41,6 @@ export const DynamicDropdownButtons: React.FC<SelectedProps> = ({
         {errors && errors[schema_name] && (
             <p className='text-sm text-red-600'>
                 {errors[schema_name].message}
-                Hello
             </p>
         )}
       </div>

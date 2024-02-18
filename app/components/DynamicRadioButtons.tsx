@@ -37,7 +37,7 @@ export const DynamicRadioButtons: React.FC<DynamicRadioButtonsProps> = ({options
                         onChange={handleOptionChange}
                     />
 
-                    <label htmlFor={option.value} className='text-gray-900 mx-2 text-sm '>{option.label}</label>
+                    <label htmlFor={option.value} className='text-gray-900 mx-2 mb-2 text-sm '>{option.label}</label>
                 </div>
             ))}
             {errors && errors[schema_name] && (
