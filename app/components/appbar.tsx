@@ -24,14 +24,14 @@ const Appbar: React.FC= () => {
                 <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl py-2 hover:cursor-pointer">
                     <span className="px-2 text-lg font-bold text-sky-400">MI</span>
                 </div>
-                <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl py-1 px-1 hover:cursor-pointer">
-                    <FaBell style={{fontSize: '2rem', color: '#66CCFF'}}/>
+                <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl px-1 hover:cursor-pointer flex justify-center py-2">
+                    <FaBell style={{fontSize: '1.5rem', color: '#66CCFF'}}/>
                 </div>
                 <Link
                 href="/welcome"
                 >
-                    <div className="rounded-lg w-10 h-10 bg-red-600 py-1 shadow-xl px-1 hover:cursor-pointer">
-                        <FaSignOutAlt style={{fontSize: '2rem', color: '#FFFFFF'}}/>
+                    <div className="rounded-lg w-10 h-10 bg-red-600 shadow-xl px-1 hover:cursor-pointer flex justify-center py-2">
+                        <FaSignOutAlt style={{fontSize: '1.5rem', color: '#FFFFFF'}}/>
                     </div>
                 </Link>
             </div>
