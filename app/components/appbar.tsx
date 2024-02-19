@@ -17,7 +17,7 @@ const Appbar: React.FC= () => {
                     <span className="font-bold ml-2 text-gray-900">1</span><span className="text-gray-900">Gov</span>
                 </div>
                 <div className="">
-                    <span className="text-3xl text-gray-900">Welcome to 1Gov, Michael!</span>
+                    <span className="text-3xl text-gray-900">Welcome to Botepco, Michael!</span>
                 </div>
             </div>
             <div className="flex items-center space-x-2 mr-2">

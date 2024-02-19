@@ -42,7 +42,8 @@ export const DynamicRadioButtons: React.FC<DynamicRadioButtonsProps> = ({options
             ))}
             {errors && errors[schema_name] && (
                 <p className='text-sm text-red-600'>
-                    {errors[schema_name].message}
+                    {/*errors[schema_name].message*/}
+                    Field is required
                 </p>
             )}
         </div>
