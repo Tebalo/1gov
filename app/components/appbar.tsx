@@ -21,11 +21,19 @@ const Appbar: React.FC= () => {
                 </div>
             </div>
             <div className="flex items-center space-x-2 mr-2">
-                <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl py-2 hover:cursor-pointer">
+                <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl py-2 hover:cursor-pointer relative">
                     <span className="px-2 text-lg font-bold text-sky-400">MI</span>
+                    <div className="rounded-full text-gray-900 bg-white border shadow-lg h-5 w-5 z-10 absolute bottom-0 right-0 -mb-2 -mr-1  flex items-center justify-center">
+                        <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </div>
                 </div>
-                <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl px-1 hover:cursor-pointer flex justify-center py-2">
+                <div className="rounded-lg w-10 h-10 bg-white items-center shadow-xl px-1 hover:cursor-pointer flex justify-center py-2 relative">
                     <FaBell style={{fontSize: '1.5rem', color: '#66CCFF'}}/>
+                    <div className="rounded-full bg-sky-400 h-5 w-5 z-10 absolute top-0 right-0 -mt-1 -mr-1 flex items-center justify-center">
+                        <span className="text-xs">44</span>
+                    </div>
                 </div>
                 <Link
                 href="/welcome"
