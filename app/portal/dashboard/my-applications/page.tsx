@@ -58,7 +58,7 @@ const Drafts: React.FC = () => {
                             </th>
                             <th className="px-6 py-4 font-normal">
                                 <button
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-3 py-0.5 text-center me-2 mb-0"
+                                className="text-white bg-sky-300 hover:bg-sky-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-3 py-0.5 text-center me-2 mb-0"
                                 >
                                     Continue
                                 </button>
@@ -87,7 +87,7 @@ const Submission: React.FC = () =>{
                         <th scope="col" className="pr-10 pl-4 py-3">
                             Submission Id
                         </th>
-                        <th scope="col" className="px-10 py-3">
+                        <th scope="col" className="pr-10 py-3">
                             Title
                         </th>
                         <th scope="col" className="px-6 py-3">
@@ -115,13 +115,13 @@ const Submission: React.FC = () =>{
                                 {row.date}
                             </th>
                             <th className="px-6 py-4 font-normal text-gray-100">
-                                <div className="bg-green-300 rounded-lg px-2 py-0">
+                                <div className="bg-sky-300 rounded-lg px-2 py-0">
                                     {row.status}
                                 </div>
                             </th>
                             <th className="px-6 py-4 font-normal">
                                 <button
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-0.5 text-center me-2 mb-0"
+                                className="text-white bg-green-400 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-0.5 text-center me-2 mb-0"
                                 >
                                     View
                                 </button>

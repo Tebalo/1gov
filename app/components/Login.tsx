@@ -79,7 +79,7 @@ const OneGovID: React.FC = () => (
                 <h3 className="text-lg font-semibold text-gray-900">Login</h3>
                   {/*Temporary to be removed*/}
                   <Link
-                  href="/dashboard/home"
+                  href="/portal/dashboard/home"
                   className=""
                   >
                     <span className="inline-block text-black hover:border-gray-300 transition-transform group-hover:translate-x-1 motion-reduce:transform-none">

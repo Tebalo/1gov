@@ -2,7 +2,7 @@
 import React,{useState} from "react";
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { FaBeer, FaHome, FaCube, FaUser, FaCogs} from "react-icons/fa";
+import { FaHome, FaCube, FaUser, FaCogs} from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
 interface SideBarItem {
@@ -12,15 +12,19 @@ interface SideBarItem {
 }
 
 const customerPortalSItems: SideBarItem[] = [
-    { path: '/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
-    { path: '/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
+    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 
-const DynamicSidebar: React.FC = () => {
+const DynamicSidebar: React.FC = ({}) => {
     const currentPath = usePathname();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    const toggleDropdown = () => {
+        setIsDropdownOpen((prev) => !prev);
+    };
     return (
         <aside id="dynamic-sidebar" className="top-0 left-0 w-80 shadow-xl">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
@@ -42,6 +46,31 @@ const DynamicSidebar: React.FC = () => {
                             </li>
                         ))}
                     </ul>
+                </div>
+                <div className="ml-5 relative">
+                    <button 
+                        type="button" 
+                        id="dropDownButton"
+                        className="flex items-center w-full p-2 text-base text-gray-100 transition duration-75 rounded-lg group" 
+                        aria-controls="dropdown-example" 
+                        data-dropdown-toggle="doubleDropdown"
+                        onClick={toggleDropdown}
+                    >
+                        <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Switch Portal</span>
+                        <svg className="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </button>
+                    <div className={`absolute top-full border -mt-20 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                        <ul id="dropdown-example" aria-labelledby="dropDownButton">
+                            <li>
+                                <a href="/stregistration" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Customer Portal</a>
+                            </li>
+                            <li>
+                                <a href="/teacherregistration" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Admin Portal</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </aside>

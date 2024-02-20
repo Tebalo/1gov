@@ -8,3 +8,5 @@ Libraries
 3. npm i @hookform/resolvers (https://www.npmjs.com/package/@hookform/resolvers?activeTab=readme)
 4. npm i react-hook-form (https://www.npmjs.com/package/react-hook-form)
 5. npm i @tailwindcss/forms (https://www.npmjs.com/package/@tailwindcss/forms)
+6. npm i react-chartjs-2 (https://www.npmjs.com/package/react-chartjs-2)
+7. npm i @faker-js/faker (https://www.npmjs.com/package/@faker-js/faker)
