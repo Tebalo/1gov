@@ -14,7 +14,7 @@ const Appbar: React.FC= () => {
                             height={350}
                             alt="Picture of the coat of arms"
                         />
-                    <span className="font-bold ml-2 text-gray-900">1</span><span className="text-gray-900">Gov</span>
+                    <span className="font-bold -ml-1 text-gray-900">Bo</span><span className="text-gray-900">tepco</span>
                 </div>
                 <div className="">
                     <span className="text-3xl text-gray-900">Welcome to Botepco, Michael!</span>
