@@ -18,6 +18,18 @@ const customerPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 
+const generalPortalSItems: SideBarItem[] = [
+    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+]
+
+const registrationOfficerPortalSItems: SideBarItem[] = [
+    { path: '/portal/dashboard/home-o', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
+    { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Reports' },
+    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+]
 const DynamicSidebar: React.FC = ({}) => {
     const currentPath = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -35,8 +47,21 @@ const DynamicSidebar: React.FC = ({}) => {
                     />
                 </div>
                 <div className="my-10 ml-5">
+                {currentPath === ("/portal/dashboard/home") && 
                     <ul className="space-y-5 font-medium">
-                        {customerPortalSItems.map((item) =>(
+{                        customerPortalSItems.map((item) =>(
+                            <li key={item.path} className="flex space-x-2">
+                                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
+                                <Link href={item.path} className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
+                                    {item.icon}
+                                    <span className="text-gray-100 text-lg">{item.title}</span>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>}
+                    {currentPath === "/portal/dashboard/home-o" && 
+                    <ul className="space-y-2 font-medium">
+{                        registrationOfficerPortalSItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
                                 <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
                                 <Link href={item.path} className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
@@ -46,6 +71,8 @@ const DynamicSidebar: React.FC = ({}) => {
                             </li>
                         ))}
                     </ul>
+
+                    }
                 </div>
                 <div className="ml-5 relative">
                     <button 
@@ -61,7 +88,7 @@ const DynamicSidebar: React.FC = ({}) => {
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
                         </svg>
                     </button>
-                    <div className={`absolute top-full border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                    <div className={`absolute top-full border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
                         <ul id="dropdown-example" aria-labelledby="dropDownButton">
                             <li>
                                 <a href="/portal/dashboard/home" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Customer Portal</a>
