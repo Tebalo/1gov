@@ -363,20 +363,24 @@ export const ApprovalRejectionForm: React.FC<RegistrationFormProps> = ({onClose}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                         <div className="bg-slate-100 p-2 rounded-lg mb-2">
-                            <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
-                                <div className=''>
-                                    <DynamicRadioButtons options={citizenOptions} onSelect={handleCitizenOptionSelect} name="Citizenry" register={register} errors={errors} schema_name="citizenry"/>
+                            <dl className="divide-y divide-white">
+                                <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Citizenry</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Citizen</dd>
                                 </div>
-                                <div className=''>
-                                    <DynamicRadioButtons options={statusOptions} onSelect={handleStatusOptionSelect} name="Status" register={register} errors={errors} schema_name="status"/>
+                                <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Status</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Serving</dd>
                                 </div>
-                                <div className=''>
-                                    <DynamicDropdownButtons options={areaOfPractice} schema_name="area_of_practice" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="Categories of Practice" register={register} errors={errors}/>
-                                </div>  
-                                <div className=''>
-                                    <DynamicDropdownButtons options={registrationCategory} schema_name="registration_category" onChange={handleRegistrationCategoryOptionSelect} defaultPractice="Select..." name="Sub-categories" register={register} errors={errors}/>
+                                <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Category of Practice</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Junior secondary</dd>
                                 </div>
-                            </div>  
+                                <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Sub-category</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Junior secondary teacher</dd>
+                                </div>
+                            </dl>  
                             </div>
                         </motion.div>           
                     )}
@@ -387,26 +391,34 @@ export const ApprovalRejectionForm: React.FC<RegistrationFormProps> = ({onClose}
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2">
-                                <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-3 sm:grid-cols-1">
-                                    <div className=''>
-                                        <DynamicRadioButtons options={employmentOptions} onSelect={handleEmploymentOptionSelect} name="Employment status" register={register} errors={errors} schema_name="employment_status"/>
-                                    </div>
-                                    <div className=''>
-                                        <DynamicRadioButtons options={institutionOptions} onSelect={handleInstitutionOptionSelect} name="Type of institution" register={register} errors={errors} schema_name="type_institution"/>
-                                    </div>  
-                                    <div className=''>
-                                        <DynamicTextInputField errors={errors} register={register} name="Current station/Institution" schema_name="institution"/>
-                                    </div>
-                                    <div className=''>
-                                        <DynamicDropdownButtons options={regionOptions} schema_name="region" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="Region" register={register} errors={errors}/>
-                                    </div>
-                                    <div className=''>
-                                        <DynamicDropdownButtons options={districtOptions} schema_name="district" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="District" register={register} errors={errors}/>
-                                    </div>
-                                    <div className=''>
-                                        <DynamicDropdownButtons options={placeOptions} schema_name="place" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="City/Town/Village" register={register} errors={errors}/>
-                                    </div>
+                        <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2 overflow-y-scroll">
+                                <div className="">
+                                    <dl className="divide-y divide-white">
+                                        <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">Employment status</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Employed</dd>
+                                        </div>
+                                        <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">Type of institution</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Public</dd>
+                                        </div>
+                                        <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">Current station/Institution</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Maru-a-pula</dd>
+                                        </div>
+                                        <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">Region</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Gaborone</dd>
+                                        </div>
+                                        <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">District</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">South-East District</dd>
+                                        </div>
+                                        <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">City/Town/Village</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">Gaborone</dd>
+                                        </div>
+                                    </dl>  
                                 </div> 
                             </div>
                         </motion.div>             

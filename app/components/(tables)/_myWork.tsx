@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import ApprovalRejectionModal from '../ApprovalRejectionModal';
 
 // Define the interface for your item
 interface ProductItem {
@@ -58,6 +59,14 @@ const MyWork: React.FC = () => {
     { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
     { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
 ];
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+
+    const handleToggleServiceList = () => {
+        setIsRegistrationOpen(!isRegistrationOpen);
+    };
+    const handleCloseLoginServiceList = () => {
+        setIsRegistrationOpen(false);
+    }
   return (
     <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">
@@ -167,6 +176,7 @@ const MyWork: React.FC = () => {
                             </th>
                             <th className="px-10 py-4 font-normal">
                                 <button
+                                onClick={handleToggleServiceList}
                                 className="text-white bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-900 font-medium rounded-full text-sm px-1 py-1 text-center me-2 mb-0"
                                 >
                                     Go
@@ -202,6 +212,7 @@ const MyWork: React.FC = () => {
               </li>
           </ul>
       </nav>
+    <ApprovalRejectionModal isOpen={isRegistrationOpen} onClose={handleCloseLoginServiceList}/>
     </div>
   );
 };
