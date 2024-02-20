@@ -47,7 +47,7 @@ const DynamicSidebar: React.FC = ({}) => {
                     />
                 </div>
                 <div className="my-10 ml-5">
-                {currentPath === ("/portal/dashboard/home") && 
+                {(currentPath === ("/portal/dashboard/home") || currentPath === ("/portal/dashboard/my-applications")) && 
                     <ul className="space-y-5 font-medium">
 {                        customerPortalSItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
@@ -57,7 +57,8 @@ const DynamicSidebar: React.FC = ({}) => {
                                     <span className="text-gray-100 text-lg">{item.title}</span>
                                 </Link>
                             </li>
-                        ))}
+                        )
+                        )}
                     </ul>}
                     {currentPath === "/portal/dashboard/home-o" && 
                     <ul className="space-y-2 font-medium">
