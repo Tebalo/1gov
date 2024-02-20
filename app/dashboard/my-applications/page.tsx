@@ -17,7 +17,7 @@ const Drafts: React.FC = () => {
     return(
         <div>
             <div className="border-b-2 font-bold">
-                <h3 className="text-gray-900 px-4">Total: 7</h3>
+                <h3 className="text-gray-900 px-4">Total: 2</h3>
             </div>
             <table className="relative overflow-x-auto">
                 <thead className="text-xs text-gray-900 uppercase">
@@ -41,7 +41,7 @@ const Drafts: React.FC = () => {
                 </thead>
                 <tbody className="space-y-2">
                     {rowData.map((row)=>(
-                        <tr key={row.id} className="bg-white border shadow-lg rounded-lg text-gray-900 text-xs font-light whitespace-nowrap">
+                        <tr key={row.id} className="bg-gray-100 border shadow-lg rounded-lg text-gray-900 text-xs font-light whitespace-nowrap">
                             <th scope="row" className="px-6 py-4 font-normal">
                                 {row.id}
                             </th>
@@ -51,14 +51,14 @@ const Drafts: React.FC = () => {
                             <th className="px-6 py-4 font-normal">
                                 {row.date}
                             </th>
-                            <th className="px-6 py-4 font-normal">
+                            <th className="px-6 py-4 font-normal text-gray-100">
                                 <div className="bg-green-300 rounded-lg px-2 py-0">
                                     {row.status}
                                 </div>
                             </th>
                             <th className="px-6 py-4 font-normal">
                                 <button
-                                className="bg-sky-300 py-1 px-2 rounded-lg"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-3 py-0.5 text-center me-2 mb-0"
                                 >
                                     Continue
                                 </button>
@@ -79,7 +79,7 @@ const Submission: React.FC = () =>{
     return(
         <div>
             <div className="border-b-2 font-bold">
-                <h3 className="text-gray-900 px-4">Total: 7</h3>
+                <h3 className="text-gray-900 px-4">Total: 2</h3>
             </div>
             <table className="relative overflow-x-auto">
                 <thead className="text-xs text-gray-900 uppercase">
@@ -104,7 +104,7 @@ const Submission: React.FC = () =>{
                 </thead>
                 <tbody className="space-y-2">
                     {rowData.map((row)=>(
-                        <tr key={row.id} className="bg-white border shadow-lg rounded-lg text-gray-900 text-xs font-light whitespace-nowrap">
+                        <tr key={row.id} className="bg-gray-100 border shadow-lg rounded-lg text-gray-900 text-xs font-light whitespace-nowrap">
                             <th scope="row" className="px-6 py-4 font-normal">
                                 {row.id}
                             </th>
@@ -114,14 +114,14 @@ const Submission: React.FC = () =>{
                             <th className="px-6 py-4 font-normal">
                                 {row.date}
                             </th>
-                            <th className="px-6 py-4 font-normal">
+                            <th className="px-6 py-4 font-normal text-gray-100">
                                 <div className="bg-green-300 rounded-lg px-2 py-0">
                                     {row.status}
                                 </div>
                             </th>
                             <th className="px-6 py-4 font-normal">
                                 <button
-                                className="bg-sky-300 py-1 px-2 rounded-lg"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-0.5 text-center me-2 mb-0"
                                 >
                                     View
                                 </button>
