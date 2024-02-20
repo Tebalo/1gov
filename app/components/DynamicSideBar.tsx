@@ -26,7 +26,7 @@ const DynamicSidebar: React.FC = ({}) => {
         setIsDropdownOpen((prev) => !prev);
     };
     return (
-        <aside id="dynamic-sidebar" className="top-0 left-0 w-80 shadow-xl">
+        <aside id="dynamic-sidebar" className="top-0 left-0 w-60 shadow-xl transition-transform -translate-x-full sm:translate-x-0">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
                 <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 w-48">
                     <Logo
@@ -61,13 +61,16 @@ const DynamicSidebar: React.FC = ({}) => {
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
                         </svg>
                     </button>
-                    <div className={`absolute top-full border -mt-20 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                    <div className={`absolute top-full border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
                         <ul id="dropdown-example" aria-labelledby="dropDownButton">
                             <li>
-                                <a href="/stregistration" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Customer Portal</a>
+                                <a href="/portal/dashboard/home" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Customer Portal</a>
                             </li>
                             <li>
-                                <a href="/teacherregistration" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Admin Portal</a>
+                                <a href="/portal/dashboard/home-o" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Registration Officer Portal</a>
+                            </li>
+                            <li>
+                                <a href="/portal/dashboard/home-o" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Admin Portal</a>
                             </li>
                         </ul>
                     </div>

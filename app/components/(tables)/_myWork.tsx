@@ -9,55 +9,15 @@ interface ProductItem {
     priority: string;
     status: string;
   }
+  interface RowData {
+    id: string;
+    title: string;
+    date: string;
+    status: string;
+}
 
-// Define your constant array with data
-const productData: ProductItem[] = [
-    {
-      id: 1,
-      name: 'Student-Teacher Application',
-      applicationID: '67bf7nfe74unf843m',
-      priority: '50',
-      status: 'Pending-Approval',
-    },
-    {
-        id: 1,
-        name: 'Teacher Application',
-        applicationID: '67bf7nfe74unf843m',
-        priority: '35',
-        status: 'Pending-Approval',
-    },
-    {
-        id: 1,
-        name: 'Teacher Application',
-        applicationID: '67bf7nfe74unf843m',
-        priority: '15',
-        status: 'Pending-Approval',
-    },
-    {
-        id: 1,
-        name: 'Student-Teacher Application',
-        applicationID: '67bf7nfe74unf843m',
-        priority: '10',
-        status: 'Pending-Approval',
-    },
-    {
-        id: 1,
-        name: 'Student-Teacher Application',
-        applicationID: '67bf7nfe74unf843m',
-        priority: '10',
-        status: 'Pending-Approval',
-    },
-    {
-        id: 1,
-        name: 'Student-Teacher Application',
-        applicationID: '67bf7nfe74unf843m',
-        priority: '10',
-        status: 'Pending-Approval',
-    },
-  ];
-  
 
-const TableFilter: React.FC = () => {
+const MyWork: React.FC = () => {
   const [data, setData] = useState<ProductItem[]>([]);
   const dropdownStyle: React.CSSProperties = {
     position: 'absolute',
@@ -81,7 +41,7 @@ const TableFilter: React.FC = () => {
     setSelectedFilter(value);
 
     // Update data based on the selected filter
-    switch (value) {
+   /* switch (value) {
       case 'Student-Teacher Application':
         setData(productData.filter(item => item.name.includes("Student-Teacher Application")));
         break;
@@ -90,10 +50,14 @@ const TableFilter: React.FC = () => {
         break;
       default:
         break;
-    }
+    }**/
 
     setIsDropdownOpen(false);
   };
+  const rowData: RowData[] = [
+    { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
+    { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
+];
   return (
     <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">
@@ -158,53 +122,60 @@ const TableFilter: React.FC = () => {
             <input type="text" id="table-search" className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for items"/>
         </div>
     </div>
-      <table className="w-full min-w-max text-sm text-left rtl:text-right text-gray-500 ">
-      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-            <tr>
-                <th scope="col" className="px-2 py-3">
-                    Submission Id
-                </th>
-                <th scope="col" className="px-2 py-3">
-                    Title
-                </th>
-                <th scope="col" className="px-2 py-3">
-                    Priority
-                </th>
-                <th scope="col" className="px-2 py-3">
-                    Status
-                </th>
-                <th scope="col" className="px-2 py-3">
-                    Actions
-                </th>
-            </tr>
-        </thead>
-      <tbody>
-        {productData.map((item) => (
-          <tr
-            key={item.id}
-            className="bg-white border-b hover:bg-gray-50"
-          >
-            <td className="px-2 py-2">{item.applicationID}</td>
-            <td className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap">
-              {item.name}
-            </td>
-            <td className="px-2 py-2">{item.priority}</td>
-            <td className="px-2 py-2 m-10 text-gray-100">
-                <div className="bg-sky-300 rounded-lg px-2 py-0 flex items-center justify-center">
-                  {item.status}
-                </div>
-              </td>
-            <td className="px-2 py-2">
-              <button
-                className="text-white bg-green-400 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-0.5 text-center me-2 mb-0"
-                >
-                Go
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-      </table>
+    <table className="overflow-x-auto relative">
+                <thead className="text-xs text-gray-900 uppercase">
+                    <tr>
+                        <th scope="col" className="pr-10 pl-4 py-3">
+                            Submission Id
+                        </th>
+                        <th scope="col" className="pr-10 py-3">
+                            Title
+                        </th>
+                        <th scope="col" className="px-10 py-3">
+                            Priority
+                        </th>
+                        <th scope="col" className="px-10 py-3">
+                            Submitted
+                        </th>
+                        <th scope="col" className="px-10 py-3">
+                            Status
+                        </th>
+                        <th scope="col" className="px-10 py-3">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="space-y-2">
+                    {rowData.map((row)=>(
+                        <tr key={row.id} className="bg-gray-100 border shadow-lg rounded-lg text-gray-900 text-xs font-light whitespace-nowrap">
+                            <th scope="row" className="px-10 py-4 font-normal">
+                                {row.id}
+                            </th>
+                            <th className="px-10 py-4 font-normal">
+                                {row.title}
+                            </th>
+                            <th className="px-10 py-4 font-normal">
+                                10
+                            </th>
+                            <th className="px-10 py-4 font-normal">
+                                {row.date}
+                            </th>
+                            <th className="px-10 py-4 font-normal text-gray-100">
+                                <div className="bg-sky-300 rounded-lg px-2 py-0">
+                                    {row.status}
+                                </div>
+                            </th>
+                            <th className="px-10 py-4 font-normal">
+                                <button
+                                className="text-white bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-900 font-medium rounded-full text-sm px-1 py-1 text-center me-2 mb-0"
+                                >
+                                    Go
+                                </button>
+                            </th>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4 px-2 pb-1" aria-label="Table navigation">
           <span className="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span className="font-semibold text-gray-900">1-10</span> of <span className="font-semibold text-gray-900 dark:text-white">1000</span></span>
           <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
@@ -235,4 +206,4 @@ const TableFilter: React.FC = () => {
   );
 };
 
-export default TableFilter;
+export default MyWork;

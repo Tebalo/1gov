@@ -33,9 +33,9 @@ export default function DashboardLayout({
   }) {
 
     return(
-    <section className="bg-white flex">
+    <section className="bg-white flex w-screen fixed">
         <DynamicSidebar/>
-        <div className="w-full">
+        <div className="h-screen w-full flex-1 flex-col">
           <Appbar/>
           {children}   
         </div>
