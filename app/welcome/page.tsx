@@ -40,8 +40,8 @@ export default function Welcome() {
                     </div>
                     <div className="flex md:flex-row flex-col items-center md:items-start my-2">
                         <div className="flex md:text-white text-black text-5xl justify-center md:justify-start md:w-fit">
-                            <h2 className="font-bold">1</h2>
-                            <h2 className="font-light md:mr-2">Gov</h2>
+                            <h2 className="font-bold">Bo</h2>
+                            <h2 className="font-light md:mr-2">tepco</h2>
                         </div>
                             <h2 className="font-bold text-5xl md:text-white text-black md:w-fit">e-Services Portal</h2> 
                         </div>
@@ -71,7 +71,7 @@ export default function Welcome() {
             <Login isOpen={isLoginOpen} onClose={handleCloseLogin}/>
             <div className="flex flex-col md:hidden items-center">
                 <button type="button" className="text-white bg-sky-300 hover:bg-sky-350 w-fit hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-base px-10 py-1.5 text-center me-2 mb-2">Get In Touch</button>
-                <p className="text-sm">@ 2024 1Gov1Citizen Portal v4.0.0</p>
+                <p className="text-sm">@ 2024 Botepco Portal v4.0.0</p>
             </div>
         </main>
     );
