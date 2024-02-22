@@ -85,7 +85,7 @@ const DynamicSidebar: React.FC = ({}) => {
             sidebarItems = adminPortalSItems;
             break;
         default:
-            sidebarItems = generalPortalSItems;
+            sidebarItems = customerPortalSItems;
             break
     }
 
