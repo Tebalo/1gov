@@ -26,17 +26,35 @@ const generalPortalSItems: SideBarItem[] = [
 const registrationOfficerPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/home-o', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
     { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
-    { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Reports' },
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
     { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 const DynamicSidebar: React.FC = ({}) => {
     const currentPath = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+    const [currentPortal, setCurrentPortal] = useState('customer')
     const toggleDropdown = () => {
         setIsDropdownOpen((prev) => !prev);
     };
+    const handleChangePortal = (value: string) => {
+        setCurrentPortal(value)
+        setIsDropdownOpen(false); // Close dropdown after selecting a portal
+    }
+
+    let sidebarItems: SideBarItem[] = [];
+
+    // Determine which set of sidebar items to display based on the current portal
+    switch (currentPortal){
+        case 'customer':
+            sidebarItems= customerPortalSItems;
+            break;
+        case 'registrationOfficer':
+            sidebarItems = registrationOfficerPortalSItems;
+            break;
+        default:
+            sidebarItems = generalPortalSItems;
+    }
+
     return (
         <aside id="dynamic-sidebar" className="top-0 left-0 w-60 shadow-xl transition-transform -translate-x-full sm:translate-x-0">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
@@ -47,9 +65,8 @@ const DynamicSidebar: React.FC = ({}) => {
                     />
                 </div>
                 <div className="my-10 ml-5">
-                {(currentPath === ("/portal/dashboard/home") || currentPath === ("/portal/dashboard/my-applications")) && 
                     <ul className="space-y-5 font-medium">
-{                        customerPortalSItems.map((item) =>(
+{                        sidebarItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
                                 <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
                                 <Link href={item.path} className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
@@ -59,21 +76,7 @@ const DynamicSidebar: React.FC = ({}) => {
                             </li>
                         )
                         )}
-                    </ul>}
-                    {currentPath === "/portal/dashboard/home-o" && 
-                    <ul className="space-y-2 font-medium">
-{                        registrationOfficerPortalSItems.map((item) =>(
-                            <li key={item.path} className="flex space-x-2">
-                                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
-                                <Link href={item.path} className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
-                                    {item.icon}
-                                    <span className="text-gray-100 text-lg">{item.title}</span>
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-
-                    }
+                    </ul>          
                 </div>
                 <div className="ml-5 relative">
                     <button 
@@ -89,17 +92,36 @@ const DynamicSidebar: React.FC = ({}) => {
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
                         </svg>
                     </button>
-                    <div className={`absolute top-full border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                    <div className={`absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
                         <ul id="dropdown-example" aria-labelledby="dropDownButton">
-                            <li>
-                                <a href="/portal/dashboard/home" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Customer Portal</a>
-                            </li>
-                            <li>
-                                <a href="/portal/dashboard/home-o" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Registration Officer Portal</a>
-                            </li>
-                            <li>
-                                <a href="/portal/dashboard/home-o" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">Admin Portal</a>
-                            </li>
+                            <Link
+                            href="/portal/dashboard/home"
+                            onClick={()=> handleChangePortal('customer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>Customer Portal</span>
+                            </Link>
+                            <Link
+                            href="/portal/dashboard/home-o"
+                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>Registration Officer Portal</span>
+                            </Link>
+                            <Link
+                            href="/portal/dashboard/home-o"
+                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>##### Officer Portal</span>
+                            </Link>
+                            <Link
+                            href="/portal/dashboard/home-o"
+                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>Admin Portal</span>
+                            </Link>
                         </ul>
                     </div>
                 </div>
