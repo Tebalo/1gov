@@ -60,7 +60,11 @@ const DynamicSidebar: React.FC = ({}) => {
         // You can add any additional logic here if needed
         // Update localStorage with currentPortal value whenever it changes
         if(currentPortal){ // Assert that currentPortal is not null(Solve typescript error)
+            if(typeof window !== 'undefined'){
             localStorage.setItem("currentPortal", currentPortal);
+            }else{
+                // toast
+            }
         }
     }, [currentPortal]); 
 
