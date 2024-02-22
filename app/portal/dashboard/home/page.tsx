@@ -1,6 +1,6 @@
 "use client"
 import React, {useState} from "react";
-import {FaDiceFour, FaChalkboardTeacher } from 'react-icons/fa';
+import {FaChalkboardTeacher } from 'react-icons/fa';
 import ServiceList from "@/app/components/ServiceList";
 const Home: React.FC = () => {
     const [isServiceListOpen, setIsServiceListOpen] = useState(false);
