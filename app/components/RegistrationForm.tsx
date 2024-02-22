@@ -301,7 +301,11 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                 
                 await handleSubmit(processForm)()
             }
-            console.log(errors)
+            if(errors){
+                console.log("Errors detected")
+                console.log(errors)
+            }
+            
             setPreviousStep(currentStep)
             setCurrentStep(step => step + 1)
         }
@@ -315,6 +319,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
     }
 
     const processForm: SubmitHandler<Inputs> = data => {
+        console.log("Form submitted")
         console.log(data)
         reset()
     }
@@ -371,10 +376,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                     <DynamicRadioButtons options={statusOptions} onSelect={handleStatusOptionSelect} name="Status" register={register} errors={errors} schema_name="status"/>
                                 </div>
                                 <div className=''>
-                                    <DynamicDropdownButtons options={areaOfPractice} schema_name="area_of_practice" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="Categories of Practice" register={register} errors={errors}/>
+                                    <DynamicDropdownButtons options={areaOfPractice} schema_name="practice_category" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="Categories of Practice" register={register} errors={errors}/>
                                 </div>  
                                 <div className=''>
-                                    <DynamicDropdownButtons options={registrationCategory} schema_name="registration_category" onChange={handleRegistrationCategoryOptionSelect} defaultPractice="Select..." name="Sub-categories" register={register} errors={errors}/>
+                                    <DynamicDropdownButtons options={registrationCategory} schema_name="sub_cateogry" onChange={handleRegistrationCategoryOptionSelect} defaultPractice="Select..." name="Sub-categories" register={register} errors={errors}/>
                                 </div>
                             </div>  
                             </div>
@@ -390,13 +395,13 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                         <div className="bg-slate-100 w-full  p-2 rounded-lg h-96 mb-2">
                                 <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-3 sm:grid-cols-1">
                                     <div className=''>
-                                        <DynamicRadioButtons options={employmentOptions} onSelect={handleEmploymentOptionSelect} name="Employment status" register={register} errors={errors} schema_name="employment_status"/>
+                                        <DynamicRadioButtons options={employmentOptions} onSelect={handleEmploymentOptionSelect} name="Employment status" register={register} errors={errors} schema_name="work_status"/>
                                     </div>
                                     <div className=''>
-                                        <DynamicRadioButtons options={institutionOptions} onSelect={handleInstitutionOptionSelect} name="Type of institution" register={register} errors={errors} schema_name="type_institution"/>
+                                        <DynamicRadioButtons options={institutionOptions} onSelect={handleInstitutionOptionSelect} name="Type of institution" register={register} errors={errors} schema_name="institution_type"/>
                                     </div>  
                                     <div className=''>
-                                        <DynamicTextInputField errors={errors} register={register} name="Current station/Institution" schema_name="institution"/>
+                                        <DynamicTextInputField errors={errors} register={register} name="Current station/Institution" schema_name="current_institution"/>
                                     </div>
                                     <div className=''>
                                         <DynamicDropdownButtons options={regionOptions} schema_name="region" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="Region" register={register} errors={errors}/>
@@ -405,7 +410,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                         <DynamicDropdownButtons options={districtOptions} schema_name="district" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="District" register={register} errors={errors}/>
                                     </div>
                                     <div className=''>
-                                        <DynamicDropdownButtons options={placeOptions} schema_name="place" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="City/Town/Village" register={register} errors={errors}/>
+                                        <DynamicDropdownButtons options={placeOptions} schema_name="city_or_town" onChange={handleAreOfPracticeOptionSelect} defaultPractice="Select..." name="City/Town/Village" register={register} errors={errors}/>
                                     </div>
                                 </div> 
                             </div>
@@ -514,9 +519,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                                 offense against a learner/ a minor?" 
                                 register={register} 
                                 errors={errors} 
-                                schema_name="minor_conviction"/>
+                                schema_name="student_related_offence"/>
                             {showIncidentTextInputArea &&(
-                                <DynamicTextInputArea errors={errors} name="Give full details about the incident" schema_name="minor_conviction_specification" register={register}/>
+                                <DynamicTextInputArea errors={errors} name="Give full details about the incident" schema_name="student_related_offence_details" register={register}/>
                             )}
                             <DynamicRadioButtons 
                             options={convitionOptions} 
@@ -524,10 +529,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                             name="Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal
                                 offense of possession of and or of drugs use?" 
                                 register={register} 
-                                schema_name="drugs_conviction"
+                                schema_name="drug_related_offence"
                                 errors={errors}/>
                             {showDrugsTextInputArea && (
-                                <DynamicTextInputArea errors={errors} name="Give full details about the incident" schema_name="drugs_conviction_specification" register={register}/>
+                                <DynamicTextInputArea errors={errors} name="Give full details about the incident" schema_name="drug_related_offence_details" register={register}/>
                             )}
                             <DynamicRadioButtons
                              options={convitionOptions} 
@@ -538,7 +543,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                               that this includes a reprimand, warning, or reproval and any order denying the right to apply
                               or reapply for a license?" 
                                 register={register}
-                                schema_name="license_revoked"
+                                schema_name="license_flag"
                                  errors={errors}/>
                             <div className="mb-6 space-y-2">
                                 {selectedLicenseRevokedOption &&(
@@ -655,7 +660,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
                             information and I authorize the Council to share this information with other relevant
                             organizations, such as employers and educational institutions.</span>
                             <div className="space-x-2">
-                                <input id="terms-conditions" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-400 rounded focus:ring-blue-500"/>
+                                <input id="agreement" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-400 rounded focus:ring-blue-500"/>
                                 <span className="text-xs">I agree to the terms and conditions.</span>
                             </div>
                         </div>
