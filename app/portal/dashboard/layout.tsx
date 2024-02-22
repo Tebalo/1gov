@@ -33,12 +33,12 @@ export default function DashboardLayout({
   }) {
 
     return(
-    <section className="bg-white flex w-screen fixed">
+    <div className="bg-white flex md:fixed">
         <DynamicSidebar/>
-        <div className="h-screen w-full flex-1 flex-col">
-          <Appbar/>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/*<Appbar/>*/}
           {children}   
         </div>
-    </section>
+    </div>
     );
 }

@@ -2,7 +2,7 @@
 import React,{useState, useEffect} from "react";
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { FaHome, FaHubspot, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight} from "react-icons/fa";
+import { FaHome, FaHubspot, FaComments, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight} from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
 interface SideBarItem {
@@ -15,6 +15,7 @@ const customerPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
     { path: '/portal/dashboard/my-applications', icon: <FaLayerGroup style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/spaces', icon: <FaComments style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Spaces' },
     { path: '/portal/dashboard/settings', icon: <FaCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 
@@ -27,6 +28,7 @@ const registrationOfficerPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/home-o', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
     { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/spaces', icon: <FaComments style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Spaces' },
     { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 const adminPortalSItems: SideBarItem[] = [
@@ -34,6 +36,7 @@ const adminPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
     { path: '/portal/dashboard/reports', icon: <FaRegChartBar style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Reports'},
     { path: '/portal/dashboard/users', icon: <FaUsersCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Users' },
+    { path: '/portal/dashboard/spaces', icon: <FaComments style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Spaces' },
     { path: '/portal/dashboard/explore-data', icon: <FaHubspot style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Explore Data' },
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
     { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },

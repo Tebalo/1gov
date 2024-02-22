@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const Appbar: React.FC= () => {
     return(
-        <nav className="bg-white shadow-xl top-0 right-0 z-10 w-full h-20 flex justify-between">
+        <nav className="bg-white shadow-xl md:top-0 md:right-0 sm:translate-x-0 z-10 w-full h-20 flex justify-between">
             <div className="flex items-center">
                 <div className="md:w-fit w-48 mx-10">
                     <Image
@@ -17,7 +17,7 @@ const Appbar: React.FC= () => {
                     <span className="font-bold -ml-1 text-gray-900">Bo</span><span className="text-gray-900">tepco</span>
                 </div>
                 <div className="">
-                    <span className="text-3xl text-gray-900">Welcome to Botepco, Michael!</span>
+                    <span className="md:text-3xl text-gray-900">Welcome to Botepco, Michael!</span>
                 </div>
             </div>
             <div className="flex items-center space-x-2 mr-2">
