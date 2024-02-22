@@ -3,7 +3,7 @@ import DoughtnutCard from '@/app/components/(charts)/_DoughtnutCard';
 import TableFilter from '@/app/components/(tables)/_tablefilter';
 import LineChartCard from '@/app/components/(charts)/_LineChartCard';
 import { fakerDE as faker } from '@faker-js/faker';
-import MyWork from '@/app/components/(tables)/_myWork';
+
 const Index: React.FC = () => {
     const doughtnutData = {
         labels: ['New', 'Pending-Approval', 'Pending-Payment'],
@@ -23,7 +23,7 @@ const Index: React.FC = () => {
             },
             title:{
                 display: true,
-                text: 'Applications By Status'
+                text: 'Teacher Registrations By Status'
             }
         }
       }
@@ -35,7 +35,7 @@ const Index: React.FC = () => {
           },
           title: {
             display: true,
-            text: 'Teacher vs Student-Teacher License Application',
+            text: 'Teacher vs Student-Teacher Registration',
           },
         },
       };
@@ -63,12 +63,12 @@ const Index: React.FC = () => {
       <div className="p-4 overflow-auto h-screen rounded-lg">
             <div className="w-full">
                 <div className="rounded-lg">
-                    <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                          <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
+                            <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
                         </div>
-                        <div className="flex col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                          <MyWork/>
+                        <div className="flex items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
+                            <LineChartCard title='' chartData={linedata} options={lineoptions}/>
                         </div>
                     </div>
                 </div>

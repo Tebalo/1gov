@@ -1,8 +1,8 @@
 "use client"
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { FaHome, FaCube, FaUser, FaCogs} from "react-icons/fa";
+import { FaHome, FaHubspot, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight} from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
 interface SideBarItem {
@@ -13,26 +13,42 @@ interface SideBarItem {
 
 const customerPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
+    { path: '/portal/dashboard/my-applications', icon: <FaLayerGroup style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/settings', icon: <FaCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 
 const generalPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/settings', icon: <FaCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 
 const registrationOfficerPortalSItems: SideBarItem[] = [
     { path: '/portal/dashboard/home-o', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/portal/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
+    { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
+    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+]
+const adminPortalSItems: SideBarItem[] = [
+    { path: '/portal/dashboard/home-a', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
+    { path: '/portal/dashboard/reports', icon: <FaRegChartBar style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Reports'},
+    { path: '/portal/dashboard/users', icon: <FaUsersCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Users' },
+    { path: '/portal/dashboard/explore-data', icon: <FaHubspot style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Explore Data' },
     { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
     { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 const DynamicSidebar: React.FC = ({}) => {
     const currentPath = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [currentPortal, setCurrentPortal] = useState('customer')
+    const [currentPortal, setCurrentPortal] = useState(() => {
+        // Initialize currentPortal with the value from localStorage if available, otherwise default to 'customer'
+        if(typeof window !== 'undefined'){
+            return localStorage.getItem("currentPortal" || "admin")
+        }
+        return "admin";
+    });
+
     const toggleDropdown = () => {
         setIsDropdownOpen((prev) => !prev);
     };
@@ -40,6 +56,20 @@ const DynamicSidebar: React.FC = ({}) => {
         setCurrentPortal(value)
         setIsDropdownOpen(false); // Close dropdown after selecting a portal
     }
+
+    // UseEffect hook to force re-render when currentPortal changes
+    useEffect(() =>{
+        // This effect will trigger whenever currentPortal changes
+        // You can add any additional logic here if needed
+        // Update localStorage with currentPortal value whenever it changes
+        if(currentPortal){ // Assert that currentPortal is not null(Solve typescript error)
+            if(typeof window !== 'undefined'){
+            localStorage.setItem("currentPortal", currentPortal);
+            }else{
+                // toast, fix
+            }
+        }
+    }, [currentPortal]); 
 
     let sidebarItems: SideBarItem[] = [];
 
@@ -51,8 +81,12 @@ const DynamicSidebar: React.FC = ({}) => {
         case 'registrationOfficer':
             sidebarItems = registrationOfficerPortalSItems;
             break;
+        case 'admin':
+            sidebarItems = adminPortalSItems;
+            break;
         default:
             sidebarItems = generalPortalSItems;
+            break
     }
 
     return (
@@ -65,7 +99,7 @@ const DynamicSidebar: React.FC = ({}) => {
                     />
                 </div>
                 <div className="my-10 ml-5">
-                    <ul className="space-y-5 font-medium">
+                    <ul className="space-y-2 font-medium">
 {                        sidebarItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
                                 <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
@@ -78,7 +112,7 @@ const DynamicSidebar: React.FC = ({}) => {
                         )}
                     </ul>          
                 </div>
-                <div className="ml-5 relative">
+                <div className="absolute bottom-0 border-t w-full">
                     <button 
                         type="button" 
                         id="dropDownButton"
@@ -87,10 +121,10 @@ const DynamicSidebar: React.FC = ({}) => {
                         data-dropdown-toggle="doubleDropdown"
                         onClick={toggleDropdown}
                     >
-                        <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Switch Portal</span>
-                        <svg className="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
-                        </svg>
+                        <div className="flex ml-5 justify-between">
+                            <div className=""><FaChevronRight style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
+                            <div><span className="flex-1 ms-3 text-left rtl:text-right font-medium whitespace-nowrap">Switch Portal</span></div>
+                        </div>
                     </button>
                     <div className={`absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
                         <ul id="dropdown-example" aria-labelledby="dropDownButton">
@@ -116,8 +150,8 @@ const DynamicSidebar: React.FC = ({}) => {
                                 <span>##### Officer Portal</span>
                             </Link>
                             <Link
-                            href="/portal/dashboard/home-o"
-                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            href="/portal/dashboard/home-a"
+                            onClick={()=> handleChangePortal('admin')}
                             className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
                             >
                                 <span>Admin Portal</span>
