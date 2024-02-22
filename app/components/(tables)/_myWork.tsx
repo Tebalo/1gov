@@ -57,7 +57,7 @@ const MyWork: React.FC = () => {
   };
   const rowData: RowData[] = [
     { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
-    { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
+    { id: '67bf7nfe74unf647m', title: 'Teacher registration', date: '23 Jan 2024 - 16:48', status: 'Pending-Approval' },
 ];
     const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
 
@@ -68,7 +68,7 @@ const MyWork: React.FC = () => {
         setIsRegistrationOpen(false);
     }
   return (
-    <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg h-full">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">
             My Work
         </h2>
@@ -131,25 +131,25 @@ const MyWork: React.FC = () => {
             <input type="text" id="table-search" className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for items"/>
         </div>
     </div>
-    <table className="overflow-x-auto relative">
+    <table className="overflow-x-auto relative w-full">
                 <thead className="text-xs text-gray-900 uppercase">
                     <tr>
-                        <th scope="col" className="pr-10 pl-4 py-3">
+                        <th scope="col" className="">
                             Submission Id
                         </th>
-                        <th scope="col" className="pr-10 py-3">
+                        <th scope="col" className="">
                             Title
                         </th>
-                        <th scope="col" className="px-10 py-3">
+                        <th scope="col" className="">
                             Priority
                         </th>
-                        <th scope="col" className="px-10 py-3">
+                        <th scope="col" className="">
                             Submitted
                         </th>
-                        <th scope="col" className="px-10 py-3">
+                        <th scope="col" className="">
                             Status
                         </th>
-                        <th scope="col" className="px-10 py-3">
+                        <th scope="col" className="">
                             Actions
                         </th>
                     </tr>
@@ -160,24 +160,24 @@ const MyWork: React.FC = () => {
                             <th scope="row" className="px-10 py-4 font-normal">
                                 {row.id}
                             </th>
-                            <th className="px-10 py-4 font-normal">
+                            <th className="px-2 py-4 font-normal">
                                 {row.title}
                             </th>
-                            <th className="px-10 py-4 font-normal">
+                            <th className="px-2 py-4 font-normal">
                                 10
                             </th>
-                            <th className="px-10 py-4 font-normal">
+                            <th className="px-2 py-4 font-normal">
                                 {row.date}
                             </th>
-                            <th className="px-10 py-4 font-normal text-gray-100">
+                            <th className="px-2 py-4 font-normal text-gray-100">
                                 <div className="bg-sky-300 rounded-lg px-2 py-0">
                                     {row.status}
                                 </div>
                             </th>
-                            <th className="px-10 py-4 font-normal">
+                            <th className="px-2 py-4 font-normal">
                                 <button
                                 onClick={handleToggleServiceList}
-                                className="text-white bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-900 font-medium rounded-full text-sm px-1 py-1 text-center me-2 mb-0"
+                                className="text-white bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-900 font-medium rounded-full text-xs px-2 py-1 text-center me-2 mb-0"
                                 >
                                     Go
                                 </button>
