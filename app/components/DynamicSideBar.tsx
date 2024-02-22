@@ -63,7 +63,7 @@ const DynamicSidebar: React.FC = ({}) => {
             if(typeof window !== 'undefined'){
             localStorage.setItem("currentPortal", currentPortal);
             }else{
-                // toast
+                // toast, fix
             }
         }
     }, [currentPortal]); 
