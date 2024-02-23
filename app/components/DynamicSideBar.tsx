@@ -93,22 +93,22 @@ const DynamicSidebar: React.FC = ({}) => {
     }
 
     return (
-        <aside id="dynamic-sidebar" className="top-0 left-0 w-60 shadow-xl transition-transform -translate-x-full sm:translate-x-0">
+        <aside id="dynamic-sidebar" className=" top-0 left-0 lg:w-60 shadow-xl transition-transform -translate-x-full sm:translate-x-0 hidden md:block" aria-label="Sidebar">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
-                <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 w-48">
+                <div className="md:rounded-r-lg rounded-b-lg bg-white lg:p-5 md:p-1 lg:w-48 md:w-36">
                     <Logo
                     width={350}
                     height={350}
                     />
                 </div>
-                <div className="my-10 ml-5">
+                <div className="my-10 lg:ml-5">
                     <ul className="space-y-2 font-medium">
 {                        sidebarItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
-                                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
-                                <Link href={item.path} className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
-                                    {item.icon}
-                                    <span className="text-gray-100 text-lg">{item.title}</span>
+                                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg':''}`}></div>
+                                <Link href={item.path} className={`lg:flex items-center w-full lg:px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
+                                    <div className="flex justify-center">{item.icon}</div>
+                                    <div className="flex justify-center"><span className="text-gray-100 lg:text-lg text-xs">{item.title}</span></div>
                                 </Link>
                             </li>
                         )
@@ -124,12 +124,12 @@ const DynamicSidebar: React.FC = ({}) => {
                         data-dropdown-toggle="doubleDropdown"
                         onClick={toggleDropdown}
                     >
-                        <div className="flex ml-5 justify-between">
-                            <div className=""><FaChevronRight style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
+                        <div className="flex lg:ml-5 lg:justify-between">
+                            <div className="hidden lg:block"><FaChevronRight style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
                             <div><span className="flex-1 ms-3 text-left rtl:text-right font-medium whitespace-nowrap">Switch Portal</span></div>
                         </div>
                     </button>
-                    <div className={`absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                    <div className={`md:absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
                         <ul id="dropdown-example" aria-labelledby="dropDownButton">
                             <Link
                             href="/portal/dashboard/home"

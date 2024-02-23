@@ -353,9 +353,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => 
     }
     return(
         <div>
-            <div className="flex m-5 w-full  space-x-1 h-96">
+            <div className="flex md:m-5 w-full  space-x-1 md:h-96 h-full">
                 {/* steps */}
-                <nav aria-label="Progress" className="w-48">
+                <nav aria-label="Progress" className="w-48 hidden md:block">
                     <Stepper currentStep={currentStep} steps={steps}/>
                 </nav>
                 {/* forms */}   

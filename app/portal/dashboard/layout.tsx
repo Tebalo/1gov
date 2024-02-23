@@ -13,19 +13,6 @@ export const metadata: Metadata = {
   description: "Dashboard",
 };
 
-interface SideBarItem {
-  path: string;
-  icon: JSX.Element;
-  title: string;
-}
-
-const customerPortalSItems: SideBarItem[] = [
-  { path: '/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-  { path: '/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
-  { path: '/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-  { path: '/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
-]
-
 export default function DashboardLayout({
     children,
   }: {
@@ -33,11 +20,17 @@ export default function DashboardLayout({
   }) {
 
     return(
-    <div className="bg-white flex md:fixed">
-        <DynamicSidebar/>
+    <div className="flex h-screen bg-slate-100">
+        <div>
+          <DynamicSidebar/>
+        </div>
         <div className="flex-1 flex flex-col overflow-hidden">
           {/*<Appbar/>*/}
-          {children}   
+          <main className="p-4 rounded-lg overflow-y-auto">
+            <div className="p-0">
+              {children}   
+            </div>
+          </main>
         </div>
     </div>
     );

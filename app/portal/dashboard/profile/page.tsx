@@ -2,9 +2,9 @@ import React from "react";
 
 const Profile: React.FC = () => {
     return(
-        <main>
+        <div>
 
-        </main>
+        </div>
     )
 }
 export default Profile;
