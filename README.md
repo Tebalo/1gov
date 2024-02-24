@@ -18,3 +18,4 @@ TODO:
 1. Setup Themes: https://www.youtube.com/watch?v=l93uukpAoxE
 2. State transition using useTransition Hook: https://www.youtube.com/watch?v=SFZrHMZQon8
 3. Global State Management using Zustand: https://www.youtube.com/watch?v=BxohoXjbhKc&t=1036s
+4. Data Display: https://tailwindui.com/components/application-ui/data-display/description-lists
