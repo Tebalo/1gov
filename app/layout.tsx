@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-import {cn} from "../lib/utils"
+//import {cn} from "../lib/utils"
 
-//const inter = Inter({ subsets: ["latin"] });
-
-export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Welcome",
-  description: "Botepco",
+  title: "Botepco",
+  description: "Botepco backoffice portal",
 };
 
 export default function RootLayout({
@@ -23,12 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={
-        cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-        )
-      }>
+      <body className={inter.className}>
         {children}</body>
     </html>
   );
