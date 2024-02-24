@@ -61,7 +61,7 @@ const Index: React.FC = () => {
         ],
       };
   return (
-            <div className="">
+          <div className="">
             <div className="mb-5">
                 <PageTitle Title="Teacher Registration and Licensing"/>
             </div>

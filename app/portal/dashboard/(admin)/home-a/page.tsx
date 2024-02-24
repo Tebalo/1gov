@@ -65,7 +65,7 @@ const Index: React.FC = () => {
             <div className="mb-5">
                 <PageTitle Title="Teacher Registration and Licensing"/>
             </div>
-                <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
+                <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4 overflow-y-auto h-screen no-scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-100 scrollbar-thin">
                     <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
                         <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
                     </div>

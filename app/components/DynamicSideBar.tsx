@@ -1,5 +1,5 @@
 "use client"
-import React,{useState, useEffect} from "react";
+import React,{useState, useEffect, Suspense} from "react";
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { FaHome, FaHubspot, FaComments, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight} from "react-icons/fa";
@@ -101,21 +101,23 @@ const DynamicSidebar: React.FC = ({}) => {
                     height={350}
                     />
                 </div>
-                <div className="my-10 lg:ml-5">
+                <div className="my-10 lg:ml-5 overflow-y-auto h-96 no-scrollbar scrollbar-hide">
                     <ul className="space-y-2 font-medium">
-{                        sidebarItems.map((item) =>(
+                        {sidebarItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
+                                <Suspense fallback={<span className="text-gray-100 lg:text-lg text-xs">Loading....</span>}>
                                 <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg':''}`}></div>
                                 <Link href={item.path} className={`lg:flex items-center w-full lg:px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
                                     <div className="flex justify-center">{item.icon}</div>
                                     <div className="flex justify-center"><span className="text-gray-100 lg:text-lg text-xs">{item.title}</span></div>
                                 </Link>
+                                </Suspense>
                             </li>
                         )
                         )}
                     </ul>          
                 </div>
-                <div className="absolute bottom-0 border-t w-full">
+                <div className="absolute bottom-0 border-t w-full bg-sky-400">
                     <button 
                         type="button" 
                         id="dropDownButton"

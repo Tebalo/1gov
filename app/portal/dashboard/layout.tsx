@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Appbar from "@/app/components/appbar";
-import Sidebar from "@/app/components/sidebar";
-import { FaBeer, FaHome, FaCube, FaUser, FaCogs} from "react-icons/fa";
-import { usePathname } from "next/navigation";
+import Appbar from "@/app/components/appbar"; // Pending executive decision
 import DynamicSidebar from "@/app/components/DynamicSideBar";
+import { Suspense } from "react";
+import { LoadingSkeleton } from "@/app/components/LoadingSkeleton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,9 +25,9 @@ export default function DashboardLayout({
         </div>
         <div className="flex-1 flex flex-col overflow-hidden">
           {/*<Appbar/>*/}
-          <main className="p-4 rounded-lg overflow-y-auto">
+          <main className="p-4 rounded-lg">
             <div className="p-0">
-              {children}   
+              <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
             </div>
           </main>
         </div>
