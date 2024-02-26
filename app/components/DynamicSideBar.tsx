@@ -41,9 +41,9 @@ const DynamicSidebar: React.FC = ({}) => {
     const [currentPortal, setCurrentPortal] = useState(() => {
         // Initialize currentPortal with the value from localStorage if available, otherwise default to 'customer'
         if(typeof window !== 'undefined'){
-            return localStorage.getItem("currentPortal" || "admin")
+            return localStorage.getItem("currentPortal" || "customer")
         }
-        return "admin";
+        return "customer";
     });
 
     const toggleDropdown = () => {

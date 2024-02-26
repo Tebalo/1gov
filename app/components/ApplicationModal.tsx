@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { CaseDetails } from "./CaseDetails";
 import { RegistrationForm } from "./RegistrationForm";
+import { ApplicationForRegistrationForm } from "./ApplicationForRegistrationForm";
 
 interface ModalProps {
   isOpen: boolean;
@@ -54,14 +55,14 @@ const ApplicationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         className={`shadow-lg fixed inset-0 z-50 flex items-center justify-center ${modalClass} transition-opacity duration-300 ease-in-out`}
         >
 
-          <div className="relative h-full w-full">
-            <div className="relative bg-slate-200 shadow-2xl w-[calc(100%-1rem)] mx-auto rounded-lg flex">
+          <div className="relative md:h-full md:w-full ">
+            <div className="relative bg-slate-200 shadow-2xl w-[calc(100%-0rem)] md:w-auto md:h-auto h-screen mx-auto rounded-lg flex">
                 <CaseDetails/>
                 <div className="rounded-lg py-2 px-5 my-2 mr-2 shadow-lg w-full bg-white">
                   <div className="mx-0">
                     <div className="flex">
-                      <div className="flex justify-center mb-2">
-                          <span className="font-bold text-3xl text-gray-700">Teacher Registration</span>
+                      <div className="flex justify-center mb-2 w-full">
+                          <span className="font-bold text-3xl text-gray-700">Application For Teacher Registration</span>
                       </div>
                       <button 
                         type="button" 
@@ -77,7 +78,7 @@ const ApplicationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                       <div className="bg-sky-300 w-full h-1 px-20 rounded-lg mb-2"></div>
                     </div>
                     <div className="w-full">
-                      <RegistrationForm onClose={onClose}/>
+                      <ApplicationForRegistrationForm onClose={onClose}/>
                     </div>
                 </div>
             </div>

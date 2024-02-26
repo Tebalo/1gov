@@ -24,7 +24,7 @@ export const ServiceListWrapper: React.FC = () => {
                         <span className="text-gray-900 md:font-semibold">Teacher Professional Services</span>
                     </div>
                     <div className="flex md:mx-10 justify-end">
-                        <div className="bg-sky-300 rounded-full px-3 text-sm">5 services</div>
+                        <div className="bg-sky-300 rounded-full px-3 text-sm">2 services</div>
                     </div>
                 </div>
             </div>

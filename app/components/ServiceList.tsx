@@ -14,7 +14,7 @@ interface ServiceCardProps{
     serviceFees: string;
     verification: string;
     path: string;
-    onOpen: () => void
+    onOpen?: () => void
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({title,ministry, serviceFees, verification, path, onOpen}) => {
@@ -79,9 +79,8 @@ const ServiceList: React.FC<ModalProps>= ({ isOpen, onClose}) => {
                             <input type="text" id="base-input" placeholder="Search by service name or description..." className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"/>
                         </div>
                         <div className="mx-1">
-                            <ServiceCard title="Teacher registration" ministry="Ministry of Education" serviceFees="Service Fees" verification="EID Verification" path="/dashboard/teacher-registration" onOpen={handleToggleServiceList}/>
-                            <ServiceCard title="Student-Teacher registration" ministry="Ministry of Education" serviceFees="Service Fees" verification="EID Verification" path="/dashboard/teacher-registration" onOpen={handleToggleServiceList}/>
-                            <ServiceCard title="Teacher License Renewal" ministry="Ministry of Education" serviceFees="Service Fees" verification="EID Verification" path="/dashboard/teacher-registration" onOpen={handleToggleServiceList}/>
+                            <ServiceCard title="Application for Teacher registration" ministry="Ministry of Education" serviceFees="Service Fees" verification="EID Verification" path="/dashboard/teacher-registration" onOpen={handleToggleServiceList}/>
+                            <ServiceCard title="Application for Teacher License Renewal" ministry="Ministry of Education" serviceFees="Service Fees" verification="EID Verification" path="/dashboard/teacher-registration"/>
                         </div>
                     </div>
                 </div>
