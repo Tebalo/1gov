@@ -146,7 +146,7 @@ export const steps = [
     },
     {
         id: 'Step 6',
-        name: 'CONSENT'
+        name: 'PREVIEW'
     },
     {
         id: 'Step 7',

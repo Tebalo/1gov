@@ -5,6 +5,7 @@ import {Stepper } from "./Stepper";
 import {motion} from 'framer-motion';
 import { FormDataSchema, formSchema } from "../lib/schema";
 import { InformationCard } from "./InformationCard";
+import { DiplomaLevel, CertificationLevel, PostGradDiplomaLevel, DegreeLevel, PostGradCertificateLevel, PhDLevel, MastersLevel} from "./QualificationLevelComponents";
 
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,7 +39,7 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover";
-import { toast } from "@/components/ui/use-toast";
+import { toast, useToast } from "@/components/ui/use-toast";
 import { 
     RadioGroup, 
     RadioGroupItem } from "@/components/ui/radio-group"
@@ -48,6 +49,23 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
+import { Checkbox } from "@/components/ui/checkbox"
+import Link from "next/link";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+  } from "@/components/ui/accordion"
+import { Label } from "@radix-ui/react-label";
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+  } from "@/components/ui/alert"
+
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+
 
 interface RegistrationFormProps{
     onClose: () => void;
@@ -98,25 +116,18 @@ const institutions = [
     { label: "Lobatse Senior Secondary School", value: "lobatse_senior_secondary_school" },
 ] as const; // Google: list of secondary schools in botswana
 
+const Signature = "J. Doe";
 
 export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => {
     const [previousStep, setPreviousStep] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const delta = currentStep - previousStep
 
-    const next = async () => {
-        const fields = steps[currentStep].fields
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isProfileChecked, setIsProfileChecked] = useState(false);
 
-        //if(!output) return
-        if (currentStep < steps.length - 1){
-            if(currentStep === steps.length - 2){
-                
-                //await handleSubmit(processForm)()
-            }
-
-            setPreviousStep(currentStep)
-            setCurrentStep(step => step + 1)
-        }
+    const handleProfileCheckboxClick = () => {
+        setIsProfileChecked(!isProfileChecked); // Toggle the state when the checkbox is clicked
     }
 
     const prev = () => {
@@ -133,9 +144,6 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
 
             },
             employment_details: {
-                //region: "",
-                //district: "",
-                //city_or_town: "",
                 current_institution: "",
                 experience_years: 0
             },
@@ -148,6 +156,9 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 drug_conviction_status: "",
                 jurisdiction_drugs: "",
                 substance_involved: "",
+            },
+            declarations:{
+                signature: "J.Doe"
             }
         }
     })
@@ -163,21 +174,118 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const misconductFlag = form.watch("offence_convictions.misconduct_flag");
 
 
-    const fileRef = form.register("offence_convictions.license_flag_details");
-    const misconduct = form.register("offence_convictions.misconduct_flag_details");
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log("Clicked")
-        console.log({values})
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-                </pre>
-            )
-        })
+    const fileRef = form.register("offence_convictions.license_flag_details");
+    const fileID = form.register("attachments.national_id_copy");
+    const fileBQA = form.register("attachments.qualification_copy");
+    const filePHP = form.register("attachments.proof_of_payment");
+    const misconduct = form.register("offence_convictions.misconduct_flag_details");
+    const agreement = form.register("declarations.agreement");
+    const next = async () => {
+        const fields = steps[currentStep].fields
+
+        //if(!output) return
+        if (currentStep < steps.length - 1){
+            if(currentStep === steps.length - 2){
+                
+                //await handleSubmit(processForm)()
+            }
+
+            setPreviousStep(currentStep)
+            setCurrentStep(step => step + 1)
+        }
     }
+
+    const {toast} = useToast()
+
+    const [isErrorAlert, setIsErrorAlert] = useState(false);
+
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        setIsSubmitting(true); // Change state to indicate submitting
+        setIsErrorAlert(false);
+        const valueswithBio = {
+            ...values,
+            bio_datas: {
+                national_id: "936510813",
+                surname: "Serala",
+                forenames: "Oaitse",
+                dob: "1996-02-15",
+                pob: "Mahalapye",
+                gender: "Male",
+                nationality: "Motswana",
+                postal_address: "P O Box 7886, Mahalapye",
+                physical_address: "Block 10, Gaborone",
+                email: "johndoe@gmail.com",
+                mobile: "26774217788",
+                marital_status: "Single",
+                next_of_kin_name: "Sarah Cornor",
+                next_of_kin_relation: "Mother",
+                next_of_kin_contact: "26776554321"
+              }
+        }
+
+        //console.log({valueswithBio})
+        try{
+        const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
+        const response = await fetch(registrationEndpoint,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive'
+            },
+            body: JSON.stringify({...valueswithBio}), // Spread the valueswithBio object to remove the nesting key.
+        })
+        if(!response.ok){
+            throw new Error("Failed to register");
+        }
+        setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
+      }catch (error:any){
+        
+        console.error('Error registering', error.message);
+        setIsErrorAlert(true);
+      }finally{
+        setIsSubmitting(false); // Change state back after submission is completed
+      }
+    }
+
+
+    const [showDiplomaLevel, setShowDiplomaLevel] = useState(false);
+    const handleDiplomaCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowDiplomaLevel(event.target.checked)
+    }
+    const [showCertificationLevel, setShowCertificationLevel] = useState(false);
+    const handleCertificationCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowCertificationLevel(event.target.checked)
+    }
+    const [showPostGradDiplomaLevel, setShowPostGradDiplomaLevel] = useState(false);
+    const handlePostGradDiplomaCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowPostGradDiplomaLevel(event.target.checked)
+    }
+    const [showPostGradCertificateLevel, setShowPostGradCertificateLevel] = useState(false);
+    const handlePostGradCertificateCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowPostGradCertificateLevel(event.target.checked)
+    }
+    const [showDegreeLevel, setShowDegreeLevel] = useState(false);
+    const handleDegreeCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowDegreeLevel(event.target.checked)
+    }
+    const [showMastersLevel, setShowMastersLevel] = useState(false);
+    const handleMastersCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowMastersLevel(event.target.checked)
+    }
+    const [showPhDLevel, setShowPhDLevel] = useState(false);
+    const handlePhDCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowPhDLevel(event.target.checked)
+    }
+
+    const [formData, setFormData] = useState<typeof formSchema>();
+
+    const onPreview = (values: z.infer<typeof formSchema>) => {
+        //setFormData(values);
+    }
+
     return(
         <div>
             <div className="flex md:m-5 w-full  space-x-1 md:h-full ">
@@ -204,7 +312,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                         render={({field}) =>{
                                             return <FormItem>
                                                     <FormLabel>Select status</FormLabel>
-                                                    <Select onValueChange={field.onChange}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select an employment status">
@@ -232,7 +340,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                         render={({field}) =>{
                                             return <FormItem>
                                                     <FormLabel>Select practice category</FormLabel>
-                                                    <Select onValueChange={field.onChange}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select category of practice">
@@ -259,7 +367,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                         render={({field}) =>{
                                             return <FormItem>
                                                     <FormLabel>Select practice sub-category</FormLabel>
-                                                    <Select onValueChange={field.onChange}>
+                                                    <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select sub-category of practice">
@@ -422,7 +530,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                             render={({field}) =>{
                                                 return <FormItem>
                                                         <FormLabel>Region</FormLabel>
-                                                        <Select onValueChange={field.onChange}>
+                                                        <Select onValueChange={field.onChange} value={field.value}>
                                                             <FormControl>
                                                                 <SelectTrigger>
                                                                     <SelectValue placeholder="Select region">
@@ -447,7 +555,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                             render={({field}) =>{
                                                 return <FormItem>
                                                         <FormLabel>District</FormLabel>
-                                                        <Select onValueChange={field.onChange}>
+                                                        <Select onValueChange={field.onChange} value={field.value}>
                                                             <FormControl>
                                                                 <SelectTrigger>
                                                                     <SelectValue placeholder="Select district">
@@ -472,7 +580,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                             render={({field}) =>{
                                                 return <FormItem>
                                                         <FormLabel>City/Town/Village</FormLabel>
-                                                        <Select onValueChange={field.onChange}>
+                                                        <Select onValueChange={field.onChange} value={field.value}>
                                                             <FormControl>
                                                                 <SelectTrigger>
                                                                     <SelectValue placeholder="Select City/Town/Village">
@@ -502,17 +610,67 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                             <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1 space-y-2">
-                                <div className="hidden">
+                            <div className="hidden">
                                     <InformationCard Information="All the qualifications indicated below must be attached to the application and must be
                                     verified by the issuing institutions if they’re locally obtained and by the Botswana
                                     Qualifications Authority (BQA) if foreign obtained."/>
                                 </div>
                                 <div className="">
-
+                                    <label className="text-gray-900 text-sm">Select your Qualifications Levels</label>
+                                    <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handleCertificationCheckboxChange} id="certificate" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="certificate" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Certification</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handleDiplomaCheckboxChange} id="diploma" type="checkbox" value="diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="diploma" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Diploma</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handlePostGradDiplomaCheckboxChange} id="post-grad-diploma" type="checkbox" value="post-grad-diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="post-grad-diploma" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Diploma</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handleDegreeCheckboxChange} id="degree" type="checkbox" value="degree" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="degree" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Degree</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handlePostGradCertificateCheckboxChange} id="post-grad-certificate" type="checkbox" value="post-grad-certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="post-grad-certificate" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Certificate</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handleMastersCheckboxChange} id="masters" type="checkbox" value="masters" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="masters" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Masters</label>
+                                            </div>
+                                        </li>
+                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+                                            <div className="flex items-center ps-3">
+                                                <input onChange={handlePhDCheckboxChange} id="phd" type="checkbox" value="phd" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <label htmlFor="phd" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">PhD</label>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                                 {/*Visible when conditions here*/}
                                 <div className="overflow-auto h-72">
-
+                                    {showDiplomaLevel && <DiplomaLevel/>}
+                                    {showCertificationLevel && <CertificationLevel/>}
+                                    {showPostGradDiplomaLevel && <PostGradDiplomaLevel/>}
+                                    {showDegreeLevel && <DegreeLevel/>}
+                                    {showMastersLevel && <MastersLevel/>}
+                                    {showPostGradCertificateLevel && <PostGradCertificateLevel/>}
+                                    {showPhDLevel && <PhDLevel/>}
                                 </div>
                             </div>
                         </motion.div>             
@@ -694,7 +852,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 render={({field}) =>{
                                     return <FormItem>
                                             <FormLabel>Select Offence type</FormLabel>
-                                            <Select onValueChange={field.onChange}>
+                                            <Select onValueChange={field.onChange} value={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select Offence type">
@@ -720,7 +878,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 render={({field}) =>{
                                     return <FormItem>
                                             <FormLabel>Select Conviction status</FormLabel>
-                                            <Select onValueChange={field.onChange}>
+                                            <Select onValueChange={field.onChange} value={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select Conviction status">
@@ -745,7 +903,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 render={({field}) =>{
                                     return <FormItem>
                                             <FormLabel>Select Sentence/Outcome</FormLabel>
-                                            <Select onValueChange={field.onChange}>
+                                            <Select onValueChange={field.onChange} value={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select Sentence/Outcome">
@@ -815,7 +973,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     render={({field}) =>{
                                         return <FormItem>
                                                 <FormLabel>Court Jurisdiction</FormLabel>
-                                                <Select onValueChange={field.onChange}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select Court Jurisdiction">
@@ -881,11 +1039,11 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 <div className="grid md:grid-cols-3 grid-col-1 gap-2 ml-3">
                                     <FormField
                                     control={form.control}
-                                    name="offence_convictions.conviction_status"
+                                    name="offence_convictions.type_of_drug_offence"
                                     render={({field}) =>{
                                         return <FormItem>
                                                 <FormLabel>Type of Drug Offense</FormLabel>
-                                                <Select onValueChange={field.onChange}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select Conviction status">
@@ -910,7 +1068,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     render={({field}) =>{
                                         return <FormItem>
                                                 <FormLabel>Select Conviction status</FormLabel>
-                                                <Select onValueChange={field.onChange}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select Conviction status">
@@ -935,7 +1093,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     render={({field}) =>{
                                         return <FormItem>
                                                 <FormLabel>Substances involved</FormLabel>
-                                                <Select onValueChange={field.onChange}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select Conviction status">
@@ -1004,7 +1162,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     render={({field}) =>{
                                         return <FormItem>
                                                 <FormLabel>Court Jurisdiction</FormLabel>
-                                                <Select onValueChange={field.onChange}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select Court Jurisdiction">
@@ -1176,52 +1334,93 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                         <div className="border md:h-96 p-2  rounded-lg mb-2 mr-1 grid gap-y-2 gap-x-10 md:grid-cols-2">
-                            {/*<div className="mb-6 space-y-2 text-wrap ml-3">
+                            <div className="mb-6 space-y-2 text-wrap ml-3">
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <FormLabel htmlFor="picture">Certified copy of OMANG or Passport(for non-citizens)</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                        id="misconduct_flag_details" 
+                                    <FormField
+                                        control={form.control}
                                         name="attachments.national_id_copy"
-                                        type="file" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
-                                    </FormDescription>
-                                    <FormMessage/>
+                                        render={({ field }) => {
+                                            return (
+                                            <FormItem>
+                                                <FormLabel>Certified copy of OMANG or passport (for non-citizens)</FormLabel>
+                                                <FormControl>
+                                                <Input
+                                                type="file"
+                                                placeholder="Attach a file"
+                                                {...fileID}
+                                                onChange={(event) => {
+                                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                                }}
+                                                />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                            );
+                                        }}
+                                        />
                                 </div>
                             </div>
                             <div className="mb-6 space-y-2 text-wrap ml-3">
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <FormLabel htmlFor="picture">Verification of qualification from BQA.</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                        id="misconduct_flag_details" 
-                                        name="offence_convictions.qualification_copy"
-                                        type="file" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
-                                    </FormDescription>
-                                    <FormMessage/>
+                                <FormField
+                                        control={form.control}
+                                        name="attachments.qualification_copy"
+                                        render={({ field }) => {
+                                            return (
+                                            <FormItem>
+                                                <FormLabel>Verification of qualification from BQA.</FormLabel>
+                                                <FormControl>
+                                                <Input
+                                                type="file"
+                                                placeholder="Attach a file"
+                                                {...fileBQA}
+                                                onChange={(event) => {
+                                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                                }}
+                                                />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                            );
+                                        }}
+                                        />
                                 </div>
                             </div>
                             <div className="mb-6 space-y-2 text-wrap ml-3">
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <FormLabel htmlFor="picture">Proof of payment of Registration fee.</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                        id="misconduct_flag_details" 
-                                        name="offence_convictions.php"
-                                        type="file" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
-                                    </FormDescription>
-                                    <FormMessage/>
+                                <FormField
+                                        control={form.control}
+                                        name="attachments.proof_of_payment"
+                                        render={({ field }) => {
+                                            return (
+                                            <FormItem>
+                                                <FormLabel>Proof of payment of Registration fee.</FormLabel>
+                                                <FormControl>
+                                                <Input
+                                                type="file"
+                                                placeholder="Attach a file"
+                                                {...filePHP}
+                                                onChange={(event) => {
+                                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                                }}
+                                                />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                            );
+                                        }}
+                                        />
+                                    </div>
                                 </div>
-                            </div>*/}
-                            <Button type="submit" className="w-full">Submit</Button>
                         </div>
                         </motion.div>             
                     )}
@@ -1233,21 +1432,251 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                         <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
-
+                            <p className="leading-7 [&:not(:first-child)]:mt-6 mb-2">
+                             I <em className="underline">{Signature}</em> hereby declare that the information I have provided in this application form is true and correct to the best of my knowledge and belief. I understand that providing false or misleading information may result in the refusal of my application or the cancellation of my registration. I am aware that the Council may collect and verify information about my qualifications, experience, and fitness to teach. I consent to the Council collecting and verifying this information and I authorize the Council to share this information with other relevant organizations, such as employers and educational institutions.
+                            </p>
+                            <FormField
+                                control={form.control}
+                                name="declarations.agreement"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                                    <FormControl>
+                                        <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>
+                                        Accept the above terms and conditions
+                                        </FormLabel>
+                                        <FormDescription>
+                                            You agree to our Terms of Service and Privacy Policy.{" "}
+                                        </FormDescription>
+                                    </div>
+                                    </FormItem>
+                                )}
+                                />
+                                <div className="flex items-center space-x-2">
+                                <FormItem className="flex flex-row w-full items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                                    <FormControl>
+                                        <Checkbox id="profile" onClick={handleProfileCheckboxClick} checked={isProfileChecked}/>
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>
+                                            Profile Information
+                                        </FormLabel>
+                                        <FormDescription>
+                                        I agree to submit the listed profile information along with this application.{" "}
+                                        </FormDescription>
+                                    </div>
+                                </FormItem>
+                                </div>
                         </div>
                         </motion.div>             
                     )}
-                    {/*CONSCENT*/}
+                    {/*PREVIEW*/}
                     {currentStep === 7 && (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
-
+                        {isErrorAlert &&
+                            <div className="mr-1">
+                                <Alert variant="destructive">
+                                    <ExclamationTriangleIcon className="h-4 w-4" />
+                                    <AlertTitle>Error</AlertTitle>
+                                    <AlertDescription>
+                                        Error submitting application. Make sure you have filled all the required fields
+                                    </AlertDescription>
+                                </Alert>
+                            </div>
+                            }
+                        <div className={`border ${isErrorAlert? 'h-80':'h-96'} p-2 rounded-lg mb-2 mr-1`}>
+                        <ScrollArea className="h-full">
+                            <div className="px-5">
+                            <Accordion type="single" collapsible>
+                                <AccordionItem value="item-1">
+                                    <AccordionTrigger>PRELIMINARY INFORMATION</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="flex space-x-2">
+                                            <Label>Status:</Label>
+                                            <Label>Serving</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>Practice category:</Label>
+                                            <Label>Primary</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>Practice sub-category:</Label>
+                                            <Label>Tutor</Label>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-2">
+                                    <AccordionTrigger>EMPLOYMENT DETAILS</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="flex space-x-2">
+                                            <Label>Years in service:</Label>
+                                            <Label>3</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>Type of institution:</Label>
+                                            <Label>Public</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>Current station/institution:</Label>
+                                            <Label>Tlokweng Primary</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>Region:</Label>
+                                            <Label>Gaborone</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>District:</Label>
+                                            <Label>South-East District</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>City/Town/Village:</Label>
+                                            <Label>Tlokweng</Label>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-3">
+                                    <AccordionTrigger>QUALIFICATIONS</AccordionTrigger>
+                                    <AccordionContent>
+                                        Qualifications here....
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-4">
+                                    <AccordionTrigger>DISABILITY</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="flex space-x-2">
+                                            <Label>Are you living with any form of disability:</Label>
+                                            <Label>Yes</Label>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <Label>Nature of Disability:</Label>
+                                            <Label>Visual Impairement</Label>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-4">
+                                    <AccordionTrigger>OFFENCE</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="flex space-x-2 mb-1">
+                                            <Label className="font-semibold">1. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense against a learner/ a minor?</Label>
+                                            <Label>Yes</Label>
+                                        </div>
+                                        <div className="grid md:grid-cols-3 grid-cols-2 mb-2 gap-2">
+                                            <div className="grid grid-cols-2 space-x-2">
+                                                <Label className="font-semibold">Offence type:</Label>
+                                                <Label>Verbal Abuse</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Conviction status:</Label>
+                                                <Label>Convicted</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Sentence/Outcome:</Label>
+                                                <Label>Community Service</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Date of Conviction/Plea:</Label>
+                                                <Label>February 7th, 2024</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Court Jurisdiction:</Label>
+                                                <Label>Local Court</Label>
+                                            </div>
+                                        </div>
+                                        <div className="flex space-x-2 mb-1">
+                                            <Label className="font-semibold">2. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense of possession of and or of drugs use?</Label>
+                                            <Label>Yes</Label>
+                                        </div>
+                                        <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Type of Drug Offense:</Label>
+                                                <Label>Drug Trafficking/Distribution</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Conviction status:</Label>
+                                                <Label>Convicted</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Substances involved:</Label>
+                                                <Label>Marijuana</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Date of Conviction/Plea:</Label>
+                                                <Label>February 7th, 2024</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Court Jurisdiction:</Label>
+                                                <Label>High Court</Label>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 mb-1">
+                                            <Label className="font-semibold">3. Have you ever had a teaching license revoked, suspended, invalidated, cancelled or denied by any teaching council or any authority; surrendered such a license or the right to apply for such a license; or had any other adverse action taken against such a license. Please note that this includes a reprimand, warning, or reproval and any order denying the right to apply or reapply for a license?</Label>
+                                            <Label>Yes</Label>
+                                        </div>
+                                        <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Official documentation of the action taken:</Label>
+                                                <Label>Document.pdf</Label>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 mb-1">
+                                            <Label className="font-semibold">4. Are you currently the subject of any review, inquiry, investigation, or appeal of alleged misconduct that could warrant discipline or termination by your employer. Please note that this includes any open investigation by or pending proceeding with a child protection agency and any pending criminal charges?</Label>
+                                            <Label>Yes</Label>
+                                        </div>
+                                        <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Official documentation of the action taken:</Label>
+                                                <Label>Document.pdf</Label>
+                                            </div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-5">
+                                    <AccordionTrigger>ATTACHMENTS</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Certified copy of OMANG or passport (for non-citizens)</Label>
+                                                <Label>Omang.pdf</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Verification of qualification from BQA.</Label>
+                                                <Label>Omang.pdf</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Proof of payment of Registration fee.</Label>
+                                                <Label>Receipt.pdf</Label>
+                                            </div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-5">
+                                    <AccordionTrigger>DECLARATION</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Accept terms and conditions</Label>
+                                                <Label>Yes</Label>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <Label className="font-semibold">Profile Information</Label>
+                                                <Label>Yes</Label>
+                                            </div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
+                            </div>
+                        </ScrollArea>
                         </div>
-
                         </motion.div>             
                     )}
                     {/*COMPLETE*/}
@@ -1267,40 +1696,41 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                         </div>
                         </motion.div>             
                     )}
+                     {/* Navigation Buttons*/}
+                    <div className='flex float-end space-x-2 mx-5'>
+                        <button 
+                            type="button" 
+                            hidden={currentStep !== steps.length - 1}
+                            onClick={onClose}
+                            className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                            >Close</button>
+                            <button 
+                            type="button" 
+                            hidden={currentStep === 0 || currentStep === steps.length - 1}
+                            className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                            >Save</button>
+                            <button 
+                            type="button" 
+                            onClick={prev}
+                            hidden={currentStep === 0 || currentStep === steps.length - 1}
+                            className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                            >Prev</button>
+                            <button 
+                            type="button" 
+                            hidden={currentStep === steps.length - 1 || currentStep === steps.length - 2 || currentStep === steps.length - 1}
+                            onClick={next}
+                            disabled={currentStep === steps.length - 3 && isProfileChecked === false}
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
+                            >Next</button>
+                            <button 
+                            type="submit" 
+                            hidden={currentStep !== steps.length - 2}
+                            disabled={isSubmitting} // Disable the button while submitting
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
+                            >{isSubmitting? "Submitting...." : "Submit"}</button>
+                    </div>
                 </form>
                 </Form>
-            </div>
-            {/* Navigation Buttons*/}
-            <div className='flex float-end space-x-2'>
-            <button 
-                type="button" 
-                hidden={currentStep !== steps.length - 1}
-                onClick={onClose}
-                className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                >Close</button>
-                <button 
-                type="button" 
-                hidden={currentStep === 0 || currentStep === steps.length - 1}
-                className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                >Save</button>
-                <button 
-                type="button" 
-                onClick={prev}
-                hidden={currentStep === 0 || currentStep === steps.length - 1}
-                className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                >Prev</button>
-                <button 
-                type="button" 
-                hidden={currentStep === steps.length - 1 || currentStep === steps.length - 2 || currentStep === steps.length - 1}
-                onClick={next}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
-                >Next</button>
-                <button 
-                type="submit" 
-                onClick={next}
-                hidden={currentStep !== steps.length - 2}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
-                >Submit</button>
             </div>
         </div>
     );

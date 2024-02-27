@@ -73,6 +73,17 @@ const teacherRegistrations = z.object({
   disability_description: z.string().optional()
 })
 
+const declarations = z.object({
+  agreement: z.boolean({
+    required_error: "Agreement is required",
+    invalid_type_error: "Agreement must be boolean"
+  }),
+  signature: z.string({
+    required_error: "Signature is required",
+    invalid_type_error: "Signature must be a string"
+  }),
+})
+
 /**
  * Check doc for Zod enums: https://zod.dev/?id=zod-enums
  * use 'as const' to define your enum values as tuple of strings.
@@ -90,24 +101,27 @@ const employmentDetails = z.object({
 })
 
 const attachments = z.object({
-  national_id_copy: z
-  .array(z.any())
+  national_id_copy:  typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
   .refine((files) => files.length === 1, {message: "File is required."})
   .refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
   .refine(
     (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
     { message: ".pdf, .doc, and .docx files are accepted"}
   ),
-  qualification_copy: z
-  .array(z.any())
+  qualification_copy: typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
   .refine((files) => files.length === 1, {message: "File is required."})
   .refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
   .refine(
     (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
     { message: ".pdf, .doc, and .docx files are accepted"}
   ),
-  php: z
-  .array(z.any())
+  proof_of_payment: typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
   .refine((files) => files.length === 1, {message: "File is required."})
   .refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
   .refine(
@@ -125,7 +139,8 @@ export const formSchema = z.object({
     employment_details: employmentDetails,
     teacher_registrations: teacherRegistrations,
     offence_convictions: offenceConvictions,
-    //attachments: attachments
+    attachments: attachments,
+    declarations: declarations,
 })
 
 export const FormDataSchema = z.object({
