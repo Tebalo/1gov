@@ -8,8 +8,9 @@ const teacherPreliminaryInfoSchema = z.object({
     /**
      * Preliminary Info schema.*/
     work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]),
-    practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary"]),
+    practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary","N/A"]),
     sub_category: z.enum(["teacher-aide", "tutor", "special education", "educational support services", "education administrator"]),
+    citizen_status: z.string().optional(),
 })
 
 const disabilities = [
@@ -30,8 +31,30 @@ const disabilities = [
   "Cerebral Palsy"
 ] as const;
 
-const MAX_FILE_SIZE = 5000000; // 5MB
+const MAX_FILE_SIZE = 50000000; // 5MB
 const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
+
+
+const studentStudyProgrammes = z.object({
+  name: z.string().optional(),
+  completion_year: z.string().optional(),
+  level: z.string().optional(),
+  duration: z.number().optional(),
+  mode_of_study: z.string().optional(),
+  specialization: z.string().optional()
+}).optional()
+
+const eduProQualification = z.object({
+  level: z.string().optional(),
+  qualification: z.string().optional(),
+  institution: z.string().optional(),
+  qualification_year: z.string().optional(),
+  teaching_subjects: z.string().optional(),
+  attachment:  typeof window === "undefined" ? z.any():
+  z
+  .any()
+  .optional()
+})
 
 const offenceConvictions = z.object({
   /**
@@ -70,18 +93,13 @@ const teacherRegistrations = z.object({
   registration_type: z.string().optional(),
   reg_status: z.string().optional(),
   disability: z.enum(["yes","no"]),
-  disability_description: z.string().optional()
-})
+  disability_description: z.string().optional(),
+  reg_number: z.string().optional(),
+}).optional()
 
 const declarations = z.object({
-  agreement: z.boolean({
-    required_error: "Agreement is required",
-    invalid_type_error: "Agreement must be boolean"
-  }),
-  signature: z.string({
-    required_error: "Signature is required",
-    invalid_type_error: "Signature must be a string"
-  }),
+  agreement: z.boolean().optional(),
+  signature: z.string().optional(),
 })
 
 /**
@@ -104,30 +122,47 @@ const attachments = z.object({
   national_id_copy:  typeof window === "undefined" ? z.any():
   z
   .instanceof(FileList)
-  .refine((files) => files.length === 1, {message: "File is required."})
-  .refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
-  .refine(
-    (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
-    { message: ".pdf, .doc, and .docx files are accepted"}
-  ),
+  .optional(),
+  //.refine((files) => files.length === 1, {message: "File is required."})
+  //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  //.refine(
+    //(files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
+    //{ message: ".pdf, .doc, and .docx files are accepted"}
+  //),
   qualification_copy: typeof window === "undefined" ? z.any():
   z
   .instanceof(FileList)
-  .refine((files) => files.length === 1, {message: "File is required."})
-  .refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
-  .refine(
-    (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
-    { message: ".pdf, .doc, and .docx files are accepted"}
-  ),
+  .optional(),
+  //.refine((files) => files.length === 1, {message: "File is required."})
+  //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  //.refine(
+   // (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
+    //{ message: ".pdf, .doc, and .docx files are accepted"}
+  //),
   proof_of_payment: typeof window === "undefined" ? z.any():
   z
   .instanceof(FileList)
-  .refine((files) => files.length === 1, {message: "File is required."})
-  .refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
-  .refine(
-    (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
-    { message: ".pdf, .doc, and .docx files are accepted"}
-  ),
+  .optional(),
+  //.refine((files) => files.length === 1, {message: "File is required."})
+  //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  //.refine(
+    //(files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
+    //{ message: ".pdf, .doc, and .docx files are accepted"}
+  //),
+})
+
+const studentPreliminaryInfos = z.object( {
+  institution_name: z.string().optional(),
+  institution_type: z.string().optional(),
+  citizenry: z.string().optional(),
+  study_area: z.string().optional(),
+})
+
+const institutionRecommendations = z.object({
+  recommended: z.string().optional(),
+  comment: z.string().optional(),
+  name: z.string().optional(),
+  signature: z.string().optional(),
 })
 
 export const formSchema = z.object({
@@ -140,7 +175,11 @@ export const formSchema = z.object({
     teacher_registrations: teacherRegistrations,
     offence_convictions: offenceConvictions,
     attachments: attachments,
-    declarations: declarations,
+    edu_pro_qualifications: eduProQualification,
+    student_study_programmes: studentStudyProgrammes,
+    student_preliminary_infos: studentPreliminaryInfos,
+    institution_recommendations: institutionRecommendations,
+    declarations: declarations, // Culprit, fix and document
 })
 
 export const FormDataSchema = z.object({

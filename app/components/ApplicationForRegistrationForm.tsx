@@ -50,7 +50,7 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Checkbox } from "@/components/ui/checkbox"
-import Link from "next/link";
+import FileUploader from "./FileUploader";
 import {
     Accordion,
     AccordionContent,
@@ -141,24 +141,62 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         resolver: zodResolver(formSchema),
         defaultValues:{
             teacher_preliminary_infos: {
-
+                //citizen_status: "",
+                //sub_category: "N/A",
+                //practice_category: "N/A",
+                //work_status: "N/A"
             },
             employment_details: {
-                current_institution: "",
-                experience_years: 0
+                //current_institution: "N/A",
+                experience_years: 0,
+                //region: "N/A",
+                //district: "N/A",
+                //city_or_town: "N/A"
             },
             offence_convictions: {
-                conviction_status: "",
-                court_jurisdiction: "",
-                date_of_conviction: undefined,
-                offence_type: "",
-                sentence_outcome: "",
-                drug_conviction_status: "",
-                jurisdiction_drugs: "",
-                substance_involved: "",
+                //conviction_status: "N/A",
+                //court_jurisdiction: "N/A",
+                //date_of_conviction: undefined,
+                //offence_type: "N/A",
+                //sentence_outcome: "N/A",
+                //drug_conviction_status: "N/A",
+                //jurisdiction_drugs: "N/A",
+                //substance_involved: "N/A",
             },
-            declarations:{
-                signature: "J.Doe"
+            //declarations:{
+                //signature: "J.Doe",
+                //agreement: false,
+            //},
+            edu_pro_qualifications:{
+                //level:"N/A",
+                qualification:"",
+                //institution: "N/A",
+                qualification_year:"",
+                teaching_subjects: ""
+            },
+            student_study_programmes: {
+                //name: "N/A",
+                //completion_year: "N/A",
+                //level: "N/A",
+                //duration: 0,
+                //specialization: "N/A"
+            }, 
+            teacher_registrations: {
+                //reg_number: "N/A",
+                //reg_status: "N/A",
+                //disability_description:"N/A",
+            },
+            institution_recommendations:{
+                //recommended: "N/A",
+                //comment: "N/A",
+                //name: "N/A",
+                //signature: "N/A"
+            },
+            student_preliminary_infos:{
+                //institution_name:"N/A",
+                //institution_type: "N/A",
+                //citizenry: "N/A",
+                //study_area: "N/A"
             }
         }
     })
@@ -181,6 +219,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const filePHP = form.register("attachments.proof_of_payment");
     const misconduct = form.register("offence_convictions.misconduct_flag_details");
     const agreement = form.register("declarations.agreement");
+    const AttachmentFile = form.watch("edu_pro_qualifications.attachment")
     const next = async () => {
         const fields = steps[currentStep].fields
 
@@ -196,13 +235,14 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         }
     }
 
-    const {toast} = useToast()
-
     const [isErrorAlert, setIsErrorAlert] = useState(false);
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true); // Change state to indicate submitting
         setIsErrorAlert(false);
+        try{
+
+        formSchema.parse(values); // vValidate form values using zod
         const valueswithBio = {
             ...values,
             bio_datas: {
@@ -225,7 +265,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         }
 
         //console.log({valueswithBio})
-        try{
+        
         const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
         const response = await fetch(registrationEndpoint,{
             method: 'POST',
@@ -280,10 +320,13 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         setShowPhDLevel(event.target.checked)
     }
 
-    const [formData, setFormData] = useState<typeof formSchema>();
+    const [numOfQualifications, setNumOfQualifications] = useState(1); // State to track the number of qualifications
 
-    const onPreview = (values: z.infer<typeof formSchema>) => {
-        //setFormData(values);
+    const handleAddQualification = () => {
+        setNumOfQualifications(prevNum => prevNum + 1)
+    }
+    const handleSubtractQualification = () => {
+        setNumOfQualifications(prevNum => prevNum - 1)
     }
 
     return(
@@ -385,7 +428,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                 <FormMessage/>
                                             </FormItem>
                                         }}
-                                        />
+                                    />
                                 </div> 
                             </div>  
                             </div>
@@ -401,7 +444,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                         <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
                                 <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-3 sm:grid-cols-1">
                                     <div className=''>
-                                        <FormField
+                                    <FormField
                                         control={form.control}
                                         name="employment_details.experience_years"
                                         render={({field}) =>{
@@ -417,7 +460,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                 <FormMessage/>
                                             </FormItem>
                                         }}
-                                        />                                  
+                                    />                                  
                                     </div> 
                                     <div className=''>
                                         <FormField
@@ -459,7 +502,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     </div>
                                     <div className=''>
                                         {/*Use next-ui autocomplete component*/}
-                                            <FormField
+                                        <FormField
                                             control={form.control}
                                             name="employment_details.current_institution"
                                             render={({ field }) => (
@@ -519,7 +562,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                         </PopoverContent>
                                                     </Popover>
                                                     <FormMessage />
-                                                    </FormItem>
+                                                </FormItem>
                                                 )}
                                             />  
                                     </div> 
@@ -546,7 +589,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                     <FormMessage/>
                                                 </FormItem>
                                             }}
-                                            />
+                                        />
                                     </div>
                                     <div className=''>
                                         <FormField
@@ -571,7 +614,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                     <FormMessage/>
                                                 </FormItem>
                                             }}
-                                            />
+                                        />
                                     </div>
                                     <div className=''>
                                         <FormField
@@ -596,7 +639,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                     <FormMessage/>
                                                 </FormItem>
                                             }}
-                                            />
+                                        />
                                     </div>
                                 </div> 
                             </div>
@@ -620,43 +663,43 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handleCertificationCheckboxChange} id="certificate" type="checkbox" value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handleCertificationCheckboxChange} id="certificate" type="checkbox" checked={showCertificationLevel} value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
                                                 <label htmlFor="certificate" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Certification</label>
                                             </div>
                                         </li>
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handleDiplomaCheckboxChange} id="diploma" type="checkbox" value="diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handleDiplomaCheckboxChange} checked={showDiplomaLevel} id="diploma" type="checkbox" value="diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
                                                 <label htmlFor="diploma" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Diploma</label>
                                             </div>
                                         </li>
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handlePostGradDiplomaCheckboxChange} id="post-grad-diploma" type="checkbox" value="post-grad-diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handlePostGradDiplomaCheckboxChange} checked={showPostGradDiplomaLevel} id="post-grad-diploma" type="checkbox" value="post-grad-diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
                                                 <label htmlFor="post-grad-diploma" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Diploma</label>
                                             </div>
                                         </li>
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handleDegreeCheckboxChange} id="degree" type="checkbox" value="degree" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handleDegreeCheckboxChange} checked={showDegreeLevel} id="degree" type="checkbox" value="degree" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
                                                 <label htmlFor="degree" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Degree</label>
                                             </div>
                                         </li>
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handlePostGradCertificateCheckboxChange} id="post-grad-certificate" type="checkbox" value="post-grad-certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handlePostGradCertificateCheckboxChange} checked={showPostGradCertificateLevel} id="post-grad-certificate" type="checkbox" value="post-grad-certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
                                                 <label htmlFor="post-grad-certificate" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Certificate</label>
                                             </div>
                                         </li>
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handleMastersCheckboxChange} id="masters" type="checkbox" value="masters" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handleMastersCheckboxChange} checked={showMastersLevel} id="masters" type="checkbox" value="masters" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
                                                 <label htmlFor="masters" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Masters</label>
                                             </div>
                                         </li>
                                         <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
                                             <div className="flex items-center ps-3">
-                                                <input onChange={handlePhDCheckboxChange} id="phd" type="checkbox" value="phd" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
+                                                <input onChange={handlePhDCheckboxChange} checked={showPhDLevel} id="phd" type="checkbox" value="phd" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
                                                 <label htmlFor="phd" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">PhD</label>
                                             </div>
                                         </li>
@@ -664,8 +707,208 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 </div>
                                 {/*Visible when conditions here*/}
                                 <div className="overflow-auto h-72">
-                                    {showDiplomaLevel && <DiplomaLevel/>}
-                                    {showCertificationLevel && <CertificationLevel/>}
+                                    {showDiplomaLevel && showDiplomaLevel}
+                                    {showCertificationLevel && 
+                                        <div className="">
+                                        {/*Scroll Content - Add-Remove Form Items*/}
+                                        <div className="flex">
+                                            <div className="">
+                                                <span className="text-gray-900 text-sm">Certifications({numOfQualifications})</span>
+                                            </div>
+                                        </div>
+                                        <div className="overflow-auto h-64 bg-white">
+                                            {/* Repeat the following block of JSX based on numOfQualification */}
+                                            {[...Array(numOfQualifications)].map((_,index)=>(
+                                            <div key={index} className="w-full grid grid-cols-3 gap-x-5 gap-y-2 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
+                                                <div>
+                                                    <FormField
+                                                    control={form.control}
+                                                    name="edu_pro_qualifications.qualification"
+                                                    render={({field}) =>{
+                                                        return <FormItem>
+                                                            <FormLabel>Qualification</FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                placeholder="Qualification name"
+                                                                {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    }}
+                                                />  
+                                                </div>
+                                                <div>                                                       
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="edu_pro_qualifications.institution"
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex flex-col space-y-3 mt-2">
+                                                                <FormLabel>Awarding Institution</FormLabel>
+                                                                <Popover>
+                                                                    <PopoverTrigger asChild>
+                                                                    <FormControl>
+                                                                        <Button
+                                                                        variant="outline"
+                                                                        role="combobox"
+                                                                        className={cn(
+                                                                            "w-[200px] justify-between",
+                                                                            !field.value && "text-muted-foreground"
+                                                                        )}
+                                                                        >
+                                                                        {field.value
+                                                                            ? institutions.find(
+                                                                                (institution) => institution.value === field.value
+                                                                            )?.label
+                                                                            : "Select institution"}
+                                                                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                                        </Button>
+                                                                    </FormControl>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent className="w-[200px] p-0">
+                                                                    <Command>
+                                                                        <CommandInput
+                                                                        placeholder="Search institution..."
+                                                                        className="h-9"
+                                                                        />
+                                                                        <ScrollArea className="h-60 w-48 rounded-md">
+                                                                        <CommandEmpty>No institution found.</CommandEmpty>
+                                                                        <CommandGroup>
+                                                                        {institutions.map((institution) => (
+                                                                            <CommandItem
+                                                                            value={institution.label}
+                                                                            key={institution.value}
+                                                                            onSelect={() => {
+                                                                                form.setValue("edu_pro_qualifications.institution", institution.value)
+                                                                            }}
+                                                                            >
+                                                                            {institution.label}
+                                                                            <CheckIcon
+                                                                                className={cn(
+                                                                                "ml-auto h-4 w-4",
+                                                                                institution.value === field.value
+                                                                                    ? "opacity-100"
+                                                                                    : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                            </CommandItem>
+                                                                        ))}
+                                                                        </CommandGroup>
+                                                                        </ScrollArea>
+                                                                    </Command>
+                                                                    </PopoverContent>
+                                                                </Popover>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                            )}
+                                                        />  
+                                                </div>
+                                                <div>
+                                                    <div>
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="edu_pro_qualifications.qualification_year"
+                                                            render={({field}) =>{
+                                                                return <FormItem>
+                                                                    <FormLabel>Year Of Completion</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input
+                                                                        type="number"
+                                                                        placeholder="Year..."
+                                                                        {...field}
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            }}
+                                                        />  
+                                                    </div>
+                                                </div>
+                                                <div className="">
+                                                    <FormField
+                                                    control={form.control}
+                                                    name="edu_pro_qualifications.teaching_subjects"
+                                                    render={({field}) =>{
+                                                        return <FormItem>
+                                                            <FormLabel>Teaching Subjects</FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                placeholder="Minor and Major subjects"
+                                                                {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    }}
+                                                />  
+                                                </div>
+                                                <div className="">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="edu_pro_qualifications.attachment"
+                                                    render={({ field }) => {
+                                                        return (
+                                                        <FormItem>
+                                                            <FormLabel>Attach a Qualification document</FormLabel>
+                                                            <FormControl>
+                                                            <Input
+                                                            type="file"
+                                                            placeholder="Attach a file"
+                                                            {...AttachmentFile}
+                                                            onChange={(event) => {
+                                                                field.onChange(event.target?.files?.[0] ?? undefined);
+                                                            }}
+                                                            />
+                                                            </FormControl>
+                                                            <FormDescription>
+                                                                Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
+                                                            </FormDescription>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                        );
+                                                    }}
+                                                    />
+                                                </div>
+                                                <div className="flex justify-center my-5">
+                                                    <button 
+                                                    type="button" 
+                                                    hidden
+                                                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                            ))}
+                                            <div className="flex items-center justify-end w-full p-2">
+                                                <button 
+                                                type="button" 
+                                                onClick={handleSubtractQualification}
+                                                disabled={numOfQualifications===1}
+                                                className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-red-500 rounded-lg border border-red-600 hover:bg-red-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                                                >- Remove</button>
+                                                <button 
+                                                type="button" 
+                                                onClick={handleAddQualification}
+                                                className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-green-500 rounded-lg border border-green-600 hover:bg-green-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                                                >+ Add</button>
+                                                {/*<button onClick={handleSubtractQualification} className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200" type="button">
+                                                    <span className="sr-only">Quantity button</span>
+                                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
+                                                    </svg>
+                                                </button>
+                                                <div>
+                                                    <input type="number" id="first_product" value={numOfQualifications} className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 " placeholder="1" required />
+                                                </div>
+                                                <button onClick={handleAddQualification} className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200" type="button">
+                                                    <span className="sr-only">Quantity button</span>
+                                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
+                                                    </svg>
+                                                    </button>*/}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
                                     {showPostGradDiplomaLevel && <PostGradDiplomaLevel/>}
                                     {showDegreeLevel && <DegreeLevel/>}
                                     {showMastersLevel && <MastersLevel/>}
@@ -812,7 +1055,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                     name="offence_convictions.student_related_offence"
                                     render={({field}) =>{
                                         return <FormItem className="space-y-3">
-                                            <FormLabel>1. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense against a learner/ a minor?</FormLabel>
+                                        <FormLabel>1. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense against a learner/ a minor?</FormLabel>
                                             <FormControl>
                                                 <RadioGroup>
                                                 <RadioGroup
@@ -1453,6 +1696,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                         <FormDescription>
                                             You agree to our Terms of Service and Privacy Policy.{" "}
                                         </FormDescription>
+                                        <FormMessage/>
                                     </div>
                                     </FormItem>
                                 )}
@@ -1467,8 +1711,9 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                             Profile Information
                                         </FormLabel>
                                         <FormDescription>
-                                        I agree to submit the listed profile information along with this application.{" "}
+                                            I agree to submit the listed profile information along with this application.{" "}
                                         </FormDescription>
+                                        <FormMessage/>
                                     </div>
                                 </FormItem>
                                 </div>
