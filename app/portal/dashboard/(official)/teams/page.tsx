@@ -60,20 +60,18 @@ const Index: React.FC = () => {
         ],
       };
   return (
-      <div className="p-4 overflow-auto h-screen rounded-lg">
-            <div className="w-full">
-                <div className="rounded-lg">
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                            <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
-                        </div>
-                        <div className="flex items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                            <LineChartCard title='' chartData={linedata} options={lineoptions}/>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            </div>
+          <div className="">
+              <div className="rounded-lg">
+                  <div className="grid lg:grid-cols-2 gap-4 mb-4">
+                      <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
+                          <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
+                      </div>
+                      <div className="flex items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
+                          <LineChartCard title='' chartData={linedata} options={lineoptions}/>
+                      </div>
+                  </div>
+              </div>
+          </div>
         );
 };
 

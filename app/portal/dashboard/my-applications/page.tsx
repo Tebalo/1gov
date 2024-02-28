@@ -74,7 +74,7 @@ const Drafts: React.FC = () => {
 const Submission: React.FC = () =>{
     const rowData: RowData[] = [
         { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
-        { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
+        { id: '67bf7nfe74unf675m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
     ];
     return(
         <div>

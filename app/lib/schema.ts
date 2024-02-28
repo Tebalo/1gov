@@ -1,5 +1,187 @@
 import {z} from 'zod';
 
+const Region = ["gaborone", "francistown", "palapye"] as const;
+const District = ["chobe", "ghanzi", "ngamiland", "kgatleng", "kweneng", "south-east"] as const;
+const Place = ["gaborone","francistown","maun","palapye","mahalapye","serowe","orapa","gantsi","jwaneng"] as const; 
+
+const teacherPreliminaryInfoSchema = z.object({
+    /**
+     * Preliminary Info schema.*/
+    work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]),
+    practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary","N/A"]),
+    sub_category: z.enum(["teacher-aide", "tutor", "special education", "educational support services", "education administrator"]),
+    citizen_status: z.string().optional(),
+})
+
+const disabilities = [
+  "Visual Impairment",
+  "Hearing Impairment",
+  "Mobility Impairment",
+  "Cognitive Impairment",
+  "Neurodevelopmental Disorders",
+  "Chronic Illnesses",
+  "Psychiatric Disabilities",
+  "Learning Disabilities",
+  "Speech Impairment",
+  "Intellectual Disability",
+  "Deafblindness",
+  "Epilepsy",
+  "Musculoskeletal Disorders",
+  "Multiple Sclerosis",
+  "Cerebral Palsy"
+] as const;
+
+const MAX_FILE_SIZE = 50000000; // 5MB
+const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
+
+
+const studentStudyProgrammes = z.object({
+  name: z.string().optional(),
+  completion_year: z.string().optional(),
+  level: z.string().optional(),
+  duration: z.number().optional(),
+  mode_of_study: z.string().optional(),
+  specialization: z.string().optional()
+}).optional()
+
+const eduProQualification = z.object({
+  level: z.string().optional(),
+  qualification: z.string().optional(),
+  institution: z.string().optional(),
+  qualification_year: z.string().optional(),
+  teaching_subjects: z.string().optional(),
+  attachment:  typeof window === "undefined" ? z.any():
+  z
+  .any()
+  .optional()
+})
+
+const offenceConvictions = z.object({
+  /**
+   * Capture offence convictions object
+  */
+  student_related_offence: z.enum(["yes", "no"]),
+  student_related_offence_details: z.string().optional(),
+  drug_related_offence: z.enum(["yes", "no"]),
+  drug_related_offence_details: z.string().optional(),
+  license_flag: z.enum(["yes", "no"]),
+  misconduct_flag: z.enum(["yes", "no"]),
+  offence_type: z.string().optional(),
+  conviction_status: z.string().optional(),
+  sentence_outcome: z.string().optional(),
+  date_of_conviction: z.date().optional(),
+  type_of_drug_offence: z.string().optional(),
+  drug_conviction_status: z.string().optional(),
+  substance_involved: z.string().optional(),
+  court_jurisdiction: z.string().optional(),
+  date_of_drug_conviction: z.date().optional(),
+  jurisdiction_drugs: z.string().optional(),
+  license_flag_details: typeof window === "undefined" ? z.any():
+    z
+    .instanceof(FileList)
+    .optional(),
+  misconduct_flag_details:  typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
+  .optional(),
+})
+
+const teacherRegistrations = z.object({
+  /**
+   * Capture teacher registration, it should be a disability object.
+  */
+  registration_type: z.string().optional(),
+  reg_status: z.string().optional(),
+  disability: z.enum(["yes","no"]),
+  disability_description: z.string().optional(),
+  reg_number: z.string().optional(),
+}).optional()
+
+const declarations = z.object({
+  agreement: z.boolean().optional(),
+  signature: z.string().optional(),
+})
+
+/**
+ * Check doc for Zod enums: https://zod.dev/?id=zod-enums
+ * use 'as const' to define your enum values as tuple of strings.
+*/
+
+const employmentDetails = z.object({
+    /**
+     * Employment Details schema.*/
+    experience_years: z.coerce.number().optional(),
+    current_institution: z.string().optional(),
+    institution_type: z.enum(["private", "public"]),
+    region: z.string(),
+    district: z.string(),
+    city_or_town: z.string(),
+})
+
+const attachments = z.object({
+  national_id_copy:  typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
+  .optional(),
+  //.refine((files) => files.length === 1, {message: "File is required."})
+  //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  //.refine(
+    //(files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
+    //{ message: ".pdf, .doc, and .docx files are accepted"}
+  //),
+  qualification_copy: typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
+  .optional(),
+  //.refine((files) => files.length === 1, {message: "File is required."})
+  //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  //.refine(
+   // (files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
+    //{ message: ".pdf, .doc, and .docx files are accepted"}
+  //),
+  proof_of_payment: typeof window === "undefined" ? z.any():
+  z
+  .instanceof(FileList)
+  .optional(),
+  //.refine((files) => files.length === 1, {message: "File is required."})
+  //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  //.refine(
+    //(files) => ACCEPTED_FILE_TYPES.includes(files[0].type),
+    //{ message: ".pdf, .doc, and .docx files are accepted"}
+  //),
+})
+
+const studentPreliminaryInfos = z.object( {
+  institution_name: z.string().optional(),
+  institution_type: z.string().optional(),
+  citizenry: z.string().optional(),
+  study_area: z.string().optional(),
+})
+
+const institutionRecommendations = z.object({
+  recommended: z.string().optional(),
+  comment: z.string().optional(),
+  name: z.string().optional(),
+  signature: z.string().optional(),
+})
+
+export const formSchema = z.object({
+    /**
+     * Application for teacher/stundent registration schema.
+     * Desc: Nested objects, meets backend specification
+     * */
+    teacher_preliminary_infos: teacherPreliminaryInfoSchema,
+    employment_details: employmentDetails,
+    teacher_registrations: teacherRegistrations,
+    offence_convictions: offenceConvictions,
+    attachments: attachments,
+    edu_pro_qualifications: eduProQualification,
+    student_study_programmes: studentStudyProgrammes,
+    student_preliminary_infos: studentPreliminaryInfos,
+    institution_recommendations: institutionRecommendations,
+    declarations: declarations, // Culprit, fix and document
+})
+
 export const FormDataSchema = z.object({
 
   // teacher registration

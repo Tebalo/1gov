@@ -1,8 +1,8 @@
 "use client"
-import React,{useState, useEffect} from "react";
+import React,{useState, useEffect, Suspense} from "react";
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { FaHome, FaHubspot, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight} from "react-icons/fa";
+import { FaHome, FaHubspot, FaComments, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight, FaBell, FaSistrix, FaSearchengin, FaRegistered, FaAsterisk, FaExchangeAlt} from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
 interface SideBarItem {
@@ -12,31 +12,28 @@ interface SideBarItem {
 }
 
 const customerPortalSItems: SideBarItem[] = [
-    { path: '/portal/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/portal/dashboard/my-applications', icon: <FaLayerGroup style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
-    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/portal/dashboard/settings', icon: <FaCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/home', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/portal/dashboard/my-applications', icon: <FaLayerGroup style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Applications' },
+    { path: '/portal/dashboard/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces' },
 ]
 
 const generalPortalSItems: SideBarItem[] = [
-    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/portal/dashboard/settings', icon: <FaCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Profile' },
+    { path: '/portal/dashboard/settings', icon: <FaCog style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Settings' },
 ]
 
 const registrationOfficerPortalSItems: SideBarItem[] = [
-    { path: '/portal/dashboard/home-o', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
-    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/home-o', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Teams' },
+    { path: '/portal/dashboard/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces' },
 ]
 const adminPortalSItems: SideBarItem[] = [
-    { path: '/portal/dashboard/home-a', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Teams' },
-    { path: '/portal/dashboard/reports', icon: <FaRegChartBar style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Reports'},
-    { path: '/portal/dashboard/users', icon: <FaUsersCog style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Users' },
-    { path: '/portal/dashboard/explore-data', icon: <FaHubspot style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Explore Data' },
-    { path: '/portal/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-    { path: '/portal/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
+    { path: '/portal/dashboard/home-a', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/portal/dashboard/teams', icon: <FaUsers style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Teams' },
+    { path: '/portal/dashboard/reports', icon: <FaRegChartBar style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Reports'},
+    { path: '/portal/dashboard/users', icon: <FaUsersCog style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Users' },
+    { path: '/portal/dashboard/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces' },
+    { path: '/portal/dashboard/explore-data', icon: <FaSearchengin style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Explore Data' },
 ]
 const DynamicSidebar: React.FC = ({}) => {
     const currentPath = usePathname();
@@ -44,9 +41,9 @@ const DynamicSidebar: React.FC = ({}) => {
     const [currentPortal, setCurrentPortal] = useState(() => {
         // Initialize currentPortal with the value from localStorage if available, otherwise default to 'customer'
         if(typeof window !== 'undefined'){
-            return localStorage.getItem("currentPortal" || "admin")
+            return localStorage.getItem("currentPortal" || "customer")
         }
-        return "admin";
+        return "customer";
     });
 
     const toggleDropdown = () => {
@@ -90,29 +87,31 @@ const DynamicSidebar: React.FC = ({}) => {
     }
 
     return (
-        <aside id="dynamic-sidebar" className="top-0 left-0 w-60 shadow-xl transition-transform -translate-x-full sm:translate-x-0">
+        <aside id="dynamic-sidebar" className=" top-0 left-0 lg:w-52 shadow-xl transition-transform -translate-x-full sm:translate-x-0 hidden md:block" aria-label="Sidebar">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
-                <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 w-48">
+                <div className="md:rounded-r-lg rounded-b-lg bg-white lg:p-5 md:p-1 lg:w-48 md:w-36">
                     <Logo
                     width={350}
                     height={350}
                     />
                 </div>
-                <div className="my-10 ml-5">
+                <div className="my-10 lg:ml-5 overflow-y-auto h-96 border-b no-scrollbar scrollbar-hide">
                     <ul className="space-y-2 font-medium">
-{                        sidebarItems.map((item) =>(
+                        {sidebarItems.map((item) =>(
                             <li key={item.path} className="flex space-x-2">
-                                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 h-12 my-1 rounded-lg':''}`}></div>
-                                <Link href={item.path} className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
-                                    {item.icon}
-                                    <span className="text-gray-100 text-lg">{item.title}</span>
+                                <Suspense fallback={<span className="text-gray-100 lg:text-lg text-xs">Loading....</span>}>
+                                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg':''}`}></div>
+                                <Link href={item.path} className={`lg:flex items-center w-full lg:px-2 py-1 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
+                                    <div className="flex justify-center">{item.icon}</div>
+                                    <div className="flex justify-center"><span className="text-gray-100  text-xs lg:text-base lg:font-semibold">{item.title}</span></div>
                                 </Link>
+                                </Suspense>
                             </li>
                         )
                         )}
                     </ul>          
                 </div>
-                <div className="absolute bottom-0 border-t w-full">
+                <div className="absolute bottom-0 w-full border-t bg-sky-400">
                     <button 
                         type="button" 
                         id="dropDownButton"
@@ -121,12 +120,38 @@ const DynamicSidebar: React.FC = ({}) => {
                         data-dropdown-toggle="doubleDropdown"
                         onClick={toggleDropdown}
                     >
-                        <div className="flex ml-5 justify-between">
-                            <div className=""><FaChevronRight style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
-                            <div><span className="flex-1 ms-3 text-left rtl:text-right font-medium whitespace-nowrap">Switch Portal</span></div>
+                        <div className="flex lg:justify-start justify-center md:w-full">
+                            <div className=""><FaBell style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
+                            <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right font-medium whitespace-nowrap">Notifications</span></div>
                         </div>
                     </button>
-                    <div className={`absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                    <button 
+                        type="button" 
+                        id="dropDownButton"
+                        className="flex items-center w-full p-2 text-base text-gray-100 transition duration-75 rounded-lg group" 
+                        aria-controls="dropdown-example" 
+                        data-dropdown-toggle="doubleDropdown"
+                        onClick={toggleDropdown}
+                    >
+                        <div className="flex lg:justify-start justify-center md:w-full">
+                            <div className=""><FaExchangeAlt style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
+                            <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base font-medium whitespace-nowrap">Switch Portal</span></div>
+                        </div>
+                    </button>
+                    <button 
+                        type="button" 
+                        id="dropDownButton"
+                        className="flex items-center w-full p-2 text-base text-gray-100 transition duration-75 rounded-lg group" 
+                        aria-controls="dropdown-example" 
+                        data-dropdown-toggle="doubleDropdown"
+                        onClick={toggleDropdown}
+                    >
+                        <div className="flex lg:justify-start justify-center md:w-full">
+                            <div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
+                            <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base font-medium whitespace-nowrap">John Doe</span></div>
+                        </div>
+                    </button>
+                    <div className={`md:absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isDropdownOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
                         <ul id="dropdown-example" aria-labelledby="dropDownButton">
                             <Link
                             href="/portal/dashboard/home"

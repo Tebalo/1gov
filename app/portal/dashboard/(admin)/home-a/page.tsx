@@ -3,6 +3,7 @@ import DoughtnutCard from '@/app/components/(charts)/_DoughtnutCard';
 import TableFilter from '@/app/components/(tables)/_tablefilter';
 import LineChartCard from '@/app/components/(charts)/_LineChartCard';
 import { fakerDE as faker } from '@faker-js/faker';
+import { PageTitle } from '@/app/components/PageTitle';
 
 const Index: React.FC = () => {
     const doughtnutData = {
@@ -60,18 +61,35 @@ const Index: React.FC = () => {
         ],
       };
   return (
-      <div className="p-4 overflow-auto h-screen rounded-lg">
-            <div className="w-full">
-                <div className="rounded-lg">
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                        <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                            <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
-                        </div>
-                        <div className="flex col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                            <LineChartCard title='' chartData={linedata} options={lineoptions}/>
-                        </div>
+          <div className="">
+            <div className="mb-5">
+                <PageTitle Title="Teacher Registration and Licensing"/>
+            </div>
+                <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4 overflow-y-auto h-screen no-scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-100 scrollbar-thin">
+                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
+                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
                     </div>
-                </div>
+                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
+                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
+                    </div>
+                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
+                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
+                    </div>
+                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
+                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
+                    </div>
+                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
+                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
+                    </div>
+                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
+                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
+                    </div>
+                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
+                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
+                    </div>
+                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
+                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
+                    </div>
                 </div>
             </div>
         );

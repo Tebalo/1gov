@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Appbar from "@/app/components/appbar";
-import Sidebar from "@/app/components/sidebar";
-import { FaBeer, FaHome, FaCube, FaUser, FaCogs} from "react-icons/fa";
-import { usePathname } from "next/navigation";
+import Appbar from "@/app/components/appbar"; // Pending executive decision
 import DynamicSidebar from "@/app/components/DynamicSideBar";
+import { Suspense } from "react";
+import { LoadingSkeleton } from "@/app/components/LoadingSkeleton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,19 +12,6 @@ export const metadata: Metadata = {
   description: "Dashboard",
 };
 
-interface SideBarItem {
-  path: string;
-  icon: JSX.Element;
-  title: string;
-}
-
-const customerPortalSItems: SideBarItem[] = [
-  { path: '/dashboard/home', icon: <FaHome style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Home' },
-  { path: '/dashboard/my-applications', icon: <FaCube style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'My Applications' },
-  { path: '/dashboard/profile', icon: <FaUser style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Profile' },
-  { path: '/dashboard/settings', icon: <FaCogs style={{ fontSize: '2rem', color: '#FFFFFF' }} />, title: 'Settings' },
-]
-
 export default function DashboardLayout({
     children,
   }: {
@@ -33,12 +19,18 @@ export default function DashboardLayout({
   }) {
 
     return(
-    <section className="bg-white flex w-screen fixed">
-        <DynamicSidebar/>
-        <div className="h-screen w-full flex-1 flex-col">
-          <Appbar/>
-          {children}   
+    <div className="flex h-screen bg-slate-100">
+        <div>
+          <DynamicSidebar/>
         </div>
-    </section>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/*<Appbar/>*/}
+          <main className="p-4 rounded-lg">
+            <div className="p-0">
+              <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
+            </div>
+          </main>
+        </div>
+    </div>
     );
 }
