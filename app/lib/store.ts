@@ -108,6 +108,45 @@ const registrationCategory = [
     {label: 'Education Administrator', value: 'Education Administrator'},
 ]
 
+export const users = [
+    {
+        national_id: "936510813",
+        surname: "Serala",
+        middlename: "Masego",
+        forenames: "Oaitse",
+        dob: "1996-02-15",
+        pob: "Mahalapye",
+        gender: "Male",
+        nationality: "Motswana",
+        postal_address: "P O Box 7886, Mahalapye",
+        physical_address: "Block 10, Gaborone",
+        email: "johndoe@gmail.com",
+        mobile: "26774217788",
+        marital_status: "Single",
+        next_of_kin_name: "Sarah Cornor",
+        next_of_kin_relation: "Mother",
+        next_of_kin_contact: "26776554321"
+    },
+    {
+        national_id: "440418213",
+        surname: "Bopaki",
+        middlename: "",
+        forenames: "Tebalo",
+        dob: "1996-02-15",
+        pob: "Orapa",
+        gender: "Male",
+        nationality: "Motswana",
+        postal_address: "P O Box 48, Mopipi",
+        physical_address: "Block 10, Gaborone",
+        email: "btebalo@gmail.com",
+        mobile: "26774217788",
+        marital_status: "Single",
+        next_of_kin_name: "Sarah Cornor",
+        next_of_kin_relation: "Mother",
+        next_of_kin_contact: "26776554321"
+    }
+]
+
 export const steps = [
     {
         id: 'Step 1',
@@ -185,6 +224,36 @@ export const studentSteps = [
     },
 ]
 
+export const hiddenSteps = [
+    {
+        id: 'Step 1',
+        name: 'PRELIMINARY INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 2',
+        name: '--------------------',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 3',
+        name: '--------------------',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 4',
+        name: '--------------------',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 5',
+        name: '--------------------'
+    },
+    {
+        id: 'Step 6',
+        name: '--------------------'
+    },
+]
 
 export const Region = ["Gaborone", "Francistowm", "Palapye"] as const;
 export const District = ["Chobe District", "Ghanzi District", "Ngamiland District", "Kgatleng District", "Kweneng District", "South-East District"] as const;

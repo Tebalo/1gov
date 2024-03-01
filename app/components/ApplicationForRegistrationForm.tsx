@@ -9,7 +9,7 @@ import { DiplomaLevel, CertificationLevel, PostGradDiplomaLevel, DegreeLevel, Po
 
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";
-import { steps, studentSteps} from "../lib/store";
+import { steps, studentSteps, hiddenSteps} from "../lib/store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {useForm} from 'react-hook-form';
@@ -440,7 +440,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const [licenseFlagLetter, setLicenseFlagLetter] = useState('');
     const [misconductFlagLetter, setMisconductFlagLetter] = useState('');
 
-    const [applicationType, setApplicationType] = useState('teacher');
+    const [applicationType, setApplicationType] = useState('');
 
     return(
         <div>
@@ -450,8 +450,11 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                     {applicationType === 'teacher' && 
                         <Stepper currentStep={currentStep} steps={steps}/>
                     }
-                    {applicationType !== 'teacher' &&
+                    {applicationType === 'student' && 
                         <Stepper currentStep={currentStep} steps={studentSteps}/>
+                    }
+                    {applicationType !== 'student' && applicationType !== 'teacher' &&
+                        <Stepper currentStep={currentStep} steps={hiddenSteps}/>
                     }
                 </nav>
                 {/* forms */}   
