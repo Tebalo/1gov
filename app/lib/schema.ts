@@ -4,15 +4,6 @@ const Region = ["gaborone", "francistown", "palapye"] as const;
 const District = ["chobe", "ghanzi", "ngamiland", "kgatleng", "kweneng", "south-east"] as const;
 const Place = ["gaborone","francistown","maun","palapye","mahalapye","serowe","orapa","gantsi","jwaneng"] as const; 
 
-const teacherPreliminaryInfoSchema = z.object({
-    /**
-     * Preliminary Info schema.*/
-    work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]),
-    practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary","N/A"]),
-    sub_category: z.enum(["teacher-aide", "tutor", "special education", "educational support services", "education administrator"]),
-    citizen_status: z.string().optional(),
-})
-
 const disabilities = [
   "Visual Impairment",
   "Hearing Impairment",
@@ -34,12 +25,20 @@ const disabilities = [
 const MAX_FILE_SIZE = 50000000; // 5MB
 const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
 
+const teacherPreliminaryInfoSchema = z.object({
+  /**
+   * Preliminary Info schema.*/
+  work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]).optional(),
+  practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary","N/A"]).optional(),
+  sub_category: z.enum(["teacher-aide", "tutor", "special education", "educational support services", "education administrator"]).optional(),
+  citizen_status: z.string().optional(),
+})
 
 const studentStudyProgrammes = z.object({
   name: z.string().optional(),
   completion_year: z.string().optional(),
   level: z.string().optional(),
-  duration: z.number().optional(),
+  duration: z.coerce.number().optional(),
   mode_of_study: z.string().optional(),
   specialization: z.string().optional()
 }).optional()
@@ -60,12 +59,12 @@ const offenceConvictions = z.object({
   /**
    * Capture offence convictions object
   */
-  student_related_offence: z.enum(["yes", "no"]),
+  student_related_offence: z.enum(["yes", "no"]).optional(),
   student_related_offence_details: z.string().optional(),
-  drug_related_offence: z.enum(["yes", "no"]),
+  drug_related_offence: z.enum(["yes", "no"]).optional(),
   drug_related_offence_details: z.string().optional(),
-  license_flag: z.enum(["yes", "no"]),
-  misconduct_flag: z.enum(["yes", "no"]),
+  license_flag: z.enum(["yes", "no"]).optional(),
+  misconduct_flag: z.enum(["yes", "no"]).optional(),
   offence_type: z.string().optional(),
   conviction_status: z.string().optional(),
   sentence_outcome: z.string().optional(),
@@ -92,10 +91,10 @@ const teacherRegistrations = z.object({
   */
   registration_type: z.string().optional(),
   reg_status: z.string().optional(),
-  disability: z.enum(["yes","no"]),
+  disability: z.enum(["yes","no"]).optional(),
   disability_description: z.string().optional(),
   reg_number: z.string().optional(),
-}).optional()
+})
 
 const declarations = z.object({
   agreement: z.boolean().optional(),
@@ -112,10 +111,10 @@ const employmentDetails = z.object({
      * Employment Details schema.*/
     experience_years: z.coerce.number().optional(),
     current_institution: z.string().optional(),
-    institution_type: z.enum(["private", "public"]),
-    region: z.string(),
-    district: z.string(),
-    city_or_town: z.string(),
+    institution_type: z.enum(["private", "public"]).optional(),
+    region: z.string().optional(),
+    district: z.string().optional(),
+    city_or_town: z.string().optional(),
 })
 
 const attachments = z.object({
@@ -152,6 +151,7 @@ const attachments = z.object({
 })
 
 const studentPreliminaryInfos = z.object( {
+
   institution_name: z.string().optional(),
   institution_type: z.string().optional(),
   citizenry: z.string().optional(),

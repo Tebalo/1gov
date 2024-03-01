@@ -154,6 +154,37 @@ export const steps = [
     },
 ]
 
+export const studentSteps = [
+    {
+        id: 'Step 1',
+        name: 'PRELIMINARY INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 2',
+        name: 'STUDY PROGRAMME',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 3',
+        name: 'DECLARATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 4',
+        name: 'RECOMMENDATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 5',
+        name: 'PREVIEW'
+    },
+    {
+        id: 'Step 6',
+        name: 'COMPLETE'
+    },
+]
+
 
 export const Region = ["Gaborone", "Francistowm", "Palapye"] as const;
 export const District = ["Chobe District", "Ghanzi District", "Ngamiland District", "Kgatleng District", "Kweneng District", "South-East District"] as const;
