@@ -23,7 +23,7 @@ const disabilities = [
 ] as const;
 
 const MAX_FILE_SIZE = 50000000; // 5MB
-const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
+const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
 
 const teacherPreliminaryInfoSchema = z.object({
   /**
@@ -163,6 +163,14 @@ const institutionRecommendations = z.object({
   comment: z.string().optional(),
   name: z.string().optional(),
   signature: z.string().optional(),
+  recommendationLetter: typeof window === "undefined" ? z.any():
+  z.any()
+  //.instanceof(File)
+  .refine((file) => file?.size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
+  .refine(
+    (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+    { message: ".pdf, .doc, and .docx files are accepted"}
+  ).optional(),
 })
 
 export const formSchema = z.object({

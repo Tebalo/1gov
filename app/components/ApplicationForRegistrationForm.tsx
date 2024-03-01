@@ -268,7 +268,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const IsAgreement = form.watch("declarations.agreement");
 
     // Stundent-Teacher registration
-
+    const RecommendationFile = form.watch("institution_recommendations.recommendationLetter");
 
     // Teacher registration
     // Teacher Priliminary Infos
@@ -345,13 +345,103 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true); // Change state to indicate submitting
         setIsErrorAlert(false);
+        const imp = {
+            "teacher_registrations":{
+                "reg_number":"GH6778888",
+                "reg_status":"Pending-Screening",
+                "registration_type":"Teacher",
+                "disability":"Yes",
+                "disability_description":"left eye is impaired and dont see clearly on cold conditions"
+        
+            },
+            "bio_datas":{
+                "national_id":"436415528",
+                "surname":"Motlalepuo",
+                "forenames":"Garenosi",
+                "dob":"1996-02-15",
+                "pob":"Maun",
+                "gender":"Male",
+                "nationality":"Motswana",
+                "postal_address":"P O Box 7886, Mahalapye",
+                "physical_address":"Block 10, Gaborone",
+                "email":"johndoe@gmail.com",
+                "mobile":"26774217788",
+                "marital_status":"Single",
+                "next_of_kin_name":"Sarah Cornor",
+                "next_of_kin_relation":"Mother",
+                "next_of_kin_contact":"26776554321"
+               
+            },
+            "declarations":{
+                "agreement":true,
+                "signature":"J. Doe"
+            },
+            "attachments":{
+                "national_id_copy":"nationalID_copy.pdf",
+                "qualification_copy":"Qualification_copy.pdf",
+                "proof_of_payment":"FNB_proof.pdf"
+                
+            },
+            "edu_pro_qualifications":{
+                "level":"masters",
+                "qualification":"MSc. Applied Sciences",
+                "institution":"University of Botswana",
+                "qualification_year":"2019",
+                "teaching_subjects":"Mathematics and Sciences"
+            },
+            "employment_details":{
+                "experience_years":4,
+                "current_institution":"Moeding Colledge",
+                "institution_type":"Public",
+                "region":"South East",
+                "district":"South East District",
+                "city_or_town":"Gaborone"
+            },
+            "institution_recommendations":{
+                "recommended":"Yes",
+                "comment":"An exceptional and hard worker",
+                "name":"Dr. W Wendy",
+                "signature":"W. Wendy"
+            },
+            "offence_convictions": {
+                "national_id": "empty",
+                "student_related_offence": "No",
+                "student_related_offence_details": "N/A",
+                "drug_related_offence": "No",
+                "drug_related_offence_details": "N/A",
+                "license_flag": "No",
+                "license_flag_details": "N/A",
+                "misconduct_flag": "No",
+                "misconduct_flag_details": "N/A"
+            },
+            "student_preliminary_infos":{
+                "institution_name":"N/A",
+                "institution_type":"N/A",
+                "citizenry":"N/A",
+                "study_area":"N/A"
+            },
+            "student_study_programmes":{
+                "name":"N/A",
+                "completion_year":"N/A",
+                "level":"N/A",
+                "duration":0,
+                "mode_of_study":"N/A",
+                "specialization":"N/A"
+            },
+            "teacher_preliminary_infos":{
+                "citizen_status":"Citizen",
+                "work_status":"Serving",
+                "practice_category":"Senior Secondary",
+                "sub_cateogry":"N/A"
+            }   
+        }
         try{
 
         formSchema.parse(values); // vValidate form values using zod
         const valueswithBio = {
             ...values,
             bio_datas: {
-                national_id: "936510813",
+                national_id: "440418213",
                 surname: "Serala",
                 forenames: "Oaitse",
                 dob: "1996-02-15",
@@ -380,14 +470,13 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 'Accept-Encoding': 'gzip, deflate, br',
                 'Connection': 'keep-alive'
             },
-            body: JSON.stringify({...valueswithBio}), // Spread the valueswithBio object to remove the nesting key.
+            body: JSON.stringify({...imp}), // Spread the valueswithBio object to remove the nesting key.
         })
         if(!response.ok){
             throw new Error("Failed to register");
         }
         setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
       }catch (error:any){
-        
         console.error('Error registering', error.message);
         setIsErrorAlert(true);
       }finally{
@@ -1050,7 +1139,7 @@ I am aware that the Council may collect and verify information about my qualific
                                 {Recommended === "yes" &&
                                 <FormField
                                 control={form.control}
-                                name="edu_pro_qualifications.attachment"
+                                name="institution_recommendations.recommendationLetter"
                                 render={({ field }) => {
                                     return (
                                     <FormItem>
@@ -1059,7 +1148,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <Input
                                         type="file"
                                         placeholder="Attach a file"
-                                        {...AttachmentFile}
+                                        {...RecommendationFile}
                                         onChange={(event) => {
                                             field.onChange(event.target?.files?.[0] ?? undefined);
                                         }}
@@ -2679,7 +2768,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Official documentation of the action taken:</Label>
-                                                <Label>{licenseFlagDetails}</Label>
+                                                <Label>letter1.pdf</Label>
                                             </div>
                                         </div>}
                                         <div className="space-y-2 mb-1">
@@ -2690,7 +2779,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Official documentation of the action taken:</Label>
-                                                <Label>{misconductFlagDetails}</Label>
+                                                <Label>letter.pdf</Label>
                                             </div>
                                         </div>
                                         }
@@ -2702,15 +2791,15 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Certified copy of OMANG or passport (for non-citizens)</Label>
-                                                <Label>{nationalIdCopy}</Label>
+                                                <Label>Omang.pdf</Label>
                                             </div>
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Verification of qualification from BQA.</Label>
-                                                <Label>{qualificationCopy}</Label>
+                                                <Label>BQA.doc</Label>
                                             </div>
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Proof of payment of Registration fee.</Label>
-                                                <Label>{proofOfPayment}</Label>
+                                                <Label>receipt.pdf</Label>
                                             </div>
                                         </div>
                                     </AccordionContent>
