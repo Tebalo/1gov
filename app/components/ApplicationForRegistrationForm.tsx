@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import {Stepper } from "./Stepper";
 import {motion} from 'framer-motion';
-import { FormDataSchema, formSchema } from "../lib/schema";
+import { FormDataSchema, formSchema, teacherPreliminaryInfoSchema, studentStudyProgrammes, offenceConvictions,teacherRegistrations,declarations,employmentDetails,attachments, studentPreliminaryInfos, institutionRecommendations, qualificationSchema   } from "../lib/schema";
 import { InformationCard } from "./InformationCard";
 import { DiplomaLevel, CertificationLevel, PostGradDiplomaLevel, DegreeLevel, PostGradCertificateLevel, PhDLevel, MastersLevel} from "./QualificationLevelComponents";
 
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";
-import { steps, studentSteps} from "../lib/store";
+import { steps, studentSteps, hiddenSteps} from "../lib/store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {useForm} from 'react-hook-form';
@@ -50,7 +50,7 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Checkbox } from "@/components/ui/checkbox"
-import FileUploader from "./FileUploader";
+import { Control as RHFControl } from 'react-hook-form';
 import {
     Accordion,
     AccordionContent,
@@ -65,7 +65,7 @@ import {
   } from "@/components/ui/alert"
 
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
-
+import axios from 'axios';
 
 interface RegistrationFormProps{
     onClose: () => void;
@@ -91,18 +91,6 @@ interface RegistrationFormProps{
 ] as const;
 
 const institutions = [
-    { label: "Botho University", value: "botho_university" },
-    { label: "Limkokwing University", value: "limkokwing_univerisity" },
-    { label: "Botswana Accountancy College", value: "botswana_accountancy_college" },
-    { label: "University of Botswana", value: "university_of_botswana" },
-    { label: "New Era College", value: "new_era_college" },
-    { label: "Boitekanelo College", value: "boitekanelo_college" },
-    { label: "Logan Business College", value: "logan_business_college" },
-    { label: "Mega Size College", value: "mega_size_college" },
-    { label: "BA ISAGO University", value: "ba_isago_university" },
-    { label: "Tonota College of Education", value: "tonota_college_of_education" },
-    { label: "Serowe College of Education", value: "serowe_college_of_education" },
-    { label: "Tlokweng College of Education", value: "tlokweng_college_of_education" },
     { label: "Maruapula School", value: "marua_pula" },
     { label: "Rainbow Secondary School", value: "rainbow_secondary_school" },
     { label: "Francistown Senior School", value: "francistown_senior_school" },
@@ -171,7 +159,18 @@ const programmes = [
 
 const Signature = "J. Doe";
 
+async function getSchool(){
+    const schools = await fetch('http://66.179.253.57/api/public_schools/', { next: { tags: ['collection'] }})
+    if(!schools.ok){
+       // schools = institutions;
+       throw new Error('Failed to fetch data')
+    }
+    return schools.json()
+}
+
 export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => {
+    //const schools = await getSchool()
+    //console.log(schools)
     const [previousStep, setPreviousStep] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const delta = currentStep - previousStep
@@ -220,13 +219,20 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 //signature: "J.Doe",
                 //agreement: false,
             //},
-            edu_pro_qualifications:{
-                //level:"N/A",
-                qualification:"",
-                //institution: "N/A",
-                qualification_year:"",
-                teaching_subjects: ""
-            },
+            edu_pro_qualifications: [
+                {
+                    level: "",
+                    qualification: "",
+                    institution: "",
+                    qualification_year: "",
+                    minor_subjects:[
+                        ""
+                    ],
+                    major_subjects: [
+                        ""
+                    ]
+                }
+            ],
             student_study_programmes: {
                 //name: "N/A",
                 //completion_year: "N/A",
@@ -250,6 +256,23 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 //institution_type: "N/A",
                 //citizenry: "N/A",
                 //study_area: "N/A"
+            },
+            bio_datas:{
+                national_id: "440418213",
+                surname: "Serala",
+                forenames: "Oaitse",
+                dob: "1996-02-15",
+                pob: "Mahalapye",
+                gender: "Male",
+                nationality: "Motswana",
+                postal_address: "P O Box 7886, Mahalapye",
+                physical_address: "Block 10, Gaborone",
+                email: "johndoe@gmail.com",
+                mobile: "26774217788",
+                marital_status: "Single",
+                next_of_kin_name: "Sarah Cornor",
+                next_of_kin_relation: "Mother",
+                next_of_kin_contact: "26776554321"
             }
         }
     })
@@ -262,19 +285,20 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const fileBQA = form.register("attachments.qualification_copy");
     const filePHP = form.register("attachments.proof_of_payment");
     const misconduct = form.register("offence_convictions.misconduct_flag_details");
-    const AttachmentFile = form.watch("edu_pro_qualifications.attachment");
+    //const AttachmentFile = form.watch("edu_pro_qualifications.attachment");
     const registrationType = form.watch("teacher_preliminary_infos.work_status"); // Switch between teacher and student registration form
     const Recommended = form.watch("institution_recommendations.recommended");
     const IsAgreement = form.watch("declarations.agreement");
 
     // Stundent-Teacher registration
-
+    const RecommendationFile = form.watch("institution_recommendations.recommendationLetter");
 
     // Teacher registration
     // Teacher Priliminary Infos
     const workStatus = form.watch("teacher_preliminary_infos.work_status");
     const practiceCategory = form.watch("teacher_preliminary_infos.practice_category");
     const subCategory = form.watch("teacher_preliminary_infos.sub_category");
+    const applicationType = form.watch("teacher_registrations.registration_type");
 
     // Employment Details
     const experienceYears = form.watch("employment_details.experience_years");
@@ -285,11 +309,11 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const cityOrTown = form.watch("employment_details.city_or_town");
 
     // Qualifications
-    const qualification = form.watch("edu_pro_qualifications.qualification");
-    const institution = form.watch("edu_pro_qualifications.institution");
-    const qualificationYear = form.watch("edu_pro_qualifications.qualification_year");
-    const teachingSubjects = form.watch("edu_pro_qualifications.teaching_subjects");
-    const attachment = form.watch("edu_pro_qualifications.attachment");
+   // const qualification = form.watch("edu_pro_qualifications.qualification");
+   // const institution = form.watch("edu_pro_qualifications.institution");
+   // const qualificationYear = form.watch("edu_pro_qualifications.qualification_year");
+   // const teachingSubjects = form.watch("edu_pro_qualifications.teaching_subjects");
+    //const attachment = form.watch("edu_pro_qualifications.attachment");
 
 
     // Disability
@@ -299,16 +323,17 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     // Offence
     // 1st question
     const studentRelatedOffence = form.watch("offence_convictions.student_related_offence");
-    const offenceType = form.watch("offence_convictions.offence_type");
-    const convictionStatus = form.watch("offence_convictions.conviction_status");
-    const sentenceOutcome = form.watch("offence_convictions.sentence_outcome");
-    const dateOfConviction = form.watch("offence_convictions.date_of_conviction");
-    const courtJurisdiction = form.watch("offence_convictions.court_jurisdiction");
+    const studentRelatedOffenceType = form.watch("offence_convictions.student_related_offence_details");
+    //const convictionStatus = form.watch("offence_convictions.conviction_status");
+    //const sentenceOutcome = form.watch("offence_convictions.sentence_outcome");
+    //const dateOfConviction = form.watch("offence_convictions.date_of_conviction");
+    //const courtJurisdiction = form.watch("offence_convictions.court_jurisdiction");
     // 2nd question
     const drugRelatedOffence = form.watch("offence_convictions.drug_related_offence");
-    const substanceInvolved = form.watch("offence_convictions.substance_involved");
-    const dateOfDrugConviction = form.watch("offence_convictions.date_of_drug_conviction");
-    const jurisdictionDrugs = form.watch("offence_convictions.jurisdiction_drugs");
+    const drugRelatedOffenceType = form.watch("offence_convictions.drug_related_offence_details");
+    //const substanceInvolved = form.watch("offence_convictions.substance_involved");
+    //const dateOfDrugConviction = form.watch("offence_convictions.date_of_drug_conviction");
+    //const jurisdictionDrugs = form.watch("offence_convictions.jurisdiction_drugs");
     // 3rd question
     const licenseFlag = form.watch("offence_convictions.license_flag");
     const licenseFlagDetails = form.watch("offence_convictions.license_flag_details");
@@ -338,20 +363,114 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             setPreviousStep(currentStep)
             setCurrentStep(step => step + 1)
         }
+    }    
+    const [isErrorAlert, setIsErrorAlert] = useState(false);
+    const imp = {
+        "teacher_registrations":{
+            "reg_number":"GH6778888",
+            "reg_status":"Pending-Screening",
+            "registration_type":"Teacher",
+            "disability":"Yes",
+            "disability_description":"left eye is impaired and dont see clearly on cold conditions"
+    
+        },
+        "bio_datas":{
+            "national_id":"436415528",
+            "surname":"Motlalepuo",
+            "forenames":"Garenosi",
+            "dob":"1996-02-15",
+            "pob":"Maun",
+            "gender":"Male",
+            "nationality":"Motswana",
+            "postal_address":"P O Box 7886, Mahalapye",
+            "physical_address":"Block 10, Gaborone",
+            "email":"johndoe@gmail.com",
+            "mobile":"26774217788",
+            "marital_status":"Single",
+            "next_of_kin_name":"Sarah Cornor",
+            "next_of_kin_relation":"Mother",
+            "next_of_kin_contact":"26776554321"
+           
+        },
+        "declarations":{
+            "agreement":true,
+            "signature":"J. Doe"
+        },
+        "attachments":{
+            "national_id_copy":"nationalID_copy.pdf",
+            "qualification_copy":"Qualification_copy.pdf",
+            "proof_of_payment":"FNB_proof.pdf"
+            
+        },
+        "edu_pro_qualifications":{
+            "level":"masters",
+            "qualification":"MSc. Applied Sciences",
+            "institution":"University of Botswana",
+            "qualification_year":"2019",
+            "teaching_subjects":"Mathematics and Sciences"
+        },
+        "employment_details":{
+            "experience_years":4,
+            "current_institution":"Moeding Colledge",
+            "institution_type":"Public",
+            "region":"South East",
+            "district":"South East District",
+            "city_or_town":"Gaborone"
+        },
+        "institution_recommendations":{
+            "recommended":"Yes",
+            "comment":"An exceptional and hard worker",
+            "name":"Dr. W Wendy",
+            "signature":"W. Wendy"
+        },
+        "offence_convictions": {
+            "national_id": "empty",
+            "student_related_offence": "No",
+            "student_related_offence_details": "N/A",
+            "drug_related_offence": "No",
+            "drug_related_offence_details": "N/A",
+            "license_flag": "No",
+            "license_flag_details": "N/A",
+            "misconduct_flag": "No",
+            "misconduct_flag_details": "N/A"
+        },
+        "student_preliminary_infos":{
+            "institution_name":"N/A",
+            "institution_type":"N/A",
+            "citizenry":"N/A",
+            "study_area":"N/A"
+        },
+        "student_study_programmes":{
+            "name":"N/A",
+            "completion_year":"N/A",
+            "level":"N/A",
+            "duration":0,
+            "mode_of_study":"N/A",
+            "specialization":"N/A"
+        },
+        "teacher_preliminary_infos":{
+            "citizen_status":"Citizen",
+            "work_status":"Serving",
+            "practice_category":"Senior Secondary",
+            "sub_cateogry":"N/A"
+        }   
     }
 
-    const [isErrorAlert, setIsErrorAlert] = useState(false);
 
+    
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true); // Change state to indicate submitting
         setIsErrorAlert(false);
+        console.log(values.attachments.national_id_copy);
+        const formData = new FormData();
+        
+        
         try{
-
         formSchema.parse(values); // vValidate form values using zod
         const valueswithBio = {
             ...values,
             bio_datas: {
-                national_id: "936510813",
+                national_id: "440418213",
                 surname: "Serala",
                 forenames: "Oaitse",
                 dob: "1996-02-15",
@@ -368,31 +487,77 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 next_of_kin_contact: "26776554321"
               }
         }
-
-        //console.log({valueswithBio})
+        const formData = new FormData();
+        //Object.keys(valueswithBio).forEach(key =>{
+            formData.append("DOB", valueswithBio.bio_datas.dob);
+            formData.append("ID", valueswithBio.attachments.national_id_copy);
+       // })
+        //formData.append(values.attachments.national_id_copy,values.attachments.national_id_copy);
+        //formData.append(values.attachments.proof_of_payment,values.attachments.proof_of_payment);
+        console.log({values})
         
         const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
         const response = await fetch(registrationEndpoint,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': '*/*',
+                //'Content-Type': 'application/json',
+                //'Accept': '*/*',
                 'Accept-Encoding': 'gzip, deflate, br',
                 'Connection': 'keep-alive'
             },
-            body: JSON.stringify({...valueswithBio}), // Spread the valueswithBio object to remove the nesting key.
+            //body: formData,
+            //body: valueswithBio,
+            body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
         })
         if(!response.ok){
             throw new Error("Failed to register");
         }
+        form.reset();
         setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
       }catch (error:any){
-        
-        console.error('Error registering', error.message);
+        //console.error('Error registering', error.message);
         setIsErrorAlert(true);
       }finally{
         setIsSubmitting(false); // Change state back after submission is completed
       }
+    }
+
+    const handleSubmit1 = async (values: z.infer<typeof formSchema>) => {
+        setIsSubmitting(true); // Change state to indicate submitting
+        setIsErrorAlert(false);
+
+        try {
+            formSchema.parse(values); // Validate with Zod
+    
+            const formData = new FormData();
+            const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
+            // Add JSON data
+            const valuesWithBio = {
+                ...values,
+                //bio_datas: { 
+                    // ... your bio_datas fields
+                //}
+            };
+    
+            // Add files (assuming file input fields are named appropriately)
+            if (values.attachments?.national_id_copy) { 
+                formData.append('national_id_copy', values.attachments.national_id_copy[0]);
+            }
+            // ... add other file fields similarly
+    
+            // Send the request using fetch
+            const response = await fetch(registrationEndpoint, { 
+                method: 'POST',
+                body: formData 
+            });
+    
+           // ... handle response and errors as before 
+    
+       } catch (error) {
+           // ... handle errors
+       } finally {
+           setIsSubmitting(false);
+       }
     }
 
 
@@ -440,7 +605,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const [licenseFlagLetter, setLicenseFlagLetter] = useState('');
     const [misconductFlagLetter, setMisconductFlagLetter] = useState('');
 
-    const [applicationType, setApplicationType] = useState('teacher');
+    //const [applicationType, setApplicationType] = useState('');
 
     return(
         <div>
@@ -450,8 +615,11 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                     {applicationType === 'teacher' && 
                         <Stepper currentStep={currentStep} steps={steps}/>
                     }
-                    {applicationType !== 'teacher' &&
+                    {applicationType === 'student' && 
                         <Stepper currentStep={currentStep} steps={studentSteps}/>
+                    }
+                    {applicationType !== 'student' && applicationType !== 'teacher' &&
+                        <Stepper currentStep={currentStep} steps={hiddenSteps}/>
                     }
                 </nav>
                 {/* forms */}   
@@ -464,35 +632,49 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
+                        <div className="border md:h-96 md:w-full w-96 p-2 rounded-lg mb-2 mr-1">
                             <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
-                                <FormItem className="space-y-3">
-                                    <FormLabel>Select Application Type</FormLabel>
-                                        <FormControl>
-                                            <RadioGroup>
-                                                <RadioGroup value={applicationType} onValueChange={setApplicationType}>
+                                <FormField
+                                    control={form.control}
+                                    name="teacher_registrations.registration_type"
+                                    render={({field}) =>{
+                                        return <FormItem className="space-y-3">
+                                            <FormLabel>Select Application Type</FormLabel>
+                                            <FormControl>
+                                                <RadioGroup>
+                                                <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    className="flex flex-col space-y-1"
+                                                    >
                                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                                         <FormControl>
-                                                            <RadioGroupItem value="student" />
+                                                        <RadioGroupItem value="student" />
                                                         </FormControl>
-                                                        <FormLabel className="font-normal">Student/Teacher</FormLabel>
+                                                        <FormLabel className="font-normal">
+                                                        Student/Teacher
+                                                        </FormLabel>
                                                     </FormItem>
                                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                                         <FormControl>
-                                                            <RadioGroupItem value="teacher" />
+                                                        <RadioGroupItem value="teacher" />
                                                         </FormControl>
-                                                        <FormLabel className="font-normal">Teacher</FormLabel>
+                                                        <FormLabel className="font-normal">
+                                                        Teacher
+                                                        </FormLabel>
                                                     </FormItem>
+                                                    </RadioGroup>
                                                 </RadioGroup>
-                                            </RadioGroup>
-                                        </FormControl>
-                                    <FormMessage />
-                                </FormItem>  
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    }}
+                                />
                                 {applicationType === 'student' && <FormField
                                 control={form.control}
                                 name="student_preliminary_infos.institution_name"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-col space-y-3 mt-2">
+                                    <FormItem className="flex overflow-auto flex-col space-y-3 mt-2">
                                         <FormLabel>Name of institution</FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
@@ -704,8 +886,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             </div>
                         </motion.div>           
                     )}
-                    {/*STUDENT-STUDY PROGRAMME DETAILS*/}
-                    {currentStep === 1 && applicationType === 'student' && (
+                    {/*BIO DATAS*/}
+                    {currentStep === 1  && (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -713,7 +895,67 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                         >
                         <div className="border md:h-96 h-96  p-2 rounded-lg mb-2 mr-1">
                             <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
-
+                            <FormField
+                                control={form.control}
+                                name="bio_datas.national_id"
+                                render={({field}) =>{
+                                    return <FormItem>
+                                        <FormLabel>National ID</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                            placeholder="national id"
+                                            {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                }}
+                            />  
+                            <FormField
+                                control={form.control}
+                                name="bio_datas.surname"
+                                render={({field}) =>{
+                                    return <FormItem>
+                                        <FormLabel>Surname</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                            placeholder="surname"
+                                            {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                }}
+                            />  
+                            <FormField
+                                control={form.control}
+                                name="bio_datas.forenames"
+                                render={({field}) =>{
+                                    return <FormItem>
+                                        <FormLabel>Fornames</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                            placeholder="surname"
+                                            {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                }}
+                            />  
+                            </div>
+                        </div>
+                        </motion.div>
+                    )}
+                    {/*STUDENT-STUDY PROGRAMME DETAILS*/}
+                    {currentStep === 2 && applicationType === 'student' && (
+                        <motion.div
+                            initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
+                            animate={{y: 0, opacity: 1}}
+                            transition={{duration: 0.3, ease: 'easeInOut'}}
+                        >
+                        <div className="border md:h-96 h-96  p-2 rounded-lg mb-2 mr-1">
+                            <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
                             <FormField
                                     control={form.control}
                                     name="student_study_programmes.level"
@@ -940,7 +1182,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                         </motion.div>
                     )}
                     {/*DECLARATION*/}
-                    {currentStep === 2 && applicationType === 'student' && (
+                    {currentStep === 3 && applicationType === 'student' && (
                     <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1000,7 +1242,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>
                     )}
                     {/*STUDENT-RECOMMENDATION BY INSTITUTION*/}
-                    {currentStep === 3 && applicationType === 'student' && (
+                    {currentStep === 4 && applicationType === 'student' && (
                     <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1047,7 +1289,7 @@ I am aware that the Council may collect and verify information about my qualific
                                 {Recommended === "yes" &&
                                 <FormField
                                 control={form.control}
-                                name="edu_pro_qualifications.attachment"
+                                name="institution_recommendations.recommendationLetter"
                                 render={({ field }) => {
                                     return (
                                     <FormItem>
@@ -1056,7 +1298,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <Input
                                         type="file"
                                         placeholder="Attach a file"
-                                        {...AttachmentFile}
+                                        {...RecommendationFile}
                                         onChange={(event) => {
                                             field.onChange(event.target?.files?.[0] ?? undefined);
                                         }}
@@ -1075,7 +1317,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>
                     )}
                     {/*STUDENT-PREVIEW*/}
-                    {currentStep === 4 && applicationType === 'student' && (
+                    {currentStep === 5 && applicationType === 'student' && (
                     <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1192,7 +1434,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>
                     )}
                     {/*STUDENT-COMPLETE*/}
-                    {currentStep === 5 && applicationType === 'student' && (
+                    {currentStep === 6 && applicationType === 'student' && (
                     <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1211,7 +1453,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>
                     )}
                     {/*EMPLOYMENT DETAILS*/}
-                    {currentStep === 1 && applicationType !== 'student' && (
+                    {currentStep === 2 && applicationType !== 'student' && (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1422,87 +1664,59 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>             
                     )}
                     {/*QUALIFICATIONS*/}
-                    {currentStep === 2 && applicationType !== 'student' &&  (
+                    {currentStep === 3 && applicationType !== 'student' &&  (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
                             <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1 space-y-2">
-                            <div className="hidden">
+                                <div className="hidden">
                                     <InformationCard Information="All the qualifications indicated below must be attached to the application and must be
                                     verified by the issuing institutions if they’re locally obtained and by the Botswana
                                     Qualifications Authority (BQA) if foreign obtained."/>
                                 </div>
-                                <div className="">
-                                    <label className="text-gray-900 text-sm">Select your Qualifications Levels</label>
-                                    <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handleCertificationCheckboxChange} id="certificate" type="checkbox" checked={showCertificationLevel} value="certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500"/>
-                                                <label htmlFor="certificate" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Certification</label>
-                                            </div>
-                                        </li>
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handleDiplomaCheckboxChange} checked={showDiplomaLevel} id="diploma" type="checkbox" value="diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
-                                                <label htmlFor="diploma" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Diploma</label>
-                                            </div>
-                                        </li>
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handlePostGradDiplomaCheckboxChange} checked={showPostGradDiplomaLevel} id="post-grad-diploma" type="checkbox" value="post-grad-diploma" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
-                                                <label htmlFor="post-grad-diploma" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Diploma</label>
-                                            </div>
-                                        </li>
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handleDegreeCheckboxChange} checked={showDegreeLevel} id="degree" type="checkbox" value="degree" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
-                                                <label htmlFor="degree" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Degree</label>
-                                            </div>
-                                        </li>
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handlePostGradCertificateCheckboxChange} checked={showPostGradCertificateLevel} id="post-grad-certificate" type="checkbox" value="post-grad-certificate" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
-                                                <label htmlFor="post-grad-certificate" className="w-full py-1 ms-2 text-xs font-medium text-gray-900">Post Grad Certificate</label>
-                                            </div>
-                                        </li>
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handleMastersCheckboxChange} checked={showMastersLevel} id="masters" type="checkbox" value="masters" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
-                                                <label htmlFor="masters" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">Masters</label>
-                                            </div>
-                                        </li>
-                                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
-                                            <div className="flex items-center ps-3">
-                                                <input onChange={handlePhDCheckboxChange} checked={showPhDLevel} id="phd" type="checkbox" value="phd" className="w-4 h-4 text-blue-600 bg-gray-300 rounded focus:ring-blue-500" disabled/>
-                                                <label htmlFor="phd" className="w-full py-3 ms-2 text-xs font-medium text-gray-900">PhD</label>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
                                 {/*Visible when conditions here*/}
-                                <div className="overflow-auto h-72">
-                                    {showDiplomaLevel && showDiplomaLevel}
-                                    {showCertificationLevel && 
+                                <div className="overflow-auto h-full">
                                         <div className="">
                                         {/*Scroll Content - Add-Remove Form Items*/}
-                                        <div className="flex">
-                                            <div className="">
-                                                <span className="text-gray-900 text-sm">Certifications({numOfQualifications})</span>
-                                            </div>
-                                        </div>
-                                        <div className="overflow-auto h-64 bg-white">
+                                        <div className=" bg-white">
                                             {/* Repeat the following block of JSX based on numOfQualification */}
                                             {[...Array(numOfQualifications)].map((_,index)=>(
-                                            <div key={index} className="w-full grid grid-cols-3 gap-x-5 gap-y-2 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
-                                                <div>
+                                            <div key={index} className="w-full grid grid-cols-3 gap-x-5 gap-y-5 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
                                                     <FormField
                                                     control={form.control}
-                                                    name="edu_pro_qualifications.qualification"
+                                                    name={`edu_pro_qualifications.${index}.level`}
                                                     render={({field}) =>{
                                                         return <FormItem>
-                                                            <FormLabel>Qualification</FormLabel>
+                                                                <FormLabel>Qualification level</FormLabel>
+                                                                <Select onValueChange={field.onChange} value={field.value}>
+                                                                    <FormControl>
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Select Qualification level">
+                                                                            </SelectValue>
+                                                                        </SelectTrigger>
+                                                                    </FormControl>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="certification">Certification</SelectItem>
+                                                                        <SelectItem value="diploma">Diploma</SelectItem>
+                                                                        <SelectItem value="post grad diploma">Post Grad Diploma</SelectItem>
+                                                                        <SelectItem value="degree">Degree</SelectItem>
+                                                                        <SelectItem value="post grad certificate">Post Grad Certificate</SelectItem>
+                                                                        <SelectItem value="masters">Masters</SelectItem>
+                                                                        <SelectItem value="phd">PhD</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    }}
+                                                    />
+                                                    <FormField
+                                                    control={form.control}
+                                                    name={`edu_pro_qualifications.${index}.qualification`}
+                                                    render={({field}) =>{
+                                                        return <FormItem>
+                                                            <FormLabel>Qualification name</FormLabel>
                                                             <FormControl>
                                                                 <Input
                                                                 placeholder="Qualification name"
@@ -1512,116 +1726,145 @@ I am aware that the Council may collect and verify information about my qualific
                                                             <FormMessage/>
                                                         </FormItem>
                                                     }}
-                                                />  
-                                                </div>
-                                                <div>                                                       
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="edu_pro_qualifications.institution"
-                                                        render={({ field }) => (
-                                                            <FormItem className="flex flex-col space-y-3 mt-2">
-                                                                <FormLabel>Awarding Institution</FormLabel>
-                                                                <Popover>
-                                                                    <PopoverTrigger asChild>
-                                                                    <FormControl>
-                                                                        <Button
-                                                                        variant="outline"
-                                                                        role="combobox"
-                                                                        className={cn(
-                                                                            "w-[200px] justify-between",
-                                                                            !field.value && "text-muted-foreground"
-                                                                        )}
-                                                                        >
-                                                                        {field.value
-                                                                            ? institutions.find(
-                                                                                (institution) => institution.value === field.value
-                                                                            )?.label
-                                                                            : "Select institution"}
-                                                                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                                        </Button>
-                                                                    </FormControl>
-                                                                    </PopoverTrigger>
-                                                                    <PopoverContent className="w-[200px] p-0">
-                                                                    <Command>
-                                                                        <CommandInput
-                                                                        placeholder="Search institution..."
-                                                                        className="h-9"
-                                                                        />
-                                                                        <ScrollArea className="h-60 w-48 rounded-md">
-                                                                        <CommandEmpty>No institution found.</CommandEmpty>
-                                                                        <CommandGroup>
-                                                                        {institutions.map((institution) => (
-                                                                            <CommandItem
-                                                                            value={institution.label}
-                                                                            key={institution.value}
-                                                                            onSelect={() => {
-                                                                                form.setValue("edu_pro_qualifications.institution", institution.value)
-                                                                            }}
-                                                                            >
-                                                                            {institution.label}
-                                                                            <CheckIcon
-                                                                                className={cn(
-                                                                                "ml-auto h-4 w-4",
-                                                                                institution.value === field.value
-                                                                                    ? "opacity-100"
-                                                                                    : "opacity-0"
-                                                                                )}
-                                                                            />
-                                                                            </CommandItem>
-                                                                        ))}
-                                                                        </CommandGroup>
-                                                                        </ScrollArea>
-                                                                    </Command>
-                                                                    </PopoverContent>
-                                                                </Popover>
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                            )}
-                                                        />  
-                                                </div>
-                                                <div>
-                                                    <div>
-                                                        <FormField
-                                                            control={form.control}
-                                                            name="edu_pro_qualifications.qualification_year"
-                                                            render={({field}) =>{
-                                                                return <FormItem>
-                                                                    <FormLabel>Year Of Completion</FormLabel>
-                                                                    <FormControl>
-                                                                        <Input
-                                                                        type="number"
-                                                                        placeholder="Year..."
-                                                                        {...field}
-                                                                        />
-                                                                    </FormControl>
-                                                                    <FormMessage/>
-                                                                </FormItem>
-                                                            }}
-                                                        />  
-                                                    </div>
-                                                </div>
-                                                <div className="">
-                                                    <FormField
+                                                />                                                      
+                                                <FormField
                                                     control={form.control}
-                                                    name="edu_pro_qualifications.teaching_subjects"
+                                                    name={`edu_pro_qualifications.${index}.institution`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex flex-col space-y-3 mt-2">
+                                                            <FormLabel>Awarding Institution</FormLabel>
+                                                            <Popover>
+                                                                <PopoverTrigger asChild>
+                                                                <FormControl>
+                                                                    <Button
+                                                                    variant="outline"
+                                                                    role="combobox"
+                                                                    className={cn(
+                                                                        "w-[200px] justify-between",
+                                                                        !field.value && "text-muted-foreground"
+                                                                    )}
+                                                                    >
+                                                                    {field.value
+                                                                        ? institutions.find(
+                                                                            (institution) => institution.value === field.value
+                                                                        )?.label
+                                                                        : "Select institution"}
+                                                                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                                    </Button>
+                                                                </FormControl>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent className="w-[200px] p-0">
+                                                                <Command>
+                                                                    <CommandInput
+                                                                    placeholder="Search institution..."
+                                                                    className="h-9"
+                                                                    />
+                                                                    <ScrollArea className="h-60 w-48 rounded-md">
+                                                                    <CommandEmpty>No institution found.</CommandEmpty>
+                                                                    <CommandGroup>
+                                                                    {institutions.map((institution) => (
+                                                                        <CommandItem
+                                                                        value={institution.label}
+                                                                        key={institution.value}
+                                                                        onSelect={() => {
+                                                                            form.setValue(`edu_pro_qualifications.${index}.institution`, institution.value)
+                                                                        }}
+                                                                        >
+                                                                        {institution.label}
+                                                                        <CheckIcon
+                                                                            className={cn(
+                                                                            "ml-auto h-4 w-4",
+                                                                            institution.value === field.value
+                                                                                ? "opacity-100"
+                                                                                : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                    </CommandGroup>
+                                                                    </ScrollArea>
+                                                                </Command>
+                                                                </PopoverContent>
+                                                            </Popover>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                        )}
+                                                    />  
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`edu_pro_qualifications.${index}.qualification_year`}
                                                     render={({field}) =>{
                                                         return <FormItem>
-                                                            <FormLabel>Teaching Subjects</FormLabel>
+                                                            <FormLabel>Year Of Completion</FormLabel>
                                                             <FormControl>
                                                                 <Input
-                                                                placeholder="Minor and Major subjects"
+                                                                placeholder="Year..."
                                                                 {...field}
                                                                 />
                                                             </FormControl>
                                                             <FormMessage/>
                                                         </FormItem>
                                                     }}
-                                                />  
-                                                </div>
+                                                />       
+                                                <FormField
+                                                control={form.control}
+                                                name={`edu_pro_qualifications.${index}.minor_subjects.${index}`}
+                                                render={({field}) =>{
+                                                    return <FormItem>
+                                                            <FormLabel>Minor subject</FormLabel>
+                                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                                <FormControl>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select minor subject">
+                                                                        </SelectValue>
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent>
+                                                                    <SelectItem value="english">English</SelectItem>
+                                                                    <SelectItem value="setswana">Setswana</SelectItem>
+                                                                    <SelectItem value="physical education">Physical education</SelectItem>
+                                                                    <SelectItem value="chemistry">Chemistry</SelectItem>
+                                                                    <SelectItem value="biology">Biology</SelectItem>
+                                                                    <SelectItem value="mathematics">Mathematics</SelectItem>
+                                                                    <SelectItem value="social studies">Social studies</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        <FormMessage/>
+                                                    </FormItem>
+                                                }}
+                                                />
+                                                <FormField
+                                                control={form.control}
+                                                name={`edu_pro_qualifications.${index}.major_subjects.${index}`}
+                                                render={({field}) =>{
+                                                    return <FormItem>
+                                                            <FormLabel>Minor subject</FormLabel>
+                                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                                <FormControl>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select major subject">
+                                                                        </SelectValue>
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent>
+                                                                <SelectItem value="english">English</SelectItem>
+                                                                    <SelectItem value="setswana">Setswana</SelectItem>
+                                                                    <SelectItem value="physical education">Physical education</SelectItem>
+                                                                    <SelectItem value="chemistry">Chemistry</SelectItem>
+                                                                    <SelectItem value="biology">Biology</SelectItem>
+                                                                    <SelectItem value="mathematics">Mathematics</SelectItem>
+                                                                    <SelectItem value="social studies">Social studies</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        <FormMessage/>
+                                                    </FormItem>
+                                                }}
+                                                />           
+                                                                   
                                                 <div className="">
                                                 <FormField
                                                     control={form.control}
-                                                    name="edu_pro_qualifications.attachment"
+                                                    name={`edu_pro_qualifications.${index}.attachment`}
                                                     render={({ field }) => {
                                                         return (
                                                         <FormItem>
@@ -1630,14 +1873,19 @@ I am aware that the Council may collect and verify information about my qualific
                                                             <Input
                                                             type="file"
                                                             placeholder="Attach a file"
-                                                            {...AttachmentFile}
+                                                            //{...AttachmentFile}
                                                             onChange={(event) => {
                                                                 field.onChange(event.target?.files?.[0] ?? undefined);
                                                             }}
                                                             />
                                                             </FormControl>
+                                                            {field.value && ( // Show file details if a file is selected
+                                                                    <div className="mt-1 text-sm text-gray-600">
+                                                                        File Name: {field.value.name} 
+                                                                    </div>
+                                                            )}
                                                             <FormDescription>
-                                                                Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
+                                                                Max File Size: 5MB Accepted File Types: .pdf
                                                             </FormDescription>
                                                             <FormMessage />
                                                         </FormItem>
@@ -1684,18 +1932,12 @@ I am aware that the Council may collect and verify information about my qualific
                                             </div>
                                         </div>
                                     </div>
-                                    }
-                                    {showPostGradDiplomaLevel && <PostGradDiplomaLevel/>}
-                                    {showDegreeLevel && <DegreeLevel/>}
-                                    {showMastersLevel && <MastersLevel/>}
-                                    {showPostGradCertificateLevel && <PostGradCertificateLevel/>}
-                                    {showPhDLevel && <PhDLevel/>}
                                 </div>
                             </div>
                         </motion.div>             
                     )}
                     {/*DISABILITY*/}
-                    {currentStep === 3 && applicationType !== 'student' &&  (
+                    {currentStep === 4 && applicationType !== 'student' &&  (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1814,7 +2056,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>             
                     )}
                     {/*OFFENCE DECLARATION*/}
-                    {currentStep === 4 && applicationType !== 'student' &&  (
+                    {currentStep === 5 && applicationType !== 'student' &&  (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -1867,7 +2109,7 @@ I am aware that the Council may collect and verify information about my qualific
                             <div className="grid md:grid-cols-3 grid-col-1 gap-2 ml-3">
                             <FormField
                                 control={form.control}
-                                name="offence_convictions.offence_type"
+                                name="offence_convictions.student_related_offence_details"
                                 render={({field}) =>{
                                     return <FormItem>
                                             <FormLabel>Select Offence type</FormLabel>
@@ -1891,126 +2133,6 @@ I am aware that the Council may collect and verify information about my qualific
                                     </FormItem>
                                 }}
                                 />
-                                <FormField
-                                control={form.control}
-                                name="offence_convictions.conviction_status"
-                                render={({field}) =>{
-                                    return <FormItem>
-                                            <FormLabel>Select Conviction status</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select Conviction status">
-                                                        </SelectValue>
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="convicted">Convicted</SelectItem>
-                                                    <SelectItem value="pleaded_guilty">Pleaded Guilty</SelectItem>
-                                                    <SelectItem value="pleaded_no_contest">Pleaded No Contest</SelectItem>
-                                                    <SelectItem value="pending _trial">Pending Trial</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        <FormMessage/>
-                                    </FormItem>
-                                }}
-                                />
-                                <FormField
-                                control={form.control}
-                                name="offence_convictions.sentence_outcome"
-                                render={({field}) =>{
-                                    return <FormItem>
-                                            <FormLabel>Select Sentence/Outcome</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select Sentence/Outcome">
-                                                        </SelectValue>
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="incarceration">Incarceration</SelectItem>
-                                                    <SelectItem value="probation">Probation</SelectItem>
-                                                    <SelectItem value="fine">Fine</SelectItem>
-                                                    <SelectItem value="community Service">Community Service</SelectItem>
-                                                    <SelectItem value="rehabilitation_program">Rehabilitation Program</SelectItem>
-                                                    <SelectItem value="no_sentence_yet">No Sentence Yet</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        <FormMessage/>
-                                    </FormItem>
-                                }}
-                                />
-                                <div className="mt-2">
-                                <FormField
-                                        control={form.control}
-                                        name="offence_convictions.date_of_conviction"
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-col">
-                                            <FormLabel className="mb-1">Date of Conviction/Plea</FormLabel>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-[240px] pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                    >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                    </Button>
-                                                </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) =>
-                                                    date > new Date() || date < new Date("1900-01-01")
-                                                    }
-                                                    initialFocus
-                                                />
-                                                </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    </div>
-                                    <FormField
-                                    control={form.control}
-                                    name="offence_convictions.court_jurisdiction"
-                                    render={({field}) =>{
-                                        return <FormItem>
-                                                <FormLabel>Court Jurisdiction</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select Court Jurisdiction">
-                                                            </SelectValue>
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="local_court">Local Court</SelectItem>
-                                                        <SelectItem value="district court">District Court</SelectItem>
-                                                        <SelectItem value="high court">High Court</SelectItem>
-                                                        <SelectItem value="supreme court">Supreme Court</SelectItem>
-                                                        <SelectItem value="other">Other</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    }}
-                                    />
                                 </div> }{/**End grid div(Option controls)*/}
                             </div>
                             <div className="border-b pb-2 mb-2">
@@ -2058,7 +2180,7 @@ I am aware that the Council may collect and verify information about my qualific
                                 <div className="grid md:grid-cols-3 grid-col-1 gap-2 ml-3">
                                     <FormField
                                     control={form.control}
-                                    name="offence_convictions.type_of_drug_offence"
+                                    name="offence_convictions.drug_related_offence_details"
                                     render={({field}) =>{
                                         return <FormItem>
                                                 <FormLabel>Type of Drug Offense</FormLabel>
@@ -2074,125 +2196,6 @@ I am aware that the Council may collect and verify information about my qualific
                                                         <SelectItem value="distribution">Drug Trafficking/Distribution</SelectItem>
                                                         <SelectItem value="manufacturing">Drug Manufacturing/Cultivation</SelectItem>
                                                         <SelectItem value="abuse">Prescription Drug Abuse</SelectItem>
-                                                        <SelectItem value="other">Other</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    }}
-                                    />
-                                    <FormField
-                                    control={form.control}
-                                    name="offence_convictions.drug_conviction_status"
-                                    render={({field}) =>{
-                                        return <FormItem>
-                                                <FormLabel>Select Conviction status</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select Conviction status">
-                                                            </SelectValue>
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="convicted">Convicted</SelectItem>
-                                                        <SelectItem value="pleaded guilty">Pleaded Guilty</SelectItem>
-                                                        <SelectItem value="pleaded no contest">Pleaded No Contest</SelectItem>
-                                                        <SelectItem value="pending trial">Pending Trial</SelectItem>
-                                                        <SelectItem value="other">Other</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    }}
-                                    />
-                                    <FormField
-                                    control={form.control}
-                                    name="offence_convictions.substance_involved"
-                                    render={({field}) =>{
-                                        return <FormItem>
-                                                <FormLabel>Substances involved</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select Conviction status">
-                                                            </SelectValue>
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="marijuana">Marijuana</SelectItem>
-                                                        <SelectItem value="cocaine">Cocaine</SelectItem>
-                                                        <SelectItem value="heroin">Heroin</SelectItem>
-                                                        <SelectItem value="methamphetamine">Methamphetamine</SelectItem>
-                                                        <SelectItem value="prescription drugs">Prescription drugs</SelectItem>
-                                                        <SelectItem value="other">Other</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    }}
-                                    />
-                                    <div className="mt-2">
-                                    <FormField
-                                            control={form.control}
-                                            name="offence_convictions.date_of_drug_conviction"
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                <FormLabel className="mb-1">Date of Conviction/Plea</FormLabel>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button
-                                                        variant={"outline"}
-                                                        className={cn(
-                                                            "w-[240px] pl-3 text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
-                                                        >
-                                                        {field.value ? (
-                                                            format(field.value, "PPP")
-                                                        ) : (
-                                                            <span>Pick a date</span>
-                                                        )}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                        </Button>
-                                                    </FormControl>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value}
-                                                        onSelect={field.onChange}
-                                                        disabled={(date) =>
-                                                        date > new Date() || date < new Date("1900-01-01")
-                                                        }
-                                                        initialFocus
-                                                    />
-                                                    </PopoverContent>
-                                                </Popover>
-                                                <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <FormField
-                                    control={form.control}
-                                    name="offence_convictions.jurisdiction_drugs"
-                                    render={({field}) =>{
-                                        return <FormItem>
-                                                <FormLabel>Court Jurisdiction</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select Court Jurisdiction">
-                                                            </SelectValue>
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="local_court">Local Court</SelectItem>
-                                                        <SelectItem value="district court">District Court</SelectItem>
-                                                        <SelectItem value="high court">High Court</SelectItem>
-                                                        <SelectItem value="supreme court">Supreme Court</SelectItem>
                                                         <SelectItem value="other">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
@@ -2358,7 +2361,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>             
                     )}
                     {/*ATTACHMENTS*/}
-                    {currentStep === 5 && applicationType !== 'student' &&  (
+                    {currentStep === 6 && applicationType !== 'student' &&  (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -2474,7 +2477,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>             
                     )}
                     {/*DECLARATION*/}
-                    {currentStep === 6 && applicationType !== 'student' &&  (
+                    {currentStep === 7 && applicationType !== 'student' &&  (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -2527,7 +2530,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>             
                     )}
                     {/*PREVIEW*/}
-                    {currentStep === 7 && applicationType !== 'student' &&  (
+                    {currentStep === 8 && applicationType !== 'student' &&  (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}
@@ -2623,50 +2626,18 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-3 grid-cols-2 mb-2 gap-2">
                                             <div className="grid grid-cols-2 space-x-2">
                                                 <Label className="font-semibold">Offence type:</Label>
-                                                <Label>{offenceType}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Conviction status:</Label>
-                                                <Label>{convictionStatus}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Sentence/Outcome:</Label>
-                                                <Label>{sentenceOutcome}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Date of Conviction/Plea:</Label>
-                                                <Label>{dateOfConviction?.toDateString()}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Court Jurisdiction:</Label>
-                                                <Label>{courtJurisdiction}</Label>
+                                                <Label>{studentRelatedOffenceType}</Label>
                                             </div>
                                         </div>
                                         <div className="flex space-x-2 mb-1">
                                             <Label className="font-semibold">2. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense of possession of and or of drugs use?</Label>
                                             <Label>{drugRelatedOffence}</Label>
                                         </div>
+                                        <div className="flex space-x-2 mb-1">
+                                            <Label className="font-semibold">Offense details</Label>
+                                            <Label>{drugRelatedOffenceType}</Label>
+                                        </div>
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Type of Drug Offense:</Label>
-                                                <Label>{substanceInvolved}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Conviction status:</Label>
-                                                <Label></Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Substances involved:</Label>
-                                                <Label>{jurisdictionDrugs}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Date of Conviction/Plea:</Label>
-                                                <Label>{dateOfDrugConviction?.toDateString()}</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Court Jurisdiction:</Label>
-                                                <Label>High Court</Label>
-                                            </div>
                                         </div>
                                         <div className="space-y-2 mb-1">
                                             <Label className="font-semibold">3. Have you ever had a teaching license revoked, suspended, invalidated, cancelled or denied by any teaching council or any authority; surrendered such a license or the right to apply for such a license; or had any other adverse action taken against such a license. Please note that this includes a reprimand, warning, or reproval and any order denying the right to apply or reapply for a license?</Label>
@@ -2676,7 +2647,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Official documentation of the action taken:</Label>
-                                                <Label>{licenseFlagDetails}</Label>
+                                                <Label>letter1.pdf</Label>
                                             </div>
                                         </div>}
                                         <div className="space-y-2 mb-1">
@@ -2687,7 +2658,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Official documentation of the action taken:</Label>
-                                                <Label>{misconductFlagDetails}</Label>
+                                                <Label>letter.pdf</Label>
                                             </div>
                                         </div>
                                         }
@@ -2699,15 +2670,15 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className="grid md:grid-cols-2 grid-cols-2 mb-2 gap-2">
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Certified copy of OMANG or passport (for non-citizens)</Label>
-                                                <Label>{nationalIdCopy}</Label>
+                                                <Label>Omang.pdf</Label>
                                             </div>
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Verification of qualification from BQA.</Label>
-                                                <Label>{qualificationCopy}</Label>
+                                                <Label>BQA.doc</Label>
                                             </div>
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Proof of payment of Registration fee.</Label>
-                                                <Label>{proofOfPayment}</Label>
+                                                <Label>receipt.pdf</Label>
                                             </div>
                                         </div>
                                     </AccordionContent>
@@ -2734,7 +2705,7 @@ I am aware that the Council may collect and verify information about my qualific
                         </motion.div>             
                     )}
                     {/*COMPLETE*/}
-                    {currentStep === 8 && applicationType !== 'student' && (
+                    {currentStep === 9 && applicationType !== 'student' && (
                         <motion.div
                             initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                             animate={{y: 0, opacity: 1}}

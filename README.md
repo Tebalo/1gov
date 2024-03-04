@@ -3,6 +3,7 @@
 3. Shadcn UI: https://ui.shadcn.com/
 4. NextJS 14 Folder Structure: https://github1s.com/mertthesamael/lalasia/blob/master/app/auth/callback/route.ts - https://medium.com/@mertenercan/nextjs-13-folder-structure-c3453d780366  - https://www.youtube.com/watch?v=gLFT1wYd7G0
 5. https://medium.com/@a_tsai5/dockerise-react-application-next-js-83f60fa2cd62?source=email-7f1648bd187d-1709170683401-digest.reader--83f60fa2cd62----0-98------------------ad5608ab_0370_4e62_8ac2_3782f45b358a-1
+6. https://gemini.google.com/app/420dcb0d4eae6f35
 
 Libraries and Components
 1. npm i zod (https://www.npmjs.com/package/zod)

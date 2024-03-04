@@ -22,10 +22,10 @@ const disabilities = [
   "Cerebral Palsy"
 ] as const;
 
-const MAX_FILE_SIZE = 50000000; // 5MB
-const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']
 
-const teacherPreliminaryInfoSchema = z.object({
+export const teacherPreliminaryInfoSchema = z.object({
   /**
    * Preliminary Info schema.*/
   work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]).optional(),
@@ -34,7 +34,7 @@ const teacherPreliminaryInfoSchema = z.object({
   citizen_status: z.string().optional(),
 })
 
-const studentStudyProgrammes = z.object({
+export const studentStudyProgrammes = z.object({
   name: z.string().optional(),
   completion_year: z.string().optional(),
   level: z.string().optional(),
@@ -43,19 +43,7 @@ const studentStudyProgrammes = z.object({
   specialization: z.string().optional()
 }).optional()
 
-const eduProQualification = z.object({
-  level: z.string().optional(),
-  qualification: z.string().optional(),
-  institution: z.string().optional(),
-  qualification_year: z.string().optional(),
-  teaching_subjects: z.string().optional(),
-  attachment:  typeof window === "undefined" ? z.any():
-  z
-  .any()
-  .optional()
-})
-
-const offenceConvictions = z.object({
+export const offenceConvictions = z.object({
   /**
    * Capture offence convictions object
   */
@@ -65,27 +53,27 @@ const offenceConvictions = z.object({
   drug_related_offence_details: z.string().optional(),
   license_flag: z.enum(["yes", "no"]).optional(),
   misconduct_flag: z.enum(["yes", "no"]).optional(),
-  offence_type: z.string().optional(),
-  conviction_status: z.string().optional(),
-  sentence_outcome: z.string().optional(),
-  date_of_conviction: z.date().optional(),
-  type_of_drug_offence: z.string().optional(),
-  drug_conviction_status: z.string().optional(),
-  substance_involved: z.string().optional(),
-  court_jurisdiction: z.string().optional(),
-  date_of_drug_conviction: z.date().optional(),
-  jurisdiction_drugs: z.string().optional(),
+  //offence_type: z.string().optional(),
+  //conviction_status: z.string().optional(),
+  //sentence_outcome: z.string().optional(),
+  //date_of_conviction: z.date().optional(),
+  //type_of_drug_offence: z.string().optional(),
+  //drug_conviction_status: z.string().optional(),
+  //substance_involved: z.string().optional(),
+  //court_jurisdiction: z.string().optional(),
+  //date_of_drug_conviction: z.date().optional(),
+  //jurisdiction_drugs: z.string().optional(),
   license_flag_details: typeof window === "undefined" ? z.any():
-    z
-    .instanceof(FileList)
-    .optional(),
+  z
+  .any()
+  .optional(),
   misconduct_flag_details:  typeof window === "undefined" ? z.any():
   z
-  .instanceof(FileList)
+  .any()
   .optional(),
 })
 
-const teacherRegistrations = z.object({
+export const teacherRegistrations = z.object({
   /**
    * Capture teacher registration, it should be a disability object.
   */
@@ -96,7 +84,7 @@ const teacherRegistrations = z.object({
   reg_number: z.string().optional(),
 })
 
-const declarations = z.object({
+export const declarations = z.object({
   agreement: z.boolean().optional(),
   signature: z.string().optional(),
 })
@@ -106,7 +94,7 @@ const declarations = z.object({
  * use 'as const' to define your enum values as tuple of strings.
 */
 
-const employmentDetails = z.object({
+export const employmentDetails = z.object({
     /**
      * Employment Details schema.*/
     experience_years: z.coerce.number().optional(),
@@ -117,10 +105,10 @@ const employmentDetails = z.object({
     city_or_town: z.string().optional(),
 })
 
-const attachments = z.object({
+export const attachments = z.object({
   national_id_copy:  typeof window === "undefined" ? z.any():
   z
-  .instanceof(FileList)
+  .any()
   .optional(),
   //.refine((files) => files.length === 1, {message: "File is required."})
   //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
@@ -130,7 +118,7 @@ const attachments = z.object({
   //),
   qualification_copy: typeof window === "undefined" ? z.any():
   z
-  .instanceof(FileList)
+  .any()
   .optional(),
   //.refine((files) => files.length === 1, {message: "File is required."})
   //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
@@ -140,7 +128,7 @@ const attachments = z.object({
   //),
   proof_of_payment: typeof window === "undefined" ? z.any():
   z
-  .instanceof(FileList)
+  .any()
   .optional(),
   //.refine((files) => files.length === 1, {message: "File is required."})
   //.refine((files) => files[0].size <= MAX_FILE_SIZE, {message: "Max file size is 5MB"})
@@ -150,7 +138,7 @@ const attachments = z.object({
   //),
 })
 
-const studentPreliminaryInfos = z.object( {
+export const studentPreliminaryInfos = z.object( {
 
   institution_name: z.string().optional(),
   institution_type: z.string().optional(),
@@ -158,12 +146,48 @@ const studentPreliminaryInfos = z.object( {
   study_area: z.string().optional(),
 })
 
-const institutionRecommendations = z.object({
+export const institutionRecommendations = z.object({
   recommended: z.string().optional(),
   comment: z.string().optional(),
   name: z.string().optional(),
   signature: z.string().optional(),
+  recommendationLetter: typeof window === "undefined" ? z.any():
+  z
+  .any()
+  .optional(),
 })
+
+export const qualificationSchema = z.object({
+  level: z.string().optional(),
+  qualification: z.string().optional(),
+  institution: z.string().optional(),
+  qualification_year: z.string().optional(),
+  teaching_subjects: z.string().optional(),
+  attachment:  typeof window === "undefined" ? z.any():
+  z
+  .any()
+  .optional(),
+  minor_subjects: z.array(z.string()).optional(),
+  major_subjects: z.array(z.string()).optional(),
+})
+
+const bioDatasSchema = z.object({
+  national_id: z.string(),
+  surname: z.string(),
+  forenames: z.string(),
+  dob: z.string(), // Assuming date format is string
+  pob: z.string(),
+  gender: z.string(),
+  nationality: z.string(),
+  postal_address: z.string(),
+  physical_address: z.string(),
+  email: z.string().email(), // Ensure email format is valid
+  mobile: z.string(), // Assuming mobile number is string
+  marital_status: z.string(),
+  next_of_kin_name: z.string(),
+  next_of_kin_relation: z.string(),
+  next_of_kin_contact: z.string(),
+});
 
 export const formSchema = z.object({
     /**
@@ -175,11 +199,12 @@ export const formSchema = z.object({
     teacher_registrations: teacherRegistrations,
     offence_convictions: offenceConvictions,
     attachments: attachments,
-    edu_pro_qualifications: eduProQualification,
+    bio_datas: bioDatasSchema,
     student_study_programmes: studentStudyProgrammes,
     student_preliminary_infos: studentPreliminaryInfos,
     institution_recommendations: institutionRecommendations,
     declarations: declarations, // Culprit, fix and document
+    edu_pro_qualifications: z.array(qualificationSchema).optional(),
 })
 
 export const FormDataSchema = z.object({

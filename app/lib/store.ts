@@ -108,6 +108,45 @@ const registrationCategory = [
     {label: 'Education Administrator', value: 'Education Administrator'},
 ]
 
+export const users = [
+    {
+        national_id: "936510813",
+        surname: "Serala",
+        middlename: "Masego",
+        forenames: "Oaitse",
+        dob: "1996-02-15",
+        pob: "Mahalapye",
+        gender: "Male",
+        nationality: "Motswana",
+        postal_address: "P O Box 7886, Mahalapye",
+        physical_address: "Block 10, Gaborone",
+        email: "johndoe@gmail.com",
+        mobile: "26774217788",
+        marital_status: "Single",
+        next_of_kin_name: "Sarah Cornor",
+        next_of_kin_relation: "Mother",
+        next_of_kin_contact: "26776554321"
+    },
+    {
+        national_id: "440418213",
+        surname: "Bopaki",
+        middlename: "",
+        forenames: "Tebalo",
+        dob: "1996-02-15",
+        pob: "Orapa",
+        gender: "Male",
+        nationality: "Motswana",
+        postal_address: "P O Box 48, Mopipi",
+        physical_address: "Block 10, Gaborone",
+        email: "btebalo@gmail.com",
+        mobile: "26774217788",
+        marital_status: "Single",
+        next_of_kin_name: "Sarah Cornor",
+        next_of_kin_relation: "Mother",
+        next_of_kin_contact: "26776554321"
+    }
+]
+
 export const steps = [
     {
         id: 'Step 1',
@@ -116,40 +155,45 @@ export const steps = [
     },
     {
         id: 'Step 2',
-        name: 'EMPLOYMENT',
+        name: 'BIO DATA',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 3',
-        name: 'QUALIFICATIONS',
+        name: 'EMPLOYMENT',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 4',
+        name: 'QUALIFICATIONS',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 5',
         name: 'DISABILITY',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 5',
+        id: 'Step 6',
         name: 'OFFENCE',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 5',
+        id: 'Step 7',
         name: 'ATTACHMENTS',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 5',
+        id: 'Step 8',
         name: 'DECLARATION',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 6',
+        id: 'Step 9',
         name: 'PREVIEW'
     },
     {
-        id: 'Step 7',
+        id: 'Step 10',
         name: 'COMPLETE'
     },
 ]
@@ -162,29 +206,64 @@ export const studentSteps = [
     },
     {
         id: 'Step 2',
-        name: 'STUDY PROGRAMME',
+        name: 'BIO DATA',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 3',
-        name: 'DECLARATION',
+        name: 'STUDY PROGRAMME',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 4',
-        name: 'RECOMMENDATION',
+        name: 'DECLARATION',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 5',
-        name: 'PREVIEW'
+        name: 'RECOMMENDATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 6',
+        name: 'PREVIEW'
+    },
+    {
+        id: 'Step 7',
         name: 'COMPLETE'
     },
 ]
 
+export const hiddenSteps = [
+    {
+        id: 'Step 1',
+        name: 'PRELIMINARY INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 2',
+        name: '--------------------',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 3',
+        name: '--------------------',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 4',
+        name: '--------------------',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 5',
+        name: '--------------------'
+    },
+    {
+        id: 'Step 6',
+        name: '--------------------'
+    },
+]
 
 export const Region = ["Gaborone", "Francistowm", "Palapye"] as const;
 export const District = ["Chobe District", "Ghanzi District", "Ngamiland District", "Kgatleng District", "Kweneng District", "South-East District"] as const;
