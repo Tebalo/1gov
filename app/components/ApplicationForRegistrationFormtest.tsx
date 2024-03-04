@@ -331,6 +331,164 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 </div>
                                 {/*Visible when conditions here*/}
                                 <div className="overflow-auto h-72">
+                                <div key={index} className="w-full grid grid-cols-3 gap-x-5 gap-y-2 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
+                                                <div>
+                                                    <FormField
+                                                    control={form.control}
+                                                    name="edu_pro_qualifications.qualification"
+                                                    render={({field}) =>{
+                                                        return <FormItem>
+                                                            <FormLabel>Qualification</FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                placeholder="Qualification name"
+                                                                {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    }}
+                                                />  
+                                                </div>
+                                                <div>                                                       
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="edu_pro_qualifications.institution"
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex flex-col space-y-3 mt-2">
+                                                                <FormLabel>Awarding Institution</FormLabel>
+                                                                <Popover>
+                                                                    <PopoverTrigger asChild>
+                                                                    <FormControl>
+                                                                        <Button
+                                                                        variant="outline"
+                                                                        role="combobox"
+                                                                        className={cn(
+                                                                            "w-[200px] justify-between",
+                                                                            !field.value && "text-muted-foreground"
+                                                                        )}
+                                                                        >
+                                                                        {field.value
+                                                                            ? institutions.find(
+                                                                                (institution) => institution.value === field.value
+                                                                            )?.label
+                                                                            : "Select institution"}
+                                                                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                                        </Button>
+                                                                    </FormControl>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent className="w-[200px] p-0">
+                                                                    <Command>
+                                                                        <CommandInput
+                                                                        placeholder="Search institution..."
+                                                                        className="h-9"
+                                                                        />
+                                                                        <ScrollArea className="h-60 w-48 rounded-md">
+                                                                        <CommandEmpty>No institution found.</CommandEmpty>
+                                                                        <CommandGroup>
+                                                                        {institutions.map((institution) => (
+                                                                            <CommandItem
+                                                                            value={institution.label}
+                                                                            key={institution.value}
+                                                                            onSelect={() => {
+                                                                                form.setValue("edu_pro_qualifications.institution", institution.value)
+                                                                            }}
+                                                                            >
+                                                                            {institution.label}
+                                                                            <CheckIcon
+                                                                                className={cn(
+                                                                                "ml-auto h-4 w-4",
+                                                                                institution.value === field.value
+                                                                                    ? "opacity-100"
+                                                                                    : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                            </CommandItem>
+                                                                        ))}
+                                                                        </CommandGroup>
+                                                                        </ScrollArea>
+                                                                    </Command>
+                                                                    </PopoverContent>
+                                                                </Popover>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                            )}
+                                                        />  
+                                                </div>
+                                                <div>
+                                                    <div>
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="edu_pro_qualifications.qualification_year"
+                                                            render={({field}) =>{
+                                                                return <FormItem>
+                                                                    <FormLabel>Year Of Completion</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input
+                                                                        type="number"
+                                                                        placeholder="Year..."
+                                                                        {...field}
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            }}
+                                                        />  
+                                                    </div>
+                                                </div>
+                                                <div className="">
+                                                    <FormField
+                                                    control={form.control}
+                                                    name="edu_pro_qualifications.teaching_subjects"
+                                                    render={({field}) =>{
+                                                        return <FormItem>
+                                                            <FormLabel>Teaching Subjects</FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                placeholder="Minor and Major subjects"
+                                                                {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    }}
+                                                />  
+                                                </div>
+                                                <div className="">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="edu_pro_qualifications.attachment"
+                                                    render={({ field }) => {
+                                                        return (
+                                                        <FormItem>
+                                                            <FormLabel>Attach a Qualification document</FormLabel>
+                                                            <FormControl>
+                                                            <Input
+                                                            type="file"
+                                                            placeholder="Attach a file"
+                                                            {...AttachmentFile}
+                                                            onChange={(event) => {
+                                                                field.onChange(event.target?.files?.[0] ?? undefined);
+                                                            }}
+                                                            />
+                                                            </FormControl>
+                                                            <FormDescription>
+                                                                Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
+                                                            </FormDescription>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                        );
+                                                    }}
+                                                    />
+                                                </div>
+                                                <div className="flex justify-center my-5">
+                                                    <button 
+                                                    type="button" 
+                                                    hidden
+                                                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
                                     {showDiplomaLevel && <DiplomaLevel/>}
                                     {showCertificationLevel && <CertificationLevel/>}
                                     {showPostGradDiplomaLevel && <PostGradDiplomaLevel/>}

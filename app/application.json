@@ -2,10 +2,7 @@
     "teacher_registrations":{
         "reg_number":"GH6778888",
         "reg_status":"Pending-Screening",
-        "registration_type":"Teacher",
-        "disability":"Yes",
-        "disability_description":"left eye is impaired and dont see clearly on cold conditions"
-
+        "registration_type":"Teacher"
     },
     "bio_datas":{
         "national_id":"936510813",
@@ -22,8 +19,9 @@
         "marital_status":"Single",
         "next_of_kin_name":"Sarah Cornor",
         "next_of_kin_relation":"Mother",
-        "next_of_kin_contact":"26776554321"
-       
+        "next_of_kin_contact":"26776554321",
+        "disability":"Yes",
+        "disability_description":"left eye is impaired and dont see clearly on cold conditions"
     },
     "declarations":{
         "agreement":true,
@@ -33,18 +31,60 @@
         "national_id_copy":"nationalID_copy.pdf",
         "qualification_copy":"Qualification_copy.pdf",
         "proof_of_payment":"FNB_proof.pdf"
-        
     },
-    "edu_pro_qualifications":{
-        "level":"masters",
-        "qualification":"MSc. Applied Sciences",
-        "institution":"University of Botswana",
-        "qualification_year":"2019",
-        "teaching_subjects":"Mathematics and Sciences"
-    },
+    "edu_pro_qualifications":[
+        {
+            "level":"masters",
+            "qualification":"MSc. Applied Sciences",
+            "institution":"University of Botswana",
+            "qualification_year":2019,
+            "attachments": "degree.pdf",
+            "minor_subjects":[
+                "Advanced Mathematics",
+                "Advanced Biology",
+                "Advanced Physics"
+            ],
+            "major_subjects":[
+                "Add Maths",
+                "Social Sciences"
+            ]
+        },
+        {
+            "level":"degree",
+            "qualification":"Bsc. Applied Sciences",
+            "institution":"University of Botswana",
+            "qualification_year":2012,
+            "teaching_subjects":"Mathematics and Sciences",
+            "attachments": "degree.pdf",
+            "minor_subjects":[
+                "Mathematics",
+                "Biology"
+            ],
+            "major_subjects":[
+                "Add Maths",
+                "Social Sciences"
+            ]
+        },
+        {
+            "level":"certificate",
+            "qualification":"Bsc. Applied Sciences",
+            "institution":"University of Botswana",
+            "qualification_year":2012,
+            "teaching_subjects":"Mathematics and Sciences",
+            "attachments": "degree.pdf",
+            "minor_subjects":[
+                "Mathematics",
+                "Biology"
+            ],
+            "major_subjects":[
+                "Add Maths",
+                "Social Sciences"
+            ]
+        }
+    ],
     "employment_details":{
         "experience_years":4,
-        "current_institution":"Moeding Colledge",
+        "current_institution":"Moeding College",
         "institution_type":"Public",
         "region":"South East",
         "district":"South East District",
@@ -52,12 +92,9 @@
     },
     "institution_recommendations":{
         "recommended":"Yes",
-        "comment":"An exceptional and hard worker",
-        "name":"Dr. W Wendy",
-        "signature":"W. Wendy"
+        "attachment": "recommendationletter.pdf"
     },
     "offence_convictions": {
-        "national_id": "empty",
         "student_related_offence": "No",
         "student_related_offence_details": "N/A",
         "drug_related_offence": "No",
@@ -86,8 +123,5 @@
         "work_status":"Serving",
         "practice_category":"Senior Secondary",
         "sub_cateogry":"N/A"
-        
     }
-    
-    
 }

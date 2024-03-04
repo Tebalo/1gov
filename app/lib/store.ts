@@ -155,40 +155,45 @@ export const steps = [
     },
     {
         id: 'Step 2',
-        name: 'EMPLOYMENT',
+        name: 'BIO DATA',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 3',
-        name: 'QUALIFICATIONS',
+        name: 'EMPLOYMENT',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 4',
+        name: 'QUALIFICATIONS',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 5',
         name: 'DISABILITY',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 5',
+        id: 'Step 6',
         name: 'OFFENCE',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 5',
+        id: 'Step 7',
         name: 'ATTACHMENTS',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 5',
+        id: 'Step 8',
         name: 'DECLARATION',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 6',
+        id: 'Step 9',
         name: 'PREVIEW'
     },
     {
-        id: 'Step 7',
+        id: 'Step 10',
         name: 'COMPLETE'
     },
 ]
@@ -201,25 +206,30 @@ export const studentSteps = [
     },
     {
         id: 'Step 2',
-        name: 'STUDY PROGRAMME',
+        name: 'BIO DATA',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 3',
-        name: 'DECLARATION',
+        name: 'STUDY PROGRAMME',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 4',
-        name: 'RECOMMENDATION',
+        name: 'DECLARATION',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 5',
-        name: 'PREVIEW'
+        name: 'RECOMMENDATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
         id: 'Step 6',
+        name: 'PREVIEW'
+    },
+    {
+        id: 'Step 7',
         name: 'COMPLETE'
     },
 ]
