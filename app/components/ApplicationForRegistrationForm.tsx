@@ -161,18 +161,21 @@ const programmes = [
 
 const Signature = "O.Serala";
 
-async function getSchool(){
-    const schools = await fetch('http://66.179.253.57/api/public_schools/', { next: { tags: ['collection'] }})
-    if(!schools.ok){
-       // schools = institutions;
-       throw new Error('Failed to fetch data')
-    }
-    return schools.json()
-}
+// async function getSchool(){
+//     const schools = await fetch('http://66.179.253.57/api/public_schools/', { next: { tags: ['collection'] }})
+//     if(!schools.ok){
+//        // schools = institutions;
+//        console.log("Error")
+//        throw new Error('Failed to fetch data')
+//     }
+//     return schools.json()
+// }
 
 export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = ({onClose}) => {
     //const schools = await getSchool()
     //console.log(schools)
+    //const schools =  getSchool()
+    //console.log(schools);
     const [previousStep, setPreviousStep] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const delta = currentStep - previousStep
@@ -469,12 +472,12 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file); // Read as Data URL (includes Base64 encoding)
-            //reader.readAsText(file)
-            //reader.onload = () => resolve((reader.result as string));
-            //console.log('Base64Log',reader.result)
             reader.onload = () => {
                 const base64 = (reader.result as string).split(',')[1];
+                console.log(base64)
+                //attachment = base64
                 resolve(base64);
+                //return base64;
             };
             reader.onerror = error => reject(error);
         });
@@ -486,15 +489,65 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         //console.log(values.attachments.national_id_copy);
         const formData = new FormData();
         //console.log('File: ',values.institution_recommendations.attachment)
-        if(values.institution_recommendations.attachment !== (null || undefined) ){
-            values.institution_recommendations.attachment = convertFileToBase64(values.institution_recommendations.attachment);
+        // let base64 = "";
+        // if(values.institution_recommendations.attachment !== (null || undefined) ){
+        //     const reader = new FileReader();
+        //     reader.readAsDataURL(values.institution_recommendations.attachment);
+        //     reader.onload = () => {
+        //         base64 = (reader.result as string).split(',')[1];
+        //     }
+        //     }
+        //     //values.institution_recommendations.attachment = convertFileToBase64(values.institution_recommendations.attachment);
+        //     console.log('Here=>',values.institution_recommendations.attachment);
+        // }
+        
+
+        if (values.institution_recommendations.attachment) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                values.institution_recommendations.attachment = (reader.result as string).split(',')[1];
+                //console.log('Base64 string:', base64);
+                // Now you can use the base64 string here or trigger further actions
+            };
+            reader.readAsDataURL(values.institution_recommendations.attachment);
+            values.attachments.national_id_copy = "Hello world"
+            //values.institution_recommendations.attachment = base64
+            //console.log(values.institution_recommendations.attachment);
         }
+        // if (values.attachments.national_id_copy) {
+        //     const reader = new FileReader();
+        //     reader.onload = () => {
+        //         values.attachments.national_id_copy = (reader.result as string).split(',')[1];
+        //         //console.log('Base64 string:', base64);
+        //         // Now you can use the base64 string here or trigger further actions
+        //     };
+        //     reader.readAsDataURL(values.attachments.national_id_copy);
+        // }
+
+        // if(values.attachments.proof_of_payment){
+        //     const reader = new FileReader();
+        //     reader.onload = () =>{
+        //         values.attachments.proof_of_payment=  (reader.result as string).split(',')[1];
+        //     };
+        //     reader.readAsDataURL(values.attachments.proof_of_payment)
+        // }
+        
+        // if(values.attachments.qualification_copy){
+        //     const reader = new FileReader();
+        //     reader.onload = () =>{
+        //         values.attachments.qualification_copy =  (reader.result as string).split(',')[1];
+        //     };
+        //     reader.readAsDataURL(values.attachments.qualification_copy)
+        // }
         //console.log('Encoded',JSON.stringify(values.institution_recommendations.attachment))
         //const binaryData = Buffer.from(values.institution_recommendations.attachment, 'base64');
         //console.log(binaryData);
-    
+        // json = {
+        //     "base64": values.institution_recommendations.attachment
+        // }
+        //console.log(base64)
         try{
-        formSchema.parse(values); // vValidate form values using zod
+        //formSchema.parse(values); // vValidate form values using zod
         /**const valueswithBio = {
             ...values,
             bio_datas: {
@@ -538,12 +591,13 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
         })
         if(!response.ok){
-            //setCurrentStep(step => step + 1)
+            setCurrentStep(step => step + 1)
             throw new Error("Failed to register");
         }
-        form.reset();
+        
         setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
-      }catch (error:any){
+        //form.reset();
+    }catch (error:any){
         //console.error('Error registering', error.message);
         setIsErrorAlert(true);
       }finally{
@@ -635,6 +689,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const [misconductFlagLetter, setMisconductFlagLetter] = useState('');
 
     //const [applicationType, setApplicationType] = useState('');
+
 
     return(
         <div>
@@ -1868,7 +1923,7 @@ I am aware that the Council may collect and verify information about my qualific
                                                 name={`edu_pro_qualifications.${index}.major_subjects.${index}`}
                                                 render={({field}) =>{
                                                     return <FormItem>
-                                                            <FormLabel>Minor subject</FormLabel>
+                                                            <FormLabel>Major subject</FormLabel>
                                                             <Select onValueChange={field.onChange} value={field.value}>
                                                                 <FormControl>
                                                                     <SelectTrigger>
@@ -2410,6 +2465,7 @@ I am aware that the Council may collect and verify information about my qualific
                                                 <FormControl>
                                                 <Input
                                                 type="file"
+                                                accept="application/pdf"
                                                 placeholder="Attach a file"
                                                 {...fileID}
                                                 onChange={(event) => {
@@ -2755,39 +2811,39 @@ renewed before it expires in accordance with the Regulations.</li>
                         </motion.div>             
                     )}
                      {/* Navigation Buttons*/}
-                    <div className='flex float-end space-x-2 mx-5'>
-                        <button 
+                        <div className='flex float-end space-x-2 mx-5'>
+                            <button 
                             type="button" 
-                            hidden={(applicationType === 'teacher' && (currentStep !== steps.length - 1)) || (applicationType === 'student' && (currentStep !== studentSteps.length - 1))}
+                            hidden={(applicationType==='') || (applicationType === 'teacher' && (currentStep !== steps.length - 1)) || (applicationType === 'student' && (currentStep !== studentSteps.length - 1))}
                             onClick={onClose}
                             className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                             >Close</button>
                             <button 
                             type="button" 
-                            hidden={(applicationType === 'teacher' && (currentStep === 0 || currentStep === steps.length - 1)) || (applicationType === 'student' && (currentStep === 0 || currentStep === studentSteps.length - 1))}
+                            hidden={(applicationType==='') || (applicationType === 'teacher' && (currentStep === 0 || currentStep === steps.length - 1)) || (applicationType === 'student' && (currentStep === 0 || currentStep === studentSteps.length - 1))}
                             className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                             >Save</button>
                             <button 
                             type="button" 
                             onClick={prev}
-                            hidden={(applicationType === 'teacher' && (currentStep === 0 || currentStep === steps.length - 1)) || (applicationType === 'student' && (currentStep === 0 || currentStep === studentSteps.length - 1))}
+                            hidden={(applicationType==='') || (applicationType === 'teacher' && (currentStep === 0 || currentStep === steps.length - 1)) || (applicationType === 'student' && (currentStep === 0 || currentStep === studentSteps.length - 1))}
                             className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                             >Prev</button>
                             <button 
                             type="button" 
-                            hidden={(applicationType === 'teacher' && ((currentStep === steps.length - 1) || (currentStep === steps.length - 2) || (currentStep === steps.length - 1))) || (applicationType === 'student' && ((currentStep === studentSteps.length - 1) || (currentStep === studentSteps.length - 2) || (currentStep === studentSteps.length - 1)))}
+                            hidden={(applicationType==='') || (applicationType === 'teacher' && ((currentStep === steps.length - 1) || (currentStep === steps.length - 2) || (currentStep === steps.length - 1))) || (applicationType === 'student' && ((currentStep === studentSteps.length - 1) || (currentStep === studentSteps.length - 2) || (currentStep === studentSteps.length - 1)))}
                             onClick={next}
                             disabled={(applicationType === 'teacher' && currentStep === steps.length - 3 && (isProfileChecked === false || IsAgreement !== true )) || (applicationType === 'student' && currentStep === studentSteps.length - 4 && (isProfileChecked === false || IsAgreement !== true ))}
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
                             >Next</button>
                             <button 
                             type="submit" 
-                            hidden={(applicationType === 'teacher' && currentStep !== steps.length - 2) || (applicationType === 'student' && currentStep !== studentSteps.length - 2)}
+                            hidden={(applicationType==='') || (applicationType === 'teacher' && (currentStep !== steps.length -2 || currentStep !== steps.length - 2)) || (applicationType === 'student' && currentStep !== studentSteps.length - 2)}
                             disabled={isSubmitting} // Disable the button while submitting
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
                             >{isSubmitting? "Submitting...." : "Submit"}</button>
-                    </div>
-                </form>
+                        </div>
+                    </form>
                 </Form>
             </div>
         </div>
