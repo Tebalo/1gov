@@ -28,9 +28,13 @@ const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/msword', 'applicati
 export const teacherPreliminaryInfoSchema = z.object({
   /**
    * Preliminary Info schema.*/
-  work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]).optional(),
-  practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary","N/A"]).optional(),
-  sub_category: z.enum(["teacher-aide", "tutor", "special education", "educational support services", "education administrator"]).optional(),
+  work_status: z.string().optional(),
+  practice_category: z.string().optional(),
+  sub_cateogry: z.string().optional(),
+
+  //work_status: z.enum(["student/teacher", "unemployed", "serving", "retired", "educational consultant"]).optional(),
+  //practice_category: z.enum(["pre-primary", "primary", "junior secondary", "secondary","N/A"]).optional(),
+  //sub_category: z.enum(["teacher-aide", "tutor", "special education", "educational support services", "education administrator"]).optional(),
   citizen_status: z.string().optional(),
 })
 
@@ -47,12 +51,12 @@ export const offenceConvictions = z.object({
   /**
    * Capture offence convictions object
   */
-  student_related_offence: z.enum(["yes", "no"]).optional(),
+  student_related_offence: z.string().optional(),
   student_related_offence_details: z.string().optional(),
-  drug_related_offence: z.enum(["yes", "no"]).optional(),
+  drug_related_offence: z.string().optional(),
   drug_related_offence_details: z.string().optional(),
-  license_flag: z.enum(["yes", "no"]).optional(),
-  misconduct_flag: z.enum(["yes", "no"]).optional(),
+  license_flag: z.string().optional(),
+  misconduct_flag: z.string().optional(),
   //offence_type: z.string().optional(),
   //conviction_status: z.string().optional(),
   //sentence_outcome: z.string().optional(),
@@ -79,8 +83,6 @@ export const teacherRegistrations = z.object({
   */
   registration_type: z.string().optional(),
   reg_status: z.string().optional(),
-  disability: z.enum(["yes","no"]).optional(),
-  disability_description: z.string().optional(),
   reg_number: z.string().optional(),
 })
 
@@ -99,7 +101,8 @@ export const employmentDetails = z.object({
      * Employment Details schema.*/
     experience_years: z.coerce.number().optional(),
     current_institution: z.string().optional(),
-    institution_type: z.enum(["private", "public"]).optional(),
+    //institution_type: z.enum(["private", "public"]).optional(),
+    institution_type: z.string().optional(),
     region: z.string().optional(),
     district: z.string().optional(),
     city_or_town: z.string().optional(),
@@ -148,10 +151,7 @@ export const studentPreliminaryInfos = z.object( {
 
 export const institutionRecommendations = z.object({
   recommended: z.string().optional(),
-  comment: z.string().optional(),
-  name: z.string().optional(),
-  signature: z.string().optional(),
-  recommendationLetter: typeof window === "undefined" ? z.any():
+  attachment: typeof window === "undefined" ? z.any():
   z
   .any()
   .optional(),
@@ -187,6 +187,9 @@ const bioDatasSchema = z.object({
   next_of_kin_name: z.string(),
   next_of_kin_relation: z.string(),
   next_of_kin_contact: z.string(),
+  //disability: z.enum(["yes","no"]).optional(),
+  disability: z.string().optional(),
+  disability_description: z.string().optional(),
 });
 
 export const formSchema = z.object({

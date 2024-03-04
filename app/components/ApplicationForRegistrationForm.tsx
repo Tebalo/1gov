@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {Stepper } from "./Stepper";
 import {motion} from 'framer-motion';
 import { FormDataSchema, formSchema, teacherPreliminaryInfoSchema, studentStudyProgrammes, offenceConvictions,teacherRegistrations,declarations,employmentDetails,attachments, studentPreliminaryInfos, institutionRecommendations, qualificationSchema   } from "../lib/schema";
@@ -66,6 +66,8 @@ import {
 
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import axios from 'axios';
+import { resolve } from "path";
+import { rejects } from "assert";
 
 interface RegistrationFormProps{
     onClose: () => void;
@@ -157,7 +159,7 @@ const programmes = [
     { label: "Master of Educational Leadership and Management", value: "Master of Educational Leadership and Management", institution:"BA ISAGO University" },
 ] as const;
 
-const Signature = "J. Doe";
+const Signature = "O.Serala";
 
 async function getSchool(){
     const schools = await fetch('http://66.179.253.57/api/public_schools/', { next: { tags: ['collection'] }})
@@ -193,32 +195,31 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         resolver: zodResolver(formSchema),
         defaultValues:{
             teacher_preliminary_infos: {
-                //citizen_status: "",
-                //sub_category: "N/A",
-                //practice_category: "N/A",
-                //work_status: "N/A"
+                citizen_status: "Citizen",
+                sub_cateogry: "",
+                practice_category: "",
+                work_status: ""
             },
             employment_details: {
-                //current_institution: "N/A",
+                current_institution: "",
+                institution_type: "",
                 experience_years: 0,
-                //region: "N/A",
-                //district: "N/A",
-                //city_or_town: "N/A"
+                region: "",
+                district: "",
+                city_or_town: ""
             },
             offence_convictions: {
-                //conviction_status: "N/A",
-                //court_jurisdiction: "N/A",
-                //date_of_conviction: undefined,
-                //offence_type: "N/A",
-                //sentence_outcome: "N/A",
-                //drug_conviction_status: "N/A",
-                //jurisdiction_drugs: "N/A",
-                //substance_involved: "N/A",
+                student_related_offence: "",
+                student_related_offence_details: "",
+                drug_related_offence: "",
+                drug_related_offence_details: "",
+                license_flag: "",
+                misconduct_flag:"",
             },
-            //declarations:{
-                //signature: "J.Doe",
+            declarations:{
+                signature: "0.Serala",
                 //agreement: false,
-            //},
+            },
             edu_pro_qualifications: [
                 {
                     level: "",
@@ -234,28 +235,28 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 }
             ],
             student_study_programmes: {
-                //name: "N/A",
-                //completion_year: "N/A",
-                //level: "N/A",
+                name: "",
+                completion_year: "",
+                level: "",
                 duration: 0,
-                //specialization: "N/A"
+                mode_of_study:"",
+                specialization: ""
             }, 
             teacher_registrations: {
+                registration_type: ""
                 //reg_number: "N/A",
                 //reg_status: "N/A",
                 //disability_description:"N/A",
             },
             institution_recommendations:{
-                //recommended: "N/A",
-                //comment: "N/A",
-                //name: "N/A",
-                //signature: "N/A"
+                recommended: "",
+                //signature: ""
             },
             student_preliminary_infos:{
-                //institution_name:"N/A",
-                //institution_type: "N/A",
-                //citizenry: "N/A",
-                //study_area: "N/A"
+                institution_name:"",
+                institution_type: "",
+                citizenry: "",
+                study_area: ""
             },
             bio_datas:{
                 national_id: "440418213",
@@ -272,13 +273,15 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 marital_status: "Single",
                 next_of_kin_name: "Sarah Cornor",
                 next_of_kin_relation: "Mother",
-                next_of_kin_contact: "26776554321"
+                next_of_kin_contact: "26776554321",
+                disability: "",
+                disability_description: "",
             }
         }
     })
 
     // Watch function, for dynamic changes
-    const disabilityFlag = form.watch("teacher_registrations.disability");
+    const disabilityFlag = form.watch("bio_datas.disability");
     
     const fileRef = form.register("offence_convictions.license_flag_details");
     const fileID = form.register("attachments.national_id_copy");
@@ -291,13 +294,13 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const IsAgreement = form.watch("declarations.agreement");
 
     // Stundent-Teacher registration
-    const RecommendationFile = form.watch("institution_recommendations.recommendationLetter");
+    const RecommendationFile = form.watch("institution_recommendations.attachment");
 
     // Teacher registration
     // Teacher Priliminary Infos
     const workStatus = form.watch("teacher_preliminary_infos.work_status");
     const practiceCategory = form.watch("teacher_preliminary_infos.practice_category");
-    const subCategory = form.watch("teacher_preliminary_infos.sub_category");
+    const subCategory = form.watch("teacher_preliminary_infos.sub_cateogry");
     const applicationType = form.watch("teacher_registrations.registration_type");
 
     // Employment Details
@@ -317,8 +320,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
 
 
     // Disability
-    const disability = form.watch("teacher_registrations.disability");
-    const disabilityDescription = form.watch("teacher_registrations.disability_description");
+    const disability = form.watch("bio_datas.disability");
+    const disabilityDescription = form.watch("bio_datas.disability_description");
 
     // Offence
     // 1st question
@@ -456,18 +459,43 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         }   
     }
 
-
+    /**
+     * 
+     * @param file 
+     * @returns base64
+     * @description Base64 Encoding
+     */
+    const convertFileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file); // Read as Data URL (includes Base64 encoding)
+            //reader.readAsText(file)
+            //reader.onload = () => resolve((reader.result as string));
+            //console.log('Base64Log',reader.result)
+            reader.onload = () => {
+                const base64 = (reader.result as string).split(',')[1];
+                resolve(base64);
+            };
+            reader.onerror = error => reject(error);
+        });
+    };
     
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true); // Change state to indicate submitting
         setIsErrorAlert(false);
-        console.log(values.attachments.national_id_copy);
+        //console.log(values.attachments.national_id_copy);
         const formData = new FormData();
-        
-        
+        //console.log('File: ',values.institution_recommendations.attachment)
+        if(values.institution_recommendations.attachment !== (null || undefined) ){
+            values.institution_recommendations.attachment = convertFileToBase64(values.institution_recommendations.attachment);
+        }
+        //console.log('Encoded',JSON.stringify(values.institution_recommendations.attachment))
+        //const binaryData = Buffer.from(values.institution_recommendations.attachment, 'base64');
+        //console.log(binaryData);
+    
         try{
         formSchema.parse(values); // vValidate form values using zod
-        const valueswithBio = {
+        /**const valueswithBio = {
             ...values,
             bio_datas: {
                 national_id: "440418213",
@@ -486,11 +514,11 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 next_of_kin_relation: "Mother",
                 next_of_kin_contact: "26776554321"
               }
-        }
-        const formData = new FormData();
+        }*/
+        //const formData = new FormData();
         //Object.keys(valueswithBio).forEach(key =>{
-            formData.append("DOB", valueswithBio.bio_datas.dob);
-            formData.append("ID", valueswithBio.attachments.national_id_copy);
+        //formData.append("DOB", valueswithBio.bio_datas.dob);
+        //formData.append("ID", valueswithBio.attachments.national_id_copy);
        // })
         //formData.append(values.attachments.national_id_copy,values.attachments.national_id_copy);
         //formData.append(values.attachments.proof_of_payment,values.attachments.proof_of_payment);
@@ -500,7 +528,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         const response = await fetch(registrationEndpoint,{
             method: 'POST',
             headers: {
-                //'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
                 //'Accept': '*/*',
                 'Accept-Encoding': 'gzip, deflate, br',
                 'Connection': 'keep-alive'
@@ -510,6 +538,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
         })
         if(!response.ok){
+            //setCurrentStep(step => step + 1)
             throw new Error("Failed to register");
         }
         form.reset();
@@ -522,43 +551,43 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
       }
     }
 
-    const handleSubmit1 = async (values: z.infer<typeof formSchema>) => {
-        setIsSubmitting(true); // Change state to indicate submitting
-        setIsErrorAlert(false);
+    // const handleSubmit1 = async (values: z.infer<typeof formSchema>) => {
+    //     setIsSubmitting(true); // Change state to indicate submitting
+    //     setIsErrorAlert(false);
 
-        try {
-            formSchema.parse(values); // Validate with Zod
+    //     try {
+    //         formSchema.parse(values); // Validate with Zod
     
-            const formData = new FormData();
-            const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
-            // Add JSON data
-            const valuesWithBio = {
-                ...values,
-                //bio_datas: { 
-                    // ... your bio_datas fields
-                //}
-            };
+    //         const formData = new FormData();
+    //         const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
+    //         // Add JSON data
+    //         const valuesWithBio = {
+    //             ...values,
+    //             //bio_datas: { 
+    //                 // ... your bio_datas fields
+    //             //}
+    //         };
     
-            // Add files (assuming file input fields are named appropriately)
-            if (values.attachments?.national_id_copy) { 
-                formData.append('national_id_copy', values.attachments.national_id_copy[0]);
-            }
-            // ... add other file fields similarly
+    //         // Add files (assuming file input fields are named appropriately)
+    //         if (values.attachments?.national_id_copy) { 
+    //             formData.append('national_id_copy', values.attachments.national_id_copy[0]);
+    //         }
+    //         // ... add other file fields similarly
     
-            // Send the request using fetch
-            const response = await fetch(registrationEndpoint, { 
-                method: 'POST',
-                body: formData 
-            });
+    //         // Send the request using fetch
+    //         const response = await fetch(registrationEndpoint, { 
+    //             method: 'POST',
+    //             body: formData 
+    //         });
     
-           // ... handle response and errors as before 
+    //        // ... handle response and errors as before 
     
-       } catch (error) {
-           // ... handle errors
-       } finally {
-           setIsSubmitting(false);
-       }
-    }
+    //    } catch (error) {
+    //        // ... handle errors
+    //    } finally {
+    //        setIsSubmitting(false);
+    //    }
+    // }
 
 
     const [showDiplomaLevel, setShowDiplomaLevel] = useState(false);
@@ -858,7 +887,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                 {applicationType === 'teacher' &&
                                     <FormField
                                         control={form.control}
-                                        name="teacher_preliminary_infos.sub_category"
+                                        name="teacher_preliminary_infos.sub_cateogry"
                                         render={({field}) =>{
                                             return <FormItem>
                                                     <FormLabel>Select practice sub-category</FormLabel>
@@ -1289,7 +1318,7 @@ I am aware that the Council may collect and verify information about my qualific
                                 {Recommended === "yes" &&
                                 <FormField
                                 control={form.control}
-                                name="institution_recommendations.recommendationLetter"
+                                name="institution_recommendations.attachment"
                                 render={({ field }) => {
                                     return (
                                     <FormItem>
@@ -1297,6 +1326,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <FormControl>
                                         <Input
                                         type="file"
+                                        accept="application/pdf"
                                         placeholder="Attach a file"
                                         {...RecommendationFile}
                                         onChange={(event) => {
@@ -1947,7 +1977,7 @@ I am aware that the Council may collect and verify information about my qualific
                             <div>
                                 <FormField
                                     control={form.control}
-                                    name="teacher_registrations.disability"
+                                    name="bio_datas.disability"
                                     render={({field}) =>{
                                         return <FormItem className="space-y-3">
                                             <FormLabel>Are you living with any form of disability</FormLabel>
@@ -1986,7 +2016,7 @@ I am aware that the Council may collect and verify information about my qualific
                             {disabilityFlag === "yes" && 
                             <FormField
                                 control={form.control}
-                                name="teacher_registrations.disability_description"
+                                name="bio_datas.disability_description"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                         <FormLabel>Nature of Disability</FormLabel>
@@ -2024,7 +2054,7 @@ I am aware that the Council may collect and verify information about my qualific
                                                     value={disability.label}
                                                     key={disability.value}
                                                     onSelect={() => {
-                                                        form.setValue("teacher_registrations.disability_description", disability.value)
+                                                        form.setValue("bio_datas.disability_description", disability.value)
                                                     }}
                                                     >
                                                     {disability.label}
@@ -2728,19 +2758,19 @@ renewed before it expires in accordance with the Regulations.</li>
                     <div className='flex float-end space-x-2 mx-5'>
                         <button 
                             type="button" 
-                            hidden={currentStep !== steps.length - 1}
+                            hidden={(applicationType === 'teacher' && (currentStep !== steps.length - 1)) || (applicationType === 'student' && (currentStep !== studentSteps.length - 1))}
                             onClick={onClose}
                             className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                             >Close</button>
                             <button 
                             type="button" 
-                            hidden={currentStep === 0 || currentStep === steps.length - 1}
+                            hidden={(applicationType === 'teacher' && (currentStep === 0 || currentStep === steps.length - 1)) || (applicationType === 'student' && (currentStep === 0 || currentStep === studentSteps.length - 1))}
                             className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                             >Save</button>
                             <button 
                             type="button" 
                             onClick={prev}
-                            hidden={currentStep === 0 || currentStep === steps.length - 1}
+                            hidden={(applicationType === 'teacher' && (currentStep === 0 || currentStep === steps.length - 1)) || (applicationType === 'student' && (currentStep === 0 || currentStep === studentSteps.length - 1))}
                             className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                             >Prev</button>
                             <button 
