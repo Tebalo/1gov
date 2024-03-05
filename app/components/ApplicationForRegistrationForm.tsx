@@ -772,7 +772,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                                         <RadioGroupItem value="student" />
                                                         </FormControl>
                                                         <FormLabel className="font-normal">
-                                                        Student/Teacher
+                                                        Student-Teacher
                                                         </FormLabel>
                                                     </FormItem>
                                                     <FormItem className="flex items-center space-x-3 space-y-0">
@@ -1846,7 +1846,7 @@ I am aware that the Council may collect and verify information about my qualific
                                                         </FormItem>
                                                     }}
                                                 />                                                      
-                                                <FormField
+                                                {/* <FormField
                                                     control={form.control}
                                                     name={`edu_pro_qualifications.${index}.institution`}
                                                     render={({ field }) => (
@@ -1908,7 +1908,23 @@ I am aware that the Council may collect and verify information about my qualific
                                                             <FormMessage />
                                                         </FormItem>
                                                         )}
-                                                    />  
+                                                    />   */}
+                                                    <FormField
+                                                    control={form.control}
+                                                    name={`edu_pro_qualifications.${index}.institution`}
+                                                    render={({field}) =>{
+                                                        return <FormItem>
+                                                            <FormLabel>Awarding Institution</FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                placeholder="Institution name"
+                                                                {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    }}
+                                                />   
                                                 <FormField
                                                     control={form.control}
                                                     name={`edu_pro_qualifications.${index}.qualification_year`}
