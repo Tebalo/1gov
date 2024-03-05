@@ -235,6 +235,42 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                     major_subjects: [
                         ""
                     ]
+                },
+                {
+                    level: "",
+                    qualification: "",
+                    institution: "",
+                    qualification_year: "",
+                    minor_subjects:[
+                        ""
+                    ],
+                    major_subjects: [
+                        ""
+                    ]
+                },
+                {
+                    level: "",
+                    qualification: "",
+                    institution: "",
+                    qualification_year: "",
+                    minor_subjects:[
+                        ""
+                    ],
+                    major_subjects: [
+                        ""
+                    ]
+                },
+                {
+                    level: "",
+                    qualification: "",
+                    institution: "",
+                    qualification_year: "",
+                    minor_subjects:[
+                        ""
+                    ],
+                    major_subjects: [
+                        ""
+                    ]
                 }
             ],
             student_study_programmes: {
