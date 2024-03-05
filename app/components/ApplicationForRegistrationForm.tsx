@@ -1024,8 +1024,6 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                         <FormControl>
                                             <Input
                                             placeholder="national id"
-                                            minLength={8}
-                                            maxLength={8}
                                             {...field}
                                             />
                                         </FormControl>
