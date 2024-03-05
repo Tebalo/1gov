@@ -172,7 +172,7 @@ export const qualificationSchema = z.object({
 })
 
 const bioDatasSchema = z.object({
-  national_id: z.string(),
+  national_id: z.string().min(8).max(8),
   surname: z.string(),
   forenames: z.string(),
   dob: z.string(), // Assuming date format is string
