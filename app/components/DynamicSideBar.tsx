@@ -38,6 +38,7 @@ const adminPortalSItems: SideBarItem[] = [
 const DynamicSidebar: React.FC = ({}) => {
     const currentPath = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [currentPortal, setCurrentPortal] = useState(() => {
         // Initialize currentPortal with the value from localStorage if available, otherwise default to 'customer'
         if(typeof window !== 'undefined'){
@@ -47,7 +48,12 @@ const DynamicSidebar: React.FC = ({}) => {
     });
 
     const toggleDropdown = () => {
+        setIsProfileOpen(false);
         setIsDropdownOpen((prev) => !prev);
+    };
+    const toggleProfile = () => {
+        setIsDropdownOpen(false);
+        setIsProfileOpen((prev) => !prev);
     };
     const handleChangePortal = (value: string) => {
         setCurrentPortal(value)
@@ -144,7 +150,7 @@ const DynamicSidebar: React.FC = ({}) => {
                         className="flex items-center w-full p-2 text-base text-gray-100 transition duration-75 rounded-lg group" 
                         aria-controls="dropdown-example" 
                         data-dropdown-toggle="doubleDropdown"
-                        onClick={toggleDropdown}
+                        onClick={toggleProfile}
                     >
                         <div className="flex lg:justify-start justify-center md:w-full">
                             <div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
@@ -183,6 +189,41 @@ const DynamicSidebar: React.FC = ({}) => {
                             </Link>
                         </ul>
                     </div>
+
+                    <div className={`md:absolute top-full text-sm border -mt-40 -mr-60 right-0 ${isProfileOpen ? '' : 'hidden'} z-50 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-60`}>
+                        <ul id="dropdown-example" aria-labelledby="dropDownButton">
+
+                            <Link
+                            href="/portal/dashboard/home-o"
+                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>Profile</span>
+                            </Link>
+                            <Link
+                            href="/portal/dashboard/home-o"
+                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>Preferences</span>
+                            </Link>
+                            <Link
+                            href="/portal/dashboard/home-o"
+                            onClick={()=> handleChangePortal('registrationOfficer')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>About this app</span>
+                            </Link>
+                            <Link
+                            href="/welcome"
+                            onClick={()=> handleChangePortal('admin')}
+                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100"
+                            >
+                                <span>Logout</span>
+                            </Link>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </aside>

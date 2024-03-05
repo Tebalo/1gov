@@ -591,8 +591,13 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
         })
         if(!response.ok){
-            setCurrentStep(step => step + 1)
-            throw new Error("Failed to register");
+            //setCurrentStep(step => step + 1)
+            const responseBody = await response.json();
+            if(responseBody.message.includes("Error! The National ID used already exists in our database")){
+                throw new Error("National ID already exists in the database.");
+            } else{
+                throw new Error("Failed to register");
+            }
         }
         
         setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
@@ -1412,7 +1417,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <ExclamationTriangleIcon className="h-4 w-4" />
                                         <AlertTitle>Error</AlertTitle>
                                         <AlertDescription>
-                                            Error submitting application, server error. Try again later...
+                                        Error submitting application, possible duplicate. Try again later...
                                         </AlertDescription>
                                     </Alert>
                                 </div>
@@ -2620,13 +2625,13 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        {isErrorAlert &&
+                            {isErrorAlert &&
                             <div className="mr-1">
                                 <Alert variant="destructive">
                                     <ExclamationTriangleIcon className="h-4 w-4" />
                                     <AlertTitle>Error</AlertTitle>
                                     <AlertDescription>
-                                        Error submitting application, server error. Try again later...
+                                        Error submitting application, possible duplicate. Try again later...
                                     </AlertDescription>
                                 </Alert>
                             </div>
