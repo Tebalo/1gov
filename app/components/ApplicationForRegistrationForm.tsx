@@ -608,7 +608,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         //formData.append(values.attachments.proof_of_payment,values.attachments.proof_of_payment);
         console.log({values})
         
-        const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
+        const registrationEndpoint = `https://66.179.253.57/api/teacher_registrations/`;
         const response = await fetch(registrationEndpoint,{
             method: 'POST',
             headers: {
