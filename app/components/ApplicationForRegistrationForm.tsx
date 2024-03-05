@@ -708,7 +708,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 </nav>
                 {/* forms */}   
                 <Form {...form}>
-                <form className="w-[calc(100%-5rem)]" onSubmit={form.handleSubmit(handleSubmit)}> 
+                <form className="w-[calc(100%)] md:pr-1"  onSubmit={form.handleSubmit(handleSubmit)}> 
                     {/*BOTH-PRELIMINARY INFORMATION*/}
                     {currentStep === 0 && (
                         <motion.div
@@ -716,8 +716,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 md:w-full w-96 p-2 rounded-lg mb-2 mr-1">
-                            <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
+                        <div className="border md:h-96 h-96 overflow-auto w-[calc(100%)] md:w-full rounded-lg mb-1">
+                            <div className="grid md:gap-y-10 gap-2 gap-x-10 m-2 md:mb-6 md:grid-cols-2 sm:grid-cols-1">
                                 <FormField
                                     control={form.control}
                                     name="teacher_registrations.registration_type"
@@ -977,8 +977,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 h-96  p-2 rounded-lg mb-2 mr-1">
-                            <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
+                        <div className="border md:h-96 h-96 w-full  p-2 rounded-lg mb-2 mr-1">
+                            <div className="grid md:gap-y-10 md:gap-x-10 gap-y-2 mb-6 md:grid-cols-3 sm:grid-cols-1">
                             <FormField
                                 control={form.control}
                                 name="bio_datas.national_id"
@@ -1038,7 +1038,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 h-96  p-2 rounded-lg mb-2 mr-1">
+                        <div className="border md:h-96 h-96 overflow-auto  p-2 rounded-lg mb-2 mr-1">
                             <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-2 sm:grid-cols-1">
                             <FormField
                                     control={form.control}
@@ -1272,9 +1272,9 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
+                       
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1">
                         
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
-                        <ScrollArea className="h-96">
                             <p className="leading-7 [&:not(:first-child)]:mt-6 mb-2 text-xs">
                              I <em className="underline">{Signature}</em> hereby declare that the information I have provided in this application form is true and correct to the best of my knowledge and belief. I understand that providing false or misleading information may result in the refusal of my application or the cancellation of my registration.
 I declare that I have read and understood the Teacher Performance Standards and the Code of Professional Conduct and Ethics and I am committed to upholding these standards in my professional practice.
@@ -1319,10 +1319,8 @@ I am aware that the Council may collect and verify information about my qualific
                                         <FormMessage/>
                                     </div>
                                 </FormItem>
-                                </div>
-                                </ScrollArea>
+                                </div>      
                         </div>
-                        
                         </motion.div>
                     )}
                     {/*STUDENT-RECOMMENDATION BY INSTITUTION*/}
@@ -1332,7 +1330,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1">
                         <div className="grid md:grid-cols-2 grid-cols-1 gap-y-2 mx-2">
                         <FormField
                                 control={form.control}
@@ -1525,7 +1523,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1">
                         <ul className='list-disc pl-5 mt-1 text-sm leading-6 text-gray-600'>
                             <li>Processing of the application will be done within 30 days;</li>
                             <li>You will receive electronic feedback once your application has been processed;</li>
@@ -1544,8 +1542,8 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
-                                <div className="grid gap-y-10 gap-x-10 mb-6 md:grid-cols-3 sm:grid-cols-1">
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1">
+                                <div className="grid md:gap-y-10 md:gap-x-10 gap-y-2 mb-6 md:grid-cols-3 sm:grid-cols-1">
                                     <div className=''>
                                     <FormField
                                         control={form.control}
@@ -1755,7 +1753,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                            <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1 space-y-2">
+                            <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1 space-y-2">
                                 <div className="hidden">
                                     <InformationCard Information="All the qualifications indicated below must be attached to the application and must be
                                     verified by the issuing institutions if they’re locally obtained and by the Botswana
@@ -1768,7 +1766,7 @@ I am aware that the Council may collect and verify information about my qualific
                                         <div className=" bg-white">
                                             {/* Repeat the following block of JSX based on numOfQualification */}
                                             {[...Array(numOfQualifications)].map((_,index)=>(
-                                            <div key={index} className="w-full grid grid-cols-3 gap-x-5 gap-y-5 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
+                                            <div key={index} className="w-full grid md:grid-cols-3 gap-x-5 gap-y-5 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
                                                     <FormField
                                                     control={form.control}
                                                     name={`edu_pro_qualifications.${index}.level`}
@@ -2028,7 +2026,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1 space-y-5">
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1 space-y-5">
                             <div>
                                 <FormField
                                     control={form.control}
@@ -2149,7 +2147,7 @@ I am aware that the Council may collect and verify information about my qualific
                         >
                         
                         <div className="border rounded-lg mb-2 mr-1 space-y-2 text-wrap">
-                            <ScrollArea className="md:h-96  p-2">
+                            <ScrollArea className="md:h-96 h-96 p-2">
                             <div className="border-b pb-2 mb-2">
                             {/**Conviction against learner*/}
                             <div className="mb-2">
@@ -2452,7 +2450,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2  rounded-lg mb-2 mr-1 grid gap-y-2 gap-x-10 md:grid-cols-2">
+                        <div className="border md:h-96 p-2 h-96 overflow-auto rounded-lg mb-2 mr-1 grid gap-y-2 md:gap-x-10 md:grid-cols-2">
                             <div className="mb-6 space-y-2 text-wrap ml-3">
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
                                     <FormField
@@ -2569,7 +2567,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1">
                             <p className="leading-7 [&:not(:first-child)]:mt-6 mb-2">
                              I <em className="underline">{Signature}</em> hereby declare that the information I have provided in this application form is true and correct to the best of my knowledge and belief. I understand that providing false or misleading information may result in the refusal of my application or the cancellation of my registration. I am aware that the Council may collect and verify information about my qualifications, experience, and fitness to teach. I consent to the Council collecting and verifying this information and I authorize the Council to share this information with other relevant organizations, such as employers and educational institutions.
                             </p>
@@ -2797,7 +2795,7 @@ I am aware that the Council may collect and verify information about my qualific
                             animate={{y: 0, opacity: 1}}
                             transition={{duration: 0.3, ease: 'easeInOut'}}
                         >
-                        <div className="border md:h-96 p-2 rounded-lg mb-2 mr-1">
+                        <div className="border md:h-96 h-96 overflow-auto p-2 rounded-lg mb-2 mr-1">
                             <ul className='list-disc pl-5 mt-1 text-sm leading-6 text-gray-600'>
                                 <li>Processing of the application will be done within 30 days;</li>
                                 <li>You will receive electronic feedback once your application has been processed;</li>
