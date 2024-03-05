@@ -622,7 +622,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
         })
         if(!response.ok){
-            //setCurrentStep(step => step + 1)
+            //setCurrentStep(step => step + 1) dd
             const responseBody = await response.json();
             if(responseBody.message.includes("Error! The National ID used already exists in our database")){
                 throw new Error("National ID already exists in the database.");
@@ -635,7 +635,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         //form.reset();
     }catch (error:any){
         //console.error('Error registering', error.message);
-        setIsErrorAlert(true);
+        //setIsErrorAlert(true);
+        setCurrentStep(step => step + 1)
       }finally{
         setIsSubmitting(false); // Change state back after submission is completed
       }
