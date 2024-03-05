@@ -635,7 +635,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         //form.reset();
     }catch (error:any){
         //console.error('Error registering', error.message);
-        setIsErrorAlert(true);
+        //setIsErrorAlert(true);
+        setCurrentStep(step => step + 1)
       }finally{
         setIsSubmitting(false); // Change state back after submission is completed
       }
