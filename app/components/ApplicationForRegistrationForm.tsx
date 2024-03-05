@@ -542,13 +542,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             const reader = new FileReader();
             reader.onload = () => {
                 values.institution_recommendations.attachment = (reader.result as string).split(',')[1];
-                //console.log('Base64 string:', base64);
-                // Now you can use the base64 string here or trigger further actions
             };
-            reader.readAsDataURL(values.institution_recommendations.attachment);
-            values.attachments.national_id_copy = "Hello world"
-            //values.institution_recommendations.attachment = base64
-            //console.log(values.institution_recommendations.attachment);
+            reader.readAsDataURL(values.institution_recommendations.attachment);     
         }
         // if (values.attachments.national_id_copy) {
         //     const reader = new FileReader();
@@ -1029,6 +1024,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                                         <FormControl>
                                             <Input
                                             placeholder="national id"
+                                            minLength={8}
+                                            maxLength={8}
                                             {...field}
                                             />
                                         </FormControl>
