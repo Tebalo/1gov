@@ -157,18 +157,31 @@ export const institutionRecommendations = z.object({
   .optional(),
 })
 
+enum SubjectType {
+  MATHS = "mathematics",
+  PHYSICS = "physics",
+  CHEMISTRY = "chemistry",
+  SETSWANA = "setswana",
+  BIOLOGY = "biology",
+  SOCIAL_STUDIES = "social studies",
+  PHYSICAL_EDUCATION = "physical education",
+  // ... Add more subjects here
+}
+
 export const qualificationSchema = z.object({
-  level: z.string().optional(),
-  qualification: z.string().optional(),
-  institution: z.string().optional(),
-  qualification_year: z.string().optional(),
-  teaching_subjects: z.string().optional(),
-  attachment:  typeof window === "undefined" ? z.any():
+  level: z.string().optional().default(""),
+  qualification: z.string().optional().default(""),
+  institution: z.string().optional().default(""),
+  qualification_year: z.string().optional().default(""),
+  teaching_subjects: z.string().optional().default(""),
+  attachments:  typeof window === "undefined" ? z.any():
   z
   .any()
   .optional(),
-  minor_subjects: z.array(z.string()).optional(),
-  major_subjects: z.array(z.string()).optional(),
+  minor_subjects: z.array(z.string().default('')).optional(),
+  major_subjects: z.array(z.string().default('')).optional(),
+  //minor_subjects: z.array(z.enum(Object.values(SubjectType) as SubjectType[])).optional(),  
+  //major_subjects: z.array(z.enum(Object.values(SubjectType) as SubjectType[])).optional(), 
 })
 
 const bioDatasSchema = z.object({

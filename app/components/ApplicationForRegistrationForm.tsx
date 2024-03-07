@@ -224,56 +224,6 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
                 signature: "0.Serala",
                 //agreement: false,
             },
-            edu_pro_qualifications: [
-                {
-                    level: "",
-                    qualification: "",
-                    institution: "",
-                    qualification_year: "",
-                    minor_subjects:[
-                        ""
-                    ],
-                    major_subjects: [
-                        ""
-                    ]
-                },
-                {
-                    level: "",
-                    qualification: "",
-                    institution: "",
-                    qualification_year: "",
-                    minor_subjects:[
-                        ""
-                    ],
-                    major_subjects: [
-                        ""
-                    ]
-                },
-                {
-                    level: "",
-                    qualification: "",
-                    institution: "",
-                    qualification_year: "",
-                    minor_subjects:[
-                        ""
-                    ],
-                    major_subjects: [
-                        ""
-                    ]
-                },
-                {
-                    level: "",
-                    qualification: "",
-                    institution: "",
-                    qualification_year: "",
-                    minor_subjects:[
-                        ""
-                    ],
-                    major_subjects: [
-                        ""
-                    ]
-                }
-            ],
             student_study_programmes: {
                 name: "",
                 completion_year: "",
@@ -426,6 +376,8 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         });
     };
     
+    //async function processQualificationAttachments()
+
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true); // Change state to indicate submitting
         setIsErrorAlert(false);
@@ -434,6 +386,13 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
 
         if (values.institution_recommendations.attachment) {
             values.institution_recommendations.attachment = await convertFileToBase64(values.institution_recommendations.attachment); 
+        }
+        if(values.teacher_registrations.registration_type ==='teacher' && Array.isArray(values.edu_pro_qualifications)){
+            for (const qualification of values.edu_pro_qualifications){
+                if(qualification.attachments){
+                    qualification.attachments = await convertFileToBase64(qualification.attachments);
+                }
+            }
         }
 
         try{
@@ -1792,7 +1751,7 @@ I am aware that the Council may collect and verify information about my qualific
                                                 <div className="">
                                                 <FormField
                                                     control={form.control}
-                                                    name={`edu_pro_qualifications.${index}.attachment`}
+                                                    name={`edu_pro_qualifications.${index}.attachments`}
                                                     render={({ field }) => {
                                                         return (
                                                         <FormItem>
