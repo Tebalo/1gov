@@ -68,6 +68,7 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import axios from 'axios';
 import { resolve } from "path";
 import { rejects } from "assert";
+import { constrainedMemory } from "process";
 
 interface RegistrationFormProps{
     onClose: () => void;
@@ -407,97 +408,6 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         }
     }    
     const [isErrorAlert, setIsErrorAlert] = useState(false);
-    const imp = {
-        "teacher_registrations":{
-            "reg_number":"GH6778888",
-            "reg_status":"Pending-Screening",
-            "registration_type":"Teacher",
-            "disability":"Yes",
-            "disability_description":"left eye is impaired and dont see clearly on cold conditions"
-    
-        },
-        "bio_datas":{
-            "national_id":"436415528",
-            "surname":"Motlalepuo",
-            "forenames":"Garenosi",
-            "dob":"1996-02-15",
-            "pob":"Maun",
-            "gender":"Male",
-            "nationality":"Motswana",
-            "postal_address":"P O Box 7886, Mahalapye",
-            "physical_address":"Block 10, Gaborone",
-            "email":"johndoe@gmail.com",
-            "mobile":"26774217788",
-            "marital_status":"Single",
-            "next_of_kin_name":"Sarah Cornor",
-            "next_of_kin_relation":"Mother",
-            "next_of_kin_contact":"26776554321"
-           
-        },
-        "declarations":{
-            "agreement":true,
-            "signature":"J. Doe"
-        },
-        "attachments":{
-            "national_id_copy":"nationalID_copy.pdf",
-            "qualification_copy":"Qualification_copy.pdf",
-            "proof_of_payment":"FNB_proof.pdf"
-            
-        },
-        "edu_pro_qualifications":{
-            "level":"masters",
-            "qualification":"MSc. Applied Sciences",
-            "institution":"University of Botswana",
-            "qualification_year":"2019",
-            "teaching_subjects":"Mathematics and Sciences"
-        },
-        "employment_details":{
-            "experience_years":4,
-            "current_institution":"Moeding Colledge",
-            "institution_type":"Public",
-            "region":"South East",
-            "district":"South East District",
-            "city_or_town":"Gaborone"
-        },
-        "institution_recommendations":{
-            "recommended":"Yes",
-            "comment":"An exceptional and hard worker",
-            "name":"Dr. W Wendy",
-            "signature":"W. Wendy"
-        },
-        "offence_convictions": {
-            "national_id": "empty",
-            "student_related_offence": "No",
-            "student_related_offence_details": "N/A",
-            "drug_related_offence": "No",
-            "drug_related_offence_details": "N/A",
-            "license_flag": "No",
-            "license_flag_details": "N/A",
-            "misconduct_flag": "No",
-            "misconduct_flag_details": "N/A"
-        },
-        "student_preliminary_infos":{
-            "institution_name":"N/A",
-            "institution_type":"N/A",
-            "citizenry":"N/A",
-            "study_area":"N/A"
-        },
-        "student_study_programmes":{
-            "name":"N/A",
-            "completion_year":"N/A",
-            "level":"N/A",
-            "duration":0,
-            "mode_of_study":"N/A",
-            "specialization":"N/A"
-        },
-        "teacher_preliminary_infos":{
-            "citizen_status":"Citizen",
-            "work_status":"Serving",
-            "practice_category":"Senior Secondary",
-            "sub_cateogry":"N/A"
-        }   
-    }
-
     /**
      * 
      * @param file 
@@ -510,10 +420,7 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
             reader.readAsDataURL(file); // Read as Data URL (includes Base64 encoding)
             reader.onload = () => {
                 const base64 = (reader.result as string).split(',')[1];
-                console.log(base64)
-                //attachment = base64
                 resolve(base64);
-                //return base64;
             };
             reader.onerror = error => reject(error);
         });
@@ -522,165 +429,50 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsSubmitting(true); // Change state to indicate submitting
         setIsErrorAlert(false);
-        //console.log(values.attachments.national_id_copy);
-        const formData = new FormData();
-        //console.log('File: ',values.institution_recommendations.attachment)
-        // let base64 = "";
-        // if(values.institution_recommendations.attachment !== (null || undefined) ){
-        //     const reader = new FileReader();
-        //     reader.readAsDataURL(values.institution_recommendations.attachment);
-        //     reader.onload = () => {
-        //         base64 = (reader.result as string).split(',')[1];
-        //     }
-        //     }
-        //     //values.institution_recommendations.attachment = convertFileToBase64(values.institution_recommendations.attachment);
-        //     console.log('Here=>',values.institution_recommendations.attachment);
-        // }
-        
+        //const formData = new FormData();
+        //let base64 = ''
 
         if (values.institution_recommendations.attachment) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                values.institution_recommendations.attachment = (reader.result as string).split(',')[1];
-            };
-            reader.readAsDataURL(values.institution_recommendations.attachment);     
+            values.institution_recommendations.attachment = await convertFileToBase64(values.institution_recommendations.attachment); 
         }
-        // if (values.attachments.national_id_copy) {
-        //     const reader = new FileReader();
-        //     reader.onload = () => {
-        //         values.attachments.national_id_copy = (reader.result as string).split(',')[1];
-        //         //console.log('Base64 string:', base64);
-        //         // Now you can use the base64 string here or trigger further actions
-        //     };
-        //     reader.readAsDataURL(values.attachments.national_id_copy);
-        // }
 
-        // if(values.attachments.proof_of_payment){
-        //     const reader = new FileReader();
-        //     reader.onload = () =>{
-        //         values.attachments.proof_of_payment=  (reader.result as string).split(',')[1];
-        //     };
-        //     reader.readAsDataURL(values.attachments.proof_of_payment)
-        // }
-        
-        // if(values.attachments.qualification_copy){
-        //     const reader = new FileReader();
-        //     reader.onload = () =>{
-        //         values.attachments.qualification_copy =  (reader.result as string).split(',')[1];
-        //     };
-        //     reader.readAsDataURL(values.attachments.qualification_copy)
-        // }
-        //console.log('Encoded',JSON.stringify(values.institution_recommendations.attachment))
-        //const binaryData = Buffer.from(values.institution_recommendations.attachment, 'base64');
-        //console.log(binaryData);
-        // json = {
-        //     "base64": values.institution_recommendations.attachment
-        // }
-        //console.log(base64)
         try{
-        //formSchema.parse(values); // vValidate form values using zod
-        /**const valueswithBio = {
-            ...values,
-            bio_datas: {
-                national_id: "440418213",
-                surname: "Serala",
-                forenames: "Oaitse",
-                dob: "1996-02-15",
-                pob: "Mahalapye",
-                gender: "Male",
-                nationality: "Motswana",
-                postal_address: "P O Box 7886, Mahalapye",
-                physical_address: "Block 10, Gaborone",
-                email: "johndoe@gmail.com",
-                mobile: "26774217788",
-                marital_status: "Single",
-                next_of_kin_name: "Sarah Cornor",
-                next_of_kin_relation: "Mother",
-                next_of_kin_contact: "26776554321"
-              }
-        }*/
-        //const formData = new FormData();
-        //Object.keys(valueswithBio).forEach(key =>{
-        //formData.append("DOB", valueswithBio.bio_datas.dob);
-        //formData.append("ID", valueswithBio.attachments.national_id_copy);
-       // })
-        //formData.append(values.attachments.national_id_copy,values.attachments.national_id_copy);
-        //formData.append(values.attachments.proof_of_payment,values.attachments.proof_of_payment);
-        console.log({values})
-        
-        const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
-        const response = await fetch(registrationEndpoint,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                //'Accept': '*/*',
-                //'Accept-Encoding': 'gzip, deflate, br',
-                'Connection': 'keep-alive'
-            },
-            //body: formData,
-            //body: valueswithBio,
-            body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
-        })
-        if(!response.ok){
-            //setCurrentStep(step => step + 1) dd
-            const responseBody = await response.json();
-            if(responseBody.message.includes("Error! The National ID used already exists in our database")){
-                throw new Error("National ID already exists in the database.");
-            } else{
-                throw new Error("Failed to register");
-            }
+            const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
+            
+            console.log('Hello there',values)
+            const response = await axios.post(registrationEndpoint, values, {
+                maxBodyLength: 200000000,
+            });
+
+            // const response = await fetch(registrationEndpoint,{
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         //'Accept': '*/*',
+            //         //'Accept-Encoding': 'gzip, deflate, br',
+            //         'Connection': 'keep-alive',
+            //     },
+            //     //body: formData,
+            //     //body: valueswithBio,
+            //     body: JSON.stringify({...values}), // Spread the valueswithBio object to remove the nesting key.
+            // })
+            // if(!response.ok){
+            //     //setCurrentStep(step => step + 1) dd
+            //     const responseBody = await response.json();
+            //     if(responseBody.message.includes("Error! The National ID used already exists in our database")){
+            //         throw new Error("National ID already exists in the database.");
+            //     } else{
+            //         throw new Error("Failed to register");
+            //     }
+            // }
+            setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
+            //form.reset();
+        }catch (error:any){
+            setIsErrorAlert(true);
+        }finally{
+            setIsSubmitting(false); // Change state back after submission is completed
         }
-        
-        setCurrentStep(step => step + 1) // Advance to the complete stage only if the response is successful
-        //form.reset();
-    }catch (error:any){
-        //console.error('Error registering', error.message);
-        //setIsErrorAlert(true);
-        setCurrentStep(step => step + 1)
-      }finally{
-        setIsSubmitting(false); // Change state back after submission is completed
-      }
     }
-
-    // const handleSubmit1 = async (values: z.infer<typeof formSchema>) => {
-    //     setIsSubmitting(true); // Change state to indicate submitting
-    //     setIsErrorAlert(false);
-
-    //     try {
-    //         formSchema.parse(values); // Validate with Zod
-    
-    //         const formData = new FormData();
-    //         const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
-    //         // Add JSON data
-    //         const valuesWithBio = {
-    //             ...values,
-    //             //bio_datas: { 
-    //                 // ... your bio_datas fields
-    //             //}
-    //         };
-    
-    //         // Add files (assuming file input fields are named appropriately)
-    //         if (values.attachments?.national_id_copy) { 
-    //             formData.append('national_id_copy', values.attachments.national_id_copy[0]);
-    //         }
-    //         // ... add other file fields similarly
-    
-    //         // Send the request using fetch
-    //         const response = await fetch(registrationEndpoint, { 
-    //             method: 'POST',
-    //             body: formData 
-    //         });
-    
-    //        // ... handle response and errors as before 
-    
-    //    } catch (error) {
-    //        // ... handle errors
-    //    } finally {
-    //        setIsSubmitting(false);
-    //    }
-    // }
-
-
     const [showDiplomaLevel, setShowDiplomaLevel] = useState(false);
     const handleDiplomaCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setShowDiplomaLevel(event.target.checked)
