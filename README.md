@@ -5,7 +5,7 @@
 5. https://medium.com/@a_tsai5/dockerise-react-application-next-js-83f60fa2cd62?source=email-7f1648bd187d-1709170683401-digest.reader--83f60fa2cd62----0-98------------------ad5608ab_0370_4e62_8ac2_3782f45b358a-1
 6. https://gemini.google.com/app/420dcb0d4eae6f35
 7. File to base64: https://base64.guru/converter/encode/file
-8. 
+8. FileReader: https://developer.mozilla.org/en-US/docs/Web/API/FileReader/result
 
 Libraries and Components
 1. npm i zod (https://www.npmjs.com/package/zod)
