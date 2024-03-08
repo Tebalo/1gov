@@ -1,6 +1,14 @@
 "use client"
 import React, {useState} from 'react';
 
+const Preliminary: React.FC = () => {
+    return(
+        <div className='border rounded-lg h-full w-full'>
+
+        </div>
+    );
+}
+
 const WorkArea: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabClick = (tabNumber: number) => {
@@ -8,7 +16,7 @@ const WorkArea: React.FC = () => {
     }
 
     return (                    
-    <div className="flex-row w-full font-sans items-start h-screen rounded bg-gray-50">
+    <div className="flex-row w-full font-sans items-start h-auto rounded bg-gray-50">
         <div className='flex items-center justify-around space-x-0 mx-2 mt-5 text-xs'>
             <ul className='flex flex-wrap -mb-px'>
                 <li>
@@ -93,10 +101,10 @@ const WorkArea: React.FC = () => {
                 </li>
             </ul>
         </div>
-        <div className='h-80'>
-
+        <div className='h-80 mx-8 my-2'>
+            {activeTab===1 && <Preliminary/>}
         </div>
-        <div className='rounded-lg p-1 mx-10 mt-5'>
+        <div className='rounded-lg p-1 mx-10'>
             <div className='flex float-end space-x-2'>
                 <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Return</button>
                 <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Approve</button>

@@ -31,8 +31,8 @@ const data = {
 }
 const Page: React.FC = () => {
     return (
-        <main className="space-y-3">
-            <div className="flex flex-row h-auto gap-1">
+        <main className="h-full">
+            <div className="flex flex-row h-full gap-1">
                 <CaseDetails/>
                 <WorkArea/>
                 {/**<Utilities/>*/}
