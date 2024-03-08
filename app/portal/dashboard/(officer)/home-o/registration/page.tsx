@@ -32,10 +32,10 @@ const data = {
 const Page: React.FC = () => {
     return (
         <main className="space-y-3">
-            <div className="flex flex-row h-screen gap-1 mb-4">
+            <div className="flex flex-row h-auto gap-1">
                 <CaseDetails/>
                 <WorkArea/>
-                <Utilities/>
+                {/**<Utilities/>*/}
             </div>
        </main>
     );
