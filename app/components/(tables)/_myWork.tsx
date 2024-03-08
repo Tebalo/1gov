@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import ApprovalRejectionModal from '../ApprovalRejectionModal';
+import { useRouter } from 'next/navigation';
 
 // Define the interface for your item
 interface ProductItem {
@@ -58,7 +59,7 @@ const MyWork: React.FC = () => {
   const rowData: RowData[] = [
     { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
     { id: '67bf7nfe74unf647m', title: 'Teacher registration', date: '23 Jan 2024 - 16:48', status: 'Pending-Approval' },
-];
+    ];
     const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
 
     const handleToggleServiceList = () => {
@@ -66,6 +67,11 @@ const MyWork: React.FC = () => {
     };
     const handleCloseLoginServiceList = () => {
         setIsRegistrationOpen(false);
+    }
+    const router = useRouter()
+
+    const getNext = () => {
+        router.push('/portal/dashboard/home-o/registration')
     }
   return (
     <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg h-full">
@@ -91,6 +97,7 @@ const MyWork: React.FC = () => {
                 </button>
                 <button 
                 type="button" 
+                onClick={getNext}
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-0 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Get Next Work</button>
             </div>
             <div

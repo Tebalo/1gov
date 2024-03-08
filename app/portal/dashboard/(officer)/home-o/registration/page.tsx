@@ -1,31 +1,8 @@
 "use client"
+import CaseDetails from "@/app/components/case/casedetails";
+import Utilities from "@/app/components/case/utilities";
+import WorkArea from "@/app/components/case/workarea";
 import React, {useState}  from "react";
-
-interface TeacherData {
-    teacher_registrations: {
-      reg_number: string;
-      reg_status: string;
-      registration_type: string;
-    };
-    bio_datas: {
-      national_id: string;
-      surname: string;
-      forenames: string;
-      dob: string;
-      // to add other fields as needed
-    };
-}
-interface RowData {
-    id: string;
-    title: string;
-    date: string;
-    status: string;
-    action: string;
-}
-interface TeacherRegistrationProps {
-    data: TeacherData;
-  }
-
 const data = {
     "teacher_registrations":{
         "reg_number":"GH6778888",
@@ -52,19 +29,13 @@ const data = {
         "disability_description":"left eye is impaired and dont see clearly on cold conditions"
     },
 }
-const Page: React.FC<TeacherRegistrationProps> = ({ data }) => {
+const Page: React.FC = () => {
     return (
-        <main className="mx-10 mt-10 space-y-3">
-            <div>
-                <span>View Teacher registration</span>
-                <p>Registration Number: {data?.teacher_registrations?.reg_number}</p>
-                <p>Registration Status: {data?.teacher_registrations?.reg_status}</p>
-                <p>Registration Type: {data?.teacher_registrations?.registration_type}</p>
-
-                <h2>Bio Data</h2>
-                <p>National ID: {data?.bio_datas?.national_id}</p>
-                <p>Surname: {data?.bio_datas?.surname}</p>
-                {/* to add more bio data fields here */}
+        <main className="space-y-3">
+            <div className="flex flex-row h-screen gap-1 mb-4">
+                <CaseDetails/>
+                <WorkArea/>
+                <Utilities/>
             </div>
        </main>
     );
