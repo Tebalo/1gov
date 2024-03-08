@@ -29,6 +29,7 @@ const data = {
         "disability_description":"left eye is impaired and dont see clearly on cold conditions"
     },
 }
+
 const Page: React.FC = () => {
     return (
         <main className="h-full">

@@ -1,13 +1,130 @@
 "use client"
 import React, {useState} from 'react';
+import StatusHistory from './StatusHistory';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
 
 const Preliminary: React.FC = () => {
+    return(
+        <div className='h-full w-full'>
+            <Card className='h-full'>
+            <div className='grid grid-cols-2 m-10 gap-y-5'>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Application Type:</Label>
+                    <span className='font-light text-sm'>Teacher</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Work status:</Label>
+                    <span className='font-light text-sm'>Serving</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Practice category:</Label>
+                    <span className='font-light text-sm'>Primary</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Practice sub-category:</Label>
+                    <span className='font-light text-sm'>Teacher Aide</span>
+                </div>
+            </div>
+            </Card>
+        </div>
+    );
+}
+const Bio: React.FC = () => {
+    return(
+        <div className='h-full w-full'>
+            <Card className='h-full'>
+            <div className='grid grid-cols-4 m-10 gap-y-5'>
+                <div className='flex flex-col space-y-1'>
+                    <Label>National ID:</Label>
+                    <span className='font-light text-sm'>Teacher</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Forenames:</Label>
+                    <span className='font-light text-sm'>Oaitse</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Surname:</Label>
+                    <span className='font-light text-sm'>Serala</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Date of birth:</Label>
+                    <span className='font-light text-sm'>1996-02-15</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Place of birth:</Label>
+                    <span className='font-light text-sm'>Mahalapye</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Gender:</Label>
+                    <span className='font-light text-sm'>Male</span>
+                </div>
+            </div>
+            </Card>
+        </div>
+    );
+}
+const Employment: React.FC = () => {
     return(
         <div className='border rounded-lg h-full w-full'>
 
         </div>
     );
 }
+const Qualifications: React.FC = () => {
+    return(
+        <div className='border rounded-lg h-full w-full'>
+
+        </div>
+    );
+}
+const Disability: React.FC = () => {
+    return(
+        <div className='border rounded-lg h-full w-full'>
+
+        </div>
+    );
+}
+const Offence: React.FC = () => {
+    return(
+        <div className='border rounded-lg h-full w-full'>
+
+        </div>
+    );
+}
+const Attachments: React.FC = () => {
+    return(
+        <div className='border rounded-lg h-full w-full'>
+
+        </div>
+    );
+}
+const Declaration: React.FC = () => {
+    return(
+        <div className='border rounded-lg h-full w-full'>
+
+        </div>
+    );
+}
+interface StatusChange {
+    newStatus: string; 
+    timestamp: Date; 
+    changedBy: string; 
+}
+
+interface CaseData {
+    // ... other case properties
+    statusHistory: StatusChange[];
+}
+const caseData: CaseData = {
+    // ... other case properties
+    statusHistory: [
+        { newStatus: "Pending-Review", timestamp: new Date('2023-10-31T10:20:00'), changedBy: 'Oaitse Segala' },
+        { newStatus: "In Progress", timestamp: new Date('2023-11-02T16:05:00'), changedBy: 'Masego Sam' },
+        { newStatus: "Needs Additional Info", timestamp: new Date('2023-11-05T09:12:00'), changedBy: 'System' } // Example of a system-generated change
+    ]
+};
 
 const WorkArea: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
@@ -103,13 +220,23 @@ const WorkArea: React.FC = () => {
         </div>
         <div className='h-80 mx-8 my-2'>
             {activeTab===1 && <Preliminary/>}
+            {activeTab===2 && <Bio/>}
+            {activeTab===3 && <Employment/>}
+            {activeTab===4 && <Qualifications/>}
+            {activeTab===5 && <Disability/>}
+            {activeTab===6 && <Offence/>}
+            {activeTab===7 && <Attachments/>}
+            {activeTab===8 && <Declaration/>}
         </div>
-        <div className='rounded-lg p-1 mx-10'>
-            <div className='flex float-end space-x-2'>
-                <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Return</button>
-                <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Approve</button>
+        <div className='p-1 mx-8 mb-2'>
+            <div className='flex space-x-2 justify-end'>
+                <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Reject</button>
+                <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Approve</button>
             </div>
         </div>
+        <ScrollArea className="mx-8 h-40">
+            <StatusHistory  />
+        </ScrollArea>
     </div>
     );
 }
