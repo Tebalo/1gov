@@ -398,7 +398,6 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         try{
             const registrationEndpoint = `http://66.179.253.57/api/teacher_registrations/`;
             
-            console.log('Hello there',values)
             const response = await axios.post(registrationEndpoint, values, {
                 maxBodyLength: 200000000,
             });
@@ -461,13 +460,30 @@ export const ApplicationForRegistrationForm: React.FC<RegistrationFormProps> = (
         setShowPhDLevel(event.target.checked)
     }
 
-    const [numOfQualifications, setNumOfQualifications] = useState(1); // State to track the number of qualifications
-
+    const [numOfQualifications, setNumOfQualifications] = useState(1); 
     const handleAddQualification = () => {
         setNumOfQualifications(prevNum => prevNum + 1)
     }
     const handleSubtractQualification = () => {
         setNumOfQualifications(prevNum => prevNum - 1)
+    }
+
+    /**Minor subjects*/
+    const [numOfMinorSubjects, setnumOfMinorSubjects] = useState(1);
+    const handleAddMinorQualification = () => {
+        setnumOfMinorSubjects(prevNumMn => prevNumMn + 1);
+    }
+    const handleSubtractMinorQualification = () => {
+        setnumOfMinorSubjects(prevNumMn => prevNumMn - 1);
+    }
+
+    /**Major subjects*/
+    const [numOfMajorSubjects, setnumOfMajorSubjects] = useState(1);
+    const handleAddMajorQualification = () => {
+        setnumOfMajorSubjects(prevNumMj => prevNumMj + 1);
+    }
+    const handleSubtractMajorQualification = () => {
+        setnumOfMajorSubjects(prevNumMj => prevNumMj - 1);
     }
 
     const [BQAFileName, setBQAFileName] = useState('');
@@ -1548,13 +1564,14 @@ I am aware that the Council may collect and verify information about my qualific
                                     Qualifications Authority (BQA) if foreign obtained."/>
                                 </div>
                                 {/*Visible when conditions here*/}
-                                <div className="overflow-auto h-full">
+                                <div className="">
                                         <div className="">
                                         {/*Scroll Content - Add-Remove Form Items*/}
                                         <div className=" bg-white">
                                             {/* Repeat the following block of JSX based on numOfQualification */}
                                             {[...Array(numOfQualifications)].map((_,index)=>(
-                                            <div key={index} className="w-full grid md:grid-cols-3 gap-x-5 gap-y-5 border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
+                                            <div key={index} className="w-full  border border-dashed border-gray-500 p-1 mt-1 rounded-lg">
+                                                <div className="grid md:grid-cols-3 gap-x-5 gap-y-5">
                                                     <FormField
                                                     control={form.control}
                                                     name={`edu_pro_qualifications.${index}.level`}
@@ -1598,69 +1615,6 @@ I am aware that the Council may collect and verify information about my qualific
                                                         </FormItem>
                                                     }}
                                                 />                                                      
-                                                {/* <FormField
-                                                    control={form.control}
-                                                    name={`edu_pro_qualifications.${index}.institution`}
-                                                    render={({ field }) => (
-                                                        <FormItem className="flex flex-col space-y-3 mt-2">
-                                                            <FormLabel>Awarding Institution</FormLabel>
-                                                            <Popover>
-                                                                <PopoverTrigger asChild>
-                                                                <FormControl>
-                                                                    <Button
-                                                                    variant="outline"
-                                                                    role="combobox"
-                                                                    className={cn(
-                                                                        "w-[200px] justify-between",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                    >
-                                                                    {field.value
-                                                                        ? institutions.find(
-                                                                            (institution) => institution.value === field.value
-                                                                        )?.label
-                                                                        : "Select institution"}
-                                                                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                                    </Button>
-                                                                </FormControl>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent className="w-[200px] p-0">
-                                                                <Command>
-                                                                    <CommandInput
-                                                                    placeholder="Search institution..."
-                                                                    className="h-9"
-                                                                    />
-                                                                    <ScrollArea className="h-60 w-48 rounded-md">
-                                                                    <CommandEmpty>No institution found.</CommandEmpty>
-                                                                    <CommandGroup>
-                                                                    {institutions.map((institution) => (
-                                                                        <CommandItem
-                                                                        value={institution.label}
-                                                                        key={institution.value}
-                                                                        onSelect={() => {
-                                                                            form.setValue(`edu_pro_qualifications.${index}.institution`, institution.value)
-                                                                        }}
-                                                                        >
-                                                                        {institution.label}
-                                                                        <CheckIcon
-                                                                            className={cn(
-                                                                            "ml-auto h-4 w-4",
-                                                                            institution.value === field.value
-                                                                                ? "opacity-100"
-                                                                                : "opacity-0"
-                                                                            )}
-                                                                        />
-                                                                        </CommandItem>
-                                                                    ))}
-                                                                    </CommandGroup>
-                                                                    </ScrollArea>
-                                                                </Command>
-                                                                </PopoverContent>
-                                                            </Popover>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                        )}
-                                                    />   */}
                                                     <FormField
                                                     control={form.control}
                                                     name={`edu_pro_qualifications.${index}.institution`}
@@ -1693,61 +1647,6 @@ I am aware that the Council may collect and verify information about my qualific
                                                         </FormItem>
                                                     }}
                                                 />       
-                                                <FormField
-                                                control={form.control}
-                                                name={`edu_pro_qualifications.${index}.minor_subjects.${index}`}
-                                                render={({field}) =>{
-                                                    return <FormItem>
-                                                            <FormLabel>Minor subject</FormLabel>
-                                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                                <FormControl>
-                                                                    <SelectTrigger>
-                                                                        <SelectValue placeholder="Select minor subject">
-                                                                        </SelectValue>
-                                                                    </SelectTrigger>
-                                                                </FormControl>
-                                                                <SelectContent>
-                                                                    <SelectItem value="english">English</SelectItem>
-                                                                    <SelectItem value="setswana">Setswana</SelectItem>
-                                                                    <SelectItem value="physical education">Physical education</SelectItem>
-                                                                    <SelectItem value="chemistry">Chemistry</SelectItem>
-                                                                    <SelectItem value="biology">Biology</SelectItem>
-                                                                    <SelectItem value="mathematics">Mathematics</SelectItem>
-                                                                    <SelectItem value="social studies">Social studies</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        <FormMessage/>
-                                                    </FormItem>
-                                                }}
-                                                />
-                                                <FormField
-                                                control={form.control}
-                                                name={`edu_pro_qualifications.${index}.major_subjects.${index}`}
-                                                render={({field}) =>{
-                                                    return <FormItem>
-                                                            <FormLabel>Major subject</FormLabel>
-                                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                                <FormControl>
-                                                                    <SelectTrigger>
-                                                                        <SelectValue placeholder="Select major subject">
-                                                                        </SelectValue>
-                                                                    </SelectTrigger>
-                                                                </FormControl>
-                                                                <SelectContent>
-                                                                <SelectItem value="english">English</SelectItem>
-                                                                    <SelectItem value="setswana">Setswana</SelectItem>
-                                                                    <SelectItem value="physical education">Physical education</SelectItem>
-                                                                    <SelectItem value="chemistry">Chemistry</SelectItem>
-                                                                    <SelectItem value="biology">Biology</SelectItem>
-                                                                    <SelectItem value="mathematics">Mathematics</SelectItem>
-                                                                    <SelectItem value="social studies">Social studies</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        <FormMessage/>
-                                                    </FormItem>
-                                                }}
-                                                />           
-                                                                   
                                                 <div className="">
                                                 <FormField
                                                     control={form.control}
@@ -1767,11 +1666,11 @@ I am aware that the Council may collect and verify information about my qualific
                                                             />
                                                             </FormControl>
                                                             {field.value && ( // Show file details if a file is selected
-                                                                    <div className="mt-1 text-sm text-gray-600">
+                                                                    <div className="mt-1 text-xs text-gray-600">
                                                                         File Name: {field.value.name} 
                                                                     </div>
                                                             )}
-                                                            <FormDescription>
+                                                            <FormDescription className="text-xs">
                                                                 Max File Size: 5MB Accepted File Types: .pdf
                                                             </FormDescription>
                                                             <FormMessage />
@@ -1780,6 +1679,111 @@ I am aware that the Council may collect and verify information about my qualific
                                                     }}
                                                     />
                                                 </div>
+                                                </div>
+                                                <div className="grid md:grid-cols-2 gap-2">
+                                                    {/**Minor subjects*/}
+                                                    <div>
+                                                        {[...Array(numOfMinorSubjects)].map((_,mnindex)=>(
+                                                        <div key={mnindex}>
+                                                            <FormField
+                                                            control={form.control}
+                                                            name={`edu_pro_qualifications.${index}.minor_subjects.${mnindex}`}
+                                                            render={({field}) =>{
+                                                                return <FormItem>
+                                                                        <FormLabel>Minor subject</FormLabel>
+                                                                        <Select onValueChange={field.onChange} value={field.value}>
+                                                                            <FormControl>
+                                                                                <SelectTrigger>
+                                                                                    <SelectValue placeholder="Select minor subject">
+                                                                                    </SelectValue>
+                                                                                </SelectTrigger>
+                                                                            </FormControl>
+                                                                            <SelectContent>
+                                                                                <SelectItem value="english">English</SelectItem>
+                                                                                <SelectItem value="setswana">Setswana</SelectItem>
+                                                                                <SelectItem value="physical education">Physical education</SelectItem>
+                                                                                <SelectItem value="chemistry">Chemistry</SelectItem>
+                                                                                <SelectItem value="biology">Biology</SelectItem>
+                                                                                <SelectItem value="mathematics">Mathematics</SelectItem>
+                                                                                <SelectItem value="social studies">Social studies</SelectItem>
+                                                                            </SelectContent>
+                                                                        </Select>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                                }}
+                                                                />
+                                                            </div>
+                                                            ))}
+                                                            <div className="space-x-2 justify-end items-end w-full">
+                                                                <button
+                                                                type="button"
+                                                                onClick={handleSubtractMinorQualification}
+                                                                disabled={numOfMinorSubjects===1}
+                                                                className="text-xs"
+                                                                >
+                                                                    - remove
+                                                                </button>
+                                                                <button
+                                                                type="button"
+                                                                onClick={handleAddMinorQualification}
+                                                                className="text-xs"
+                                                                >
+                                                                    + Add
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        {/**Major subjects*/}
+                                                        <div>
+                                                        {[...Array(numOfMajorSubjects)].map((_,mjindex)=>(
+                                                        <div key={mjindex}>
+                                                            <FormField
+                                                            control={form.control}
+                                                            name={`edu_pro_qualifications.${index}.major_subjects.${mjindex}`}
+                                                            render={({field}) =>{
+                                                                return <FormItem>
+                                                                        <FormLabel>Major subject</FormLabel>
+                                                                        <Select onValueChange={field.onChange} value={field.value}>
+                                                                            <FormControl>
+                                                                                <SelectTrigger>
+                                                                                    <SelectValue placeholder="Select major subject">
+                                                                                    </SelectValue>
+                                                                                </SelectTrigger>
+                                                                            </FormControl>
+                                                                            <SelectContent>
+                                                                                <SelectItem value="english">English</SelectItem>
+                                                                                <SelectItem value="setswana">Setswana</SelectItem>
+                                                                                <SelectItem value="physical education">Physical education</SelectItem>
+                                                                                <SelectItem value="chemistry">Chemistry</SelectItem>
+                                                                                <SelectItem value="biology">Biology</SelectItem>
+                                                                                <SelectItem value="mathematics">Mathematics</SelectItem>
+                                                                                <SelectItem value="social studies">Social studies</SelectItem>
+                                                                            </SelectContent>
+                                                                        </Select>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                                }}
+                                                                />
+                                                            </div>
+                                                            ))}
+                                                            <div className="space-x-2 justify-end items-end w-full">
+                                                                <button
+                                                                type="button"
+                                                                onClick={handleSubtractMajorQualification}
+                                                                disabled={numOfMajorSubjects===1}
+                                                                className="text-xs"
+                                                                >
+                                                                    - remove
+                                                                </button>
+                                                                <button
+                                                                type="button"
+                                                                onClick={handleAddMajorQualification}
+                                                                className="text-xs"
+                                                                >
+                                                                    + Add
+                                                                </button>
+                                                            </div>
+                                                        </div>    
+                                                </div>     
                                                 <div className="flex justify-center my-5">
                                                     <button 
                                                     type="button" 
@@ -1801,21 +1805,6 @@ I am aware that the Council may collect and verify information about my qualific
                                                 onClick={handleAddQualification}
                                                 className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-green-500 rounded-lg border border-green-600 hover:bg-green-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
                                                 >+ Add</button>
-                                                {/*<button onClick={handleSubtractQualification} className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200" type="button">
-                                                    <span className="sr-only">Quantity button</span>
-                                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
-                                                    </svg>
-                                                </button>
-                                                <div>
-                                                    <input type="number" id="first_product" value={numOfQualifications} className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 " placeholder="1" required />
-                                                </div>
-                                                <button onClick={handleAddQualification} className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200" type="button">
-                                                    <span className="sr-only">Quantity button</span>
-                                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
-                                                    </svg>
-                                                    </button>*/}
                                             </div>
                                         </div>
                                     </div>
@@ -2328,38 +2317,7 @@ I am aware that the Council may collect and verify information about my qualific
                             </div>
                             <div className="mb-6 space-y-2 text-wrap ml-3">
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                                <FormField
-                                        control={form.control}
-                                        name="attachments.proof_of_payment"
-                                        render={({ field }) => {
-                                            return (
-                                            <FormItem>
-                                                <FormLabel>Proof of payment of Registration fee.</FormLabel>
-                                                <FormControl>
-                                                <Input
-                                                type="file"
-                                                placeholder="Attach a file"
-                                                {...filePHP}
-                                                onChange={(event) => {
-                                                    field.onChange(event.target?.files?.[0] ?? undefined);
-                                                    const ProofOfPayment = event.target?.files?.[0];
-                                                    if(ProofOfPayment){
-                                                        setProofOfPayment(ProofOfPayment.name);
-                                                    }else{
-                                                        setProofOfPayment('');
-                                                    }
-                                                }}
-                                                />
-                                                </FormControl>
-                                                <FormDescription>
-                                                    Max File Size: 5MB Accepted File Types: .pdf, .doc, and .docx
-                                                </FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                            );
-                                        }}
-                                        />
-                                    </div>
+                                </div>
                                 </div>
                         </div>
                         </motion.div>             
@@ -2563,10 +2521,6 @@ I am aware that the Council may collect and verify information about my qualific
                                             <div className="flex space-x-2">
                                                 <Label className="font-semibold">Verification of qualification from BQA.</Label>
                                                 <Label>BQA.doc</Label>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Label className="font-semibold">Proof of payment of Registration fee.</Label>
-                                                <Label>receipt.pdf</Label>
                                             </div>
                                         </div>
                                     </AccordionContent>
