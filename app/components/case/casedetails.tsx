@@ -29,8 +29,8 @@ const CaseDetails: React.FC = () => {
             </div>
             
             <div className='flex border-b-2 border-dotted border-gray-500 justify-end w-full px-2 py-2'>
-                <button type="button" className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-4 py-1.5 me-2">
-                    Refresh
+                <button type="button" className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-4 py-1 me-2">
+                    Actions
                 </button>
             </div>
             <div className='m-3 space-y-5 mb-20'>
@@ -60,12 +60,12 @@ const CaseDetails: React.FC = () => {
                 </div>
             </div>
             <div className=''>
-                <div className='border-y-2  h-12 items-center py-3 px-2 cursor-pointer'>
+                <div className='border-r-4 border-r-blue-700 border-y-2  h-12 items-center py-3 px-2 cursor-pointer'>
                     <span className='text-thin text-ellipsis font-light'>
                         Details
                     </span>
                 </div>
-                <div className='border-r-4 border-r-blue-700 h-12 items-center border-y-2  py-3 px-2 cursor-pointer'>
+                <div className='border-r-4 h-12 items-center border-y-2  py-3 px-2 cursor-pointer'>
                     <span className='text-thin text-ellipsis font-light'>
                         Comments
                     </span>

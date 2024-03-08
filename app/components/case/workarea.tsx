@@ -8,7 +8,6 @@ import { Card } from '@/components/ui/card';
 const Preliminary: React.FC = () => {
     return(
         <div className='h-full w-full'>
-            <Card className='h-full'>
             <div className='grid grid-cols-2 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Application Type:</Label>
@@ -27,14 +26,12 @@ const Preliminary: React.FC = () => {
                     <span className='font-light text-sm'>Teacher Aide</span>
                 </div>
             </div>
-            </Card>
         </div>
     );
 }
 const Bio: React.FC = () => {
     return(
         <div className='h-full w-full'>
-            <Card className='h-full'>
             <div className='grid grid-cols-4 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>National ID:</Label>
@@ -61,48 +58,64 @@ const Bio: React.FC = () => {
                     <span className='font-light text-sm'>Male</span>
                 </div>
             </div>
-            </Card>
         </div>
     );
 }
 const Employment: React.FC = () => {
     return(
-        <div className='border rounded-lg h-full w-full'>
-
+        <div className='h-full w-full'>
+ 
         </div>
     );
 }
 const Qualifications: React.FC = () => {
     return(
-        <div className='border rounded-lg h-full w-full'>
-
+        <div className='h-full w-full'>
+            <div className='grid grid-cols-2 m-10 gap-y-5'>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Qualification level:</Label>
+                    <span className='font-light text-sm'>Diploma</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Qualification name:</Label>
+                    <span className='font-light text-sm'>Diploma in Primary Education</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Awarding Institution:</Label>
+                    <span className='font-light text-sm'>Tonota college of education</span>
+                </div>
+                <div className='flex flex-col space-y-1'>
+                    <Label>Year Of Completion:</Label>
+                    <span className='font-light text-sm'>2015</span>
+                </div>
+            </div>
         </div>
     );
 }
 const Disability: React.FC = () => {
     return(
-        <div className='border rounded-lg h-full w-full'>
+        <div className='h-full w-full'>
 
         </div>
     );
 }
 const Offence: React.FC = () => {
     return(
-        <div className='border rounded-lg h-full w-full'>
+        <div className='h-full w-full'>
 
         </div>
     );
 }
 const Attachments: React.FC = () => {
     return(
-        <div className='border rounded-lg h-full w-full'>
+        <div className='h-full w-full'>
 
         </div>
     );
 }
 const Declaration: React.FC = () => {
     return(
-        <div className='border rounded-lg h-full w-full'>
+        <div className='h-full w-full'>
 
         </div>
     );
@@ -218,24 +231,30 @@ const WorkArea: React.FC = () => {
                 </li>
             </ul>
         </div>
-        <div className='h-80 mx-8 my-2'>
-            {activeTab===1 && <Preliminary/>}
-            {activeTab===2 && <Bio/>}
-            {activeTab===3 && <Employment/>}
-            {activeTab===4 && <Qualifications/>}
-            {activeTab===5 && <Disability/>}
-            {activeTab===6 && <Offence/>}
-            {activeTab===7 && <Attachments/>}
-            {activeTab===8 && <Declaration/>}
-        </div>
-        <div className='p-1 mx-8 mb-2'>
-            <div className='flex space-x-2 justify-end'>
-                <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Reject</button>
-                <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Approve</button>
+        <ScrollArea className='h-screen'>
+            <Card className='mx-8 my-2'>
+            <div className=''>
+                {activeTab===1 && <Preliminary/>}
+                {activeTab===2 && <Bio/>}
+                {activeTab===3 && <Employment/>}
+                {activeTab===4 && <Qualifications/>}
+                {activeTab===5 && <Disability/>}
+                {activeTab===6 && <Offence/>}
+                {activeTab===7 && <Attachments/>}
+                {activeTab===8 && <Declaration/>}
             </div>
-        </div>
-        <ScrollArea className="mx-8 h-40">
-            <StatusHistory  />
+            <div className='p-1 mx-8 mb-2'>
+                <div className='flex space-x-2 justify-end'>
+                    <button type="button" className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Reject</button>
+                    <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Approve</button>
+                </div>
+            </div>
+            </Card>
+            <Card className='mx-8 mb-2'>
+                <ScrollArea className="h-72">
+                    <StatusHistory  />
+                </ScrollArea>
+            </Card>
         </ScrollArea>
     </div>
     );

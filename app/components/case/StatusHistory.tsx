@@ -56,7 +56,7 @@ const notifications = [
 
  const statuses = [
     { newStatus: "Pending-Review", timestamp: new Date('2023-10-31T10:20:00'), changedBy: 'Oaitse Segala' },
-    { newStatus: "In Progress", timestamp: new Date('2023-11-02T16:05:00'), changedBy: 'Masego Sam' },
+    { newStatus: "Pending-Screening", timestamp: new Date('2023-11-02T16:05:00'), changedBy: 'Masego Sam' },
     { newStatus: "Needs Additional Info", timestamp: new Date('2023-11-05T09:12:00'), changedBy: 'System' } // Example of a system-generated change
 ]
 
@@ -64,10 +64,10 @@ type CardProps = React.ComponentProps<typeof Card>
 
 export function statusHistory({ className, ...props }: CardProps) {
     return(
-        <Card className={cn("w-full", className)} {...props}>
+        <div className={cn("w-full", className)} {...props}>
         <CardHeader>
-          <CardTitle>Comments</CardTitle>
-          <CardDescription>The record has 3 comments.</CardDescription>
+          <CardTitle>Status change history</CardTitle>
+          <CardDescription>The record has 3 status changes.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div>
@@ -86,7 +86,7 @@ export function statusHistory({ className, ...props }: CardProps) {
                     Updated {status.timestamp.toLocaleString()}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {status.changedBy}
+                   - {status.changedBy}
                   </p>
                   </div>
                 </div>
@@ -95,11 +95,11 @@ export function statusHistory({ className, ...props }: CardProps) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">
-            {/*<CheckIcon className="mr-2 h-4 w-4" />*/} View all
+          <Button className="w-full bg-sky-400">
+            {/*<CheckIcon className="mr-2 h-4 w-4" />*/} Add comment
           </Button>
         </CardFooter>
-      </Card>
+      </div>
     )
 }
 export default statusHistory;
