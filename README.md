@@ -32,6 +32,7 @@ TODO:
 11. Next UI: https://nextui.org/docs/guide/introduction
 12. Zustand: https://docs.pmnd.rs/zustand/getting-started/introduction
 13. Material UI: https://mui.com/material-ui/getting-started/
+14. https://tailwindcss.com/docs/cursor#setting-the-cursor-style
 
 Erros and Resolutions
 1. https://github.com/shadcn-ui/ui/issues/800: My mistake was that my editor auto imported Form component from react-hook-form when it should have been imported from @/components/ui/form. Hope this helps somebody.
