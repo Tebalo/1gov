@@ -94,11 +94,11 @@ export function statusHistory({ className, ...props }: CardProps) {
             ))}
           </div>
         </CardContent>
-        <CardFooter>
+        {/**<CardFooter>
           <Button className="w-full bg-sky-400">
-            {/*<CheckIcon className="mr-2 h-4 w-4" />*/} Add comment
+            <CheckIcon className="mr-2 h-4 w-4" /> Add comment
           </Button>
-        </CardFooter>
+        </CardFooter>*/}
       </div>
     )
 }
