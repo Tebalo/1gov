@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import ApprovalRejectionModal from '../ApprovalRejectionModal';
 import { useRouter } from 'next/navigation';
+import { getNext } from '@/app/lib/route';
 
 // Define the interface for your item
 interface ProductItem {
@@ -39,23 +40,6 @@ const MyWork: React.FC = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
 
-  const handleRadioChange = (value: string) => {
-    setSelectedFilter(value);
-
-    // Update data based on the selected filter
-   /* switch (value) {
-      case 'Student-Teacher Application':
-        setData(productData.filter(item => item.name.includes("Student-Teacher Application")));
-        break;
-      case 'Teacher Application':
-        setData(productData.filter(item => item.name.includes("Teacher Application")));
-        break;
-      default:
-        break;
-    }**/
-
-    setIsDropdownOpen(false);
-  };
   const rowData: RowData[] = [
     { id: '67bf7nfe74unf843m', title: 'Teacher registration', date: '02 Feb 2024 - 12:48', status: 'Pending-Approval' },
     { id: '67bf7nfe74unf647m', title: 'Teacher registration', date: '23 Jan 2024 - 16:48', status: 'Pending-Approval' },
@@ -69,12 +53,14 @@ const MyWork: React.FC = () => {
         setIsRegistrationOpen(false);
     }
     const router = useRouter()
+    const [isFetching, setIsFetching] = useState(false);
+    const [error, setError] = useState(null);
 
-    const getNext = () => {
-
-
-        
-        router.push('/portal/dashboard/home-o/registration')
+    async function getWork(){
+        //setIsFetching(true);
+        //setError(null)
+        //const work = await getNext()
+        router.push('/portal/dashboard/home-o/reg')
     }
   return (
     <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg h-full">
@@ -95,12 +81,12 @@ const MyWork: React.FC = () => {
                         </svg>
                     All
                     <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" strokeLinecap-="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
                     </svg>
                 </button>
                 <button 
                 type="button" 
-                onClick={getNext}
+                onClick={getWork}
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-0 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Get Next Work</button>
             </div>
             <div
@@ -120,7 +106,7 @@ const MyWork: React.FC = () => {
                     </li>
                     <li>
                         <div className="flex items-center p-2 rounded hover:bg-gray-100 ">
-                            <input checked id="filter-radio-example-2" type="radio" value="Student-Teacher Application" name="filter-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                            <input defaultChecked id="filter-radio-example-2" type="radio" value="Student-Teacher Application" name="filter-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                             <label htmlFor="filter-radio-example-2" className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Student-Teacher Application</label>
                         </div>
                     </li>
@@ -136,7 +122,7 @@ const MyWork: React.FC = () => {
         <label htmlFor="table-search" className="sr-only">Search</label>
         <div className="relative">
             <div className="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
-                <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
             </div>
             <input type="text" id="table-search" className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for items"/>
         </div>

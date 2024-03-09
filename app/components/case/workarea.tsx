@@ -6,25 +6,25 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { LoadingSkeleton } from '../LoadingSkeleton';
 
-const Preliminary: React.FC = () => {
+const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
     return(
         <div className='h-full w-full'>
             <div className='grid grid-cols-2 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Application Type:</Label>
-                    <span className='font-light text-sm'>Teacher</span>
+                    <span className='font-light text-sm'>{pre.type}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Work status:</Label>
-                    <span className='font-light text-sm'>Serving</span>
+                    <span className='font-light text-sm'>{pre.work_status}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Practice category:</Label>
-                    <span className='font-light text-sm'>Primary</span>
+                    <span className='font-light text-sm'>{pre.practice_category}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Practice sub-category:</Label>
-                    <span className='font-light text-sm'>Teacher Aide</span>
+                    <span className='font-light text-sm'>{pre.sub_cateogry}</span>
                 </div>
             </div>
         </div>
@@ -230,16 +230,17 @@ interface CaseData {
     // ... other case properties
     statusHistory: StatusChange[];
 }
-const caseData: CaseData = {
-    // ... other case properties
-    statusHistory: [
-        { newStatus: "Pending-Review", timestamp: new Date('2023-10-31T10:20:00'), changedBy: 'Oaitse Segala' },
-        { newStatus: "In Progress", timestamp: new Date('2023-11-02T16:05:00'), changedBy: 'Masego Sam' },
-        { newStatus: "Needs Additional Info", timestamp: new Date('2023-11-05T09:12:00'), changedBy: 'System' } // Example of a system-generated change
-    ]
-};
+interface Preliminary {
+    type: string;
+    work_status: string,
+    practice_category: string,
+    sub_cateogry: string,
+}
+interface Props{
+    preliminary: Preliminary;
+}
 
-const WorkArea: React.FC = () => {
+const WorkArea: React.FC<Props> = (data: Props) => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabClick = (tabNumber: number) => {
         setActiveTab(tabNumber);
@@ -334,7 +335,7 @@ const WorkArea: React.FC = () => {
         <ScrollArea className='h-screen'>
             <Card className='mx-8 my-2'>
             <div className=''>
-                {activeTab===1 && <Preliminary/>}
+                {activeTab===1 && <Preliminary {...data.preliminary}/>}
                 {activeTab===2 && <Bio/>}
                 {activeTab===3 && <Employment/>}
                 {activeTab===4 && <Qualifications/>}

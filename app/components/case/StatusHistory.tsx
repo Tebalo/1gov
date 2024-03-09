@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from 'react'; // Import useEffect
 import getHistory from "@/app/lib/route"
+
 interface StatusChange {
     newStatus: string;
     timestamp: Date;
@@ -23,18 +24,14 @@ interface StatusChangeProps {
     statusHistory: StatusChange[];
 }
 
-
-
 type CardProps = React.ComponentProps<typeof Card>
 
 interface StatusHistoryProps extends CardProps {
   reg_number: string;
 }
 
-
-
 export async function statusHistory({ className, reg_number, ...props }: StatusHistoryProps) {
-    const statuses = await getHistory();
+    const statuses = await getHistory(reg_number);
     return(
         <div className={cn("w-full", className)} {...props}>
         <CardHeader>

@@ -1,7 +1,16 @@
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
-const CaseDetails: React.FC = () => {
+interface Props {
+    status: string;
+    type: string;
+    id: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+const CaseDetails: React.FC<Props> = (data: Props) => {
   return (       
     <>  
         <div className="items-start bg-gray-50 justify-start h-screen w-1/4">
@@ -21,8 +30,8 @@ const CaseDetails: React.FC = () => {
                     </div>
                     <div className='font-sans text-white text-lg'>
                         <a href="#">
-                            <p>R-00001</p>
-                            <h5 className="mb-2 tracking-tight">Teacher</h5>
+                            <p>{data.id}</p>
+                            <h5 className="mb-2 tracking-tight">{data.type==='teacher' && <>Teacher</>}{data.type==='student' && <>Teacher</>}</h5>
                         </a>
                     </div>
                 </div>
@@ -33,7 +42,7 @@ const CaseDetails: React.FC = () => {
                     Actions
                 </button>
             </div>
-            <div className='m-3 space-y-5 mb-20'>
+            <div className='m-3 space-y-5 mb-10'>
                 <div>
                     <h1 className='text-sm text-gray-500'>Priority</h1>
                     <h5 className='text-3xl font-semibold tracking-tight'>10</h5>
@@ -41,21 +50,21 @@ const CaseDetails: React.FC = () => {
                 <div className='flex space-x-11'>
                     <h1 className='text-sm text-gray-500'>Status</h1>
                     <div className='px-1 py-0 bg-blue-300 rounded-lg'>
-                        <h1 className='text-blue text-xs text-indigo-900'>Pending-Review</h1>
+                        <h1 className='text-blue text-xs text-indigo-900'>{data.status}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Created</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>Oaitse Segala</h1>
-                        <h1 className='text-xs font-thin'>Jan 30th 2024, 2 months ago</h1>
+                        <h1 className='text-sm text-sky-600'>{data.createdBy}</h1>
+                        <h1 className='text-xs font-thin'>{data.createdAt}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Updated</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>Masego Sam</h1>
-                        <h1 className='text-xs font-thin'>less than a minute ago</h1>
+                        <h1 className='text-sm text-sky-600'>{data.createdBy}</h1>
+                        <h1 className='text-xs font-thin'>{data.updatedAt}</h1>
                     </div>
                 </div>
             </div>
