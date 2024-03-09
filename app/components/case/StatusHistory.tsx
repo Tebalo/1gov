@@ -1,3 +1,4 @@
+'use client'
 import { BellIcon, CheckIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
 import {
@@ -10,6 +11,8 @@ import {
   } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
+import { useEffect, useState } from 'react'; // Import useEffect
+import getHistory from "@/app/lib/route"
 interface StatusChange {
     newStatus: string;
     timestamp: Date;
@@ -21,48 +24,17 @@ interface StatusChangeProps {
 }
 
 
-const statusHistory1: React.FC<StatusChangeProps> = ({statusHistory}) => {
-    return(
-        <div>
-            <h2>Status Change History</h2>
-            <ul>
-                {statusHistory.map((change, index) => (
-                    <li key={index}>
-
-                        <p><strong>Status:</strong> {change.newStatus}</p>
-                        <p><strong>Date:</strong> {change.timestamp.toLocaleString()}</p>
-                        {change.changedBy && <p><strong>Changed by:</strong>{change.changedBy}</p>}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )
-}
-
-const notifications = [
-    {
-      title: "Your call has been confirmed.",
-      description: "1 hour ago",
-    },
-    {
-      title: "You have a new message!",
-      description: "1 hour ago",
-    },
-    {
-      title: "Your subscription is expiring soon!",
-      description: "2 hours ago",
-    },
-  ]
-
- const statuses = [
-    { newStatus: "Pending-Review", timestamp: new Date('2023-10-31T10:20:00'), changedBy: 'Oaitse Segala' },
-    { newStatus: "Pending-Screening", timestamp: new Date('2023-11-02T16:05:00'), changedBy: 'Masego Sam' },
-    { newStatus: "Needs Additional Info", timestamp: new Date('2023-11-05T09:12:00'), changedBy: 'System' } // Example of a system-generated change
-]
 
 type CardProps = React.ComponentProps<typeof Card>
 
-export function statusHistory({ className, ...props }: CardProps) {
+interface StatusHistoryProps extends CardProps {
+  reg_number: string;
+}
+
+
+
+export async function statusHistory({ className, reg_number, ...props }: StatusHistoryProps) {
+    const statuses = await getHistory();
     return(
         <div className={cn("w-full", className)} {...props}>
         <CardHeader>

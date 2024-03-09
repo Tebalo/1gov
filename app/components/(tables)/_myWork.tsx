@@ -71,6 +71,9 @@ const MyWork: React.FC = () => {
     const router = useRouter()
 
     const getNext = () => {
+
+
+        
         router.push('/portal/dashboard/home-o/registration')
     }
   return (
