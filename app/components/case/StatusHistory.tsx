@@ -1,4 +1,4 @@
-'use client'
+//'use client'
 import { BellIcon, CheckIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
 import {
@@ -11,7 +11,6 @@ import {
   } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from 'react'; // Import useEffect
 import getHistory from "@/app/lib/route"
 
 interface StatusChange {
