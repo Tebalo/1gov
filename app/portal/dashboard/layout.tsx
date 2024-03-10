@@ -4,6 +4,7 @@ import Appbar from "@/app/components/appbar"; // Pending executive decision
 import DynamicSidebar from "@/app/components/DynamicSideBar";
 import { Suspense } from "react";
 import { LoadingSkeleton } from "@/app/components/LoadingSkeleton";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function DashboardLayout({
           <main className="p-4 rounded-lg">
             <div className="p-0">
               <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
+              <Toaster />
             </div>
           </main>
         </div>

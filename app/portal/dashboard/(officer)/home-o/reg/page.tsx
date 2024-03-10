@@ -10,13 +10,13 @@ interface Record{
 }
 
 const Page: React.FC<Record> = async () => {
-    revalidate('work')
+    //revalidate('work')
     const work = await getNext()
-
+    
     const details = {
         'status': work.reg_status ?? '',
         'type': work.registration_type ?? '',
-        'id': work.national_id,
+        'id': work.national_id ?? '',
         'createdBy': work.forenames +' '+ work.surname ?? '',
         'createdAt': work.created_at ?? '',
         'updatedAt': work.updated_at ?? '',
@@ -121,9 +121,11 @@ const Page: React.FC<Record> = async () => {
     return (
         <main className="h-full">
             <div className="flex flex-row h-full gap-1">
-                {work.national_id!==null && (<><CaseDetails {...details}/>
-                 <WorkArea {...recordDetails}/></>)}
-                {(work.national_id===null) &&
+                {work !== null ? (
+                    <>
+                        <CaseDetails {...details}/>
+                        <WorkArea {...recordDetails}/>
+                    </>):(
                     <div className="w-full md:h-96 items-center flex justify-center">
                         <div>
                             <h2 className="text-center text-black text-3xl">Work not found!</h2>
@@ -140,7 +142,7 @@ const Page: React.FC<Record> = async () => {
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </div>)
                 }
                 {/**<Utilities/>*/}
             </div>

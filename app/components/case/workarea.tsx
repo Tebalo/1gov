@@ -9,6 +9,19 @@ import { UpdateStatus } from '@/app/lib/route';
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
 import { FaFilePdf } from "react-icons/fa";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+    } from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+import { useRouter } from 'next/navigation'
 
 const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
     return(
@@ -350,6 +363,7 @@ interface Props {
   }
 
 const WorkArea: React.FC<Props> = (data: Props) => {
+    const router = useRouter()
     const [activeTab, setActiveTab] = useState(1);
     const handleTabClick = (tabNumber: number) => {
         setActiveTab(tabNumber);
@@ -358,15 +372,23 @@ const WorkArea: React.FC<Props> = (data: Props) => {
     const handleStatusChange=async (id:string,status:string)=>{
         const res = await UpdateStatus(data.preliminary.id, status)
         if(!res){
-
+            toast({
+                title: "Failed!!!",
+                description: "Something went wrong",
+                action: (
+                  <ToastAction altText="Ok">Ok</ToastAction>
+                ),
+            })
+        }else{
+            toast({
+                title: "Routed successfully",
+                description: "The record has been routed with the status: "+status,
+                action: (
+                <ToastAction altText="Ok">Ok</ToastAction>
+                ),
+            })
+            router.push('/portal/dashboard/home-o')
         }
-        toast({
-            title: "Routed successfully",
-            description: "The record has been routed with the status: "+status,
-            action: (
-              <ToastAction altText="Done">Done</ToastAction>
-            ),
-        })
     }
 
     const new_status = 'Pending-Screening'
@@ -471,25 +493,65 @@ const WorkArea: React.FC<Props> = (data: Props) => {
             </div>
             <div className='p-1 mx-8 mb-2'>
                 <div className='flex space-x-2 justify-end'>
-                    <button 
+                    {/*<button 
                     type="button" 
                     onClick={async () => await handleStatusChange(data.preliminary.id, prev_status)}
                     className="py-2 px-4 me-2 mb-0 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Reject</button>
                     <button 
                     type="submit" 
                     onClick={async () => await handleStatusChange(data.preliminary.id, new_status)}
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Approve</button>
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center">Approve</button>*/}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline">Reject</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action will change the status to <span className='italic font-medium'>{prev_status}</span>, and this will route the application to the previous level.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                            className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                            onClick={async () => await handleStatusChange(data.preliminary.id, prev_status)}
+                            >Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="default" className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'>Approve</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action will change the status to <span className='italic font-medium'>{new_status}</span>, and this will route the application to the next level.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                            className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                            onClick={async () => await handleStatusChange(data.preliminary.id, new_status)}
+                            >Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                    </div>
                 </div>
-            </div>
-            </Card>
-            <Card className='mx-8 mb-2'>
-                <ScrollArea className="h-72">
-                <Suspense fallback={<LoadingSkeleton/>}>
-                    <StatusHistory reg_number={data.preliminary.id} />
-                    </Suspense>
-                </ScrollArea>
-            </Card>
-        </ScrollArea>
+                </Card>
+                <Card className='mx-8 mb-2'>
+                    <ScrollArea className="h-72">
+                    <Suspense fallback={<LoadingSkeleton/>}>
+                        <StatusHistory reg_number={data.preliminary.id} />
+                        </Suspense>
+                    </ScrollArea>
+                </Card>
+            </ScrollArea>
     </div>
     );
 }

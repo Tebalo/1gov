@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidateTag } from "next/cache"
+import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
 
 //import { revalidateTag } from "next/cache"
 
@@ -22,19 +23,28 @@ export default async function getHistory(reg_number: string){
   }
 
 export async function getNext(){
+    revalidateTag('work')
     const res = await fetch('http://66.179.253.57/api/getNext/', {next:{tags:['work']}})
 
     if(!res.ok){
-        // This will activate the closest 'error.js' Error Boundary
-        throw new Error('Failed to fetch data')
+        if(res.status === 204){
+             return null
+        }else{
+            throw new Error('Failed to fetch data')
+        }
     }
-    
-    return res.json()
-}
-
-interface StatusProps {
-    id: string;
-    status: string;
+    if(res.status === 204){
+        return null
+    }
+    try{
+        return await res.json()
+    }catch(error){
+        if(error instanceof SyntaxError){
+            return {}
+        }else{
+            throw new Error('Failed to fetch data')
+        }
+    }
 }
 
 export async function UpdateStatus(id: string, status: string ){
