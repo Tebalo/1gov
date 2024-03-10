@@ -8,11 +8,12 @@ import { LoadingSkeleton } from '../LoadingSkeleton';
 import { UpdateStatus } from '@/app/lib/route';
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
+import { FaFilePdf } from "react-icons/fa";
 
 const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid grid-cols-2 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-2 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Application Type:</Label>
                     <span className='font-light text-sm'>{pre.type}</span>
@@ -55,7 +56,7 @@ interface Bio {
 const Bio: React.FC<Bio> = (bio: Bio) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid grid-cols-4 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-4 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>National ID:</Label>
                     <span className='font-light text-sm'>{bio.id}</span>
@@ -132,7 +133,7 @@ interface Employment {
 const Employment: React.FC<Employment> = (emp: Employment) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid grid-cols-3 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-3 m-10 gap-y-5'>
                  <div className='flex flex-col space-y-1'>
                     <Label>Years in service:</Label>
                     <span className='font-light text-sm'>{emp.experienceYears}</span>
@@ -164,7 +165,7 @@ const Employment: React.FC<Employment> = (emp: Employment) => {
 const Qualifications: React.FC = () => {
     return(
         <div className='h-full w-full'>
-            <div className='grid grid-cols-2 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-3 mx-10 mt-10 mb-2 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Qualification level:</Label>
                     <span className='font-light text-sm'>Diploma</span>
@@ -181,6 +182,27 @@ const Qualifications: React.FC = () => {
                     <Label>Year Of Completion:</Label>
                     <span className='font-light text-sm'>2015</span>
                 </div>
+                <div className=''>
+                    <div className='flex space-x-1'>
+                        <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
+                        <span>filename.pdf</span>
+                    </div>
+                </div>
+            </div>
+            <div className='mx-10 flex space-x-24'>
+                <div>
+                    <Label>Minor subjects:</Label>
+                    <ol type='1'>
+                        <li key='1'><span className='font-light text-sm'>Physics</span></li>
+                        <li key='2'><span className='font-light text-sm'>Chemistry</span></li>
+                    </ol>
+                </div>
+                <div>
+                    <Label>Major subjects:</Label>
+                    <ul>
+                        <li><span className='font-light text-sm'>Biology</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
     );
@@ -188,7 +210,7 @@ const Qualifications: React.FC = () => {
 const Disability: React.FC<Disability> = (dis: Disability) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid grid-cols-1 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-1 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Are you living with any form of disability:</Label>
                     <span className='font-light text-sm'>{dis.disability}</span>
@@ -228,7 +250,22 @@ const Offence: React.FC<OffenceConvictions> = (off:OffenceConvictions) => {
 const Attachments: React.FC = () => {
     return(
         <div className='h-full w-full'>
-
+            <div className='grid md:grid-cols-2 m-10 gap-y-5 gap-x-5'>
+                <div className='space-y-2'>
+                    <Label>Certified copy of OMANG or passport</Label>
+                    <div className='flex space-x-1'>
+                        <FaFilePdf style={{ fontSize: '2rem', color: '#FF6666' }}/>
+                        <span>filename.pdf</span>
+                    </div>
+                </div>
+                <div className='space-y-2'>
+                    <Label>Verification of qualification from BQA</Label>
+                    <div className='flex space-x-1'>
+                        <FaFilePdf style={{ fontSize: '2rem', color: '#FF6666' }}/>
+                        <span>filename.pdf</span>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
@@ -448,7 +485,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
             <Card className='mx-8 mb-2'>
                 <ScrollArea className="h-72">
                 <Suspense fallback={<LoadingSkeleton/>}>
-                    <StatusHistory reg_number='7378566' />
+                    <StatusHistory reg_number={data.preliminary.id} />
                     </Suspense>
                 </ScrollArea>
             </Card>
