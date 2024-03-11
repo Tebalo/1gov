@@ -5,7 +5,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { LoadingSkeleton } from '../LoadingSkeleton';
-import { UpdateStatus } from '@/app/lib/route';
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
 import { FaFilePdf } from "react-icons/fa";
@@ -22,6 +21,7 @@ import {
     } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
+import { UpdateStatus } from '@/app/lib/actions';
 
 const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
     return(
