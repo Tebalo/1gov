@@ -1,12 +1,25 @@
+'use client'
 import React, { useState } from "react";
 import Link from "next/link";
 import {motion} from 'framer-motion';
+import { authenticate } from '@/app/lib/actions'
+import {useFormState, useFormStatus } from 'react-dom'
+import { z } from 'zod';
+
+const loginSchema = z.object({
+    email: z.string().email('Invalid email format'),
+    password: z.string().min(8, 'Password must be at least 8 characters'), 
+});
 
 interface ModalProps{
     isOpen: boolean;
     onClose: () => void;
 }
-const OneGovID: React.FC = () => (
+function OneGovID(){
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined)
+
+  return(
+  <form action={dispatch}>
     <div className="py-4">
         <div>
             <label htmlFor="govid" className="block mb-2 text-sm font-medium text-gray-900">1Gov ID</label>
@@ -21,7 +34,8 @@ const OneGovID: React.FC = () => (
             <h4 className="text-sky-400 text-sm">Recover account</h4>
         </div>
     </div>
-  );
+  </form>)
+};
   
   const Phone: React.FC = () => (
     <div className="py-4">
@@ -40,22 +54,40 @@ const OneGovID: React.FC = () => (
     </div>
   );
   
-  const Email: React.FC = () => (
-    <div className="py-4">
-        <div className="">
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email address</label>
-            <input type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="john.doe@company.com" required/>
-        </div> 
-        <div className="mb-6">
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-            <input type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="•••••••••" required/>
-        </div> 
-        <div className="flex space-x-2">
-            <h3 className="text-gray-900">Forgot your password?</h3>
-            <h4 className="text-sky-400 text-sm">Recover account</h4>
+  function Email(){
+    const [errorMessage, dispatch] = useFormState(authenticate, undefined)
+
+    return(
+      <form action={dispatch}>
+        <div className="py-2">
+            <div>{errorMessage && <p className="text text-red-500">{errorMessage}</p>}</div>
+            <div className="">
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email address</label>
+                <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="john.doe@company.com" required/>
+            </div> 
+            <div className="mb-2">
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                <input type="password" name="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="•••••••••" required/>
+            </div> 
+            <div className="w-full flex justify-end">
+              <LoginButton/>
+            </div>
+            <div className="flex space-x-2">
+                <h3 className="text-gray-900 text-sm">Forgot your password?</h3>
+                <h4 className="text-sky-400 text-sm">Recover account</h4>
+                
+            </div>
         </div>
-    </div>
-  );
+      </form>
+    )
+  };
+  function LoginButton(){
+    const {pending} = useFormStatus()
+    return(
+    <button aria-disabled={pending} type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+      Login
+    </button>)
+  }
   export const Login: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const modalClass = isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none';
     const [activeTab, setActiveTab] = useState(1);
