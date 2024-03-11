@@ -39,4 +39,4 @@ TODO:
 Erros and Resolutions
 1. https://github.com/shadcn-ui/ui/issues/800: My mistake was that my editor auto imported Form component from react-hook-form when it should have been imported from @/components/ui/form. Hope this helps somebody.
 2. Hydration error is a result of local storage, because the render tree between pre-render(SSR/SSG) and the first render in browser is different: https://nextjs.org/docs/messages/react-hydration-error
-3. Installation for WSL: https://learn.microsoft.com/en-us/windows/dev-environment/javascript/react-on-wsl
+3. Installation for WSL: https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-wsl
