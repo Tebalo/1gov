@@ -31,7 +31,7 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                     <div className='font-sans text-white text-lg'>
                         <a href="#">
                             <p>{data.id}</p>
-                            <h5 className="mb-2 tracking-tight">{data.type==='teacher' && <>Teacher</>}{data.type==='student' && <>Teacher</>}</h5>
+                            <h5 className="mb-2 tracking-tight">{data.type}</h5>
                         </a>
                     </div>
                 </div>
