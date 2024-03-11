@@ -1,5 +1,4 @@
-'use server'
-
+"use server"
 import { signIn } from "../auth/signIn"
 
 export async function authenticate(_currentState: unknown, formData: FormData) {
