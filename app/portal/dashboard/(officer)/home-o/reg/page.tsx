@@ -1,15 +1,11 @@
 import CaseDetails from "@/app/components/case/casedetails";
-import Utilities from "@/app/components/case/utilities";
+//import Utilities from "@/app/components/case/utilities";
 import WorkArea from "@/app/components/case/workarea";
 import { getNext } from "@/app/lib/actions";
 import Link from "next/link";
-import React, {useState}  from "react";
 
-interface Record{
-    national_id: string;
-}
 
-const Page: React.FC<Record> = async () => {
+const Page: React.FC = async () => {
     //revalidate('work')
     const work = await getNext()
   
