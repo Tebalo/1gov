@@ -1,7 +1,7 @@
 import CaseDetails from "@/app/components/case/casedetails";
 import Utilities from "@/app/components/case/utilities";
 import WorkArea from "@/app/components/case/workarea";
-import { getNext, revalidate} from "@/app/lib/route";
+import { getNext } from "@/app/lib/actions";
 import Link from "next/link";
 import React, {useState}  from "react";
 
@@ -12,7 +12,7 @@ interface Record{
 const Page: React.FC<Record> = async () => {
     //revalidate('work')
     const work = await getNext()
-    
+  
     const details = {
         'status': work.reg_status ?? '',
         'type': work.registration_type ?? '',
