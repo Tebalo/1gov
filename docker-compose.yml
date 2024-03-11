@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  nextjs:
+    build: 
+      context: .
+    ports:
+      - "3000:3000"
+    networks:
+      - bopteco_docker_network
+
+  nginx_nextjs:
+    build: ./nginx
+    ports:
+      - "8443:80"
+    networks:
+      - bopteco_docker_network
+
+networks:
+  bopteco_docker_network:
+    external: true
