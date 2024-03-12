@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { UpdateStatus } from '@/app/lib/actions';
+import Link from 'next/link';
 
 const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
     return(
@@ -175,46 +176,61 @@ const Employment: React.FC<Employment> = (emp: Employment) => {
         </div>
     );
 }
-const Qualifications: React.FC = () => {
+const Qualifications: React.FC<Qualifications> = (qual: Qualifications) => {
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-3 mx-10 mt-10 mb-2 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Qualification level:</Label>
-                    <span className='font-light text-sm'>Diploma</span>
+                    <span className='font-light text-sm'>{qual.level}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Qualification name:</Label>
-                    <span className='font-light text-sm'>Diploma in Primary Education</span>
+                    <span className='font-light text-sm'>{qual.qualification}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Awarding Institution:</Label>
-                    <span className='font-light text-sm'>Tonota college of education</span>
+                    <span className='font-light text-sm'>{qual.institution}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Year Of Completion:</Label>
-                    <span className='font-light text-sm'>2015</span>
+                    <span className='font-light text-sm'>{qual.qualification_year}</span>
                 </div>
                 <div className=''>
-                    <div className='flex space-x-1'>
-                        <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
-                        <span>filename.pdf</span>
-                    </div>
+                    
+                    <Link
+                        href={qual.attachments}
+                        target='_blank'
+                        rel="noreferrer noopener"
+                        className='hover:cursor-auto'
+                        >
+                            <div className='flex space-x-1'>
+                                <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
+                                <span>document.pdf</span>
+                            </div>
+                    </Link>
                 </div>
             </div>
             <div className='mx-10 flex space-x-24'>
                 <div>
                     <Label>Minor subjects:</Label>
                     <ol type='1'>
-                        <li key='1'><span className='font-light text-sm'>Physics</span></li>
-                        <li key='2'><span className='font-light text-sm'>Chemistry</span></li>
+                        {qual.minor_subjects.map((subject, index) =>(
+                            <li key='1'>
+                                <span className='font-light text-sm'>{subject}</span>
+                            </li>
+                        ))}
                     </ol>
                 </div>
                 <div>
                     <Label>Major subjects:</Label>
-                    <ul>
-                        <li><span className='font-light text-sm'>Biology</span></li>
-                    </ul>
+                    <ol type='1'>
+                        {qual.major_subjects.map((subject, index) =>(
+                            <li key='1'>
+                                <span className='font-light text-sm'>{subject}</span>
+                            </li>
+                        ))}
+                    </ol>
                 </div>
             </div>
         </div>
@@ -291,7 +307,7 @@ const Declaration: React.FC<Declarations> = (dec: Declarations) => {
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Accept the above terms and conditions</Label>
-                    <span className='font-light text-sm'>{dec.agreement}</span>
+                    <span className='font-light text-sm'>Yes</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>I agree to submit the listed profile information along with this application.</Label>
@@ -336,6 +352,16 @@ interface OffenceConvictions {
     misconductFlagDetails: string;
 }
 
+interface Qualifications {
+    level: string;
+    qualification: string;
+    institution: string;
+    qualification_year: string;
+    attachments: string;
+    minor_subjects: [];
+    major_subjects: [];
+}
+
 interface Preliminary {
     type: string;
     id: string;
@@ -355,6 +381,7 @@ interface Props {
     employment: Employment;
     offenceConvictions: OffenceConvictions;
     disability: Disability;
+    qualifications: Qualifications;
     //institutionRecommendations: InstitutionRecommendations; // Added 
     //studentPreliminaryInfos: StudentPreliminaryInfos; // Added
     //studentStudyProgrammes: StudentStudyProgrammes; // Added
@@ -485,7 +512,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
                 {activeTab===1 && <Preliminary {...data.preliminary}/>}
                 {activeTab===2 && <Bio {...data.bio}/>}
                 {activeTab===3 && <Employment {...data.employment}/>}
-                {activeTab===4 && <Qualifications/>}
+                {activeTab===4 && <Qualifications {...data.qualifications}/>}
                 {activeTab===5 && <Disability {...data.disability}/>}
                 {activeTab===6 && <Offence {...data.offenceConvictions}/>}
                 {activeTab===7 && <Attachments/>}

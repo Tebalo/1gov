@@ -4,11 +4,21 @@ import WorkArea from "@/app/components/case/workarea";
 import { getNext } from "@/app/lib/actions";
 import Link from "next/link";
 
+const processMjSubjects = (work: any) => {
+  if(work.major_subjects){
+    const mj = work.major_subjects.split(", ");
+    return mj
+  }else{
+    return []
+  }
+}
+
 
 const Page: React.FC = async () => {
     //revalidate('work')
-    const work = await getNext()
-  
+    const work = await getNext('Pending-Review')
+    const filepath = 'http://66.179.253.57/Qualifications/'
+
     const details = {
         'status': work.reg_status ?? '',
         'type': work.registration_type ?? '',
@@ -97,6 +107,15 @@ const Page: React.FC = async () => {
             'region': work.region ?? '',
             'district': work.district ?? '',
             'cityOrTown': work.city_or_town ?? ''
+          },
+          'qualifications':{
+            'level': work.level ?? '',
+            'qualification': work.qualification,
+            'institution': work.institution,
+            'qualification_year': work.qualification_year,
+            'attachments': filepath+work.attachments,
+            'minor_subjects': work.minor_subjects.split(", ") ?? [],
+            'major_subjects': work.major_subjects.split(", ") ?? [],
           },
           'offenceConvictions': {
             'studentRelatedOffence': work.student_related_offence ?? '',

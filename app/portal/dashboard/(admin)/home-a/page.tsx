@@ -4,8 +4,24 @@ import TableFilter from '@/app/components/(tables)/_tablefilter';
 import LineChartCard from '@/app/components/(charts)/_LineChartCard';
 import { fakerDE as faker } from '@faker-js/faker';
 import { PageTitle } from '@/app/components/PageTitle';
+import { Payment, columns } from "./columns"
+import { DataTable } from "./data-table"
 
-const Index: React.FC = () => {
+async function getData(): Promise<Payment[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    // ...
+  ]
+}
+
+const Index: React.FC = async () => {
+    const data = await getData()
     const doughtnutData = {
         labels: ['New', 'Pending-Approval', 'Pending-Payment'],
         datasets: [
@@ -70,25 +86,7 @@ const Index: React.FC = () => {
                         <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
                     </div>
                     <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
-                    </div>
-                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
-                    </div>
-                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
-                    </div>
-                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
-                    </div>
-                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
-                    </div>
-                    <div className="flex-row items-center justify-center h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                        <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
-                    </div>
-                    <div className="flex md:col-span-2 items-center justify-center h-96 border border-gray-200 rounded bg-gray-50">
-                        <LineChartCard title='' chartData={linedata} options={lineoptions}/>
+                      <DataTable columns={columns} data={data} />
                     </div>
                 </div>
             </div>

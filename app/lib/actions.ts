@@ -39,10 +39,16 @@ export default async function getHistory(reg_number: string){
     //const res = await fetch('') // docs: fetching-caching-and-revalidating
     return statuses
   }
-
-export async function getNext(){
+export async function getAll(){
+  const res = await fetch('http://66.179.253.57/api/teacher_registrations/', {cache: 'no-store'})
+  if(!res.ok){
+    return []
+  }
+  return res.json()
+}
+export async function getNext(status:string){
     revalidateTag('work')
-    const res = await fetch('http://66.179.253.57/api/getNext/', {next:{tags:['work']}})
+    const res = await fetch(`http://66.179.253.57/api/getNext/?reg_status=${status}`, {next:{tags:['work']}})
 
     if(!res.ok){
         if(res.status === 204){
