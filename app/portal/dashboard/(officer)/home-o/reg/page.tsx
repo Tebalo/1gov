@@ -1,4 +1,5 @@
 import CaseDetails from "@/app/components/case/casedetails";
+import StudentWorkArea from "@/app/components/case/studentWorkArea";
 //import Utilities from "@/app/components/case/utilities";
 import WorkArea from "@/app/components/case/workarea";
 import { getNext } from "@/app/lib/actions";
@@ -22,11 +23,12 @@ const Page: React.FC = async () => {
         'updatedAt': work.updated_at ?? '',
     }
     const studentDetails = {
-        'institutionRecommendations': {
+        'recommedation': {
             'recommended': work.recommended ?? '', 
-            'attachment': work.attachment ?? ''
+            'attachment': filepath+work.attachment ?? ''
           },
           'bio': {
+            'id': work.national_id ?? '',
             'surname': work.surname ?? '',
             'forenames': work.forenames ?? '',
             'dob': work.dob ?? '',
@@ -44,7 +46,7 @@ const Page: React.FC = async () => {
             'disability': work.disability ?? '',
             'disabilityDescription': work.disability_description ?? ''
           },
-          'studentStudyProgrammes': {
+          'studyprogramme': {
             'name': work.name ?? '',
             'completionYear': work.completion_year ?? '',
             'level': work.level ?? '',
@@ -52,11 +54,13 @@ const Page: React.FC = async () => {
             'modeOfStudy': work.mode_of_study ?? '',
             'specialization': work.specialization ?? ''
           },
-          'studentPreliminaryInfos': {
-            'institutionName': work.institution_name ?? '',
-            'institutionType': work.institution_type ?? '',
+          'preliminary': {
+            'institution_name': work.institution_name ?? '',
+            'type': work.registration_type ?? '',
+            'id': work.national_id ?? '',
+            'institution_type': work.institution_type ?? '',
             'citizenry': work.citizenry ?? '',
-            'studyArea': work.study_area ?? ''
+            'study_area': work.study_area ?? ''
           },
           'declarations': {
             'agreement': work.agreement ?? false, 
@@ -92,7 +96,7 @@ const Page: React.FC = async () => {
           },
           'declarations': {
             'agreement': work.agreement ?? false, 
-            'signature': work.signature ?? ''
+            'signature': work.surname ?? ''
           },
           'employment': {
             'experienceYears': work.experience_years ?? 0, 
@@ -133,7 +137,8 @@ const Page: React.FC = async () => {
                 {work !== null ? (
                     <>
                         <CaseDetails {...details}/>
-                        <WorkArea {...recordDetails}/>
+                        {work.registration_type === 'teacher' || 'Teacher' ? (<WorkArea {...recordDetails}/>):
+                        (<StudentWorkArea {...studentDetails}/>)}:
                     </>):(
                     <div className="w-full md:h-96 items-center flex justify-center">
                         <div>
