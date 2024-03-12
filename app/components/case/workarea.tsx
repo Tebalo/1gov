@@ -204,12 +204,15 @@ const Qualifications: React.FC<Qualifications> = (qual: Qualifications) => {
                         href={qual.attachments}
                         target='_blank'
                         rel="noreferrer noopener"
-                        className='hover:cursor-auto'
+                        className='cursor-pointer'
                         >
                             <div className='flex space-x-1'>
                                 <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
                                 <span>document.pdf</span>
                             </div>
+                            <span className='text-xs font-thin italic'>
+                               click to open in a new tab.{" "}
+                            </span>
                     </Link>
                 </div>
             </div>
@@ -286,15 +289,21 @@ const Attachments: React.FC = () => {
                     <Label>Certified copy of OMANG or passport</Label>
                     <div className='flex space-x-1'>
                         <FaFilePdf style={{ fontSize: '2rem', color: '#FF6666' }}/>
-                        <span>filename.pdf</span>
+                        <span>Omang.pdf</span>
                     </div>
+                    <span className='text-xs font-thin italic'>
+                        click to open in a new tab.{" "}
+                    </span>
                 </div>
                 <div className='space-y-2'>
                     <Label>Verification of qualification from BQA</Label>
                     <div className='flex space-x-1'>
                         <FaFilePdf style={{ fontSize: '2rem', color: '#FF6666' }}/>
-                        <span>filename.pdf</span>
+                        <span>Omang.pdf</span>
                     </div>
+                    <span className='text-xs font-thin italic'>
+                        click to open in a new tab.{" "}
+                    </span>
                 </div>
             </div>
         </div>
