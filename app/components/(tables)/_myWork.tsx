@@ -53,13 +53,14 @@ const MyWork: React.FC = () => {
     }
     const router = useRouter()
     const [isFetching, setIsFetching] = useState(false);
+    //setIsFetching(false);
     const [error, setError] = useState(null);
-
+    
     async function getWork(){
-        //setIsFetching(true);
-        //setError(null)
-        //const work = await getNext()
+        setIsFetching(true);
+        router.refresh()
         router.push('/portal/dashboard/home-o/reg')
+        setIsFetching(false);
     }
   return (
     <div className="w-full p-4 overflow-x-auto shadow-md sm:rounded-lg h-full">
@@ -86,7 +87,10 @@ const MyWork: React.FC = () => {
                 <button 
                 type="button" 
                 onClick={getWork}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-0 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Get Next Work</button>
+                disabled={isFetching}
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-0 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    {isFetching? "Fetching...." : "Get Next Work"}
+                </button>
             </div>
             <div
                 id="dropdownRadio"

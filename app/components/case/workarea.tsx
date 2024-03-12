@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { LoadingSkeleton } from '../LoadingSkeleton';
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
+
 import { FaFilePdf } from "react-icons/fa";
 import {
     AlertDialog,
@@ -23,6 +24,7 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { UpdateStatus } from '@/app/lib/actions';
 import Link from 'next/link';
+import { roundToNearestMinutes } from 'date-fns';
 
 const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
     return(
@@ -414,6 +416,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
                 <ToastAction altText="Ok">Ok</ToastAction>
                 ),
             })
+            router.prefetch('/portal/dashboard/home-o')
             router.push('/portal/dashboard/home-o')
         }
     }

@@ -3,21 +3,15 @@ import CaseDetails from "@/app/components/case/casedetails";
 import WorkArea from "@/app/components/case/workarea";
 import { getNext } from "@/app/lib/actions";
 import Link from "next/link";
-
-const processMjSubjects = (work: any) => {
-  if(work.major_subjects){
-    const mj = work.major_subjects.split(", ");
-    return mj
-  }else{
-    return []
-  }
-}
-
+import { redirect } from 'next/navigation'
 
 const Page: React.FC = async () => {
     //revalidate('work')
     const work = await getNext('Pending-Review')
     const filepath = 'http://66.179.253.57/Qualifications/'
+    if(!work){
+      redirect('/portal/dashboard/home-o/')
+    }
 
     const details = {
         'status': work.reg_status ?? '',
