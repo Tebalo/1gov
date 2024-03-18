@@ -1,8 +1,29 @@
 "use server"
+import axios from "axios";
 import { signIn } from "../auth/signIn"
 import { revalidateTag } from "next/cache"
 import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
+//import jsCookie from 'js-cookie';
+//import { useRouter } from "next/router";
 
+
+const authUrl = 'http://localhost:8000/api';
+
+export const logout =async () => {
+  try{
+    const response = await axios.post(`${authUrl}/welcome`, null, {
+      withCredentials: true,
+    });
+    console.log(response.data.message);
+    //jsCookie.remove('access_token');
+    //jsCookie.remove('refresh_token');
+
+    //const router = useRouter()
+    //router.push('/welcome')
+  }catch(error){
+    console.error(error)
+  }
+}
 
 export async function authenticate(_currentState: unknown, formData: FormData) {
     try {

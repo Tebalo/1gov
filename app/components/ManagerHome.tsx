@@ -1,11 +1,9 @@
-import React from 'react';
-import DoughtnutCard from '@/app/components/(charts)/_DoughtnutCard';
-import TableFilter from '@/app/components/(tables)/_tablefilter';
-import LineChartCard from '@/app/components/(charts)/_LineChartCard';
+import DoughtnutCard from "./(charts)/_DoughtnutCard";
+import MyWork from "./(tables)/_myWork";
+import { PageTitle } from "./PageTitle";
 import { fakerDE as faker } from '@faker-js/faker';
-import MyWork from '@/app/components/(tables)/_myWork';
-import { PageTitle } from '@/app/components/PageTitle';
-const Index: React.FC = () => {
+
+export const ManagerHome = () => {
     const doughtnutData = {
         labels: ['New', 'Pending-Approval', 'Pending-Payment'],
         datasets: [
@@ -60,8 +58,9 @@ const Index: React.FC = () => {
           },
         ],
       };
-  return (
-      <div className="overflow-auto h-screen rounded-lg">
+    return(
+        <>
+        <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-5">
                 <PageTitle Title="Teacher Registration and Licensing"/>
             </div>
@@ -69,16 +68,15 @@ const Index: React.FC = () => {
                 <div className="rounded-lg">
                     <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
                         <div className="flex-row items-center justify-center md:h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                          <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
+                            <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
                         </div>
                         <div className="flex md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
-                          <MyWork/>
+                            <MyWork/>
                         </div>
                     </div>
                 </div>
-                </div>
             </div>
-        );
-};
-
-export default Index;
+        </div>
+        </>
+    );
+}

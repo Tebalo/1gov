@@ -1,10 +1,11 @@
-import React, {Suspense} from "react";
-import { PageTitle } from "@/app/components/PageTitle";
-import { ServiceListWrapper } from "@/app/components/ServiceListWrapper";
-import { LoadingSkeleton } from "@/app/components/LoadingSkeleton";
+import { Suspense } from "react";
+import { LoadingSkeleton } from "./LoadingSkeleton";
+import { PageTitle } from "./PageTitle";
+import { ServiceListWrapper } from "./ServiceListWrapper";
 
-const Home: React.FC = () => {
+export const TeacherHome = () => {
     return(
+        <>
         <div className="">
             <div className="mb-5">
                 <PageTitle Title="Teacher Registration and Licensing"/>
@@ -25,6 +26,6 @@ const Home: React.FC = () => {
                 <ServiceListWrapper/>
             </Suspense>
         </div>
-    )
+        </>
+    );
 }
-export default Home;
