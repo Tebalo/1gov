@@ -2,12 +2,12 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 interface Props {
-    status: string;
-    type: string;
-    id: string;
-    createdBy: string;
-    createdAt: string;
-    updatedAt: string;
+    national_id: string;
+    reg_number: string;
+    registration_type: string;
+    reg_status: string;
+    created_at: string;
+    updated_at: string;
 }
 
 const CaseDetails: React.FC<Props> = (data: Props) => {
@@ -30,8 +30,8 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                     </div>
                     <div className='font-sans text-white text-lg'>
                         <a href="#">
-                            <p>{data.id}</p>
-                            <h5 className="mb-2 tracking-tight">{data.type}</h5>
+                            <p>{data.national_id}</p>
+                            <h5 className="mb-2 tracking-tight">{data.registration_type}</h5>
                         </a>
                     </div>
                 </div>
@@ -50,21 +50,21 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                 <div className='flex space-x-11'>
                     <h1 className='text-sm text-gray-500'>Status</h1>
                     <div className='px-1 py-0 bg-blue-300 rounded-lg'>
-                        <h1 className='text-blue text-xs text-indigo-900'>{data.status}</h1>
+                        <h1 className='text-blue text-xs text-indigo-900'>{data.reg_status}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Created</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>{data.createdBy}</h1>
-                        <h1 className='text-xs font-thin'>{data.createdAt}</h1>
+                        <h1 className='text-sm text-sky-600'>firstname+lastname</h1>
+                        <h1 className='text-xs font-thin'>{data.created_at}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Updated</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>{data.createdBy}</h1>
-                        <h1 className='text-xs font-thin'>{data.updatedAt}</h1>
+                        <h1 className='text-sm text-sky-600'>firstname+lastname</h1>
+                        <h1 className='text-xs font-thin'>{data.updated_at}</h1>
                     </div>
                 </div>
             </div>

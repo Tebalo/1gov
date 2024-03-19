@@ -30,6 +30,12 @@ export async function decrypt(input: string): Promise<any> {
   export async function authenticate(_currentState: unknown, formData: FormData) {
     try {
         const res = await login(formData)
+
+        // if(res?.ok || res?.status === 200){
+        //   return redirect('/dashboard/home');
+        // }else {
+
+        // }
     } catch (error) {
       if (error) {
         switch (error) {
@@ -41,7 +47,7 @@ export async function decrypt(input: string): Promise<any> {
       }
       throw error
     }
-    redirect('/dashboard/home');
+    //return redirect('/dashboard/home');
   }
 
 export async function login(formData: FormData) {
@@ -101,10 +107,8 @@ export async function updateSession(request: NextRequest) {
     });
     return res;
   }
-  
 
 export const register = async (username:string, password:string, roles:[]) => {
-
     try{
         const response = await axios.post(`${apiUrl}/register/`, { username, password, roles });
         //setAuthCookie(response.data);
@@ -125,7 +129,6 @@ export const register = async (username:string, password:string, roles:[]) => {
 
 const setAuthCookie = (authData: any) => {
     const {access, refresh} = authData;
-
 }
 
 /**

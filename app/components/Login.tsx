@@ -54,9 +54,9 @@ function OneGovID(){
     </div>
   );
   
-  async function Email(){
+  function Email(){
     const [errorMessage, dispatch] = useFormState(authenticate, undefined)
-    const session = await getSession();
+    //const session = await getSession();
     return(
       <section>
         <form action={dispatch}>
@@ -80,7 +80,6 @@ function OneGovID(){
               </div>
           </div>
         </form>
-        {/*<pre>{JSON.stringify(session, null, 2)}</pre>*/}
       </section>
     )
   };
@@ -91,7 +90,7 @@ function OneGovID(){
       Login
     </button>)
   }
-  export const Login: React.FC<ModalProps> = async ({ isOpen, onClose }) => {
+  export const Login: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const modalClass = isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none';
     const [activeTab, setActiveTab] = useState(1);
     const delta = activeTab

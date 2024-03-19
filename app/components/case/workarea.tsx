@@ -338,7 +338,7 @@ interface CaseData {
     // ... other case properties
     statusHistory: StatusChange[];
 }
-interface Preliminary {
+interface teacher_preliminary_infos {
     type: string;
     id: string;
     work_status: string,
@@ -386,7 +386,7 @@ interface Disability{
 }
 
 interface Props {
-    preliminary: Preliminary;
+    preliminary: teacher_preliminary_infos;
     bio: Bio;
     declarations: Declarations;
     employment: Employment;
