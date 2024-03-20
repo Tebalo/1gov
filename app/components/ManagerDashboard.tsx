@@ -1,14 +1,11 @@
-import DoughtnutCard from "./(charts)/_DoughtnutCard";
-import MyWork from "./(tables)/_myWork";
 import { PageTitle } from "./PageTitle";
-import { fakerDE as faker } from '@faker-js/faker';
 
-export const RegistrationOfficerHome = () => {
+export const ManagerDashboard = () => {
     return(
         <>
         <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-5">
-                <PageTitle Title="Teacher Registration and Licensing"/>
+                <PageTitle Title="Dashboard"/>
             </div>
             <div className="w-full">
                 <div className="rounded-lg">
@@ -16,7 +13,7 @@ export const RegistrationOfficerHome = () => {
                         <div className="flex-row items-center justify-center md:h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
                         </div>
                         <div className="flex md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
-                            <MyWork/>
+                            
                         </div>
                     </div>
                 </div>
