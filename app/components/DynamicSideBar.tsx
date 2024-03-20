@@ -14,6 +14,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { getSession, logout } from "../auth/auth";
 import SidebarNav from "./SidebarNav";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Menubar, MenubarItem, MenubarSeparator, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from "@/components/ui/menubar";
+import { MenubarMenu } from "@radix-ui/react-menubar";
 
 const DynamicSidebar: React.FC = async ({}) => {
     const session = await getSession();
@@ -79,9 +82,13 @@ const DynamicSidebar: React.FC = async ({}) => {
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
-                            <div className="flex lg:justify-start justify-center md:w-full">
-                                <div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div>
-                                <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">User name</span></div>
+                            <div className="flex lg:justify-start justify-center md:w-full items-center">
+                                {/*<div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div>*/}
+                               <Avatar className="h-6 w-6">
+                                    <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                                    <AvatarFallback>{userRole[0]}</AvatarFallback>
+                                </Avatar>
+                                <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
                             </div>
                             </Button>
                         </PopoverTrigger>
@@ -96,9 +103,20 @@ const DynamicSidebar: React.FC = async ({}) => {
                                         <div className=""><Label htmlFor="height" className="font-normal">Preferences</Label></div>
                                     </div>
                                     <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2 font-normal">Switch Portal</Label>
-                                    </div>
+                                    <MenubarMenu>                                     
+                                        <MenubarTrigger>
+                                            <div className="flex items-center w-full justify-between">
+                                                <Label htmlFor="maxHeight" className="col-span-2 font-normal">Switch Portal</Label>
+                                            </div>
+                                        </MenubarTrigger>
+                                        <MenubarItem>
+                                            <MenubarItem>Search the web</MenubarItem>
+                                            <MenubarSeparator />
+                                            <MenubarItem>Find...</MenubarItem>
+                                            <MenubarItem>Find Next</MenubarItem>
+                                            <MenubarItem>Find Previous</MenubarItem>
+                                        </MenubarItem>                                 
+                                    </MenubarMenu>
                                     <Separator />
                                     <div className="flex items-center w-full justify-between">
                                         <Label htmlFor="maxHeight" className="col-span-2 font-normal">About this app</Label>
