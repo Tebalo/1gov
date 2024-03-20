@@ -19,7 +19,7 @@ const Page: React.FC = async () => {
             <div className="flex flex-row h-full gap-1">
                 {work !== null ? (
                     <>
-                        <CaseDetails {...work?.teacher_registrations}/>
+                        <CaseDetails {...work}/>
                         {work.teacher_registrations?.registration_type === 'teacher' || 'Teacher' ? (<WorkArea {...work}/>):
                         (<StudentWorkArea {...work}/>)}:
                     </>):(

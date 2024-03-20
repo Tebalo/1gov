@@ -4,6 +4,7 @@ import {SignJWT, jwtVerify} from 'jose';
 import {cookies} from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 /**
  * An authentication context or service that handles user authentication and 
  * role-based authorization
@@ -30,7 +31,8 @@ export async function decrypt(input: string): Promise<any> {
   export async function authenticate(_currentState: unknown, formData: FormData) {
     try {
         const res = await login(formData)
-
+        //const router = useRouter()
+        //router.push('/dashboard/home'); 
         // if(res?.ok || res?.status === 200){
         //   return redirect('/dashboard/home');
         // }else {
@@ -47,7 +49,7 @@ export async function decrypt(input: string): Promise<any> {
       }
       throw error
     }
-    //return redirect('/dashboard/home');
+    return redirect('/dashboard/home');
   }
 
 export async function login(formData: FormData) {
@@ -77,7 +79,7 @@ export async function login(formData: FormData) {
     } catch(error){
 
     }
-    //redirect('/dashboard/home');
+    //`redirect('/dashboard/home');
   }
 
 export async function logout() {

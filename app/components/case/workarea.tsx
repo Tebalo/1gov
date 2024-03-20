@@ -26,50 +26,32 @@ import { UpdateStatus } from '@/app/lib/actions';
 import Link from 'next/link';
 import { roundToNearestMinutes } from 'date-fns';
 
-const Preliminary: React.FC<Preliminary> = (pre: Preliminary) => {
+const Preliminary: React.FC<Props> = (pre: Props) => {
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-2 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Application Type:</Label>
-                    <span className='font-light text-sm'>{pre.type}</span>
+                    <span className='font-light text-sm'>{pre.teacher_registrations.registration_type}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Work status:</Label>
-                    <span className='font-light text-sm'>{pre.work_status}</span>
+                    <span className='font-light text-sm'>{pre.teacher_preliminary_infos.work_status}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Practice category:</Label>
-                    <span className='font-light text-sm'>{pre.practice_category}</span>
+                    <span className='font-light text-sm'>{pre.teacher_preliminary_infos.practice_category}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Practice sub-category:</Label>
-                    <span className='font-light text-sm'>{pre.sub_category}</span>
+                    <span className='font-light text-sm'>{pre.teacher_preliminary_infos.sub_category}</span>
                 </div>
             </div>
         </div>
     );
 }
-interface Bio {
-    surname: string;
-    forenames: string;
-    id: string;
-    dob: string; 
-    pob: string;
-    gender: string;
-    nationality: string;
-    postalAddress: string;
-    physicalAddress: string;
-    email: string;
-    mobile: string;
-    maritalStatus: string;
-    nextOfKinName: string;
-    nextOfKinRelation: string;
-    nextOfKinContact: string;
-    disability: string;
-    disabilityDescription: string;
-  }
-const Bio: React.FC<Bio> = (bio: Bio) => {
+
+const Bio: React.FC<bio_datas> = (bio: bio_datas) => {
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-4 m-10 gap-y-5'>
@@ -137,30 +119,22 @@ const Bio: React.FC<Bio> = (bio: Bio) => {
         </div>
     );
 }
-interface Employment {
-    experienceYears: number;
-    currentInstitution: string;
-    institutionType: string;
-    region: string;
-    district: string;
-    cityOrTown: string;
-  }
 
-const Employment: React.FC<Employment> = (emp: Employment) => {
+const Employment: React.FC<employment_details> = (emp: employment_details) => {
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-3 m-10 gap-y-5'>
                  <div className='flex flex-col space-y-1'>
                     <Label>Years in service:</Label>
-                    <span className='font-light text-sm'>{emp.experienceYears}</span>
+                    <span className='font-light text-sm'>{emp.experience_years}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Type of institution:</Label>
-                    <span className='font-light text-sm'>{emp.institutionType}</span>
+                    <span className='font-light text-sm'>{emp.institution_type}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Current station/institution:</Label>
-                    <span className='font-light text-sm'>{emp.currentInstitution}</span>
+                    <span className='font-light text-sm'>{emp.current_institution}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Region:</Label>
@@ -172,76 +146,85 @@ const Employment: React.FC<Employment> = (emp: Employment) => {
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>City/Town/Village:</Label>
-                    <span className='font-light text-sm'>{emp.cityOrTown}</span>
+                    <span className='font-light text-sm'>{emp.city_or_town}</span>
                 </div>
             </div>
         </div>
     );
 }
-const Qualifications: React.FC<Qualifications> = (qual: Qualifications) => {
-    return(
-        <div className='h-full w-full'>
-            <div className='grid md:grid-cols-3 mx-10 mt-10 mb-2 gap-y-5'>
+const Qualifications: React.FC<Props> = (data: Props) => {
+    const path = 'http://66.179.253.57/Qualifications/'
+    return (
+        <div >
+        <ScrollArea className='h-96'>
+          {data.edu_pro_qualifications.map((qual, index) => (
+            <div key={index} className='h-full bg-slate-100 rounded-lg py-2 px-5 mb-2'>
+                <span className='font-light mr-2'>{index+1}.</span>
+              <div className='grid md:grid-cols-3 mx-10 mt-1 mb-2 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
-                    <Label>Qualification level:</Label>
-                    <span className='font-light text-sm'>{qual.level}</span>
+                  <Label>Qualification level:</Label>
+                  <span className='font-light text-sm'>{qual.level}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
-                    <Label>Qualification name:</Label>
-                    <span className='font-light text-sm'>{qual.qualification}</span>
+                  <Label>Qualification name:</Label>
+                  <span className='font-light text-sm'>{qual.qualification}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
-                    <Label>Awarding Institution:</Label>
-                    <span className='font-light text-sm'>{qual.institution}</span>
+                  <Label>Awarding Institution:</Label>
+                  <span className='font-light text-sm'>{qual.institution}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
-                    <Label>Year Of Completion:</Label>
-                    <span className='font-light text-sm'>{qual.qualification_year}</span>
+                  <Label>Year Of Completion:</Label>
+                  <span className='font-light text-sm'>{qual.qualification_year}</span>
                 </div>
                 <div className=''>
-                    
-                    <Link
-                        href={qual.attachments}
-                        target='_blank'
-                        rel="noreferrer noopener"
-                        className='cursor-pointer'
-                        >
-                            <div className='flex space-x-1'>
-                                <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
-                                <span>document.pdf</span>
-                            </div>
-                            <span className='text-xs font-thin italic'>
-                               click to open in a new tab.{" "}
-                            </span>
-                    </Link>
+                  <Link
+                    href={path+qual.attachments}
+                    target='_blank'
+                    rel="noreferrer noopener"
+                    className='cursor-pointer'
+                  >
+                    <div className='flex space-x-1'>
+                      <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }} />
+                      <span>{qual.attachments}</span>
+                    </div>
+                    <span className='text-xs font-thin italic'>
+                      click to open in a new tab.{" "}
+                    </span>
+                  </Link>
                 </div>
-            </div>
-            <div className='mx-10 flex space-x-24'>
+              </div>
+              <div className='mx-10 flex space-x-24'>
                 <div>
-                    <Label>Minor subjects:</Label>
-                    <ol type='1'>
-                        {qual.minor_subjects.map((subject, index) =>(
-                            <li key='1'>
-                                <span className='font-light text-sm'>{subject}</span>
-                            </li>
-                        ))}
-                    </ol>
+                  <Label>Minor subjects:</Label>
+                  <ol type='1'>
+                    {qual.minor_subjects.map((subject, index) => (
+                      <li key={index}>
+                        <span className='font-light mr-2'>{index+1}.</span>
+                        <span className='font-light text-sm'>{subject}</span>
+                      </li>
+                    ))}
+                  </ol>
                 </div>
                 <div>
-                    <Label>Major subjects:</Label>
-                    <ol type='1'>
-                        {qual.major_subjects.map((subject, index) =>(
-                            <li key='1'>
-                                <span className='font-light text-sm'>{subject}</span>
-                            </li>
-                        ))}
-                    </ol>
+                  <Label>Major subjects:</Label>
+                  <ol type='1'>
+                    {qual.major_subjects.map((subject, index) => (
+                      <li key={index}>
+                        <span className='font-light mr-2'>{index+1}.</span>
+                        <span className='font-light text-sm'>{subject}</span>
+                      </li>
+                    ))}
+                  </ol>
                 </div>
+              </div>
             </div>
+          ))}
+          </ScrollArea>
         </div>
-    );
+      );
 }
-const Disability: React.FC<Disability> = (dis: Disability) => {
+const Disability: React.FC<bio_datas> = (dis: bio_datas) => {
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-1 m-10 gap-y-5'>
@@ -257,25 +240,25 @@ const Disability: React.FC<Disability> = (dis: Disability) => {
         </div>
     );
 }
-const Offence: React.FC<OffenceConvictions> = (off:OffenceConvictions) => {
+const Offence: React.FC<offence_convictions> = (off:offence_convictions) => {
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-2 m-10 gap-y-5 gap-x-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>1. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense against a learner/ a minor?:</Label>
-                    <span className='font-light text-sm'>{off.studentRelatedOffence}, {off.studentRelatedOffenceDetails}</span>
+                    <span className='font-light text-sm'>{off.drug_related_offence}, {off.drug_related_offence_details}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>2. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense of possession of and or of drugs use?:</Label>
-                    <span className='font-light text-sm'>{off.drugRelatedOffence}, {off.drugRelatedOffenceDetails}</span>
+                    <span className='font-light text-sm'>{off.drug_related_offence}, {off.drug_related_offence_details}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>3. Have you ever had a teaching license revoked, suspended, invalidated, cancelled or denied by any teaching council or any authority; surrendered such a license or the right to apply for such a license; or had any other adverse action taken against such a license. Please note that this includes a reprimand, warning, or reproval and any order denying the right to apply or reapply for a license?:</Label>
-                    <span className='font-light text-sm'>{off.licenseFlag}</span>
+                    <span className='font-light text-sm'>{off.license_flag}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>4. Are you currently the subject of any review, inquiry, investigation, or appeal of alleged misconduct that could warrant discipline or termination by your employer. Please note that this includes any open investigation by or pending proceeding with a child protection agency and any pending criminal charges?:</Label>
-                    <span className='font-light text-sm'>{off.misconductFlag}</span>
+                    <span className='font-light text-sm'>{off.misconduct_flag}</span>
                 </div>
             </div>
         </div>
@@ -309,7 +292,7 @@ const Attachments: React.FC = () => {
         </div>
     );
 }
-const Declaration: React.FC<Declarations> = (dec: Declarations) => {
+const Declaration: React.FC<declarations> = (dec: declarations) => {
     return(
         <div className='h-full w-full'>
             <div className='grid grid-cols-1 m-10 gap-y-5 gap-x-5'>
@@ -328,77 +311,99 @@ const Declaration: React.FC<Declarations> = (dec: Declarations) => {
         </div>
     );
 }
-interface StatusChange {
-    newStatus: string; 
-    timestamp: Date; 
-    changedBy: string; 
-}
 
-interface CaseData {
-    // ... other case properties
-    statusHistory: StatusChange[];
-}
 interface teacher_preliminary_infos {
-    type: string;
-    id: string;
+    id: string,
+    national_id: string;
+    citizen_status: string,
     work_status: string,
     practice_category: string,
     sub_category: string,
+    created_at: string,
+    updated_at: string
 }
-
   
-interface Declarations {
+interface declarations {
     agreement: boolean;
     signature: string;
 }
 
-interface OffenceConvictions {
-    studentRelatedOffence: string;
-    studentRelatedOffenceDetails: string;
-    drugRelatedOffence: string;
-    drugRelatedOffenceDetails: string;
-    licenseFlag: string;
-    licenseFlagDetails: string;
-    misconductFlag: string;
-    misconductFlagDetails: string;
+interface offence_convictions {
+    id: string,
+    student_related_offence: string;
+    student_related_offence_details: string;
+    drug_related_offence: string;
+    drug_related_offence_details: string;
+    license_flag: string;
+    license_flag_details: string;
+    misconduct_flag: string;
+    misconduct_flag_details: string;
 }
 
-interface Qualifications {
-    level: string;
-    qualification: string;
-    institution: string;
-    qualification_year: string;
-    attachments: string;
-    minor_subjects: [];
-    major_subjects: [];
+interface edu_pro_qualifications{
+    id: string,
+    level: string,
+    qualification: string,
+    institution: string,
+    qualification_year: string,
+    attachments: string,
+    minor_subjects: [],
+    major_subjects: [],
 }
 
-interface Preliminary {
-    type: string;
+interface bio_datas {
+    surname: string;
+    forenames: string;
     id: string;
-    work_status: string;
-    practice_category: string;
-    sub_category: string; // Updated from sub_cateogry
-}
-interface Disability{
+    dob: string; 
+    pob: string;
+    gender: string;
+    nationality: string;
+    postalAddress: string;
+    physicalAddress: string;
+    email: string;
+    mobile: string;
+    maritalStatus: string;
+    nextOfKinName: string;
+    nextOfKinRelation: string;
+    nextOfKinContact: string;
     disability: string;
     disability_description: string;
 }
-
+interface employment_details {
+    experience_years: number;
+    current_institution: string;
+    institution_type: string;
+    region: string;
+    district: string;
+    city_or_town: string;
+}
+interface teacher_registrations {
+    national_id: string;
+    reg_number: string;
+    registration_type: string;
+    reg_status: string;
+    created_at: string;
+    updated_at: string;
+}
+interface attachments{
+    national_id: string,
+    national_id_copy: string,
+    qualification_copy: string,
+    proof_of_payment: string,
+    created_at: string,
+    updated_at: string
+}
 interface Props {
-    preliminary: teacher_preliminary_infos;
-    bio: Bio;
-    declarations: Declarations;
-    employment: Employment;
-    offenceConvictions: OffenceConvictions;
-    disability: Disability;
-    qualifications: Qualifications;
-    //institutionRecommendations: InstitutionRecommendations; // Added 
-    //studentPreliminaryInfos: StudentPreliminaryInfos; // Added
-    //studentStudyProgrammes: StudentStudyProgrammes; // Added
-    //eduProQualifications: EduProQualification[]; // For the array
-    // ... potentially more sections to add
-  }
+    teacher_registrations: teacher_registrations,
+    teacher_preliminary_infos: teacher_preliminary_infos,
+    edu_pro_qualifications: edu_pro_qualifications[],
+    bio_datas: bio_datas,
+    declarations: declarations,
+    offence_convictions: offence_convictions,
+    employment_details: employment_details,
+    attachments: attachments
+}
 
 const WorkArea: React.FC<Props> = (data: Props) => {
     const router = useRouter()
@@ -408,7 +413,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
     }
     const { toast } = useToast()
     const handleStatusChange=async (id:string,status:string)=>{
-        const res = await UpdateStatus(data.preliminary.id, status)
+        const res = await UpdateStatus(data.teacher_preliminary_infos.national_id, status)
         if(!res){
             toast({
                 title: "Failed!!!",
@@ -521,12 +526,12 @@ const WorkArea: React.FC<Props> = (data: Props) => {
         <ScrollArea className='h-screen'>
             <Card className='mx-8 my-2'>
             <div className=''>
-                {activeTab===1 && <Preliminary {...data.preliminary}/>}
-                {activeTab===2 && <Bio {...data.bio}/>}
-                {activeTab===3 && <Employment {...data.employment}/>}
-                {activeTab===4 && <Qualifications {...data.qualifications}/>}
-                {activeTab===5 && <Disability {...data.disability}/>}
-                {activeTab===6 && <Offence {...data.offenceConvictions}/>}
+                {activeTab===1 && <Preliminary {...data}/>}
+                {activeTab===2 && <Bio {...data.bio_datas}/>}
+                {activeTab===3 && <Employment {...data.employment_details}/>}
+                {activeTab===4 && <Qualifications {...data}/>}
+                {activeTab===5 && <Disability {...data.bio_datas}/>}
+                {activeTab===6 && <Offence {...data.offence_convictions}/>}
                 {activeTab===7 && <Attachments/>}
                 {activeTab===8 && <Declaration {...data.declarations}/>}
             </div>
@@ -555,7 +560,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                             className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                            onClick={async () => await handleStatusChange(data.preliminary.id, prev_status)}
+                            onClick={async () => await handleStatusChange(data.teacher_preliminary_infos.national_id, prev_status)}
                             >Continue</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
@@ -575,7 +580,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                             className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                            onClick={async () => await handleStatusChange(data.preliminary.id, new_status)}
+                            onClick={async () => await handleStatusChange(data.teacher_preliminary_infos.national_id, new_status)}
                             >Continue</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
@@ -586,7 +591,7 @@ const WorkArea: React.FC<Props> = (data: Props) => {
                 <Card className='mx-8 mb-2'>
                     <ScrollArea className="h-72">
                     <Suspense fallback={<LoadingSkeleton/>}>
-                        <StatusHistory reg_number={data.preliminary.id} />
+                        <StatusHistory reg_number=""/>
                         </Suspense>
                     </ScrollArea>
                 </Card>

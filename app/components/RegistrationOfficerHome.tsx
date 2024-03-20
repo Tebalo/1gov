@@ -68,7 +68,6 @@ export const RegistrationOfficerHome = () => {
                 <div className="rounded-lg">
                     <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
                         <div className="flex-row items-center justify-center md:h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                            <DoughtnutCard title='' chartData={doughtnutData} options={doughtnutOptions}/>
                         </div>
                         <div className="flex md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
                             <MyWork/>
