@@ -1,26 +1,15 @@
 //"use client"
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { FaHome, FaHubspot, FaComments, FaUser, FaCogs, FaCog, FaUsers, FaUsersCog, FaLayerGroup, FaRegChartBar, FaChevronRight, FaBell, FaSistrix, FaSearchengin, FaRegistered, FaAsterisk, FaExchangeAlt} from "react-icons/fa";
-import { usePathname } from "next/navigation";
 
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { Separator } from "@/components/ui/separator";
 import { getSession, logout } from "../auth/auth";
 import SidebarNav from "./SidebarNav";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Menubar, MenubarItem, MenubarSeparator, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from "@/components/ui/menubar";
-import { MenubarMenu } from "@radix-ui/react-menubar";
+import NavUtils from "./NavComponents/NavUtilis";
 
 const DynamicSidebar: React.FC = async ({}) => {
     const session = await getSession();
     const userRole = session?.user?.roles[0] 
+
     return (
         <aside id="dynamic-sidebar" className=" top-0 left-0 lg:w-52 shadow-xl transition-transform -translate-x-full sm:translate-x-0 hidden md:block" aria-label="Sidebar">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
@@ -35,105 +24,7 @@ const DynamicSidebar: React.FC = async ({}) => {
                     />
                 </div>
                 <div className="absolute bottom-0 w-full border-t bg-sky-400">
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
-                            <div className="flex lg:justify-start justify-center md:w-full">
-                                <div className=""><FaExchangeAlt style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
-                                <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">Switch Portal</span></div>
-                            </div>
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-60" side='right' align="start">
-                            <div className="grid gap-2">
-                                <div className="grid gap-2">
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="width">Customer</Label>
-                                    </div>
-                                    <Separator />
-                                    <div className="grid grid-cols-2 items-center gap-4">
-                                        <Label htmlFor="maxWidth" className="col-span-2">Registration Officer</Label>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <div className=""><Label htmlFor="height" className="">Snr. Registration Officer</Label></div>
-                                        <div className=""><span className="flex w-3 h-3 me-3 bg-green-500 rounded-full"></span></div>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2">Manager</Label>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2">Director</Label>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2">Register</Label>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2">Admin</Label>
-                                    </div>
-                                </div>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
-                            <div className="flex lg:justify-start justify-center md:w-full items-center">
-                                {/*<div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div>*/}
-                               <Avatar className="h-6 w-6">
-                                    <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                                    <AvatarFallback>{userRole[0]}</AvatarFallback>
-                                </Avatar>
-                                <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
-                            </div>
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-60" side='right' align="start">
-                            <div className="grid gap-2">
-                                <div className="grid gap-2">
-                                    <div className="grid grid-cols-2 items-center gap-4">
-                                        <Label htmlFor="maxWidth" className="col-span-2 font-normal">Profile</Label>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <div className=""><Label htmlFor="height" className="font-normal">Preferences</Label></div>
-                                    </div>
-                                    <Separator />
-                                    <MenubarMenu>                                     
-                                        <MenubarTrigger>
-                                            <div className="flex items-center w-full justify-between">
-                                                <Label htmlFor="maxHeight" className="col-span-2 font-normal">Switch Portal</Label>
-                                            </div>
-                                        </MenubarTrigger>
-                                        <MenubarItem>
-                                            <MenubarItem>Search the web</MenubarItem>
-                                            <MenubarSeparator />
-                                            <MenubarItem>Find...</MenubarItem>
-                                            <MenubarItem>Find Next</MenubarItem>
-                                            <MenubarItem>Find Previous</MenubarItem>
-                                        </MenubarItem>                                 
-                                    </MenubarMenu>
-                                    <Separator />
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2 font-normal">About this app</Label>
-                                    </div>
-                                    <Separator />
-                                    <Link
-                                    href='/welcome'
-                                    //onClick={async ()=> await logout() }
-                                    >
-                                    <div className="flex items-center w-full justify-between">
-                                        <Label htmlFor="maxHeight" className="col-span-2 font-normal">Logout</Label>
-                                    </div>
-                                    </Link>
-                                </div>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+                        <NavUtils userRole={userRole}   />
 {/*                    <button 
                         type="button" 
                         id="dropDownButton"

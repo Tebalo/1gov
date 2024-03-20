@@ -25,6 +25,7 @@ import { useRouter } from 'next/navigation'
 import { UpdateStatus } from '@/app/lib/actions';
 import Link from 'next/link';
 import { roundToNearestMinutes } from 'date-fns';
+import { apiUrl } from '@/app/lib/store';
 
 const Preliminary: React.FC<Props> = (pre: Props) => {
     return(
@@ -153,7 +154,7 @@ const Employment: React.FC<employment_details> = (emp: employment_details) => {
     );
 }
 const Qualifications: React.FC<Props> = (data: Props) => {
-    const path = 'http://66.179.253.57/Qualifications/'
+    const path = `${apiUrl}/Qualifications/`
     return (
         <div >
         <ScrollArea className='h-96'>
@@ -430,8 +431,8 @@ const WorkArea: React.FC<Props> = (data: Props) => {
                 <ToastAction altText="Ok">Ok</ToastAction>
                 ),
             })
-            router.prefetch('/portal/dashboard/home-o')
-            router.push('/portal/dashboard/home-o')
+            router.prefetch('/trls/home')
+            router.push('/trls/home')
         }
     }
 

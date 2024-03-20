@@ -19,9 +19,9 @@ interface SidebarProps {
     inactiveLinkColor?: string;
 }
 const user: SideBarItem[] = [
-    { path: '/dashboard/home', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home' },
-    { path: '/dashboard/my-applications', icon: <FaLayerGroup style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Applications' },
-    { path: '/dashboard/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces' },
+    { path: '/trls/home', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home' },
+    { path: '/trls/my-applications', icon: <FaLayerGroup style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Applications' },
+    { path: '/trls/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces' },
 ]
 
 const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
@@ -40,10 +40,10 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
             )
         )}*/}
         <li className="flex space-x-2">
-            <div className={`${currentPath === '/dashboard/home' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
+            <div className={`${currentPath === '/trls/home' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
-                href="/dashboard/home"
-                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/home' ? 'bg-sky-300' : 'text-gray-100'}`}
+                href="/trls/home"
+                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/home' ? 'bg-sky-300' : 'text-gray-100'}`}
             >
             <FaHome style={{fontSize: '1.5rem' , color: '#FFFFFF'}}/>
             <div className="flex justify-center"><span className="text-gray-100  text-xs lg:text-base lg:font-semibold">
@@ -53,10 +53,10 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
             </Link>
         </li>
         {staffRoles.includes(userRole) && <li className="flex space-x-2">
-            <div className={`${currentPath === '/dashboard/dashboard' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
+            <div className={`${currentPath === '/trls/dashboard' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
-                href="/dashboard/dashboard"
-                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/dashboard' ? 'bg-sky-300' : 'text-gray-100'}`}
+                href="/trls/dashboard"
+                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/dashboard' ? 'bg-sky-300' : 'text-gray-100'}`}
             >
                 <GrDashboard  style={{fontSize: '1.5rem' , color: '#FFFFFF'}}/>
                 <div className="flex justify-center">
@@ -67,10 +67,10 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
             </Link>
         </li>}
         <li className="flex space-x-2">
-            <div className={`${currentPath === '/dashboard/applications' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
+            <div className={`${currentPath === '/trls/applications' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
-                href="/dashboard/applications"
-                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/applications' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
+                href="/trls/applications"
+                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/applications' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
                 <FaLayerGroup style={{fontSize: '1.5rem', color: '#FFFFFF'}}/>
                 <div className="flex justify-center">
                     <span className="text-gray-100  text-xs lg:text-base lg:font-semibold">
@@ -80,10 +80,10 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
             </Link>
         </li>
         {staffRoles.includes(userRole) && <li className="flex space-x-2">
-            <div className={`${currentPath === '/dashboard/profile' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
+            <div className={`${currentPath === '/trls/profile' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
-                href="/dashboard/reports"
-                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/dashboard/reports' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
+                href="/trls/reports"
+                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/reports' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
                 <FaUser style={{fontSize: '1.5rem', color: '#FFFFFF'}}/>
                 <div className="flex justify-center">
                     <span className="text-gray-100  text-xs lg:text-base lg:font-semibold">

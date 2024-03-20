@@ -17,6 +17,7 @@ Libraries and Components
 7. npm i @faker-js/faker (https://www.npmjs.com/package/@faker-js/faker)
 8. npm install tailwind-scrollbar-hide https://github.com/reslear/tailwind-scrollbar-hide https://stackoverflow.com/questions/69400560/how-to-change-scrollbar-when-using-tailwind-next-js-react
 16. REACT ICONS: https://react-icons.github.io/react-icons/icons/fa/
+17. RECHARTS: https://recharts.org/en-US/examples
 
 TODO:
 1. Setup Themes: https://www.youtube.com/watch?v=l93uukpAoxE

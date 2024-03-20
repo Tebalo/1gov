@@ -3,15 +3,17 @@ import StudentWorkArea from "@/app/components/case/studentWorkArea";
 //import Utilities from "@/app/components/case/utilities";
 import WorkArea from "@/app/components/case/workarea";
 import { getNext } from "@/app/lib/actions";
+import { apiUrl } from "@/app/lib/store";
 import Link from "next/link";
 import { redirect } from 'next/navigation'
+import { Metadata } from "next";
 
 const Page: React.FC = async () => {
     //revalidate('work')
     const work = await getNext('Pending-Review')
-    const filepath = 'http://66.179.253.57/Qualifications/'
+    const filepath = `${apiUrl}/Qualifications/`
     if(!work){
-      redirect('/portal/dashboard/home-o/')
+      redirect('/trls/home')
     }
     
     return (
@@ -28,7 +30,7 @@ const Page: React.FC = async () => {
                             <h2 className="text-center text-black text-3xl">Work not found!</h2>
                             <div className="flex items-center justify-center">
                                 <Link
-                                href='/portal/dashboard/home-o'
+                                href='/trls/home'
                                 scroll={false}
                                 >
                                     <button

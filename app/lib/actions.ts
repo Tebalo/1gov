@@ -3,11 +3,13 @@ import axios from "axios";
 import { signIn } from "../auth/signIn"
 import { revalidateTag } from "next/cache"
 import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
+import { apiUrl } from "./store";
 //import jsCookie from 'js-cookie';
 //import { useRouter } from "next/router";
 
 
 const authUrl = 'http://localhost:8000/api';
+//const apiUrl = 'http://66.179.253.57/api';
 
 export const logout =async () => {
   try{
@@ -61,7 +63,7 @@ export default async function getHistory(reg_number: string){
     return statuses
   }
 export async function getAll(){
-  const res = await fetch('http://66.179.253.57/api/teacher_registrations/', {cache: 'no-store'})
+  const res = await fetch(`${apiUrl}/teacher_registrations/`, {cache: 'no-store'})
   if(!res.ok){
     return []
   }
@@ -69,7 +71,7 @@ export async function getAll(){
 }
 export async function getNext(status:string){
     revalidateTag('work')
-    const res = await fetch(`http://66.179.253.57/api/getNext/?reg_status=${status}`, {next:{tags:['work']}})
+    const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {next:{tags:['work']}})
 
     if(!res.ok){
         if(res.status === 204){
@@ -94,7 +96,7 @@ export async function getNext(status:string){
 
 export async function UpdateStatus(id: string, status: string ){
 
-    const res = await fetch(`http://66.179.253.57/api/teacher_registrations/${id}?reg_status=${status}`,{
+    const res = await fetch(`${apiUrl}/teacher_registrations/${id}?reg_status=${status}`,{
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

@@ -31,13 +31,6 @@ export async function decrypt(input: string): Promise<any> {
   export async function authenticate(_currentState: unknown, formData: FormData) {
     try {
         const res = await login(formData)
-        //const router = useRouter()
-        //router.push('/dashboard/home'); 
-        // if(res?.ok || res?.status === 200){
-        //   return redirect('/dashboard/home');
-        // }else {
-
-        // }
     } catch (error) {
       if (error) {
         switch (error) {
@@ -49,7 +42,7 @@ export async function decrypt(input: string): Promise<any> {
       }
       throw error
     }
-    return redirect('/dashboard/home');
+    return redirect('/trls/home');
   }
 
 export async function login(formData: FormData) {
@@ -79,7 +72,7 @@ export async function login(formData: FormData) {
     } catch(error){
 
     }
-    //`redirect('/dashboard/home');
+    //`redirect('/trls//home');
   }
 
 export async function logout() {

@@ -1,3 +1,4 @@
+export const apiUrl = 'http://74.208.205.44/api';
 const citizenOptions = [
     {label: 'Citizen', value: 'citizen'},
     {label: 'Non-citizen', value: 'non_citizen'},
