@@ -1,12 +1,12 @@
 import { getSession } from "@/app/auth/auth";
 import { AccessDenied } from "@/app/components/AccessDenied";
-import { AdminHome } from "@/app/components/AdminHome";
-import { DirectorHome } from "@/app/components/DirectorHome";
-import { ManagerHome } from "@/app/components/ManagerHome";
-import { RegistrarHome } from "@/app/components/RegistrarHome";
-import { RegistrationOfficerHome } from "@/app/components/RegistrationOfficerHome";
-import { SnrRegistrationOfficerHome } from "@/app/components/SnrRegistrationOfficerHome";
-import { TeacherHome } from "@/app/components/TeacherHome";
+import { AdminHome } from "@/app/components/Home/AdminHome";
+import { DirectorHome } from "@/app/components/Home/DirectorHome";
+import { ManagerHome } from "@/app/components/Home/ManagerHome";
+import { RegistrarHome } from "@/app/components/Home/RegistrarHome";
+import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOfficerHome";
+import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
+import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { redirect } from "next/navigation";
 
 

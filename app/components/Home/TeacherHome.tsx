@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { LoadingSkeleton } from "./LoadingSkeleton";
-import { PageTitle } from "./PageTitle";
-import { ServiceListWrapper } from "./ServiceListWrapper";
+import { LoadingSkeleton } from "../LoadingSkeleton";
+import { PageTitle } from "../PageTitle";
+import { ServiceListWrapper } from "../ServiceListWrapper";
 
 export const TeacherHome = () => {
     return(

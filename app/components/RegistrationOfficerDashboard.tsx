@@ -1,10 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageTitle } from "./PageTitle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDateRangePicker } from "./dashboard/date-range-picker";
+import { CalendarDateRangePicker } from "./Dashboard/date-range-picker";
 import { Button } from "@/components/ui/button";
-import { Overview } from "./dashboard/overview";
-import { RecentSales } from "./dashboard/recent-sales";
+import { Overview } from "./Dashboard/overview";
+import { RecentSales } from "./Dashboard/recent-sales";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const RegistrationOfficerDashboard = () => {

@@ -1,6 +1,6 @@
-import DoughtnutCard from "./(charts)/_DoughtnutCard";
-import MyWork from "./(tables)/_myWork";
-import { PageTitle } from "./PageTitle";
+import DoughtnutCard from "../(charts)/_DoughtnutCard";
+import MyWork from "../(tables)/_myWork";
+import { PageTitle } from "../PageTitle";
 
 export const AdminHome = () => {
     return(
