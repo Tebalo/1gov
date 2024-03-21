@@ -9,7 +9,7 @@ export const Work: React.FC<WorkProps> = ({status}) => {
     return(
         <>
             <div>
-                <GetNext status={"Pending-Review"}/>
+                <GetNext status={status}/>
             </div>
         </>
     )
