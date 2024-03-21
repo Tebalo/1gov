@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export const RegistrationOfficerDashboard = () => {
     return(
         <>
-        <div className="overflow-auto h-full rounded-lg">
+        <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-5">
                 <div className="flex items-center justify-between space-y-2 mr-10">
                     <PageTitle Title="Dashboard"/>
@@ -20,7 +20,6 @@ export const RegistrationOfficerDashboard = () => {
                     </div>
                 </div>
             </div>
-            <ScrollArea className="h-full">
             <div className="w-full">
                 <div className="rounded-lg">
                     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -167,7 +166,6 @@ export const RegistrationOfficerDashboard = () => {
                     </div>
                 </div>
             </div>
-            </ScrollArea>
         </div>
         </>
     );

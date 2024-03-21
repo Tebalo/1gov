@@ -5,14 +5,14 @@ import {cookies} from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation'
 import { useRouter } from 'next/navigation';
+import { authUrl, secretKey } from '../lib/store';
 /**
  * An authentication context or service that handles user authentication and 
  * role-based authorization
 */
-const secretKey = 'secret';
+
 const key = new TextEncoder().encode(secretKey);
 
-const apiUrl = 'http://localhost:8000/api';
 
 export async function encrypt(payload: any) {
     return await new SignJWT(payload)
@@ -54,7 +54,7 @@ export async function login(formData: FormData) {
         password: formData.get('password')
     }
     try{
-        const res = await fetch(`${apiUrl}/login/`,{
+        const res = await fetch(`${authUrl}/login/`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -105,7 +105,7 @@ export async function updateSession(request: NextRequest) {
 
 export const register = async (username:string, password:string, roles:[]) => {
     try{
-        const response = await axios.post(`${apiUrl}/register/`, { username, password, roles });
+        const response = await axios.post(`${authUrl}/register/`, { username, password, roles });
         //setAuthCookie(response.data);
         return response.data;
     } catch(error){
@@ -115,7 +115,7 @@ export const register = async (username:string, password:string, roles:[]) => {
 
 // export const login = async (username:string,password:string) => {
 //     try{
-//         const response = await axios.post(`${apiUrl}/login/`, { username, password });
+//         const response = await axios.post(`${authUrl}/login/`, { username, password });
 //         return response.data;
 //     } catch(error){
 //         throw error;
@@ -131,7 +131,7 @@ const setAuthCookie = (authData: any) => {
  * token in the Authorization header
 */
 const authAxios = axios.create({
-    baseURL: apiUrl,
+    baseURL: authUrl,
     headers: {
         'Content-Type': 'application/json',
     },
