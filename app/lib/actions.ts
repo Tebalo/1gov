@@ -94,6 +94,31 @@ export async function getNext(status:string){
     }
 }
 
+export async function getRegById(Id:string){
+  revalidateTag('work')
+  const res = await fetch(`${apiUrl}/teacher_registrations/${Id}`, {next:{tags:['work']}})
+
+  if(!res.ok){
+      if(res.status === 204){
+            return null
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+  if(res.status === 204){
+      return null
+  }
+  try{
+      return await res.json()
+  }catch(error){
+      if(error instanceof SyntaxError){
+          return {}
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+}
+
 export async function UpdateStatus(id: string, status: string ){
 
     const res = await fetch(`${apiUrl}/teacher_registrations/${id}?reg_status=${status}`,{

@@ -2,24 +2,36 @@ import CaseDetails from "@/app/components/case/casedetails";
 import StudentWorkArea from "@/app/components/case/studentWorkArea";
 //import Utilities from "@/app/components/case/utilities";
 import WorkArea from "@/app/components/case/workarea";
-import { getNext } from "@/app/lib/actions";
-import { apiUrl } from "@/app/lib/store";
+import { getRegById } from "@/app/lib/actions";
 import Link from "next/link";
 import { redirect } from 'next/navigation'
-import { Metadata } from "next";
 
-const Page: React.FC = async () => {
+
+import { Metadata } from 'next';
+
+// interface PageProps {
+//   params: {
+//     nationalId: string;
+//   };
+// }
+
+
+
+export default async function Page({params}:{params: {slug: string}}){
+    const id = await params.slug;
+    //console.log('ID',id)
     //revalidate('work')
-    const work = await getNext('Pending-Review')
-    const filepath = `${apiUrl}/Qualifications/`
-    if(!work){
-      redirect('/trls/home')
-    }
+
+    const work = await getRegById(id)
+
+    // if(!work){
+    //   redirect('/trls/home')
+    // }
     
     return (
         <main className="h-full">
             <div className="flex flex-row h-full gap-1">
-                {work !== null ? (
+                {work ? (
                     <>
                         <CaseDetails {...work}/>
                         {work.teacher_registrations?.registration_type === 'teacher' || 'Teacher' ? (<WorkArea {...work}/>):
@@ -48,5 +60,3 @@ const Page: React.FC = async () => {
        </main>
     );
 };
-
-export default Page; 

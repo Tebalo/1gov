@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import React, { Suspense, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
+import { useRouter } from "next/navigation";
 
 interface WorkProps{
     status: string;
@@ -25,6 +26,7 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
     const {toast} = useToast()
     const [response, setResponse] = useState<Registration | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     async function handleWork(){
         setIsLoading(true);
@@ -35,7 +37,11 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
         //   })
         setIsLoading(false)
     }
-    
+    function handleOpen(Id:string | undefined){
+        if(Id){
+            router.push(`/trls/home/${Id}`);
+        }
+    }
     return(
         <>
         <Dialog>
@@ -71,7 +77,11 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                     </Suspense>
                 </div>
                 <DialogFooter>
-                    <Button type="submit" className="bg-sky-300 hover:bg-sky-600">Open</Button>
+                    <Button 
+                    type="submit" 
+                    className="bg-sky-300 hover:bg-sky-600"
+                    onClick={() => handleOpen(response?.national_id)}
+                    >Open</Button>
                 </DialogFooter>
           </DialogContent>
         </Dialog>
