@@ -1,11 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageTitle } from "./PageTitle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDateRangePicker } from "./Dashboard/date-range-picker";
 import { Button } from "@/components/ui/button";
-import { Overview } from "./Dashboard/overview";
-import { RecentSales } from "./Dashboard/recent-sales";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { CalendarDateRangePicker } from "./dashboard/date-range-picker";
+import { RecentSales } from "./dashboard/recent-sales";
+import { Overview } from "./dashboard/overview";
 
 export const RegistrationOfficerDashboard = () => {
     return(
@@ -117,7 +116,7 @@ export const RegistrationOfficerDashboard = () => {
                                     <Card>
                                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                             <CardTitle className="text-sm font-medium">
-                                            Pending-Review
+                                            Under Investigation
                                             </CardTitle>
                                             <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -151,9 +150,9 @@ export const RegistrationOfficerDashboard = () => {
                                     </Card>
                                     <Card className="col-span-3">
                                     <CardHeader>
-                                        <CardTitle>Recent Work</CardTitle>
+                                        <CardTitle>Team</CardTitle>
                                         <CardDescription>
-                                        You made 265 reviews this month.
+                                        Applications processed this month.
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>

@@ -70,8 +70,7 @@ export async function getAll(){
   return res.json()
 }
 export async function getNext(status:string){
-    revalidateTag('work')
-    const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {next:{tags:['work']}})
+    const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {cache:'no-cache'})
 
     if(!res.ok){
         if(res.status === 204){

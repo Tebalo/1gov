@@ -112,14 +112,14 @@ function OneGovID(){
                 <div className="flex space-x-2">
                 <h3 className="text-lg font-semibold text-gray-900">Login</h3>
                   {/*Temporary to be removed*/}
-                  <Link
+{/*                  <Link
                   href="/portal/dashboard/home"
                   className=""
                   >
                     <span className="inline-block text-black hover:border-gray-300 transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                       -&gt;
                     </span>
-                </Link>
+    </Link>*/}
                 </div>
                 <div className="bg-sky-300 rounded-sm h-1 w-20"></div>
                 <h4 className="text-sm font-light text-gray-800">

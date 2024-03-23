@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation'
 import { useRouter } from 'next/navigation';
 import { authUrl, secretKey } from '../lib/store';
+import { revalidatePath } from 'next/cache';
 /**
  * An authentication context or service that handles user authentication and 
  * role-based authorization
@@ -77,6 +78,7 @@ export async function login(formData: FormData) {
 
 export async function logout() {
     // Destroy the session
+    revalidatePath('/trls/home')
     cookies().set("session", "", { expires: new Date(0) });
 }
   

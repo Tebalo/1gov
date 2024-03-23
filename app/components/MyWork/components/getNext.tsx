@@ -30,8 +30,13 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
 
     async function handleWork(){
         setIsLoading(true);
-        const response = await getNext('Pending-Review')
-        setResponse(response[0] || null)
+        const response = await getNext(status)
+        if(response){
+            setResponse(response[0] || null)
+        }else{
+            setResponse(null)
+        }
+        
         // toast({
         //     title: JSON.stringify(response)
         //   })
@@ -72,16 +77,24 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                             <div className="grid grid-cols-2 items-center"><Label>Updated At: </Label><span className="font-light italic text-sm">{response.updated_at}</span></div>
                         </div>
                     ) : (
-                        <div><LoadingSkeleton/></div>
+                        <div className="w-full flex justify-center">
+                            {isLoading ? (
+                                <LoadingSkeleton/>
+                            ):(
+                            <Label>No work found!!!</Label>
+                            )}
+                        </div>
                     )}
                     </Suspense>
                 </div>
                 <DialogFooter>
-                    <Button 
-                    type="submit" 
-                    className="bg-sky-300 hover:bg-sky-600"
-                    onClick={() => handleOpen(response?.national_id)}
-                    >Open</Button>
+                    <div className={`${response? 'block':'hidden'}`}>
+                        <Button 
+                        type="submit" 
+                        className="bg-sky-300 hover:bg-sky-600"
+                        onClick={() => handleOpen(response?.national_id)}
+                        >Open</Button>
+                    </div>
                 </DialogFooter>
           </DialogContent>
         </Dialog>

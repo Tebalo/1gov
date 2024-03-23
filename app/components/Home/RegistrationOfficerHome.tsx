@@ -1,8 +1,5 @@
-import DoughtnutCard from "../(charts)/_DoughtnutCard";
-import MyWork from "../(tables)/_myWork";
 import { Work } from "../MyWork/work";
 import { PageTitle } from "../PageTitle";
-import { fakerDE as faker } from '@faker-js/faker';
 
 export const RegistrationOfficerHome = () => {
     return(

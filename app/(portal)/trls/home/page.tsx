@@ -19,17 +19,17 @@ export default async function Home(){
     //console.log('Home page',userRole)
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
         return <TeacherHome/>
-    } else if(userRole?.includes('registration_officer') || userRole?.startsWith('registration_officer')){
+    } else if(userRole === 'registration_officer'){
         return <RegistrationOfficerHome/>
-    } else if(userRole?.includes('snr_registration_officer') || userRole?.startsWith('snr_registration_officer')){
+    } else if(userRole === 'snr_registration_officer'){
         return <SnrRegistrationOfficerHome/>
-    } else if(userRole?.includes('manager') || userRole?.startsWith('manager')){
+    } else if(userRole === 'manager'){
         return <ManagerHome/>
-    } else if(userRole?.includes('director') || userRole?.startsWith('director')){
+    } else if(userRole === 'director'){
         return <DirectorHome/>
-    } else if(userRole?.includes('registrar') || userRole?.startsWith('registrar')){
+    } else if(userRole === 'registrar'){
         return <RegistrarHome/>
-    } else if(userRole?.includes("admin") || userRole?.startsWith('admin')){
+    } else if(userRole === "admin"){
         return <AdminHome/>
     } else {
         return <AccessDenied/>
