@@ -11,11 +11,10 @@ RUN npm install --global pm2
 # Utilize Docker cache to save re-installing dependencies if unchanged
 COPY ./package*.json ./
 
-# Install dependencies
-RUN npm install --production
-
-# Install 'autoprefixer' as a dependency
-RUN npm install autoprefixer
+# Install dependencies including 'sharp' for image optimization
+RUN npm install --production && \
+    npm install autoprefixer && \
+    npm install sharp
 
 # Copy all files
 COPY ./ ./
