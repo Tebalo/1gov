@@ -1,13 +1,104 @@
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
-interface Props {
-    status: string;
-    type: string;
+// interface Props {
+//     national_id: string;
+//     reg_number: string;
+//     registration_type: string;
+//     reg_status: string;
+//     created_at: string;
+//     updated_at: string;
+// }
+interface teacher_preliminary_infos {
+    id: string,
+    national_id: string;
+    citizen_status: string,
+    work_status: string,
+    practice_category: string,
+    sub_category: string,
+    created_at: string,
+    updated_at: string
+}
+  
+interface declarations {
+    agreement: boolean;
+    signature: string;
+}
+
+interface offence_convictions {
+    id: string,
+    student_related_offence: string;
+    student_related_offence_details: string;
+    drug_related_offence: string;
+    drug_related_offence_details: string;
+    license_flag: string;
+    license_flag_details: string;
+    misconduct_flag: string;
+    misconduct_flag_details: string;
+}
+
+interface edu_pro_qualifications{
+    level: string,
+    qualification: string,
+    institution: string,
+    qualification_year: string,
+    attachments: string,
+    minor_subjects: [],
+    major_subjects: [],
+}
+
+interface bio_datas {
+    surname: string;
+    forenames: string;
     id: string;
-    createdBy: string;
-    createdAt: string;
-    updatedAt: string;
+    dob: string; 
+    pob: string;
+    gender: string;
+    nationality: string;
+    postalAddress: string;
+    physicalAddress: string;
+    email: string;
+    mobile: string;
+    maritalStatus: string;
+    nextOfKinName: string;
+    nextOfKinRelation: string;
+    nextOfKinContact: string;
+    disability: string;
+    disability_description: string;
+}
+interface employment_details {
+    experienceYears: number;
+    currentInstitution: string;
+    institutionType: string;
+    region: string;
+    district: string;
+    cityOrTown: string;
+}
+interface teacher_registrations {
+    national_id: string;
+    reg_number: string;
+    registration_type: string;
+    reg_status: string;
+    created_at: string;
+    updated_at: string;
+}
+interface attachments{
+    national_id: string,
+    national_id_copy: string,
+    qualification_copy: string,
+    proof_of_payment: string,
+    created_at: string,
+    updated_at: string
+}
+interface Props {
+    teacher_registrations: teacher_registrations,
+    teacher_preliminary_infos: teacher_preliminary_infos,
+    edu_pro_qualifications: edu_pro_qualifications[],
+    bio_datas: bio_datas,
+    declarations: declarations,
+    offence_convictions: offence_convictions,
+    employment: employment_details,
+    attachments: attachments
 }
 
 const CaseDetails: React.FC<Props> = (data: Props) => {
@@ -30,8 +121,8 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                     </div>
                     <div className='font-sans text-white text-lg'>
                         <a href="#">
-                            <p>{data.id}</p>
-                            <h5 className="mb-2 tracking-tight">{data.type}</h5>
+                            <p>{data.teacher_preliminary_infos.national_id}</p>
+                            <h5 className="mb-2 tracking-tight">{data.teacher_registrations.registration_type}</h5>
                         </a>
                     </div>
                 </div>
@@ -50,21 +141,21 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                 <div className='flex space-x-11'>
                     <h1 className='text-sm text-gray-500'>Status</h1>
                     <div className='px-1 py-0 bg-blue-300 rounded-lg'>
-                        <h1 className='text-blue text-xs text-indigo-900'>{data.status}</h1>
+                        <h1 className='text-blue text-xs text-indigo-900'>{data.teacher_registrations.reg_status}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Created</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>{data.createdBy}</h1>
-                        <h1 className='text-xs font-thin'>{data.createdAt}</h1>
+                        <h1 className='text-sm text-sky-600'>{data.bio_datas.forenames} {data.bio_datas.surname}</h1>
+                        <h1 className='text-xs font-thin'>{data.teacher_registrations.created_at}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Updated</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>{data.createdBy}</h1>
-                        <h1 className='text-xs font-thin'>{data.updatedAt}</h1>
+                        <h1 className='text-sm text-sky-600'>{data.bio_datas.forenames} {data.bio_datas.surname}</h1>
+                        <h1 className='text-xs font-thin'>{data.teacher_registrations.updated_at}</h1>
                     </div>
                 </div>
             </div>

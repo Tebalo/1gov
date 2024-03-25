@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {motion} from 'framer-motion';
-import { authenticate } from '@/app/lib/actions'
 import {useFormState, useFormStatus } from 'react-dom'
 import { z } from 'zod';
+import { authenticate, getSession } from "../auth/auth";
 
 const loginSchema = z.object({
     email: z.string().email('Invalid email format'),
@@ -56,29 +56,31 @@ function OneGovID(){
   
   function Email(){
     const [errorMessage, dispatch] = useFormState(authenticate, undefined)
-
+    //const session = await getSession();
     return(
-      <form action={dispatch}>
-        <div className="py-2">
-            <div>{errorMessage && <p className="text text-red-500">{errorMessage}</p>}</div>
-            <div className="">
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email address</label>
-                <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="john.doe@company.com" required/>
-            </div> 
-            <div className="mb-2">
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                <input type="password" name="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="•••••••••" required/>
-            </div> 
-            <div className="w-full flex justify-end">
-              <LoginButton/>
-            </div>
-            <div className="flex space-x-2">
-                <h3 className="text-gray-900 text-sm">Forgot your password?</h3>
-                <h4 className="text-sky-400 text-sm">Recover account</h4>
-                
-            </div>
-        </div>
-      </form>
+      <section>
+        <form action={dispatch}>
+          <div className="py-2">
+              <div>{errorMessage && <p className="text text-red-500">{errorMessage}</p>}</div>
+              <div className="">
+                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email address</label>
+                  <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="john.doe@company.com" required/>
+              </div> 
+              <div className="mb-2">
+                  <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                  <input type="password" name="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="•••••••••" required/>
+              </div> 
+              <div className="w-full flex justify-end">
+                <LoginButton/>
+              </div>
+              <div className="flex space-x-2">
+                  <h3 className="text-gray-900 text-sm">Forgot your password?</h3>
+                  <h4 className="text-sky-400 text-sm">Recover account</h4>
+                  
+              </div>
+          </div>
+        </form>
+      </section>
     )
   };
   function LoginButton(){
@@ -95,7 +97,7 @@ function OneGovID(){
     const handleTabClick = (tabNumber: number) => {
       setActiveTab(tabNumber);
     };
-  
+    
     return (
       <div
         id="crud-modal"
@@ -110,14 +112,14 @@ function OneGovID(){
                 <div className="flex space-x-2">
                 <h3 className="text-lg font-semibold text-gray-900">Login</h3>
                   {/*Temporary to be removed*/}
-                  <Link
+{/*                  <Link
                   href="/portal/dashboard/home"
                   className=""
                   >
                     <span className="inline-block text-black hover:border-gray-300 transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                       -&gt;
                     </span>
-                </Link>
+    </Link>*/}
                 </div>
                 <div className="bg-sky-300 rounded-sm h-1 w-20"></div>
                 <h4 className="text-sm font-light text-gray-800">

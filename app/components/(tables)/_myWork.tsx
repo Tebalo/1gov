@@ -59,7 +59,7 @@ const MyWork: React.FC = () => {
     async function getWork(){
         setIsFetching(true);
         router.refresh()
-        router.push('/portal/dashboard/home-o/reg')
+        router.push(`/trls/home/app`)
         setIsFetching(false);
     }
   return (

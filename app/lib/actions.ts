@@ -1,8 +1,31 @@
 "use server"
+import axios from "axios";
 import { signIn } from "../auth/signIn"
 import { revalidateTag } from "next/cache"
 import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
+import { apiUrl } from "./store";
+//import jsCookie from 'js-cookie';
+//import { useRouter } from "next/router";
 
+
+const authUrl = 'http://localhost:8000/api';
+//const apiUrl = 'http://66.179.253.57/api';
+
+export const logout =async () => {
+  try{
+    const response = await axios.post(`${authUrl}/welcome`, null, {
+      withCredentials: true,
+    });
+    console.log(response.data.message);
+    //jsCookie.remove('access_token');
+    //jsCookie.remove('refresh_token');
+
+    //const router = useRouter()
+    //router.push('/welcome')
+  }catch(error){
+    console.error(error)
+  }
+}
 
 export async function authenticate(_currentState: unknown, formData: FormData) {
     try {
@@ -40,15 +63,14 @@ export default async function getHistory(reg_number: string){
     return statuses
   }
 export async function getAll(){
-  const res = await fetch('http://66.179.253.57/api/teacher_registrations/', {cache: 'no-store'})
+  const res = await fetch(`${apiUrl}/teacher_registrations/`, {cache: 'no-store'})
   if(!res.ok){
     return []
   }
   return res.json()
 }
 export async function getNext(status:string){
-    revalidateTag('work')
-    const res = await fetch(`http://66.179.253.57/api/getNext/?reg_status=${status}`, {next:{tags:['work']}})
+    const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {cache:'no-cache'})
 
     if(!res.ok){
         if(res.status === 204){
@@ -71,9 +93,34 @@ export async function getNext(status:string){
     }
 }
 
+export async function getRegById(Id:string){
+  revalidateTag('work')
+  const res = await fetch(`${apiUrl}/teacher_registrations/${Id}`, {next:{tags:['work']}})
+
+  if(!res.ok){
+      if(res.status === 204){
+            return null
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+  if(res.status === 204){
+      return null
+  }
+  try{
+      return await res.json()
+  }catch(error){
+      if(error instanceof SyntaxError){
+          return {}
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+}
+
 export async function UpdateStatus(id: string, status: string ){
 
-    const res = await fetch(`http://66.179.253.57/api/teacher_registrations/${id}?reg_status=${status}`,{
+    const res = await fetch(`${apiUrl}/teacher_registrations/${id}?reg_status=${status}`,{
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
