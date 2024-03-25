@@ -37,7 +37,7 @@ const NavUtils: React.FC<SidebarProps> = ({ userRole}) =>{
       };
     return(
         <>
-            <Popover>
+            {/* <Popover>
             <PopoverTrigger asChild>
                 <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
                 <div className="flex lg:justify-start justify-center md:w-full">
@@ -80,7 +80,7 @@ const NavUtils: React.FC<SidebarProps> = ({ userRole}) =>{
                     </div>
                 </div>
             </PopoverContent>
-        </Popover>
+        </Popover> */}
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">

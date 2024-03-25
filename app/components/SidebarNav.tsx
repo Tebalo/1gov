@@ -80,14 +80,14 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
             </Link>
         </li>
         {staffRoles.includes(userRole) && <li className="flex space-x-2">
-            <div className={`${currentPath === '/trls/profile' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
+            <div className={`${currentPath === '/trls/settings' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
-                href="/trls/reports"
-                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/reports' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
-                <FaUser style={{fontSize: '1.5rem', color: '#FFFFFF'}}/>
+                href="/trls/settings"
+                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/settings' ? 'bg-sky-300' : 'text-gray-100'}`}                        >
+                <FaCogs style={{fontSize: '1.5rem', color: '#FFFFFF'}}/>
                 <div className="flex justify-center">
                     <span className="text-gray-100  text-xs lg:text-base lg:font-semibold">
-                        Reports
+                        Settings
                     </span>
                 </div>
             </Link>
