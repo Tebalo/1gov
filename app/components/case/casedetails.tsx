@@ -121,8 +121,8 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                     </div>
                     <div className='font-sans text-white text-lg'>
                         <a href="#">
-                            <p>{data.teacher_preliminary_infos.national_id}</p>
-                            <h5 className="mb-2 tracking-tight">{data.teacher_registrations.registration_type}</h5>
+                            <p>{data?.teacher_preliminary_infos?.national_id}</p>
+                            <h5 className="mb-2 tracking-tight">{data?.teacher_registrations?.registration_type}</h5>
                         </a>
                     </div>
                 </div>
@@ -141,21 +141,21 @@ const CaseDetails: React.FC<Props> = (data: Props) => {
                 <div className='flex space-x-11'>
                     <h1 className='text-sm text-gray-500'>Status</h1>
                     <div className='px-1 py-0 bg-blue-300 rounded-lg'>
-                        <h1 className='text-blue text-xs text-indigo-900'>{data.teacher_registrations.reg_status}</h1>
+                        <h1 className='text-blue text-xs text-indigo-900'>{data?.teacher_registrations?.reg_status}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Created</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>{data.bio_datas.forenames} {data.bio_datas.surname}</h1>
-                        <h1 className='text-xs font-thin'>{data.teacher_registrations.created_at}</h1>
+                        <h1 className='text-sm text-sky-600'>{data?.bio_datas?.forenames} {data?.bio_datas?.surname}</h1>
+                        <h1 className='text-xs font-thin'>{data?.teacher_registrations?.created_at}</h1>
                     </div>
                 </div>
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Updated</h1>
                     <div className=''>
-                        <h1 className='text-sm text-sky-600'>{data.bio_datas.forenames} {data.bio_datas.surname}</h1>
-                        <h1 className='text-xs font-thin'>{data.teacher_registrations.updated_at}</h1>
+                        <h1 className='text-sm text-sky-600'>{data?.bio_datas?.forenames} {data?.bio_datas?.surname}</h1>
+                        <h1 className='text-xs font-thin'>{data?.teacher_registrations?.updated_at}</h1>
                     </div>
                 </div>
             </div>

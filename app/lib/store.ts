@@ -1,4 +1,4 @@
-export const apiUrl = 'http://74.208.205.44/api';
+export const apiUrl = 'http://74.208.205.44:8080/api';
 export const authUrl = 'https://auth.26digitaldev.com/api/';
 export const secretKey = 'secret';
 

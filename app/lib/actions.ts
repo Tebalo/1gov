@@ -69,9 +69,17 @@ export async function getAll(){
   }
   return res.json()
 }
+
+export async function getRegApplications(status:string, count: string) {
+  const res = await fetch(`${apiUrl}/displayRegistrations?reg_status=${status}&count=${count}`, {cache: 'no-store'})
+  if(!res.ok){
+    return []
+  }
+  return res.json()
+}
+
 export async function getNext(status:string){
     const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {cache:'no-cache'})
-
     if(!res.ok){
         if(res.status === 204){
               return null

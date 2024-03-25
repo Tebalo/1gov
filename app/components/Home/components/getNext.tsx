@@ -19,8 +19,6 @@ interface Registration {
     registration_type: string;
     created_at: string;
     updated_at: string;
-    updated_by: string;
-    created_by: string;
   }
   
 
@@ -33,9 +31,8 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
     async function handleWork(){
         setIsLoading(true);
         const response = await getNext(status)
-
         if(response){
-            setResponse(response || null)
+            setResponse(response[0] || null)
         }else{
             setResponse(null)
         }
@@ -46,7 +43,6 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
         setIsLoading(false)
     }
     function handleOpen(Id:string | undefined){
-        
         if(Id){
             router.push(`/trls/home/${Id}`);
         }
@@ -57,7 +53,7 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
             <DialogTrigger asChild>
                 <Button
                 onClick={handleWork}
-                className="bg-sky-400 hover:bg-sky-600"
+                className="bg-sky-300 hover:bg-sky-600"
                 >
                     Get Next Work
                 </Button>

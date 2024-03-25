@@ -33,19 +33,19 @@ const Preliminary: React.FC<Props> = (pre: Props) => {
             <div className='grid md:grid-cols-2 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Application Type:</Label>
-                    <span className='font-light text-sm'>{pre.teacher_registrations.registration_type}</span>
+                    <span className='font-light text-sm'>{pre?.teacher_registrations?.registration_type}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Work status:</Label>
-                    <span className='font-light text-sm'>{pre.teacher_preliminary_infos.work_status}</span>
+                    <span className='font-light text-sm'>{pre?.teacher_preliminary_infos?.work_status}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Practice category:</Label>
-                    <span className='font-light text-sm'>{pre.teacher_preliminary_infos.practice_category}</span>
+                    <span className='font-light text-sm'>{pre?.teacher_preliminary_infos?.practice_category}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Practice sub-category:</Label>
-                    <span className='font-light text-sm'>{pre.teacher_preliminary_infos.sub_category}</span>
+                    <span className='font-light text-sm'>{pre?.teacher_preliminary_infos?.sub_category}</span>
                 </div>
             </div>
         </div>
@@ -158,7 +158,7 @@ const Qualifications: React.FC<Props> = (data: Props) => {
     return (
         <div >
         <ScrollArea className='h-96'>
-          {data.edu_pro_qualifications.map((qual, index) => (
+          {data?.edu_pro_qualifications.map((qual, index) => (
             <div key={index} className='h-full bg-slate-100 rounded-lg py-2 px-5 mb-2'>
                 <span className='font-light mr-2'>{index+1}.</span>
               <div className='grid md:grid-cols-3 mx-10 mt-1 mb-2 gap-y-5'>
@@ -450,8 +450,8 @@ interface StatusTransition {
     return statusTransition;
   };
 const WorkArea: React.FC<Work> = (data, userRole) => {
-    console.log('role', data.userRole)
-    const { prev_status, next_status } = getNextStatus(data.userRole);
+    console.log('role', data?.userRole)
+    const { prev_status, next_status } = getNextStatus(data?.userRole);
     const router = useRouter()
     const [activeTab, setActiveTab] = useState(1);
     const handleTabClick = (tabNumber: number) => {
@@ -459,7 +459,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     }
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
-        const res = await UpdateStatus(data.data.teacher_preliminary_infos.national_id, status)
+        const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
         if(!res){
             toast({
                 title: "Failed!!!",
@@ -570,14 +570,14 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
         <ScrollArea className='h-screen'>
             <Card className='mx-8 my-2'>
             <div className=''>
-                {activeTab===1 && <Preliminary {...data.data}/>}
-                {activeTab===2 && <Bio {...data.data.bio_datas}/>}
-                {activeTab===3 && <Employment {...data.data.employment_details}/>}
-                {activeTab===4 && <Qualifications {...data.data}/>}
-                {activeTab===5 && <Disability {...data.data.bio_datas}/>}
-                {activeTab===6 && <Offence {...data.data.offence_convictions}/>}
+                {activeTab===1 && <Preliminary {...data?.data}/>}
+                {activeTab===2 && <Bio {...data?.data?.bio_datas}/>}
+                {activeTab===3 && <Employment {...data?.data?.employment_details}/>}
+                {activeTab===4 && <Qualifications {...data?.data}/>}
+                {activeTab===5 && <Disability {...data?.data?.bio_datas}/>}
+                {activeTab===6 && <Offence {...data?.data?.offence_convictions}/>}
                 {activeTab===7 && <Attachments/>}
-                {activeTab===8 && <Declaration {...data.data.declarations}/>}
+                {activeTab===8 && <Declaration {...data?.data?.declarations}/>}
             </div>
             <div className='p-1 mx-8 mb-2'>
                 <div className='flex space-x-2 justify-end'>
@@ -604,7 +604,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                             className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                            onClick={async () => await handleStatusChange(data.data.teacher_preliminary_infos.national_id, prev_status)}
+                            onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, prev_status)}
                             >Continue</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
@@ -624,7 +624,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                             className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                            onClick={async () => await handleStatusChange(data.data.teacher_preliminary_infos.national_id, next_status)}
+                            onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, next_status)}
                             >Continue</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
