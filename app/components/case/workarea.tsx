@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { LoadingSkeleton } from '../LoadingSkeleton';
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
-
+import { revalidatePath } from 'next/cache'
 import { FaFilePdf } from "react-icons/fa";
 import {
     AlertDialog,
@@ -20,12 +20,23 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
     } from "@/components/ui/alert-dialog"
+
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+    } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { UpdateStatus } from '@/app/lib/actions';
 import Link from 'next/link';
 import { roundToNearestMinutes } from 'date-fns';
-import { apiUrl } from '@/app/lib/store';
+import { apiUrl, statusTransitions } from '@/app/lib/store';
 
 const Preliminary: React.FC<Props> = (pre: Props) => {
     return(
@@ -58,63 +69,63 @@ const Bio: React.FC<bio_datas> = (bio: bio_datas) => {
             <div className='grid md:grid-cols-4 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>National ID:</Label>
-                    <span className='font-light text-sm'>{bio.id}</span>
+                    <span className='font-light text-sm'>{bio?.id}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Forenames:</Label>
-                    <span className='font-light text-sm'>{bio.forenames}</span>
+                    <span className='font-light text-sm'>{bio?.forenames}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Surname:</Label>
-                    <span className='font-light text-sm'>{bio.surname}</span>
+                    <span className='font-light text-sm'>{bio?.surname}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Date of birth:</Label>
-                    <span className='font-light text-sm'>{bio.dob}</span>
+                    <span className='font-light text-sm'>{bio?.dob}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Place of birth:</Label>
-                    <span className='font-light text-sm'>{bio.pob}</span>
+                    <span className='font-light text-sm'>{bio?.pob}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Gender:</Label>
-                    <span className='font-light text-sm'>{bio.gender}</span>
+                    <span className='font-light text-sm'>{bio?.gender}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Nationality:</Label>
-                    <span className='font-light text-sm'>{bio.nationality}</span>
+                    <span className='font-light text-sm'>{bio?.nationality}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Postal address:</Label>
-                    <span className='font-light text-sm'>{bio.postalAddress}</span>
+                    <span className='font-light text-sm'>{bio?.postalAddress}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Physical address:</Label>
-                    <span className='font-light text-sm'>{bio.physicalAddress}</span>
+                    <span className='font-light text-sm'>{bio?.physicalAddress}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Email:</Label>
-                    <span className='font-light text-sm'>{bio.email}</span>
+                    <span className='font-light text-sm'>{bio?.email}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Mobile:</Label>
-                    <span className='font-light text-sm'>{bio.mobile}</span>
+                    <span className='font-light text-sm'>{bio?.mobile}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Marital status:</Label>
-                    <span className='font-light text-sm'>{bio.maritalStatus}</span>
+                    <span className='font-light text-sm'>{bio?.maritalStatus}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Next of kin name:</Label>
-                    <span className='font-light text-sm'>{bio.nextOfKinName}</span>
+                    <span className='font-light text-sm'>{bio?.nextOfKinName}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Next of kin relation:</Label>
-                    <span className='font-light text-sm'>{bio.nextOfKinRelation}</span>
+                    <span className='font-light text-sm'>{bio?.nextOfKinRelation}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Next of kin contact:</Label>
-                    <span className='font-light text-sm'>{bio.nextOfKinContact}</span>
+                    <span className='font-light text-sm'>{bio?.nextOfKinContact}</span>
                 </div>
             </div>
         </div>
@@ -127,27 +138,27 @@ const Employment: React.FC<employment_details> = (emp: employment_details) => {
             <div className='grid md:grid-cols-3 m-10 gap-y-5'>
                  <div className='flex flex-col space-y-1'>
                     <Label>Years in service:</Label>
-                    <span className='font-light text-sm'>{emp.experience_years}</span>
+                    <span className='font-light text-sm'>{emp?.experience_years}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Type of institution:</Label>
-                    <span className='font-light text-sm'>{emp.institution_type}</span>
+                    <span className='font-light text-sm'>{emp?.institution_type}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Current station/institution:</Label>
-                    <span className='font-light text-sm'>{emp.current_institution}</span>
+                    <span className='font-light text-sm'>{emp?.current_institution}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Region:</Label>
-                    <span className='font-light text-sm'>{emp.region}</span>
+                    <span className='font-light text-sm'>{emp?.region}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>District:</Label>
-                    <span className='font-light text-sm'>{emp.district}</span>
+                    <span className='font-light text-sm'>{emp?.district}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>City/Town/Village:</Label>
-                    <span className='font-light text-sm'>{emp.city_or_town}</span>
+                    <span className='font-light text-sm'>{emp?.city_or_town}</span>
                 </div>
             </div>
         </div>
@@ -164,19 +175,19 @@ const Qualifications: React.FC<Props> = (data: Props) => {
               <div className='grid md:grid-cols-3 mx-10 mt-1 mb-2 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                   <Label>Qualification level:</Label>
-                  <span className='font-light text-sm'>{qual.level}</span>
+                  <span className='font-light text-sm'>{qual?.level}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                   <Label>Qualification name:</Label>
-                  <span className='font-light text-sm'>{qual.qualification}</span>
+                  <span className='font-light text-sm'>{qual?.qualification}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                   <Label>Awarding Institution:</Label>
-                  <span className='font-light text-sm'>{qual.institution}</span>
+                  <span className='font-light text-sm'>{qual?.institution}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                   <Label>Year Of Completion:</Label>
-                  <span className='font-light text-sm'>{qual.qualification_year}</span>
+                  <span className='font-light text-sm'>{qual?.qualification_year}</span>
                 </div>
                 <div className=''>
                   <Link
@@ -231,11 +242,11 @@ const Disability: React.FC<bio_datas> = (dis: bio_datas) => {
             <div className='grid md:grid-cols-1 m-10 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Are you living with any form of disability:</Label>
-                    <span className='font-light text-sm'>{dis.disability}</span>
+                    <span className='font-light text-sm'>{dis?.disability}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Nature of Disability:</Label>
-                    <span className='font-light text-sm'>{dis.disability_description}t</span>
+                    <span className='font-light text-sm'>{dis?.disability_description}t</span>
                 </div>
             </div>
         </div>
@@ -247,19 +258,19 @@ const Offence: React.FC<offence_convictions> = (off:offence_convictions) => {
             <div className='grid md:grid-cols-2 m-10 gap-y-5 gap-x-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>1. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense against a learner/ a minor?:</Label>
-                    <span className='font-light text-sm'>{off.drug_related_offence}, {off.drug_related_offence_details}</span>
+                    <span className='font-light text-sm'>{off?.drug_related_offence}, {off?.drug_related_offence_details}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>2. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense of possession of and or of drugs use?:</Label>
-                    <span className='font-light text-sm'>{off.drug_related_offence}, {off.drug_related_offence_details}</span>
+                    <span className='font-light text-sm'>{off?.drug_related_offence}, {off?.drug_related_offence_details}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>3. Have you ever had a teaching license revoked, suspended, invalidated, cancelled or denied by any teaching council or any authority; surrendered such a license or the right to apply for such a license; or had any other adverse action taken against such a license. Please note that this includes a reprimand, warning, or reproval and any order denying the right to apply or reapply for a license?:</Label>
-                    <span className='font-light text-sm'>{off.license_flag}</span>
+                    <span className='font-light text-sm'>{off?.license_flag}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>4. Are you currently the subject of any review, inquiry, investigation, or appeal of alleged misconduct that could warrant discipline or termination by your employer. Please note that this includes any open investigation by or pending proceeding with a child protection agency and any pending criminal charges?:</Label>
-                    <span className='font-light text-sm'>{off.misconduct_flag}</span>
+                    <span className='font-light text-sm'>{off?.misconduct_flag}</span>
                 </div>
             </div>
         </div>
@@ -298,7 +309,7 @@ const Declaration: React.FC<declarations> = (dec: declarations) => {
         <div className='h-full w-full'>
             <div className='grid grid-cols-1 m-10 gap-y-5 gap-x-5'>
                 <div className='flex flex-col space-y-1'>
-                    <Label>I <span className='italic'>{dec.signature}</span> hereby declare that the information I have provided in this application form is true and correct to the best of my knowledge and belief. I understand that providing false or misleading information may result in the refusal of my application or the cancellation of my registration. I am aware that the Council may collect and verify information about my qualifications, experience, and fitness to teach. I consent to the Council collecting and verifying this information and I authorize the Council to share this information with other relevant organizations, such as employers and educational institutions.</Label>
+                    <Label>I <span className='italic'>{dec?.signature}</span> hereby declare that the information I have provided in this application form is true and correct to the best of my knowledge and belief. I understand that providing false or misleading information may result in the refusal of my application or the cancellation of my registration. I am aware that the Council may collect and verify information about my qualifications, experience, and fitness to teach. I consent to the Council collecting and verifying this information and I authorize the Council to share this information with other relevant organizations, such as employers and educational institutions.</Label>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Accept the above terms and conditions</Label>
@@ -410,47 +421,14 @@ interface Work{
     data: Props,
     userRole: string
 }
-interface StatusTransition {
-    [key: string]: {
-        prev_status: string;
-        next_status: string;
-    };
-  }
-  
-  const statusTransitions: StatusTransition = {
-    'Default': {
-        prev_status: 'Default',
-        next_status: 'Default',
-    },
-    'registration_officer': {
-        prev_status: 'Customer-Action-Pending',
-        next_status: 'Pending-Screening',
-    },
-    'snr_registration_officer': {
-        prev_status: 'Pending-Review',
-        next_status: 'Pending-Manager-Review',
-    },
-    'manager': {
-        prev_status: 'Pending-Screening',
-        next_status: 'Pending-Director-Review',
-    },
-    'director': {
-        prev_status: 'Pending-Manager-Review',
-        next_status: 'Pending-Registrar-Review',
-    },
-    'registrar': {
-        prev_status: 'Pending-Director-Review',
-        next_status: 'Registration-Case-Complete',
-    },
-  };
 
 
-  export const getNextStatus = (userRole: string): { prev_status: string; next_status: string } => {
+
+export const getNextStatus = (userRole: string): { prev_status: string; inv_status: string; bar_status: string; rej_status: string; next_status: string; } => {
     const statusTransition = statusTransitions[userRole] || statusTransitions['Default'];
     return statusTransition;
-  };
+};
 const WorkArea: React.FC<Work> = (data, userRole) => {
-    console.log('role', data?.userRole)
     const { prev_status, next_status } = getNextStatus(data?.userRole);
     const router = useRouter()
     const [activeTab, setActiveTab] = useState(1);
@@ -460,6 +438,8 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
         const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
+        
+        router.prefetch('/trls/home')
         if(!res){
             toast({
                 title: "Failed!!!",
@@ -476,7 +456,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <ToastAction altText="Ok">Ok</ToastAction>
                 ),
             })
-            router.prefetch('/trls/home')
+            
             router.push('/trls/home')
         }
     }
@@ -595,11 +575,40 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
+                            <AlertDialogTitle>Rejection</AlertDialogTitle>
+                            
+                            {/* <AlertDialogDescription>
                                 This action will change the status to <span className='italic font-medium'>{prev_status}</span>, and this will route the application to the previous level.
-                            </AlertDialogDescription>
+                            </AlertDialogDescription> */}
                             </AlertDialogHeader>
+                            <Select>
+                                <SelectTrigger className="w-[200px]">
+                                    <SelectValue placeholder="Select a rejection type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Rejections</SelectLabel>
+                                        <SelectItem value="apple">Return</SelectItem>
+                                        <SelectItem value="banana">Investigate</SelectItem>
+                                        <SelectItem value="blueberry">Bar</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="name" className="text-right">
+                                    Name
+                                    </Label>
+                                    <Input id="name" value="Pedro Duarte" className="col-span-3" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="username" className="text-right">
+                                    Username
+                                    </Label>
+                                    <Input id="username" value="@peduarte" className="col-span-3" />
+                                </div>
+                            </div>
+
                             <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
@@ -614,7 +623,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                             <Button variant="default" className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'>Approve</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
-                            <AlertDialogHeader>
+                            <AlertDialogHeader>                                
                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                             <AlertDialogDescription>
                                 This action will change the status to <span className='italic font-medium'>{next_status}</span>, and this will route the application to the next level.

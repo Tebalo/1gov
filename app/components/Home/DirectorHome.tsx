@@ -13,13 +13,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Label } from "recharts";
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Suspense } from "react";
+import { Label } from "@/components/ui/label";
 
 export const DirectorHome = async () => {
-    const tasks = await getRegApplications('Pending-Director-Review','20')
+    let tasks = await getRegApplications('Pending-Director-Review','20')
+    if(!tasks){
+      tasks = []
+    }
     return(
       <>
       <div className="overflow-auto h-screen rounded-lg">
@@ -29,30 +32,52 @@ export const DirectorHome = async () => {
         <div className="w-full">
             <div className="rounded-lg">
                 <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
-                    <div className="flex-row items-center justify-center border shadow border-gray-200 p-2 rounded-lg bg-gray-50">
-                    <h3 className="text-sm mb-1">Show statuses for</h3>
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select an application..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Application Type</SelectLabel>
-                          <SelectItem value="apple">Registration</SelectItem>
-                          <SelectItem value="banana">License renewal</SelectItem>
-                          <SelectItem value="blueberry">License</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Suspense fallback='Loading...'>
-                      <ApplicationStatusPieChart/>
-                    </Suspense>
-                    </div>
-                    <div className="p-2 space-y-2 md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
-                      <Work status={"Pending-Director-Review"}/>
+                    <div className="p-2 space-y-2 md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">                      
+                      <Label>My Work</Label>
+                      <div className="flex space-x-2 items-end">
+                        <div>
+                          <Label className="font-light">Show work for</Label>
+                          <Select>
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Select an application..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Application Type</SelectLabel>
+                                <SelectItem value="Registration">Registration</SelectItem>
+                                <SelectItem value="License renewal">License renewal</SelectItem>
+                                <SelectItem value="License">License</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Work status={"Pending-Director-Review"}/>
+                      </div>
                       <ScrollArea className="h-96">
                           <DataTable data={tasks} columns={columns} />
                       </ScrollArea>
+                    </div>
+                    <div className="flex-row items-center justify-center border shadow border-gray-200 p-1 rounded bg-gray-50 space-x-2">
+                    <Label>Applications by status</Label>
+                      <div>
+                        <Label className="font-light">Show statuses for</Label>
+                        <Select>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select an application..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Application Type</SelectLabel>
+                              <SelectItem value="Registration">Registration</SelectItem>
+                              <SelectItem value="License renewal">License renewal</SelectItem>
+                              <SelectItem value="License">License</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <Suspense fallback='Loading...'>
+                          <ApplicationStatusPieChart/>
+                        </Suspense>
+                      </div>
                     </div>
                 </div>
             </div>

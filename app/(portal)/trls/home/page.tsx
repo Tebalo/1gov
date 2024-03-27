@@ -15,8 +15,7 @@ export default async function Home(){
     const userRole = session?.user?.roles[0]
     if(!session?.user?.access){
         redirect('/welcome')
-      }
-    //console.log('Home page',userRole)
+    }
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
         return <TeacherHome/>
     } else if(userRole === 'registration_officer'){

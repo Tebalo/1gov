@@ -1,6 +1,4 @@
 'use client'
-import { usePathname } from "next/navigation";
-
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import {
@@ -9,7 +7,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator";
-import { FaExchangeAlt } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { logout } from "@/app/auth/auth";
@@ -96,29 +93,29 @@ const NavUtils: React.FC<SidebarProps> = ({ userRole}) =>{
             </PopoverTrigger>
             <PopoverContent className="w-60" side='right' align="start">
                 <div className="grid gap-2">
-                    <div className="grid gap-2">
-                        <div className="grid grid-cols-2 items-center gap-4">
-                            <Label htmlFor="maxWidth" className="col-span-2 font-normal">Profile</Label>
+                    <div className="grid gap-2 cursor-pointer">
+                        <div className="grid grid-cols-2 items-center gap-4 cursor-pointer">
+                            <Label htmlFor="maxWidth" className="col-span-2 font-normal cursor-pointer">Profile</Label>
                         </div>
                         <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <div className=""><Label htmlFor="height" className="font-normal">Preferences</Label></div>
+                        <div className="flex items-center w-full justify-between cursor-pointer">
+                            <div className=""><Label htmlFor="height" className="font-normal cursor-pointer">Preferences</Label></div>
                         </div>
                             <Separator />
                                 <div className="flex items-center w-full justify-between">
-                                    <Label htmlFor="maxHeight" className="col-span-2 font-normal">Switch Portal</Label>
+                                    <Label htmlFor="maxHeight" className="col-span-2 font-normal cursor-pointer">Switch Portal</Label>
                                 </div>
                             <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="maxHeight" className="col-span-2 font-normal">About this app</Label>
+                        <div className="flex items-center w-full justify-between cursor-pointer">
+                            <Label htmlFor="maxHeight" className="col-span-2 font-normal cursor-pointer">About this app</Label>
                         </div>
                         <Separator />
                         <Link
                         href='/'
                         onClick={handleLogout}
                         >
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="maxHeight" className="col-span-2 font-normal">Logout</Label>
+                        <div className="flex items-center w-full justify-between cursor-pointer">
+                            <Label htmlFor="maxHeight" className="col-span-2 font-normal cursor-pointer">Logout</Label>
                         </div>
                         </Link>
                     </div>

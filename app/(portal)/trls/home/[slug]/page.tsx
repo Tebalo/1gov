@@ -1,7 +1,6 @@
 import { getSession } from "@/app/auth/auth";
 import CaseDetails from "@/app/components/case/casedetails";
 import StudentWorkArea from "@/app/components/case/studentWorkArea";
-//import Utilities from "@/app/components/case/utilities";
 import WorkArea from "@/app/components/case/workarea";
 import { getRegById } from "@/app/lib/actions";
 import Link from "next/link";
@@ -14,7 +13,7 @@ export default async function Page({params}:{params: {slug: string}}){
     const userRole = await session?.user?.roles[0]
     if(!session?.user?.access){
         redirect('/welcome')
-      }
+    }
     return (
         <main className="h-full">
             <div className="flex flex-row h-full gap-1">

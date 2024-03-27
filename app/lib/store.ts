@@ -1,6 +1,77 @@
-export const apiUrl = 'http://74.208.205.44:8080/api';
+export const apiUrl = 'http://66.179.253.57:8080/api';
 export const authUrl = 'https://auth.26digitaldev.com/api/';
 export const secretKey = 'secret';
+
+export interface StatusTransition {
+    [key: string]: {
+        prev_status: string;
+        inv_status: string;
+        bar_status: string;
+        rej_status: string;
+        next_status: string;
+    };
+  }
+  
+export const statusTransitions: StatusTransition = {
+    'Default': {
+        prev_status: 'Default',
+        inv_status: '',
+        bar_status: '',
+        rej_status: '',
+        next_status: 'Default',
+    },
+    'registration_officer': {
+        prev_status: 'Pending-Customer-Update',
+        inv_status: '',
+        bar_status: '',
+        rej_status: '',
+        next_status: 'Pending-Screening',
+    },
+    'snr_registration_officer': {
+        prev_status: 'Default',
+        inv_status: 'Pending-Investigation',
+        bar_status: 'Barred',
+        rej_status: 'Senior-RO-Rejected',
+        next_status: 'Pending-Manager-Review',
+    },
+    'manager': {
+        prev_status: 'Default',
+        inv_status: 'Pending-Investigation',
+        bar_status: 'Barred',
+        rej_status: 'Manager-Rejected',
+        next_status: 'Pending-Director-Review',
+    },
+    'director': {
+        prev_status: 'Default',
+        inv_status: '',
+        bar_status: '',
+        rej_status: '',
+        next_status: 'Endorsement-Recommendation',
+    },
+    'registrar': {
+        prev_status: 'Default',
+        inv_status: '',
+        bar_status: '',
+        rej_status: '',
+        next_status: 'Endorsement-Complete',
+    },
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const citizenOptions = [

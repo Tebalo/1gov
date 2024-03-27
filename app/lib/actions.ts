@@ -1,29 +1,25 @@
 "use server"
 import axios from "axios";
 import { signIn } from "../auth/signIn"
-import { revalidateTag } from "next/cache"
-import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { apiUrl } from "./store";
 //import jsCookie from 'js-cookie';
 //import { useRouter } from "next/router";
 
-
 const authUrl = 'http://localhost:8000/api';
-//const apiUrl = 'http://66.179.253.57/api';
 
 export const logout =async () => {
   try{
     const response = await axios.post(`${authUrl}/welcome`, null, {
       withCredentials: true,
     });
-    console.log(response.data.message);
     //jsCookie.remove('access_token');
     //jsCookie.remove('refresh_token');
 
     //const router = useRouter()
     //router.push('/welcome')
   }catch(error){
-    console.error(error)
+    throw error
   }
 }
 
@@ -59,7 +55,6 @@ export default async function getHistory(reg_number: string){
         { newStatus: "Pending-Screening", timestamp: new Date('2023-11-02T16:05:00'), changedBy: 'Masego Sam' },
         { newStatus: "Needs Additional Info", timestamp: new Date('2023-11-05T09:12:00'), changedBy: 'System' } // Example of a system-generated change
     ]
-    //const res = await fetch('') // docs: fetching-caching-and-revalidating
     return statuses
   }
 export async function getAll(){
@@ -71,27 +66,34 @@ export async function getAll(){
 }
 
 export async function getRegApplications(status:string, count: string) {
-  const res = await fetch(`${apiUrl}/displayRegistrations?reg_status=${status}&count=${count}`, {cache: 'no-store'})
-  if(!res.ok){
+  
+  try{
+    const res = await fetch(`${apiUrl}/displayRegistrations?reg_status=${status}&count=${count}`, {cache: 'no-store'})
+    const contentType = res.headers.get('content-type');
+    if(contentType && contentType.startsWith('application/json')){
+      return res.json()
+    }else{
+      return [];
+    }
+  }catch(error){
     return []
   }
-  return res.json()
+  
 }
 
 export async function getNext(status:string){
-    const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {cache:'no-cache'})
-    if(!res.ok){
-        if(res.status === 204){
-              return null
-        }else{
-            throw new Error('Failed to fetch data')
-        }
-    }
-    if(res.status === 204){
-        return null
-    }
+    
     try{
-        return await res.json()
+        const res = await fetch(`${apiUrl}/getNext/?reg_status=${status}`, {cache:'no-cache'})
+        const contentType = res.headers.get('content-type');
+        if(!res.ok || res.status === 204){
+          return null
+        }
+        if(contentType && contentType.startsWith('application/json')){
+          return await res.json()
+        }else{
+          return [];
+        }      
     }catch(error){
         if(error instanceof SyntaxError){
             return {}
@@ -134,5 +136,6 @@ export async function UpdateStatus(id: string, status: string ){
             'Content-Type': 'application/json'
         }
     })
+    //revalidatePath('/(portal)/trls/home/', 'page')
     return res.status
 }
