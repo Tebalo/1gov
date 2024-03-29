@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/card';
 import { LoadingSkeleton } from '../LoadingSkeleton';
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
-import { revalidatePath } from 'next/cache'
 import { FaFilePdf } from "react-icons/fa";
 import {
     AlertDialog,
@@ -30,13 +29,42 @@ import {
     SelectTrigger,
     SelectValue,
     } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { UpdateStatus } from '@/app/lib/actions';
 import Link from 'next/link';
 import { roundToNearestMinutes } from 'date-fns';
 import { apiUrl, statusTransitions } from '@/app/lib/store';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form"
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from "@/components/ui/table"
+  import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+  } from "@/components/ui/hover-card"
+  import { ChevronRightIcon } from "@radix-ui/react-icons"
 
 const Preliminary: React.FC<Props> = (pre: Props) => {
     return(
@@ -165,6 +193,87 @@ const Employment: React.FC<employment_details> = (emp: employment_details) => {
     );
 }
 const Qualifications: React.FC<Props> = (data: Props) => {
+    const path = `${apiUrl}/Qualifications/`
+    return (
+        <div className='m-10'>
+            <Table>
+                <TableCaption>A list of qualifications.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead className="w-[100px]">Level</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Awarding Institution</TableHead>
+                    <TableHead>Attachment</TableHead>
+                    <TableHead className="text-right">Year of completion</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {data.edu_pro_qualifications.map((qual, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="font-medium">{qual?.level}</TableCell>
+                                <TableCell>{qual?.qualification}</TableCell>
+                                <TableCell>{qual?.institution}</TableCell>
+                                <TableCell>
+                                    <Link
+                                    href={path+qual.attachments}
+                                    target='_blank'
+                                    rel="noreferrer noopener"
+                                    className='cursor-pointer'
+                                    >
+                                        <div className='flex space-x-1'>
+                                        <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }} />
+                                        <span>doc.pdf</span>
+                                        {/* <span>{qual.attachments}</span> */}
+                                        </div>
+                                    </Link>
+                                </TableCell>
+                                <TableCell className="text-center">{qual?.qualification_year}</TableCell>
+                                <HoverCard>
+                                    <HoverCardTrigger>
+                                        <Button variant='outline'>
+                                            Subjects
+                                            <ChevronRightIcon className="h-4 w-4" />
+                                        </Button>
+                                    </HoverCardTrigger>
+                                    <HoverCardContent>
+                                    <div>
+                                        <Label>Minor subjects</Label>
+                                        <ol type='1'>
+                                            {qual.minor_subjects.map((subject, index) => (
+                                            <li key={index}>
+                                                <span className='font-light mr-2'>{index+1}.</span>
+                                                <span className='font-light text-sm'>{subject}</span>
+                                            </li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                    <div>
+                                        <Label>Major subjects</Label>
+                                        <ol type='1'>
+                                            {qual.major_subjects.map((subject, index) => (
+                                            <li key={index}>
+                                                <span className='font-light mr-2'>{index+1}.</span>
+                                                <span className='font-light text-sm'>{subject}</span>
+                                            </li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                    </HoverCardContent>
+                                </HoverCard>
+                        </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                    {/* <TableRow>
+                    <TableCell colSpan={3}>Total</TableCell>
+                    <TableCell className="text-right">$2,500.00</TableCell>
+                    </TableRow> */}
+                </TableFooter>
+            </Table>
+        </div>
+      );
+}
+const Qualificationse: React.FC<Props> = (data: Props) => {
     const path = `${apiUrl}/Qualifications/`
     return (
         <div >
@@ -422,14 +531,73 @@ interface Work{
     userRole: string
 }
 
-
-
-export const getNextStatus = (userRole: string): { prev_status: string; inv_status: string; bar_status: string; rej_status: string; next_status: string; } => {
+export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; } => {
     const statusTransition = statusTransitions[userRole] || statusTransitions['Default'];
     return statusTransition;
 };
+
+const items = [
+    {
+      id: "national_id_copy",
+      label: "National ID",
+    },
+    {
+      id: "qualification_copy",
+      label: "Qualification copy",
+    },
+    {
+      id: "proof_of_payment",
+      label: "Proof of payment",
+    },
+    {
+      id: "attachments",
+      label: "Qualifications attachment",
+    },
+    {
+      id: "attachment",
+      label: "Recommendation attachment",
+    },
+  ] as const
+
+  interface Tab {
+    id: number;
+    label: string;
+}
+
+interface DynamicTabsProps {
+    tabs: Tab[]
+}
+
+const DynamicTabs: React.FC<DynamicTabsProps> = ({tabs}) => {
+    const [activeTab, setActiveTab] = useState<number>(1);
+
+    const handleTabClick = (tabId: number) => {
+        setActiveTab(tabId)
+    }
+    return(
+        <div className='flex items-center justify-around space-x-0 mx-2 mt-5 text-xs'>
+            <ul className='flex flex-wrap -mb-px'>
+                {tabs.map((tab) =>(
+                    <li key={tab.id}>
+                        <button
+                        className={`w-full transition ${
+                            activeTab === tab.id
+                            ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active'
+                            : 'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        }`}
+                        onClick={() => handleTabClick(tab.id)}
+                        >
+                            {tab.label}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
+}
+
 const WorkArea: React.FC<Work> = (data, userRole) => {
-    const { prev_status, next_status } = getNextStatus(data?.userRole);
+    const { prev_status, next_status, rej_status, bar_status, inv_status } = getNextStatus(data?.userRole);
     const router = useRouter()
     const [activeTab, setActiveTab] = useState(1);
     const handleTabClick = (tabNumber: number) => {
@@ -438,7 +606,6 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
         const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
-        
         router.prefetch('/trls/home')
         if(!res){
             toast({
@@ -460,7 +627,38 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
             router.push('/trls/home')
         }
     }
-
+    const FormSchema = z.object({
+        status: z
+          .string({
+            required_error: 'Please select rejection type.',
+            // path: ['status']
+          }),
+        evidence: z
+          .any()
+          .optional(),
+        // items: z.array(z.string()).optional(),
+        items: z.array(z.string()).refine((value) => value.some((item) => item), {
+        message: "You have to select at least one item.",
+        }),
+    })
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        // defaultValues: {
+        //     items: [''],
+        // }
+      })
+      function onSubmit(data: z.infer<typeof FormSchema>) {
+        toast({
+          title: "You submitted the following values:",
+          description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+              <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+            </pre>
+          ),
+        })
+      }
+      const status = form.watch("status"); // watch status changes, for validations and ...
+      const evidence = form.watch('evidence')
     return (                    
     <div className="flex-row w-full font-sans items-start h-auto rounded bg-gray-50">
         <div className='flex items-center justify-around space-x-0 mx-2 mt-5 text-xs'>
@@ -468,7 +666,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===1 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===1 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(1)}
                     >
@@ -478,7 +676,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===2 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===2 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(2)}
                     >
@@ -488,7 +686,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===3 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===3 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(3)}
                     >
@@ -498,7 +696,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===4 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===4 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(4)}
                     >
@@ -508,7 +706,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===5 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===5 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(5)}
                     >
@@ -518,7 +716,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===6 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===6 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(6)}
                     >
@@ -528,7 +726,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===7 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===7 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(7)}
                     >
@@ -538,7 +736,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <li>
                     <button
                     className={`w-full transition ${
-                        activeTab ===8 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
+                        activeTab ===8 ? 'inline-block px-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active':'inline-block px-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300'
                     }`}
                     onClick={() => handleTabClick(8)}
                     >
@@ -575,52 +773,132 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                            <AlertDialogTitle>Rejection</AlertDialogTitle>
-                            
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                             {/* <AlertDialogDescription>
                                 This action will change the status to <span className='italic font-medium'>{prev_status}</span>, and this will route the application to the previous level.
                             </AlertDialogDescription> */}
                             </AlertDialogHeader>
-                            <Select>
-                                <SelectTrigger className="w-[200px]">
-                                    <SelectValue placeholder="Select a rejection type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Rejections</SelectLabel>
-                                        <SelectItem value="apple">Return</SelectItem>
-                                        <SelectItem value="banana">Investigate</SelectItem>
-                                        <SelectItem value="blueberry">Bar</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="name" className="text-right">
-                                    Name
-                                    </Label>
-                                    <Input id="name" value="Pedro Duarte" className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="username" className="text-right">
-                                    Username
-                                    </Label>
-                                    <Input id="username" value="@peduarte" className="col-span-3" />
-                                </div>
-                            </div>
+                            {/* <Label className="font-light"></Label> */}
+                            <Form  {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+                                        <FormField
+                                        control={form.control}
+                                        name="status"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Rejection type</FormLabel>
+                                                <Select onValueChange={field.onChange} value={field.value}>
+                                                    <SelectTrigger className="w-[200px]">
+                                                        <SelectValue placeholder="Select a rejection type" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectGroup>
+                                                            <SelectLabel>Rejections</SelectLabel>
+                                                            {prev_status && (<SelectItem value={prev_status}>Return to customer</SelectItem>)}
+                                                            {inv_status && (<SelectItem value={inv_status}>Route to investigations</SelectItem>)}
+                                                            {bar_status && (<SelectItem value={bar_status}>Send to barred</SelectItem>)}
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+                                            {/* <FormDescription>
+                                                You can manage email addresses in your{" "}
+                                                <Link href="/examples/forms">email settings</Link>.
+                                            </FormDescription> */}
+                                            <FormMessage />
+                                    </FormItem>
+                                    )}
+                                    />
+                                    {status === bar_status && (
+                                    <FormField
+                                    control={form.control}
+                                    name="evidence"
+                                    render={({ field }) => {
+                                        return (
+                                        <FormItem>
+                                            <FormLabel>Attach supporting evidence</FormLabel>
+                                            <FormControl>
+                                            <Input
+                                            type="file"
+                                            accept="application/pdf"
+                                            placeholder="Attach a file"
+                                            {...evidence}
+                                            onChange={(event) => {
+                                                field.onChange(event.target?.files?.[0] ?? undefined);
+                                            }}
+                                            />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Max File Size: 5MB Accepted File Types: .pdf
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                        );
+                                    }}
+                                    />)}
+                                    {status === prev_status && <FormField
+                                        control={form.control}
+                                        name="items"
+                                        render={() => (
+                                            <FormItem>
+                                            <div className="mb-4">
+                                                <FormLabel className="text-base">Attachments</FormLabel>
+                                                <FormDescription>
+                                                Select the items you want the customer to update.
+                                                </FormDescription>
+                                            </div>
+                                            {items.map((item) => (
+                                                <FormField
+                                                key={item.id}
+                                                control={form.control}
+                                                name="items"
+                                                render={({ field }) => {
+                                                    return (
+                                                    <FormItem
+                                                        key={item.id}
+                                                        className="flex flex-row items-start space-x-3 space-y-0"
+                                                    >
+                                                        <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value?.includes(item.id)}
+                                                            onCheckedChange={(checked) => {
+                                                            return checked
+                                                                ? field.onChange([...field.value, item.id])
+                                                                : field.onChange(
+                                                                    field.value?.filter(
+                                                                    (value) => value !== item.id
+                                                                    )
+                                                                )
+                                                            }}
+                                                        />
+                                                        </FormControl>
+                                                        <FormLabel className="text-sm font-normal">
+                                                        {item.label}
+                                                        </FormLabel>
+                                                    </FormItem>
+                                                    )
+                                                }}
+                                                />
+                                            ))}
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        />}
+                                        <AlertDialogFooter className='w-full items-end justify-end'>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <Button
+                                            className=''
+                                            type='submit'
+                                            // onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, status)}
+                                            >Submit</Button>
+                                        </AlertDialogFooter>
+                                </form>
+                            </Form>
 
-                            <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                            className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                            onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, prev_status)}
-                            >Continue</AlertDialogAction>
-                            </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="default" className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'>Approve</Button>
+                            <Button variant="default" className=''>Approve</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>                                
@@ -633,7 +911,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                             className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                            onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, next_status)}
+                            onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, status)}
                             >Continue</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>

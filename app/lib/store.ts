@@ -4,55 +4,55 @@ export const secretKey = 'secret';
 
 export interface StatusTransition {
     [key: string]: {
-        prev_status: string;
-        inv_status: string;
-        bar_status: string;
-        rej_status: string;
-        next_status: string;
+        prev_status: string | null;
+        inv_status: string | null;
+        bar_status: string | null;
+        rej_status: string | null;
+        next_status: string | null;
     };
   }
   
 export const statusTransitions: StatusTransition = {
     'Default': {
         prev_status: 'Default',
-        inv_status: '',
-        bar_status: '',
-        rej_status: '',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
         next_status: 'Default',
     },
     'registration_officer': {
         prev_status: 'Pending-Customer-Update',
-        inv_status: '',
-        bar_status: '',
-        rej_status: '',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
         next_status: 'Pending-Screening',
     },
     'snr_registration_officer': {
-        prev_status: 'Default',
+        prev_status: null,
         inv_status: 'Pending-Investigation',
         bar_status: 'Barred',
         rej_status: 'Senior-RO-Rejected',
         next_status: 'Pending-Manager-Review',
     },
     'manager': {
-        prev_status: 'Default',
+        prev_status: '',
         inv_status: 'Pending-Investigation',
         bar_status: 'Barred',
         rej_status: 'Manager-Rejected',
         next_status: 'Pending-Director-Review',
     },
     'director': {
-        prev_status: 'Default',
-        inv_status: '',
-        bar_status: '',
-        rej_status: '',
+        prev_status: null,
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
         next_status: 'Endorsement-Recommendation',
     },
     'registrar': {
-        prev_status: 'Default',
-        inv_status: '',
-        bar_status: '',
-        rej_status: '',
+        prev_status: null,
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
         next_status: 'Endorsement-Complete',
     },
 };

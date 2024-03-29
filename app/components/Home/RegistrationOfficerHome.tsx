@@ -25,8 +25,8 @@ export const RegistrationOfficerHome = async () => {
             </div>
             <div className="w-full">
                 <div className="rounded-lg">
-                    <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
-                        <div className="p-2 space-y-2 md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
+                    <div className="flex space-x-2">
+                        <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
                         <Label>My Work</Label>
                         <div className="flex space-x-2 items-end">
                             <div>
@@ -46,12 +46,11 @@ export const RegistrationOfficerHome = async () => {
                                 <Work status={"Pending-Review"}/>
                             </div>
                             <div className="">
-                                <ScrollArea className="h-96">
-                                    <DataTable data={tasks} columns={columns} />
-                                </ScrollArea>
+                                <DataTable data={tasks} columns={columns} />
                             </div>
+
                         </div>
-                        <div className="flex-row items-center justify-center md:h-96 border shadow border-gray-200 p-6 rounded bg-gray-50">
+                        <div className="flex-none w-60 items-center justify-center border shadow border-gray-200 p-6 rounded bg-gray-50">
                         </div>
                     </div>
                 </div>

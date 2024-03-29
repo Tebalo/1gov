@@ -1,6 +1,6 @@
 import React from 'react';
 import DoughtnutCard from '@/app/components/(charts)/_DoughtnutCard';
-import TableFilter from '@/app/components/(tables)/_tablefilter';
+import TableFilter from '@/app/components/dashboard/(tables)/_tablefilter';
 import LineChartCard from '@/app/components/(charts)/_LineChartCard';
 import { fakerDE as faker } from '@faker-js/faker';
 const Index: React.FC = () => {
