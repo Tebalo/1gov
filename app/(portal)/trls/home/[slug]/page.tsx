@@ -1,6 +1,5 @@
 import { getSession } from "@/app/auth/auth";
 import CaseDetails from "@/app/components/record/record-details";
-import StudentWorkArea from "@/app/components/record/studentWorkArea";
 import WorkArea from "@/app/components/record/work-area";
 import { getRegById } from "@/app/lib/actions";
 import Link from "next/link";

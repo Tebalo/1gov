@@ -17,6 +17,7 @@ import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Suspense } from "react";
 import { Label } from "@/components/ui/label";
+import { SelectTable } from "./components/select-table";
 
 export const DirectorHome = async () => {
     let tasks = await getRegApplications('Pending-Director-Review','20')
@@ -34,7 +35,7 @@ export const DirectorHome = async () => {
                 <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
                     <div className="p-2 space-y-2 md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">                      
                       <Label>My Work</Label>
-                      <div className="flex space-x-2 items-end">
+                      {/* <div className="flex space-x-2 items-end">
                         <div>
                           <Label className="font-light">Show work for</Label>
                           <Select>
@@ -55,7 +56,8 @@ export const DirectorHome = async () => {
                       </div>
                       <ScrollArea className="h-96">
                           <DataTable data={tasks} columns={columns} />
-                      </ScrollArea>
+                      </ScrollArea> */}
+                      <SelectTable/>
                     </div>
                     <div className="flex-row items-center justify-center border shadow border-gray-200 p-1 rounded bg-gray-50 space-x-2">
                     <Label>Applications by status</Label>
