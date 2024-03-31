@@ -229,6 +229,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                                                         <SelectLabel>Rejections</SelectLabel>
                                                                         {prev_status && (<SelectItem value={prev_status}>Return to customer</SelectItem>)}
                                                                         {inv_status && (<SelectItem value={inv_status}>Route to investigations</SelectItem>)}
+                                                                        {rej_status && (<SelectItem value={rej_status}>Send to rejected</SelectItem>)}
                                                                         {bar_status && (<SelectItem value={bar_status}>Send to barred</SelectItem>)}
                                                                     </SelectGroup>
                                                                 </SelectContent>

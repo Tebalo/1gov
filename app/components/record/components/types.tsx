@@ -72,6 +72,18 @@ interface teacher_registrations {
     created_at: string;
     updated_at: string;
 }
+interface Recommendation{
+    recommended:string;
+    attachment: string;
+}
+interface StudyProgramme{
+    name: string;
+    completionYear: string;
+    level: string;
+    duration: number;// Assuming duration is numerical
+    modeOfStudy: string;
+    specialization: string;
+}
 interface attachments{
     national_id: string,
     national_id_copy: string,
@@ -88,6 +100,8 @@ export default interface Props {
     declarations: declarations,
     offence_convictions: offence_convictions,
     employment_details: employment_details,
+    study_programmes: StudyProgramme,
     attachments: attachments,
+    recommendation: Recommendation,
     userRole:string
 }

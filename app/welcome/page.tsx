@@ -2,6 +2,27 @@
 import Image from "next/image";
 import { Login } from "../components/Login";
 import { useState } from "react";
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+  } from "@/components/ui/tabs"
+import { Email } from "./components/email-login";
+import { OneGovID } from "./components/one-gov";
+  
 export default function Welcome() {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
 
@@ -50,6 +71,34 @@ export default function Welcome() {
             <div className="flex md:justify-end justify-center mb-5">
                 <div className="rounded-lg bg-teal-800 hidden"></div>
                 <div className="flex space-x-1 md:space-x-10 md:pr-10">
+                        <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="px-10 py-4">Login</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                            <DialogTitle>Login</DialogTitle>
+                            <DialogDescription>
+                                Complete the form below to access your account.
+                            </DialogDescription>
+                            </DialogHeader>
+                            <Tabs defaultValue="email" className="w-full">
+                                <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="email">Email</TabsTrigger>
+                                    <TabsTrigger value="onegov">IGov ID</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="email">
+                                    <Email/>
+                                </TabsContent>
+                                <TabsContent value="onegov">
+                                    <OneGovID/>
+                                </TabsContent>
+                            </Tabs> 
+                            <DialogFooter>
+                                {/* <Button type="submit">Submit</Button> */}
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                     <button 
                     type="button" 
                     data-modal-target="crud-modal"
@@ -68,6 +117,7 @@ export default function Welcome() {
                     
                 </div>
             </div>
+
             <Login isOpen={isLoginOpen} onClose={handleCloseLogin}/>
             <div className="flex flex-col md:hidden items-center">
                 <button type="button" className="text-white bg-sky-300 hover:bg-sky-350 w-fit hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-base px-10 py-1.5 text-center me-2 mb-2">Get In Touch</button>

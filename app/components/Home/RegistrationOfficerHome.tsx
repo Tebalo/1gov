@@ -1,4 +1,4 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
+'use client'
 import { Work } from "../MyWork/work";
 import { PageTitle } from "../PageTitle";
 import { columns } from "./components/columns";
@@ -8,15 +8,26 @@ import { z } from "zod"
 import { getAll, getRegApplications } from "@/app/lib/actions";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RecordTable } from "./components/registration-table";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+  } from "@/components/ui/tabs"
 
-// Simulate a database read for tasks.
-async function getTasks() {
-    const data = await getAll()  
-    return z.array(regSchema).parse(data)
-  }
+  import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card"
+
 
 export const RegistrationOfficerHome = async () => {
-    const tasks = await getRegApplications('Pending-Review','20')
+    //const tasks = await getRegApplications('Pending-Review','20')
     return(
         <>
         <div className="overflow-auto h-screen rounded-lg">
@@ -27,28 +38,39 @@ export const RegistrationOfficerHome = async () => {
                 <div className="rounded-lg">
                     <div className="flex space-x-2">
                         <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
-                        <Label>My Work</Label>
-                        <div className="flex space-x-2 items-end">
-                            <div>
-                                <Label className="font-light">Show work for</Label>
-                                <Select>
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select an application..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                    <SelectLabel>Application Type</SelectLabel>
-                                    <SelectItem value="Registration">Registration</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                                </Select>
-                            </div>
-                                <Work status={"Pending-Review"}/>
-                            </div>
-                            <div className="">
-                                <DataTable data={tasks} columns={columns} />
-                            </div>
-
+                            <Tabs defaultValue="account" className="w-full">
+                                <TabsList className="grid w-full grid-cols-1">
+                                    <TabsTrigger value="account">Teacher Registration Applications</TabsTrigger>
+                                    {/* <TabsTrigger value="password">Teacher License Applications</TabsTrigger> */}
+                                </TabsList>
+                                <TabsContent value="account">
+                                    <Card>
+                                    <CardHeader>
+                                        {/* <CardTitle>Applications for Teacher registrations</CardTitle> */}
+                                        <CardDescription>
+                                            Review teacher records.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-2">
+                                        <Work status={"Pending-Review"}/>
+                                        <RecordTable status="Pending-Review"/>
+                                    </CardContent>
+                                    </Card>
+                                </TabsContent>
+                                <TabsContent value="password">
+                                    <Card>
+                                    <CardHeader>
+                                        {/* <CardTitle>License </CardTitle> */}
+                                        <CardDescription>
+                                            Review teacher records.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-2">
+                                        <RecordTable status="Pending-Review"/>
+                                    </CardContent>
+                                    </Card>
+                                </TabsContent>
+                            </Tabs>
                         </div>
                         <div className="flex-none w-60 items-center justify-center border shadow border-gray-200 p-6 rounded bg-gray-50">
                         </div>
