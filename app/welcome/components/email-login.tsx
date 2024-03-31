@@ -14,14 +14,16 @@ import {
     FormMessage,
   } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { toast, useToast } from '@/components/ui/use-toast';
+import { login } from "@/app/auth/auth"
+import {useRouter} from 'next/navigation'
+
 interface UserCredentials{
     email: string,
     password: string,
 }
 
 export const Email: React.FC = () => {
-    const { toast } = useToast()
+    const router = useRouter()
     const FormSchema = z.object({
         email: z.string().email({
             message: 'Invalid email format',
@@ -31,15 +33,15 @@ export const Email: React.FC = () => {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema)
     })
-    function onSubmit(data: z.infer<typeof FormSchema>){
-        toast({
-            title: "You submitted the following values:",
-            description: (
-              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-              </pre>
-            ),
-          })
+    async function onSubmit(data: z.infer<typeof FormSchema>){
+        const formData = new FormData();
+        formData.append('username', data.email);
+        formData.append('password', data.password);
+
+        const response = await login(formData)
+        if(response?.ok){
+            router.push('/trls/home')
+        }
     }
     const email = form.watch('email');
     const password = form.watch('password');
@@ -74,7 +76,7 @@ export const Email: React.FC = () => {
                                     <FormControl>
                                         <Input
                                         placeholder=""
-                                        type="text"
+                                        type="password"
                                         {...field}
                                         />
                                     </FormControl>
