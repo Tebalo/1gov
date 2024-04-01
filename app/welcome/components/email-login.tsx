@@ -15,33 +15,46 @@ import {
   } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { login } from "@/app/auth/auth"
-import {useRouter} from 'next/navigation'
+import { useState } from "react"
 
 interface UserCredentials{
     email: string,
     password: string,
 }
-
+interface Error{
+    detail: string
+}
 export const Email: React.FC = () => {
-    const router = useRouter()
     const FormSchema = z.object({
         email: z.string().email({
             message: 'Invalid email format',
         }),
-        password: z.string()
+        password: z.string().min(1)
     })
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema)
     })
+    const [response, setResponse] = useState<Error | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [redirecting, setIsRedirecting] = useState(false);
     async function onSubmit(data: z.infer<typeof FormSchema>){
+        setIsLoading(true)
         const formData = new FormData();
+        
         formData.append('username', data.email);
         formData.append('password', data.password);
 
-        const response = await login(formData)
-        if(response?.ok){
-            router.push('/trls/home')
+        const res = await login(formData);
+        console.log('Json', res)
+        if(!res){
+            setIsRedirecting(true)
         }
+        if(res){
+            setResponse(res || null)
+        }else{
+            setResponse(null)
+        }
+        setIsLoading(false)
     }
     const email = form.watch('email');
     const password = form.watch('password');
@@ -50,6 +63,7 @@ export const Email: React.FC = () => {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="grid gap-4 py-4">
+                    <span className="text-red-600 text-sm">{response?.detail}</span>
                     <FormField
                         control={form.control}
                         name="email"
@@ -84,7 +98,7 @@ export const Email: React.FC = () => {
                                 </FormItem>
                             }}
                         /> 
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit" disabled={isLoading}>{isLoading ? (<>authenticating...</>): (<>Submit</>)}</Button>
                 </div>
             </form>
         </Form>

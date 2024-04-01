@@ -1,7 +1,4 @@
-"use client"
 import Image from "next/image";
-import { Login } from "../components/Login";
-import { useState } from "react";
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,24 +19,25 @@ import {
   } from "@/components/ui/tabs"
 import { Email } from "./components/email-login";
 import { OneGovID } from "./components/one-gov";
-  
+import Logo from '@/public/Code-of-Arms-colour.png'
 export default function Welcome() {
-    const [isLoginOpen, setIsLoginOpen] = useState(false);
+    // const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-    const handleToggleLogin = () => {
-        setIsLoginOpen(!isLoginOpen);
-    };
-    const handleCloseLogin = () => {
-        setIsLoginOpen(false);
-    }
+    // const handleToggleLogin = () => {
+    //     setIsLoginOpen(!isLoginOpen);
+    // };
+    // const handleCloseLogin = () => {
+    //     setIsLoginOpen(false);
+    // }
     return (
         <main className="bg-sky-400 w-full h-screen">
             <div className="flex md:justify-start justify-center md:py-10 py-0">
                 <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 md:w-72 w-48">
                     <Image
-                        src="/Code-of-Arms-colour.png"
+                        src={Logo}
                         width={350}
                         height={350}
+                        priority={true}
                         alt="Picture of the coat of arms"
                     />
                 </div>
@@ -55,6 +53,7 @@ export default function Welcome() {
                                 src="/main-icon.png"
                                 width={350}
                                 height={350}
+                                priority={true}
                                 alt="Picture of the coat of arms"
                             />
                         </div>
@@ -71,7 +70,7 @@ export default function Welcome() {
             <div className="flex md:justify-end justify-center mb-5">
                 <div className="rounded-lg bg-teal-800 hidden"></div>
                 <div className="flex space-x-1 md:space-x-10 md:pr-10">
-                        <Dialog>
+                    <Dialog>
                         <DialogTrigger asChild>
                             <Button variant="outline" className="px-10 py-4">Login</Button>
                         </DialogTrigger>
@@ -99,7 +98,12 @@ export default function Welcome() {
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-                    <button 
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button>Register</Button>
+                        </DialogTrigger>
+                    </Dialog>
+                    {/* <button 
                     type="button" 
                     data-modal-target="crud-modal"
                     data-modal-toggle="crud-modal"
@@ -107,18 +111,18 @@ export default function Welcome() {
                     className="text-black bg-white hover:shadow-md focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-4 me-2 mb-2 focus:outline-none"
                     >
                         Login
-                    </button>
-                    <button 
+                    </button> */}
+                    {/* <button 
                     type="button" 
                     className="text-white bg-gray-700 hover:shadow-md focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-4 me-2 mb-2 focus:outline-none"
                     >
                         Register
-                    </button>
+                    </button> */}
                     
                 </div>
             </div>
 
-            <Login isOpen={isLoginOpen} onClose={handleCloseLogin}/>
+            {/* <Login isOpen={isLoginOpen} onClose={handleCloseLogin}/> */}
             <div className="flex flex-col md:hidden items-center">
                 <button type="button" className="text-white bg-sky-300 hover:bg-sky-350 w-fit hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-base px-10 py-1.5 text-center me-2 mb-2">Get In Touch</button>
                 <p className="text-sm">@ 2024 Botepco Portal v4.0.0</p>
