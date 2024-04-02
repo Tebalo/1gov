@@ -5,12 +5,6 @@ import Appbar from "@/app/components/appbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface SideBarItem {
-  path: string;
-  icon: JSX.Element;
-  title: string;
-}
-
 export default function DashboardLayout({
     children,
   }: {

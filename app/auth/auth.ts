@@ -4,7 +4,6 @@ import {SignJWT, jwtVerify} from 'jose';
 import {cookies} from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation'
-import { useRouter } from 'next/navigation';
 import { authUrl, secretKey } from '../lib/store';
 import { revalidatePath } from 'next/cache';
 /**
@@ -45,13 +44,22 @@ export async function decrypt(input: string): Promise<any> {
     }
     return redirect('/trls/home');
   }
-
+export async function experiment(formData: FormData){
+  const res = await login(formData)
+  // console.log(await res.statusText)
+  return res.statusText
+  // if(res?.ok){
+  //   redirect('/trls/home')
+  // }else{
+  //   return res?.json()
+  // }
+}
 export async function login(formData: FormData) {
     // Verify credentials && get the user
   
     //const user = { email: formData.get("email"), name: "John" };
     const payload = {
-        username: formData.get('email'),
+        username: formData.get('username'),
         password: formData.get('password')
     }
     try{
@@ -62,18 +70,21 @@ export async function login(formData: FormData) {
             }, 
             body: JSON.stringify({...payload}),
         })
-        const user = await res.json()
-        // Create the session
-        const expires = new Date(Date.now() + 3600 * 1000);
-        const session = await encrypt({ user, expires });
-        
-        // Save the session in a cookie
-        cookies().set("session", session, { expires, httpOnly: true });
-        return res;
+        if(res.ok){
+          const user = await res.json()
+          console.log(user)
+          // Create the session
+          const expires = new Date(Date.now() + 3600 * 1000);
+          const session = await encrypt({ user, expires });
+          // Save the session in a cookie
+          cookies().set("session", session, { expires, httpOnly: true });
+          redirect('/trls/home')
+        }else{
+          return res.json();
+        }
     } catch(error){
-
+      throw error
     }
-    //`redirect('/trls//home');
   }
 
 export async function logout() {

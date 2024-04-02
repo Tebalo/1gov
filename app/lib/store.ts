@@ -1,6 +1,137 @@
-export const apiUrl = 'http://74.208.205.44/api';
+export const apiUrl = 'http://66.179.253.57:8080/api';
 export const authUrl = 'https://auth.26digitaldev.com/api/';
 export const secretKey = 'secret';
+
+export interface StatusTransition {
+    [key: string]: {
+        prev_status: string | null;
+        inv_status: string | null;
+        bar_status: string | null;
+        rej_status: string | null;
+        next_status: string | null;
+    };
+}
+
+export interface RoleObjects{
+    [key: string]:{
+        reg_application: boolean | false,
+        lic_application: boolean | false,
+        reg_Next_Status: string | null,
+        lic_Next_Status: string | null,
+    }
+}
+
+export const roleObjects: RoleObjects = {
+    'registration_officer': {
+        reg_application: true,
+        lic_application: false,
+        reg_Next_Status: 'Pending-Review',
+        lic_Next_Status: null
+    },
+    'license_officer': {
+        reg_application: true,
+        lic_application: false,
+        reg_Next_Status: null,
+        lic_Next_Status: 'Pending-Review'
+    },
+    'snr_registration_officer': {
+        reg_application: true,
+        lic_application: false,
+        reg_Next_Status: 'Pending-Screening',
+        lic_Next_Status: null
+    },
+    'snr_license_officer': {
+        reg_application: true,
+        lic_application: false,
+        reg_Next_Status: null,
+        lic_Next_Status:'Pending-Screening'
+    },
+    'manager': {
+        reg_application: true,
+        lic_application: false,
+        reg_Next_Status: 'Pending-Manager-Review',
+        lic_Next_Status: null
+    },
+    'license_manager': {
+        reg_application: true,
+        lic_application: false,
+        reg_Next_Status: null,
+        lic_Next_Status: 'Pending-Manager-Review'
+    },
+    'director': {
+        reg_application: true,
+        lic_application: true,
+        reg_Next_Status: 'Pending-Endorsement',
+        lic_Next_Status: 'Pending-Endorsement'
+    },
+    'registrar': {
+        reg_application: true,
+        lic_application: true,
+        reg_Next_Status: 'Endorsement-Recommendation',
+        lic_Next_Status: 'Endorsement-Recommendation'
+    },
+}
+
+export const statusTransitions: StatusTransition = {
+    'Default': {
+        prev_status: 'Default',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        next_status: 'Default',
+    },
+    'registration_officer': {
+        prev_status: 'Pending-Customer-Update',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        next_status: 'Pending-Screening',
+    },
+    'snr_registration_officer': {
+        prev_status: null,
+        inv_status: 'Pending-Investigation',
+        bar_status: 'Barred',
+        rej_status: 'Senior-RO-Rejected',
+        next_status: 'Pending-Manager-Review',
+    },
+    'manager': {
+        prev_status: '',
+        inv_status: 'Pending-Investigation',
+        bar_status: 'Barred',
+        rej_status: 'Manager-Rejected',
+        next_status: 'Manager-Approved',
+    },
+    'director': {
+        prev_status: null,
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        next_status: 'Endorsement-Recommendation',
+    },
+    'registrar': {
+        prev_status: null,
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        next_status: 'Endorsement-Complete',
+    },
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const citizenOptions = [

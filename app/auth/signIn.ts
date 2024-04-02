@@ -16,7 +16,7 @@ interface LoginErrorResponse {
 }
 const data = new FormData();
 export async function signIn(strategy: string, formData: FormData): Promise<LoginSuccessResponse> { // Define the return type
-    console.log(JSON.stringify(Object.fromEntries(formData) as unknown))
+    // console.log(JSON.stringify(Object.fromEntries(formData) as unknown))
     const response = await fetch('http://66.179.253.57/api/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }, 

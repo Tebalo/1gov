@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import ApprovalRejectionModal from '../ApprovalRejectionModal';
+import ApprovalRejectionModal from '../../ApprovalRejectionModal';
 import { useRouter } from 'next/navigation';
 
 // Define the interface for your item

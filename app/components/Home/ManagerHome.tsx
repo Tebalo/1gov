@@ -1,21 +1,22 @@
-import { Work } from "../MyWork/work";
 import { PageTitle } from "../PageTitle";
+import { getRegApplications } from "@/app/lib/actions";
 
-export const ManagerHome = () => {
+import { Label } from "@/components/ui/label";
+import { SelectTable } from "./components/select-table";
+
+export const ManagerHome = async () => {
+  const tasks = await getRegApplications('Pending-Manager-Review','20')
     return(
         <>
           <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-5">
-                <PageTitle Title="Teacher Registration and Licensing"/>
+                <PageTitle Title="Teacher Registration"/>
             </div>
             <div className="w-full">
-                <div className="rounded-lg">
-                    <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
-                        <div className="flex-row items-center justify-center md:h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
-                        </div>
-                        <div className="flex md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
-                          <Work status={"Pending-Manager-Review"}/>
-                        </div>
+                <div className="flex space-x-2">
+                    <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
+                        <Label>My Work</Label>
+                        <SelectTable userRole={"manager"} />
                     </div>
                 </div>
             </div>

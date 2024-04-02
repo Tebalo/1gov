@@ -15,7 +15,6 @@ export default async function Dashboard(){
     if(!session?.user?.access){
         redirect('/welcome')
       }
-    //console.log('Home page',userRole)
     if(userRole === 'teacher'){
         return <TeacherDashboard/>
     } else if(userRole === 'registration_officer'){
