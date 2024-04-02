@@ -17,6 +17,8 @@ import {
     CardTitle,
   } from "@/components/ui/card"
   import { RecordTable } from "./components/registration-table";
+import { SelectTable } from "./components/select-table";
+import { Label } from "@/components/ui/label";
 
 export const SnrRegistrationOfficerHome = () => {
     return(
@@ -28,39 +30,8 @@ export const SnrRegistrationOfficerHome = () => {
             <div className="w-full">
                 <div className="flex space-x-2">
                     <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
-                    <Tabs defaultValue="registration-application" className="w-full">
-                            <TabsList className="grid w-full grid-cols-1">
-                                <TabsTrigger value="registration-application">Teacher Registration Applications</TabsTrigger>
-                                {/* <TabsTrigger value="license-registration">Teacher License Applications</TabsTrigger> */}
-                            </TabsList>
-                            <TabsContent value="registration-application">
-                                <Card>
-                                <CardHeader>
-                                    {/* <CardTitle>Applications for Teacher registrations</CardTitle> */}
-                                    <CardDescription>
-                                        Review teacher records.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <Work status={"Pending-Screening"}/>
-                                    <RecordTable status="Pending-Screening"/>
-                                </CardContent>
-                                </Card>
-                            </TabsContent>
-                            <TabsContent value="license-registration">
-                                <Card>
-                                <CardHeader>
-                                    {/* <CardTitle>License </CardTitle> */}
-                                    <CardDescription>
-                                        Review teacher records.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <RecordTable status="Pending-Screening"/>
-                                </CardContent>
-                                </Card>
-                            </TabsContent>
-                        </Tabs>
+                        <Label>My Work</Label>
+                        <SelectTable userRole={"snr_registration_officer"} />
                     </div>
                 </div>
             </div>

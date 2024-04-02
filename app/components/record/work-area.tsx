@@ -123,7 +123,6 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                 <ToastAction altText="Ok">Ok</ToastAction>
                 ),
             })
-            
             router.push('/trls/home')
         }
     }
@@ -136,7 +135,9 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
         evidence: z
           .any()
           .optional(),
-        // items: z.array(z.string()).optional(),
+        // items: z.array(z.string()).optional().refine((value) => value ? value.some((item) => item) : true, {
+        //     message: "You have to select at least one item.",
+        // }),
         items: z.array(z.string()).refine((value) => value.some((item) => item), {
             message: "You have to select at least one item.",
         }),
@@ -147,15 +148,34 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
             items: ['attachment'],
         }
       })
-      function onSubmit(data: z.infer<typeof FormSchema>) {
-        toast({
-          title: "You submitted the following values:",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-            </pre>
-          ),
-        })
+      async function onSubmit(record: z.infer<typeof FormSchema>) {
+        const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, record.status);
+        if(!res){
+            toast({
+                title: "Failed!!!",
+                description: "Something went wrong",
+                action: (
+                  <ToastAction altText="Ok">Ok</ToastAction>
+                ),
+            })
+        }else{
+            toast({
+                title: "Routed successfully",
+                description: "The record has been routed with the status: "+status,
+                action: (
+                <ToastAction altText="Ok">Ok</ToastAction>
+                ),
+            })
+            router.push('/trls/home')
+        }
+        // toast({
+        //   title: "You submitted the following values:",
+        //   description: (
+        //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        //     </pre>
+        //   ),
+        // })
       }
       const status = form.watch("status"); // watch status changes, for validations and ...
       const evidence = form.watch('evidence')

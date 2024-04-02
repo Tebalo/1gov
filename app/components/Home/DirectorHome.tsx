@@ -35,29 +35,7 @@ export const DirectorHome = async () => {
                 <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
                     <div className="p-2 space-y-2 md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">                      
                       <Label>My Work</Label>
-                      {/* <div className="flex space-x-2 items-end">
-                        <div>
-                          <Label className="font-light">Show work for</Label>
-                          <Select>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Select an application..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Application Type</SelectLabel>
-                                <SelectItem value="Registration">Registration</SelectItem>
-                                <SelectItem value="License renewal">License renewal</SelectItem>
-                                <SelectItem value="License">License</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <Work status={"Pending-Director-Review"}/>
-                      </div>
-                      <ScrollArea className="h-96">
-                          <DataTable data={tasks} columns={columns} />
-                      </ScrollArea> */}
-                      <SelectTable/>
+                      <SelectTable userRole={"director"} />
                     </div>
                     <div className="flex-row items-center justify-center border shadow border-gray-200 p-1 rounded bg-gray-50 space-x-2">
                     <Label>Applications by status</Label>

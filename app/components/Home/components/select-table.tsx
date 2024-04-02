@@ -13,8 +13,19 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import { Work } from "../../MyWork/work";
+import { roleObjects } from "@/app/lib/store";
 
-export const SelectTable = async () => {
+interface Props{
+    userRole: string
+}
+
+export const getRoleObjects = (userRole: string): { reg_application: boolean | false; lic_application: boolean | false; reg_Next_Status: string | null; lic_Next_Status: string | null} => {
+    const roleObject = roleObjects[userRole];
+    return roleObject
+}
+
+export const SelectTable = async ({userRole}:Props) => {
+    const {reg_application, lic_application, reg_Next_Status, lic_Next_Status} = getRoleObjects(userRole);
     const [table, setTable] = useState('teacherRegistration')
     const handleSelectChange = (newValue: string) => {
         setTable(newValue);
@@ -31,17 +42,17 @@ export const SelectTable = async () => {
                         <SelectContent>
                             <SelectGroup>
                             <SelectLabel>Application Type</SelectLabel>
-                            <SelectItem value="teacherRegistration">Registration</SelectItem>
-                            <SelectItem value="licenseRenewal">License renewal</SelectItem>
-                            <SelectItem value="license">License</SelectItem>
+                            {reg_application && <SelectItem value="teacherRegistration">Registration</SelectItem>}
+                            {lic_application && <SelectItem value="licenseRenewal">License</SelectItem>}
+                            {/* <SelectItem value="license">License</SelectItem> */}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
-                <Work status={"Pending-Director-Review"}/>
+                {reg_Next_Status && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
             </div>
-            {table === 'teacherRegistration' && <RecordTable status="Pending-Review"/>}
-            {table === 'licenseRenewal' && <RecordTable status="License-Renewal" />}
+            {table === 'teacherRegistration' && (reg_Next_Status && <RecordTable status={reg_Next_Status}/>)}
+            {table === 'licenseRenewal' && (lic_Next_Status && <RecordTable status={lic_Next_Status}/>)}
             {table === 'license' && <RecordTable status="License" />}
         </>
     )

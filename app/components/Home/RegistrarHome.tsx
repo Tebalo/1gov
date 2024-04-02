@@ -4,6 +4,8 @@ import { PageTitle } from "../PageTitle";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
 import { getRegApplications } from "@/app/lib/actions";
+import { SelectTable } from "./components/select-table";
+import { Label } from "@/components/ui/label";
 
 export const RegistrarHome = async () => {
    const tasks = await getRegApplications('Pending-Registrar-Review','20')
@@ -19,12 +21,8 @@ export const RegistrarHome = async () => {
                     <div className="flex-row items-center justify-center md:h-96 border shadow border-gray-200 p-6 rounded-lg bg-gray-50">
                     </div>
                     <div className="p-2 space-y-2 md:col-span-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
-                      <Work status={"Pending-Registrar-Review"}/>
-                      <div className="">
-                          <ScrollArea className="h-96">
-                              <DataTable data={tasks} columns={columns} />
-                          </ScrollArea>
-                      </div>
+                        <Label>My Work</Label>
+                        <SelectTable userRole={"registrar"} />
                     </div>
                 </div>
             </div>
