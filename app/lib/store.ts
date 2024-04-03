@@ -1,5 +1,5 @@
 export const apiUrl = 'http://66.179.253.57:8080/api';
-export const authUrl = 'https://auth.26digitaldev.com/api/';
+export const authUrl = 'http://jwtauth.26digitaldev.com/api/';
 export const secretKey = 'secret';
 
 export interface StatusTransition {
