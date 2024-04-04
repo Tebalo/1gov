@@ -105,25 +105,36 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     const router = useRouter()
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
-        const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
-        router.prefetch('/trls/home')
-        if(!res){
-            toast({
-                title: "Failed!!!",
-                description: "Something went wrong",
-                action: (
-                  <ToastAction altText="Ok">Ok</ToastAction>
-                ),
-            })
+        if(next_status){
+            const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
+    
+            router.prefetch('/trls/home')
+            if(!res){
+                toast({
+                    title: "Failed!!!",
+                    description: "Something went wrong",
+                    action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                    ),
+                })
+            }else{
+                toast({
+                    title: "Routed successfully",
+                    description: "The record has been routed with the status: "+status,
+                    action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                    ),
+                })
+                router.push('/trls/home')
+            }
         }else{
             toast({
-                title: "Routed successfully",
-                description: "The record has been routed with the status: "+status,
+                title: "Failed!!!",
+                description: "Next status cannot be undefined/null",
                 action: (
                 <ToastAction altText="Ok">Ok</ToastAction>
                 ),
             })
-            router.push('/trls/home')
         }
     }
     const FormSchema = z.object({
@@ -161,7 +172,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
         }else{
             toast({
                 title: "Routed successfully",
-                description: "The record has been routed with the status: "+status,
+                description: "The record has been routed with the status: "+record.status,
                 action: (
                 <ToastAction altText="Ok">Ok</ToastAction>
                 ),
@@ -364,7 +375,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                                                     <AlertDialogAction
                                                         className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                                                        onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, status)}
+                                                        onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, next_status!)}
                                                         >Continue</AlertDialogAction>
                                                     </AlertDialogFooter>
                                         </AlertDialogContent>

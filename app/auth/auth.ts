@@ -46,7 +46,7 @@ export async function decrypt(input: string): Promise<any> {
   }
 export async function experiment(formData: FormData){
   const res = await login(formData)
-  // console.log(await res.statusText)
+
   return res.statusText
   // if(res?.ok){
   //   redirect('/trls/home')
@@ -72,7 +72,6 @@ export async function login(formData: FormData) {
         })
         if(res.ok){
           const user = await res.json()
-          console.log(user)
           // Create the session
           const expires = new Date(Date.now() + 3600 * 1000);
           const session = await encrypt({ user, expires });

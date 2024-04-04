@@ -37,7 +37,7 @@ export default function Welcome() {
                         src={Logo}
                         width={350}
                         height={350}
-                        priority={true}
+                        priority
                         alt="Picture of the coat of arms"
                     />
                 </div>

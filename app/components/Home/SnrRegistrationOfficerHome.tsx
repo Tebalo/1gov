@@ -1,22 +1,4 @@
-import { Work } from "../MyWork/work";
 import { PageTitle } from "../PageTitle";
-import { getRegApplications } from "@/app/lib/actions";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-  } from "@/components/ui/tabs"
-
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
-  import { RecordTable } from "./components/registration-table";
 import { SelectTable } from "./components/select-table";
 import { Label } from "@/components/ui/label";
 

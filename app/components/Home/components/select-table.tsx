@@ -14,6 +14,7 @@ import {
   } from "@/components/ui/select"
 import { Work } from "../../MyWork/work";
 import { roleObjects } from "@/app/lib/store";
+import { EndorsementTable } from "./upper-mgt-table";
 
 interface Props{
     userRole: string
@@ -30,6 +31,7 @@ export const SelectTable = async ({userRole}:Props) => {
     const handleSelectChange = (newValue: string) => {
         setTable(newValue);
     }
+    const mgt = ['director', 'registrar']
     return(
         <>
             <div className="flex space-x-2 items-end">
@@ -49,9 +51,9 @@ export const SelectTable = async ({userRole}:Props) => {
                         </SelectContent>
                     </Select>
                 </div>
-                {reg_Next_Status && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
+                {reg_Next_Status && !mgt.includes(userRole) && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
             </div>
-            {table === 'teacherRegistration' && (reg_Next_Status && <RecordTable status={reg_Next_Status}/>)}
+            {table === 'teacherRegistration' && !mgt.includes(userRole) ? (reg_Next_Status && <RecordTable status={reg_Next_Status}/>):(reg_Next_Status && <EndorsementTable status={reg_Next_Status}/>)}
             {table === 'licenseRenewal' && (lic_Next_Status && <RecordTable status={lic_Next_Status}/>)}
             {table === 'license' && <RecordTable status="License" />}
         </>
