@@ -23,8 +23,56 @@ import {
       label: "Approve",
     },
   ]
-  
+  export const endorse_status = [
+    {
+      value: "Pending-Endorsement",
+      label: "Pending-Endorsement",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Endorsement-Recommendation",
+      label: "Endorsement-Recommendation",
+      icon: CircleIcon,
+    },
+    {
+      value: "Endorsement-Complete",
+      label: "Endorsement-Complete",
+      icon: CircleIcon,
+    },
+  ]
+  export const final_status = [
+    {
+      value: "Manager-Rejected",
+      label: "Manager-Rejected",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Manager-Approved",
+      label: "Manager-Approved",
+      icon: CircleIcon,
+    },
+    {
+      value: "Senior-RO-Rejected",
+      label: "Senior-RO-Rejected",
+      icon: CircleIcon,
+    },
+  ]
   export const statuses = [
+    {
+      value: "Manager-Rejected",
+      label: "Manager-Rejected",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Manager-Approved",
+      label: "Manager-Approved",
+      icon: CircleIcon,
+    },
+    {
+      value: "Senior-RO-Rejected",
+      label: "Senior-RO-Rejected",
+      icon: CircleIcon,
+    },
     {
       value: "Pending-Review",
       label: "Pending-Review",

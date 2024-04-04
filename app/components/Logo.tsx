@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import Coat from '@/public/Code-of-Arms-colour.png'
 interface LogoProps{
     width:number,
     height:number
@@ -8,7 +8,7 @@ interface LogoProps{
 export const Logo: React.FC<LogoProps>=({width,height})=>{
     return (
             <Image
-                src="/Code-of-Arms-colour.png"
+                src={Coat}
                 width={width}
                 height={height}
                 alt="Picture of the coat of arms"
