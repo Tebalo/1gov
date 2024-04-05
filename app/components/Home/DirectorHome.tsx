@@ -38,7 +38,7 @@ export const DirectorHome = async () => {
                       <SelectTable userRole={"director"} />
                     </div>
                     <div className="flex-row items-center justify-center border shadow border-gray-200 p-1 rounded bg-gray-50 space-x-2">
-                    <Label>Applications by status</Label>
+                      <Label>Applications by status</Label>
                       <div>
                         <Label className="font-light">Show statuses for</Label>
                         <Select>

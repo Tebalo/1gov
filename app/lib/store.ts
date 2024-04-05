@@ -95,10 +95,10 @@ export const statusTransitions: StatusTransition = {
         next_status: 'Pending-Manager-Review',
     },
     'manager': {
-        prev_status: '',
+        prev_status: 'Pending-Review',
         inv_status: 'Pending-Investigation',
-        bar_status: 'Barred',
-        rej_status: 'Manager-Rejected',
+        bar_status: null,
+        rej_status: null,
         next_status: 'Manager-Approved',
     },
     'director': {

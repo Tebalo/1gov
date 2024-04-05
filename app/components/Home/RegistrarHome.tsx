@@ -2,6 +2,7 @@ import { PageTitle } from "../PageTitle";
 import { getRegApplications } from "@/app/lib/actions";
 import { SelectTable } from "./components/select-table";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const RegistrarHome = async () => {
    const tasks = await getRegApplications('Pending-Registrar-Review','20')
@@ -13,10 +14,10 @@ export const RegistrarHome = async () => {
         </div>
         <div className="w-full">
             <div className="rounded-lg">
-                <div className="flex space-x-2">
-                    <div className="p-2 space-y-2 items-center justify-center md:h-96 border border-gray-200 rounded bg-gray-50">
-                        <Label>My Work</Label>
-                        <SelectTable userRole={"registrar"} />
+                <div className="flex w-full">
+                    <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">                      
+                      <Label>My Work</Label>
+                      <SelectTable userRole={"registrar"} />
                     </div>
                 </div>
             </div>
