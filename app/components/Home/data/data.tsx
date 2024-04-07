@@ -32,7 +32,7 @@ import {
     {
       value: "Endorsement-Recommendation",
       label: "Endorsement-Recommendation",
-      icon: CircleIcon,
+      icon: QuestionMarkCircledIcon,
     },
     {
       value: "Endorsement-Complete",
@@ -44,17 +44,17 @@ import {
     {
       value: "Manager-Rejected",
       label: "Manager-Rejected",
-      icon: QuestionMarkCircledIcon,
+      icon: CrossCircledIcon,
     },
     {
       value: "Manager-Approved",
       label: "Manager-Approved",
-      icon: CircleIcon,
+      icon: CheckCircledIcon,
     },
     {
       value: "Senior-RO-Rejected",
       label: "Senior-RO-Rejected",
-      icon: CircleIcon,
+      icon: CrossCircledIcon,
     },
   ]
   export const statuses = [
@@ -117,4 +117,21 @@ import {
       icon: ArrowUpIcon,
     },
   ]
-  
+
+  export const endorsement_status = [
+    {
+      label: 'Pending-Endorsement',
+      value: 'Pending-Endorsement',
+      icon: QuestionMarkCircledIcon
+    },
+    {
+      label: 'Endorsement-Recommendation',
+      value: 'Endorsement-Recommendation',
+      icon: StopwatchIcon
+    },
+    {
+      label: 'Endorsement-Complete',
+      value: 'Endorsement-Complete',
+      icon: CheckCircledIcon
+    }
+  ]  

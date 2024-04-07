@@ -7,6 +7,7 @@ import { z } from "zod"
 import { getAll, getRegApplications } from "@/app/lib/actions";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SelectTable } from "./components/select-table";
 
 // Simulate a database read for tasks.
 async function getTasks() {
@@ -25,31 +26,9 @@ export const LicenseOfficerHome = async () => {
             <div className="w-full">
                 <div className="rounded-lg">
                     <div className="flex space-x-2">
-                        <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
-                        <Label>My Work</Label>
-                        <div className="flex space-x-2 items-end">
-                            <div>
-                                <Label className="font-light">Show work for</Label>
-                                <Select>
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select an application..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                    <SelectLabel>Application Type</SelectLabel>
-                                    <SelectItem value="Registration">License</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                                </Select>
-                            </div>
-                                <Work status={"Pending-Review"}/>
-                            </div>
-                            <div className="">
-                                <DataTable data={tasks} columns={columns} />
-                            </div>
-
-                        </div>
-                        <div className="flex-none w-60 items-center justify-center border shadow border-gray-200 p-6 rounded bg-gray-50">
+                    <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
+                            <Label>My Work</Label>
+                            <SelectTable userRole={"license_officer"} />
                         </div>
                     </div>
                 </div>

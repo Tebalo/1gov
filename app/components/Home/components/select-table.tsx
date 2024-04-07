@@ -15,19 +15,26 @@ import {
 import { Work } from "../../MyWork/work";
 import { roleObjects } from "@/app/lib/store";
 import { EndorsementTable } from "./upper-mgt-table";
+import { constants } from "buffer";
 
 interface Props{
     userRole: string
 }
 
-export const getRoleObjects = (userRole: string): { reg_application: boolean | false; lic_application: boolean | false; reg_Next_Status: string | null; lic_Next_Status: string | null} => {
+export const getRoleObjects = (userRole: string): { reg_application: boolean | false; lic_application: boolean | false; reg_Next_Status: string | null; lic_Next_Status: string | null; defaultWork: string | ''} => {
     const roleObject = roleObjects[userRole];
     return roleObject
 }
 
 export const SelectTable = async ({userRole}:Props) => {
-    const {reg_application, lic_application, reg_Next_Status, lic_Next_Status} = getRoleObjects(userRole);
-    const [table, setTable] = useState('teacherRegistration')
+    const {reg_application, lic_application, reg_Next_Status, lic_Next_Status, defaultWork} = getRoleObjects(userRole);
+    
+
+
+    //const default = DefaultWork[userRole] || '';
+
+    const [table, setTable] = useState(defaultWork);
+
     const handleSelectChange = (newValue: string) => {
         setTable(newValue);
     }
@@ -44,8 +51,8 @@ export const SelectTable = async ({userRole}:Props) => {
                         <SelectContent>
                             <SelectGroup>
                             <SelectLabel>Application Type</SelectLabel>
-                            {reg_application && <SelectItem value="teacherRegistration">Registration</SelectItem>}
-                            {lic_application && <SelectItem value="licenseRenewal">License</SelectItem>}
+                            {reg_application && <SelectItem value="RegistrationApplication">Registration</SelectItem>}
+                            {lic_application && <SelectItem value="licenseApplication">License</SelectItem>}
                             {/* <SelectItem value="license">License</SelectItem> */}
                             </SelectGroup>
                         </SelectContent>
@@ -53,9 +60,10 @@ export const SelectTable = async ({userRole}:Props) => {
                 </div>
                 {reg_Next_Status && !mgt.includes(userRole) && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
             </div>
-            {table === 'teacherRegistration' && !mgt.includes(userRole) ? (reg_Next_Status && <RecordTable status={reg_Next_Status}/>):(reg_Next_Status && <EndorsementTable status={reg_Next_Status}/>)}
+            {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RecordTable status={reg_Next_Status}/>)}
+            {table === 'RegistrationApplication' && mgt.includes(userRole) && (reg_Next_Status && <EndorsementTable status={reg_Next_Status}/>)}
             {table === 'licenseRenewal' && (lic_Next_Status && <RecordTable status={lic_Next_Status}/>)}
-            {table === 'license' && <RecordTable status="License" />}
+            {table === 'licenseApplication' && <RecordTable status="License" />}
         </>
     )
 }

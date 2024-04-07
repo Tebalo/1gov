@@ -3,22 +3,28 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { Row } from "@tanstack/react-table"
 
-
-
 import { labels } from "../data/data"
-import { regSchema, taskSchema } from "../data/schema"
+import { regSchema } from "../data/schema"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
+  userRole?: string,
 }
 
 export function DataTableRowActions<TData>({
   row,
+  userRole
 }: DataTableRowActionsProps<TData>) {
-  const task = regSchema.parse(row.original)
-
+  const record = regSchema.parse(row.original)
+  const router = useRouter();
+  function handleOpen(national_id:string){
+    if(national_id){
+      router.push(`/trls/home/${national_id}`);
+  }
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,12 +37,16 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Open</DropdownMenuItem>
+        <DropdownMenuItem
+        onClick={() => handleOpen(record.national_id)}
+        >
+          Open
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Update status</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.reg_status}>
+            <DropdownMenuRadioGroup value={record.reg_status}>
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}

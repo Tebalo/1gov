@@ -18,6 +18,7 @@ export interface RoleObjects{
         lic_application: boolean | false,
         reg_Next_Status: string | null,
         lic_Next_Status: string | null,
+        defaultWork: string | '',
     }
 }
 
@@ -26,49 +27,57 @@ export const roleObjects: RoleObjects = {
         reg_application: true,
         lic_application: false,
         reg_Next_Status: 'Pending-Review',
-        lic_Next_Status: null
+        lic_Next_Status: null,
+        defaultWork: 'RegistrationApplication'
     },
     'license_officer': {
-        reg_application: true,
-        lic_application: false,
+        reg_application: false,
+        lic_application: true,
         reg_Next_Status: null,
-        lic_Next_Status: 'Pending-Review'
+        lic_Next_Status: 'Pending-Review',
+        defaultWork: 'licenseApplication'
     },
     'snr_registration_officer': {
         reg_application: true,
         lic_application: false,
         reg_Next_Status: 'Pending-Screening',
-        lic_Next_Status: null
+        lic_Next_Status: null,
+        defaultWork: 'RegistrationApplication'
     },
     'snr_license_officer': {
-        reg_application: true,
-        lic_application: false,
+        reg_application: false,
+        lic_application: true,
         reg_Next_Status: null,
-        lic_Next_Status:'Pending-Screening'
+        lic_Next_Status:'Pending-Screening',
+        defaultWork: 'licenseApplication'
     },
     'manager': {
         reg_application: true,
         lic_application: false,
         reg_Next_Status: 'Pending-Manager-Review',
-        lic_Next_Status: null
+        lic_Next_Status: null,
+        defaultWork: 'RegistrationApplication'
     },
     'license_manager': {
-        reg_application: true,
-        lic_application: false,
+        reg_application: false,
+        lic_application: true,
         reg_Next_Status: null,
-        lic_Next_Status: 'Pending-Manager-Review'
+        lic_Next_Status: 'Pending-Manager-Review',
+        defaultWork: 'licenseApplication'
     },
     'director': {
         reg_application: true,
         lic_application: true,
         reg_Next_Status: 'Pending-Endorsement',
-        lic_Next_Status: 'Pending-Endorsement'
+        lic_Next_Status: 'Pending-Endorsement',
+        defaultWork: 'RegistrationApplication'
     },
     'registrar': {
         reg_application: true,
         lic_application: true,
         reg_Next_Status: 'Endorsement-Recommendation',
-        lic_Next_Status: 'Endorsement-Recommendation'
+        lic_Next_Status: 'Endorsement-Recommendation',
+        defaultWork: 'RegistrationApplication'
     },
 }
 
