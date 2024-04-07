@@ -194,17 +194,17 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
         <div className="flex-row w-full font-sans items-start h-auto rounded bg-gray-50">
             <Tabs defaultValue='preliminary' className='w-full'>
                 <TabsList className='flex'>
-                    <TabsTrigger value='preliminary'>Preliminary</TabsTrigger>
-                    <TabsTrigger value='bio'>Bio</TabsTrigger>
-                    <TabsTrigger value='employment'>Employment</TabsTrigger>
-                    <TabsTrigger value='qualifications'>Qualifications</TabsTrigger>
-                    <TabsTrigger value='disability'>Disability</TabsTrigger>
-                    <TabsTrigger value='offence'>Offence</TabsTrigger>
-                    <TabsTrigger value='attachments'>Attachments</TabsTrigger>
-                    <TabsTrigger value='declaration'>Declaration</TabsTrigger>
+                    {data.data.teacher_preliminary_infos && <TabsTrigger value='preliminary'>Preliminary</TabsTrigger>}
+                    {data.data.bio_datas && <TabsTrigger value='bio'>Bio</TabsTrigger>}
+                    {data.data.employment_details && <TabsTrigger value='employment'>Employment</TabsTrigger>}
+                    {data.data.edu_pro_qualifications && <TabsTrigger value='qualifications'>Qualifications</TabsTrigger>}
+                    {data.data.bio_datas.disability && <TabsTrigger value='disability'>Disability</TabsTrigger>}
+                    {data.data.offence_convictions && <TabsTrigger value='offence'>Offence</TabsTrigger>}
+                    {data.data.attachments && <TabsTrigger value='attachments'>Attachments</TabsTrigger>}
+                    {data.data.declarations && <TabsTrigger value='declaration'>Declaration</TabsTrigger>}
                 </TabsList>
                 <ScrollArea className='h-screen'>
-                    <Card className='mx-8 my-2'>
+                    <Card className='mx-8 my-2'>    
                         <TabsContent value='preliminary'>
                             <Preliminary {...data?.data}/>
                         </TabsContent>
@@ -258,7 +258,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                                                 <SelectContent>
                                                                     <SelectGroup>
                                                                         <SelectLabel>Rejections</SelectLabel>
-                                                                        {prev_status && (<SelectItem value={prev_status}>Return to customer</SelectItem>)}
+                                                                        {prev_status &&(<SelectItem value={prev_status}>{prev_status === 'Pending-Review' ? (<>Return to reg-officer</>):(<>Return to customer</>)}</SelectItem>)}
                                                                         {inv_status && (<SelectItem value={inv_status}>Route to investigations</SelectItem>)}
                                                                         {rej_status && (<SelectItem value={rej_status}>Send to rejected</SelectItem>)}
                                                                         {bar_status && (<SelectItem value={bar_status}>Send to barred</SelectItem>)}
@@ -300,7 +300,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                                     );
                                                 }}
                                                 />)}
-                                                {status === prev_status && <FormField
+                                                {status === prev_status && prev_status !== 'Pending-Review' && <FormField
                                                     control={form.control}
                                                     name="items"
                                                     render={() => (
