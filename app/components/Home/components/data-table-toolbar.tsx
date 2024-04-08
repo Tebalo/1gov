@@ -18,6 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { regSchema } from "../data/schema";
+
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -79,9 +81,21 @@ export function DataTableToolbar<TData>({
               <DialogHeader>
                 <DialogTitle>Are you absolutely sure?</DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently delete your account
-                  and remove your data from our servers.
+                  Add description here...
                 </DialogDescription>
+                {
+                  table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <li
+                      key={row.id}
+                      >
+                        selected, work in progress!
+                      </li>
+                    ))
+                  ):(
+                    <></>
+                  )
+                }
               </DialogHeader>
               <DialogFooter>
                 <Button 
