@@ -9,8 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
-
 import {
     Tabs,
     TabsContent,
@@ -20,15 +18,8 @@ import {
 import { Email } from "./components/email-login";
 import { OneGovID } from "./components/one-gov";
 import Logo from '@/public/Code-of-Arms-colour.png'
-export default function Welcome() {
-    // const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-    // const handleToggleLogin = () => {
-    //     setIsLoginOpen(!isLoginOpen);
-    // };
-    // const handleCloseLogin = () => {
-    //     setIsLoginOpen(false);
-    // }
+export default function Welcome() {
     return (
         <main className="bg-sky-400 w-full h-screen">
             <div className="flex md:justify-start justify-center md:py-10 py-0">
@@ -103,26 +94,8 @@ export default function Welcome() {
                             <Button>Register</Button>
                         </DialogTrigger>
                     </Dialog>
-                    {/* <button 
-                    type="button" 
-                    data-modal-target="crud-modal"
-                    data-modal-toggle="crud-modal"
-                    onClick={handleToggleLogin}
-                    className="text-black bg-white hover:shadow-md focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-4 me-2 mb-2 focus:outline-none"
-                    >
-                        Login
-                    </button> */}
-                    {/* <button 
-                    type="button" 
-                    className="text-white bg-gray-700 hover:shadow-md focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-4 me-2 mb-2 focus:outline-none"
-                    >
-                        Register
-                    </button> */}
-                    
                 </div>
             </div>
-
-            {/* <Login isOpen={isLoginOpen} onClose={handleCloseLogin}/> */}
             <div className="flex flex-col md:hidden items-center">
                 <button type="button" className="text-white bg-sky-300 hover:bg-sky-350 w-fit hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-base px-10 py-1.5 text-center me-2 mb-2">Get In Touch</button>
                 <p className="text-sm">@ 2024 Botepco Portal v4.0.0</p>

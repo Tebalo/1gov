@@ -7,6 +7,8 @@ export interface StatusTransition {
         prev_status: string | null;
         inv_status: string | null;
         bar_status: string | null;
+        recommend: string | null,
+        endorse: string | null,
         rej_status: string | null;
         next_status: string | null;
     };
@@ -90,6 +92,8 @@ export const statusTransitions: StatusTransition = {
         inv_status: null,
         bar_status: null,
         rej_status: null,
+        recommend: null,
+        endorse: null,
         next_status: 'Default',
     },
     'registration_officer': {
@@ -97,6 +101,8 @@ export const statusTransitions: StatusTransition = {
         inv_status: null,
         bar_status: null,
         rej_status: null,
+        recommend: null,
+        endorse: null,
         next_status: 'Pending-Screening',
     },
     'snr_registration_officer': {
@@ -104,6 +110,8 @@ export const statusTransitions: StatusTransition = {
         inv_status: 'Pending-Investigation',
         bar_status: 'Barred',
         rej_status: 'Senior-RO-Rejected',
+        recommend: null,
+        endorse: null,
         next_status: 'Pending-Manager-Review',
     },
     'manager': {
@@ -111,6 +119,8 @@ export const statusTransitions: StatusTransition = {
         inv_status: null,
         bar_status: null,
         rej_status: 'Manager-Rejected',
+        recommend: null,
+        endorse: null,
         next_status: 'Manager-Approved',
     },
     'director': {
@@ -118,14 +128,18 @@ export const statusTransitions: StatusTransition = {
         inv_status: null,
         bar_status: null,
         rej_status: null,
-        next_status: 'Endorsement-Recommendation',
+        recommend: 'Endorsement-Recommendation',
+        endorse: 'Endorsement-Complete',
+        next_status: null,
     },
     'registrar': {
         prev_status: null,
         inv_status: null,
         bar_status: null,
         rej_status: null,
-        next_status: 'Endorsement-Complete',
+        recommend: null,
+        endorse: 'Endorsement-Complete',
+        next_status: null,
     },
 };
 

@@ -31,10 +31,10 @@ import {
     } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
-import { UpdateStatus } from '@/app/lib/actions';
+import { UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
 import Link from 'next/link';
 import { roundToNearestMinutes } from 'date-fns';
-import { apiUrl, statusTransitions } from '@/app/lib/store';
+import { apiUrl, mgt, statusTransitions } from '@/app/lib/store';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -75,7 +75,7 @@ interface Work{
     userRole: string
 }
 
-export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; } => {
+export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; recommend: string | null; endorse: string | null; } => {
     const statusTransition = statusTransitions[userRole] || statusTransitions['Default'];
     return statusTransition;
 };
@@ -104,15 +104,15 @@ const items = [
   ] as const
 
 const WorkArea: React.FC<Work> = (data, userRole) => {
-    const { prev_status, next_status, rej_status, bar_status, inv_status } = getNextStatus(data?.userRole);
+    const { prev_status, next_status, rej_status, bar_status, inv_status, recommend, endorse } = getNextStatus(data?.userRole);
     const router = useRouter()
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
-        if(next_status){
+        if(status){
             const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status)
     
             router.prefetch('/trls/home')
-            if(!res){
+            if(res !== 201){
                 toast({
                     title: "Failed!!!",
                     description: "Something went wrong",
@@ -140,6 +140,40 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
             })
         }
     }
+
+    const handleEndorsementStatusUpdate=async (id:string, status:string)=>{
+        if(status){
+            const res = await UpdateEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
+            router.prefetch('/trls/home')
+            if(res !== 201){
+                toast({
+                    title: "Failed!!!",
+                    description: "Something went wrong",
+                    action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                    ),
+                })
+            }else{
+                toast({
+                    title: "Routed successfully",
+                    description: "The record has been routed with the status: "+status,
+                    action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                    ),
+                })
+                router.push('/trls/home')
+            }
+        }else{
+            toast({
+                title: "Failed!!!",
+                description: "Next status cannot be undefined/null",
+                action: (
+                <ToastAction altText="Ok">Ok</ToastAction>
+                ),
+            })
+        }
+    }
+
     const FormSchema = z.object({
         status: z
           .string({
@@ -182,19 +216,11 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
             })
             router.push('/trls/home')
         }
-        // toast({
-        //   title: "You submitted the following values:",
-        //   description: (
-        //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        //     </pre>
-        //   ),
-        // })
       }
       const status = form.watch("status"); // watch status changes, for validations and ...
       const evidence = form.watch('evidence')
     return (                    
-        <div className="flex-row w-full font-sans items-start h-auto rounded bg-gray-50">
+        <div className="flex-row w-full font-sans items-start h-lvh rounded bg-gray-50">
             <Tabs defaultValue='bio' className='w-full'>
                 <TabsList className='flex'>
                     {data?.data?.teacher_preliminary_infos && <TabsTrigger value='preliminary'>Preliminary</TabsTrigger>}
@@ -209,7 +235,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                     {data?.data?.attachments && <TabsTrigger value='attachments'>Attachments</TabsTrigger>}
                     {data?.data?.declarations && <TabsTrigger value='declaration'>Declaration</TabsTrigger>}
                 </TabsList>
-                <ScrollArea className='h-screen'>
+                <ScrollArea className='h-lvh'>
                     <Card className='mx-8 my-2'>    
                         <TabsContent value='preliminary'>
                             <Preliminary {...data?.data}/>
@@ -246,6 +272,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                         </TabsContent>
                         <div className='p-1 mx-8 mb-2'>
                             <div className='flex space-x-2 justify-end'>
+                                {(prev_status || inv_status || bar_status || rej_status) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="outline">Reject</Button>
@@ -375,6 +402,8 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                             </Form>
                                             </AlertDialogContent>
                                         </AlertDialog>
+                                        }
+                                        {next_status && 
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button variant="default" className=''>Approve</Button>
@@ -395,6 +424,51 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                                     </AlertDialogFooter>
                                         </AlertDialogContent>
                                     </AlertDialog>
+                                    }
+                                    {recommend &&
+                                    <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="outline" className=''>Recommend</Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>                                
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action will change the status to <span className='italic font-medium'>{recommend}</span>, and this will route the application to the next level.
+                                                </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                                                        onClick={async () => await handleEndorsementStatusUpdate(data?.data?.teacher_registrations?.national_id, recommend!)}
+                                                        >Continue</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                    }
+                                    {endorse &&
+                                    <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="default" className=''>Endorse</Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>                                
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action will change the status to <span className='italic font-medium'>{endorse}</span>, and this will complete the application process.
+                                                </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                                                        onClick={async () => await handleEndorsementStatusUpdate(data?.data?.teacher_registrations?.national_id, endorse!)}
+                                                        >Continue</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                    }
                                 </div>
                             </div>
                             </Card>

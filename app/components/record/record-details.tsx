@@ -10,10 +10,9 @@ interface Work{
 }
 
 const CaseDetails: React.FC<Work> = (data,userRole) => {
-    console.log('In',data?.userRole, data?.data?.bio_datas?.forenames)
   return (       
     <>  
-        <div className="items-start bg-gray-50 justify-start h-screen w-1/4">
+        <div className="items-start bg-gray-50 justify-start h-dvh w-1/4">
         <Card className="h-full">
             <div className="max-w-sm p-2 w-full bg-sky-400 border rounded-lg border-gray-200 shadow">
                 <div className='flex gap-2 items-center'>
@@ -44,13 +43,13 @@ const CaseDetails: React.FC<Work> = (data,userRole) => {
                     <h1 className='text-sm text-gray-500'>Priority</h1>
                     <h5 className='text-2xl font-semibold tracking-tight'>LOW</h5>
                 </div>
-                <div className='flex space-x-11'>
+                <div className='flex space-x-3'>
                     <h1 className='text-sm text-gray-500'>Status</h1>
-                    <Badge className="w-full"><h1 className='text-nowrap'>{data?.data?.teacher_registrations?.reg_status}</h1></Badge>
+                    <Badge className="flex w-fit"><h1 className='text-nowrap'>{data?.data?.teacher_registrations?.reg_status}</h1></Badge>
                 </div>
-                {mgt.includes(data?.userRole) && <div className='flex space-x-11'>
+                {mgt.includes(data?.userRole) && <div className='flex space-x-3'>
                     <h1 className='text-sm text-gray-500'>Status</h1>
-                    <Badge className="w-full"><h1 className='text-nowrap'>{data?.data?.teacher_registrations?.endorsement_status}</h1></Badge>
+                    <Badge className="w-fit"><h1 className='text-nowrap'>{data?.data?.teacher_registrations?.endorsement_status}</h1></Badge>
                 </div>}
                 <div className='flex space-x-9'>
                     <h1 className='text-sm text-gray-500'>Created</h1>

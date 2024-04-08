@@ -27,7 +27,6 @@ interface Registration {
     async function getApplications(status:string){
         setIsLoading(true);
         const response: Registration[] = await getEndorsementRecords(status,'20');
-        console.log(response)
         setResponse(response);
         setIsLoading(false)
     } 

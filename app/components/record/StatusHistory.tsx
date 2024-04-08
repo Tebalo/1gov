@@ -41,12 +41,12 @@ export async function statusHistory({ className, reg_number, ...props }: StatusH
           <CardTitle>Status change history</CardTitle>
           <CardDescription>The record has 3 status changes.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
+        <CardContent className="grid gap-2">
           <div>
             {statuses.map((status, index) => (
               <div
                 key={index}
-                className="mb-4 grid grid-cols-[25px_1fr] items-start pb-2 last:mb-0 last:pb-0"
+                className="mb-2 grid grid-cols-[25px_1fr] items-start pb-2 last:mb-0 last:pb-0"
               >
                 <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
                 <div className="space-y-1">

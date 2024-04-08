@@ -15,7 +15,6 @@ import {
 import { Work } from "../../MyWork/work";
 import { mgt, roleObjects } from "@/app/lib/store";
 import { EndorsementTable } from "./upper-mgt-table";
-import { constants } from "buffer";
 
 interface Props{
     userRole: string
@@ -28,10 +27,6 @@ export const getRoleObjects = (userRole: string): { reg_application: boolean | f
 
 export const SelectTable = async ({userRole}:Props) => {
     const {reg_application, lic_application, reg_Next_Status, lic_Next_Status, defaultWork} = getRoleObjects(userRole);
-    
-
-
-    //const default = DefaultWork[userRole] || '';
 
     const [table, setTable] = useState(defaultWork);
 

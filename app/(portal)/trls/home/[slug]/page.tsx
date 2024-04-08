@@ -15,7 +15,7 @@ export default async function Page({params}:{params: {slug: string}}){
     }
     return (
         <main className="h-full">
-            <div className="flex flex-row h-full gap-1">
+            <div className="flex flex-row h-full gap-0">
                 {work ? (
                     <>
                         <CaseDetails data={work} userRole={userRole}/>

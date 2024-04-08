@@ -37,7 +37,7 @@ import {
     {
       value: "Endorsement-Complete",
       label: "Endorsement-Complete",
-      icon: CircleIcon,
+      icon: CheckCircledIcon,
     },
   ]
   export const final_status = [

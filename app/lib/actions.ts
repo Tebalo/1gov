@@ -155,3 +155,14 @@ export async function UpdateStatus(id: string, status: string ){
     //revalidatePath('/(portal)/trls/home/', 'page')
     return res.status
 }
+export async function UpdateEndorsementStatus(id: string, status: string ){
+
+  const res = await fetch(`${apiUrl}/teacher_registrations/${id}?endorsement_status=${status}`,{
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  //revalidatePath('/(portal)/trls/home/', 'page')
+  return res.status
+}
