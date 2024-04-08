@@ -80,7 +80,10 @@ export const roleObjects: RoleObjects = {
         defaultWork: 'RegistrationApplication'
     },
 }
-
+export const mgt = [
+    'director', 
+    'registrar'
+]
 export const statusTransitions: StatusTransition = {
     'Default': {
         prev_status: 'Default',
@@ -105,9 +108,9 @@ export const statusTransitions: StatusTransition = {
     },
     'manager': {
         prev_status: 'Pending-Review',
-        inv_status: 'Pending-Investigation',
+        inv_status: null,
         bar_status: null,
-        rej_status: null,
+        rej_status: 'Manager-Rejected',
         next_status: 'Manager-Approved',
     },
     'director': {

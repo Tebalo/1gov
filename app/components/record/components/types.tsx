@@ -69,19 +69,28 @@ interface teacher_registrations {
     reg_number: string;
     registration_type: string;
     reg_status: string;
+    endorsement_status: string;
     created_at: string;
     updated_at: string;
 }
-interface Recommendation{
+
+interface student_preliminary_infos{
+    institution_name: string;
+    institution_type: string;
+    citizenry: string;
+    study_area: string;
+}
+
+interface institution_recommendations{
     recommended:string;
     attachment: string;
 }
-interface StudyProgramme{
+interface student_study_programmes{
     name: string;
-    completionYear: string;
+    completion_year: string;
     level: string;
     duration: number;// Assuming duration is numerical
-    modeOfStudy: string;
+    mode_of_study: string;
     specialization: string;
 }
 interface attachments{
@@ -96,12 +105,13 @@ export default interface Props {
     teacher_registrations: teacher_registrations,
     teacher_preliminary_infos: teacher_preliminary_infos,
     edu_pro_qualifications: edu_pro_qualifications[],
+    student_preliminary_infos: student_preliminary_infos,
     bio_datas: bio_datas,
     declarations: declarations,
     offence_convictions: offence_convictions,
     employment_details: employment_details,
-    study_programmes: StudyProgramme,
+    student_study_programmes: student_study_programmes,
     attachments: attachments,
-    recommendation: Recommendation,
+    institution_recommendations: institution_recommendations,
     userRole:string
 }

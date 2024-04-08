@@ -18,7 +18,7 @@ export default async function Page({params}:{params: {slug: string}}){
             <div className="flex flex-row h-full gap-1">
                 {work ? (
                     <>
-                        <CaseDetails {...work}/>
+                        <CaseDetails data={work} userRole={userRole}/>
                         <WorkArea userRole={userRole} data={work}/>:
                     </>):(
                         <div className="w-full md:h-96 items-center flex justify-center">
@@ -32,7 +32,7 @@ export default async function Page({params}:{params: {slug: string}}){
                                         <button
                                         className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
                                         >
-                                            Dashboard
+                                            Home
                                         </button>
                                     </Link>
                                 </div>

@@ -66,12 +66,12 @@ import {
     {
       value: "Manager-Approved",
       label: "Manager-Approved",
-      icon: CircleIcon,
+      icon: CheckCircledIcon,
     },
     {
       value: "Senior-RO-Rejected",
       label: "Senior-RO-Rejected",
-      icon: CircleIcon,
+      icon: CrossCircledIcon,
     },
     {
       value: "Pending-Review",
@@ -81,12 +81,12 @@ import {
     {
       value: "Pending-Screening",
       label: "Pending-Screening",
-      icon: CircleIcon,
+      icon: QuestionMarkCircledIcon,
     },
     {
       value: "Pending-SRO-Review",
       label: "Pending-SRO-Review",
-      icon: StopwatchIcon,
+      icon: QuestionMarkCircledIcon,
     },
     {
       value: "Pending-Manager-Review",
@@ -96,7 +96,7 @@ import {
     {
       value: "Pending-Director-Review",
       label: "Pending-Director-Review",
-      icon: CrossCircledIcon,
+      icon: QuestionMarkCircledIcon,
     },
   ]
   

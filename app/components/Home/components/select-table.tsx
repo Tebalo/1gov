@@ -13,7 +13,7 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import { Work } from "../../MyWork/work";
-import { roleObjects } from "@/app/lib/store";
+import { mgt, roleObjects } from "@/app/lib/store";
 import { EndorsementTable } from "./upper-mgt-table";
 import { constants } from "buffer";
 
@@ -38,7 +38,7 @@ export const SelectTable = async ({userRole}:Props) => {
     const handleSelectChange = (newValue: string) => {
         setTable(newValue);
     }
-    const mgt = ['director', 'registrar']
+    
     return(
         <>
             <div className="flex space-x-2 items-end">

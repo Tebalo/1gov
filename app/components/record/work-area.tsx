@@ -67,6 +67,9 @@ import { Disability } from './components/disability';
 import { Offence } from './components/offence';
 import { Declaration } from './components/declaration';
 import { Qualifications } from './components/qualifications';
+import { StudentPreliminary } from './components/student-preliminary';
+import { StudyProgramme } from './components/study-programme';
+import { Recommendation } from './components/recommendation';
 interface Work{
     data: Props,
     userRole: string
@@ -106,7 +109,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
         if(next_status){
-            const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
+            const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status)
     
             router.prefetch('/trls/home')
             if(!res){
@@ -192,21 +195,27 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
       const evidence = form.watch('evidence')
     return (                    
         <div className="flex-row w-full font-sans items-start h-auto rounded bg-gray-50">
-            <Tabs defaultValue='preliminary' className='w-full'>
+            <Tabs defaultValue='bio' className='w-full'>
                 <TabsList className='flex'>
-                    {data.data.teacher_preliminary_infos && <TabsTrigger value='preliminary'>Preliminary</TabsTrigger>}
-                    {data.data.bio_datas && <TabsTrigger value='bio'>Bio</TabsTrigger>}
-                    {data.data.employment_details && <TabsTrigger value='employment'>Employment</TabsTrigger>}
-                    {data.data.edu_pro_qualifications && <TabsTrigger value='qualifications'>Qualifications</TabsTrigger>}
-                    {data.data.bio_datas.disability && <TabsTrigger value='disability'>Disability</TabsTrigger>}
-                    {data.data.offence_convictions && <TabsTrigger value='offence'>Offence</TabsTrigger>}
-                    {data.data.attachments && <TabsTrigger value='attachments'>Attachments</TabsTrigger>}
-                    {data.data.declarations && <TabsTrigger value='declaration'>Declaration</TabsTrigger>}
+                    {data?.data?.teacher_preliminary_infos && <TabsTrigger value='preliminary'>Preliminary</TabsTrigger>}
+                    {data?.data?.student_preliminary_infos && <TabsTrigger value='student-preliminary'>Preliminary</TabsTrigger>}
+                    {data?.data?.bio_datas && <TabsTrigger value='bio'>Bio</TabsTrigger>}
+                    {data?.data?.employment_details && <TabsTrigger value='employment'>Employment</TabsTrigger>}
+                    {data?.data?.student_study_programmes && <TabsTrigger value='study-programme'>Study Programmes</TabsTrigger>}
+                    {data?.data?.edu_pro_qualifications && <TabsTrigger value='qualifications'>Qualifications</TabsTrigger>}
+                    {data?.data?.bio_datas.disability && <TabsTrigger value='disability'>Disability</TabsTrigger>}
+                    {data?.data?.offence_convictions && <TabsTrigger value='offence'>Offence</TabsTrigger>}
+                    {data?.data?.institution_recommendations && <TabsTrigger value='recommendation'>Recommendations</TabsTrigger>}
+                    {data?.data?.attachments && <TabsTrigger value='attachments'>Attachments</TabsTrigger>}
+                    {data?.data?.declarations && <TabsTrigger value='declaration'>Declaration</TabsTrigger>}
                 </TabsList>
                 <ScrollArea className='h-screen'>
                     <Card className='mx-8 my-2'>    
                         <TabsContent value='preliminary'>
                             <Preliminary {...data?.data}/>
+                        </TabsContent>
+                        <TabsContent value='student-preliminary'>
+                            <StudentPreliminary {...data?.data}/>
                         </TabsContent>
                         <TabsContent value='bio'>
                             <Bio {...data?.data}/>
@@ -214,8 +223,14 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                         <TabsContent value='employment'>
                             <Employment {...data?.data}/>
                         </TabsContent>
+                        <TabsContent value='study-programme'>
+                            <StudyProgramme {...data?.data}/>
+                        </TabsContent>
                         <TabsContent value='qualifications'>
                             <Qualifications {...data?.data}/>
+                        </TabsContent>
+                        <TabsContent value='recommendation'>
+                            <Recommendation {...data?.data}/>
                         </TabsContent>
                         <TabsContent value='disability'>
                             <Disability {...data?.data}/>
@@ -375,7 +390,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                                                     <AlertDialogAction
                                                         className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                                                        onClick={async () => await handleStatusChange(data?.data?.teacher_preliminary_infos.national_id, next_status!)}
+                                                        onClick={async () => await handleStatusChange(data?.data?.teacher_registrations?.national_id, next_status!)}
                                                         >Continue</AlertDialogAction>
                                                     </AlertDialogFooter>
                                         </AlertDialogContent>
