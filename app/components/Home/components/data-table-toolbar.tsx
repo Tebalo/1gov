@@ -9,6 +9,15 @@ import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DataTableViewOptions } from "./data-table-view-options"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -56,13 +65,35 @@ export function DataTableToolbar<TData>({
         )}
         {
           table.getIsSomePageRowsSelected() &&
-          <Button
-          variant="outline"
-          className="h-8 px-2 lg:px-3"
-          >
-          Open Selected
-          <RxCheck className="ml-2 h-4 w-4" />
-        </Button>
+            <Dialog>
+            <DialogTrigger className="flex" >
+              <Button
+                variant="outline"
+                className="h-8 px-2 lg:px-3"
+                >
+                Open Selected
+                <RxCheck className="ml-2 h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete your account
+                  and remove your data from our servers.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button 
+                type="submit"
+                variant='outline'
+                >Recommend</Button>
+                <Button 
+                type="submit"
+                >Endorse</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         }
       </div>
       <DataTableViewOptions table={table} />
