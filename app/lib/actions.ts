@@ -1,8 +1,8 @@
 "use server"
 import axios from "axios";
 import { signIn } from "../auth/signIn"
-import { revalidatePath, revalidateTag } from "next/cache"
-import { apiUrl } from "./store";
+import { revalidateTag } from "next/cache"
+import { apiUrl, devUrl } from "./store";
 //import jsCookie from 'js-cookie';
 //import { useRouter } from "next/router";
 
@@ -69,6 +69,22 @@ export async function getRegApplications(status:string, count: string) {
   
   try{
     const res = await fetch(`${apiUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`, {cache: 'no-store'})
+    const contentType = res.headers.get('content-type');
+    if(contentType && contentType.startsWith('application/json')){
+      return res.json()
+    }else{
+      return [];
+    }
+  }catch(error){
+    return []
+  }
+  
+}
+
+export async function getLicenseApplications(status:string, count: string) {
+  
+  try{
+    const res = await fetch(`${apiUrl}/license_applications/`, {cache: 'no-store'})
     const contentType = res.headers.get('content-type');
     if(contentType && contentType.startsWith('application/json')){
       return res.json()

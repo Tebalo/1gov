@@ -1,6 +1,7 @@
 "use client"
 
 import { Cross2Icon } from "@radix-ui/react-icons"
+import { RxCheck } from "react-icons/rx";
 import { Table } from "@tanstack/react-table"
 
 import { endorsement_status, priorities, statuses } from "../data/data"
@@ -53,6 +54,16 @@ export function DataTableToolbar<TData>({
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
+        {
+          table.getIsSomePageRowsSelected() &&
+          <Button
+          variant="outline"
+          className="h-8 px-2 lg:px-3"
+          >
+          Open Selected
+          <RxCheck className="ml-2 h-4 w-4" />
+        </Button>
+        }
       </div>
       <DataTableViewOptions table={table} />
     </div>
