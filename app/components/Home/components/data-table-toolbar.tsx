@@ -4,7 +4,7 @@ import { Cross2Icon } from "@radix-ui/react-icons"
 import { RxCheck } from "react-icons/rx";
 import { Table } from "@tanstack/react-table"
 
-import { endorsement_status, priorities, statuses } from "../data/data"
+import { endorsement_status, statuses } from "../data/data"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { regSchema } from "../data/schema";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 
 interface DataTableToolbarProps<TData> {
@@ -29,7 +31,11 @@ export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
-
+  const handleBulkStatusUpdate = () => {
+    const selectedRows = table.getFilteredSelectedRowModel().flatRows;
+    
+    console.log('Selected rows',selectedRows)
+  }
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
@@ -66,7 +72,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
         {
-          table.getIsSomePageRowsSelected() &&
+          (table.getIsSomePageRowsSelected() || table.getIsAllRowsSelected()) &&
             <Dialog>
             <DialogTrigger className="flex" >
               <Button
@@ -79,18 +85,24 @@ export function DataTableToolbar<TData>({
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogTitle>Selected Records</DialogTitle>
                 <DialogDescription>
-                  Add description here...
+                  Update selected{" "}({table.getFilteredSelectedRowModel().rows.length}) records in bulk.
                 </DialogDescription>
                 {
-                  table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
+                  table.getFilteredSelectedRowModel().rows?.length ? (
+                    table.getFilteredSelectedRowModel().rows.map((row) => (
+                      <>
                       <li
                       key={row.id}
+                      className="flex space-x-2"
                       >
-                        selected, work in progress!
+                        <Badge variant='outline'>{row.getValue('national_id')}</Badge>
+                        <Badge variant='secondary'>{row.getValue('reg_status')}</Badge>
+                        <Badge variant='default'>{row.getValue('endorsement_status')}</Badge>
                       </li>
+                      <Separator/>
+                      </>
                     ))
                   ):(
                     <></>
@@ -101,6 +113,7 @@ export function DataTableToolbar<TData>({
                 <Button 
                 type="submit"
                 variant='outline'
+                onClick={async () => await handleBulkStatusUpdate}
                 >Recommend</Button>
                 <Button 
                 type="submit"
