@@ -5,7 +5,7 @@ import Link from 'next/link';
 export const Recommendation: React.FC<Props> = (data: Props) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid md:grid-cols-3 mx-10 mt-10 mb-2 gap-y-5'>
+            <div className='grid md:grid-cols-3 mb-2 gap-y-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>Recommended:</Label>
                     <span className='font-light text-sm'>{data?.institution_recommendations?.recommended}</span>

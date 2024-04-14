@@ -3,7 +3,7 @@ import Props from './types';
 export const Bio: React.FC<Props> = (data: Props) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid md:grid-cols-4 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-4 gap-y-5'>
                 {/* <div className='flex flex-col space-y-1'>
                     <Label>National ID:</Label>
                     <span className='font-light text-sm'>{bio?.id}</span>

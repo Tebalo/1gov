@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button"
 export const Qualifications: React.FC<Props> = (data: Props) => {
     const path = `${apiUrl}/Qualifications/`
     return (
-        <div className='m-10'>
+        <div className=''>
             <Table>
                 <TableCaption>A list of qualifications.</TableCaption>
                 <TableHeader>

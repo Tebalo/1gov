@@ -3,7 +3,7 @@ import Props from './types';
 export const StudyProgramme: React.FC<Props> = (data: Props) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid md:grid-cols-3 m-10 gap-y-5'>
+            <div className='grid md:grid-cols-3 gap-y-5'>
                  <div className='flex flex-col space-y-1'>
                     <Label>Programme level:</Label>
                     <span className='font-light text-sm'>{data?.student_study_programmes?.level}</span>

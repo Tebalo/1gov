@@ -20,8 +20,6 @@ export default async function Page({params}:{params: {slug: string}}){
                 {work ? (
                     <>
                         <ApplicationForTeacherRegistration data={work} userRole={userRole}/>
-                        {/* <CaseDetails data={work} userRole={userRole}/>
-                        <WorkArea userRole={userRole} data={work}/> */}
                     </>):(
                         <div className="w-full md:h-96 items-center flex justify-center">
                             <div>
@@ -42,7 +40,6 @@ export default async function Page({params}:{params: {slug: string}}){
                         </div>
                     )
                 }
-                {/**<Utilities/>*/}
             </div>
        </main>
     );

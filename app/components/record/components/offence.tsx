@@ -3,7 +3,7 @@ import Props from './types';
 export const Offence: React.FC<Props> = (data:Props) => {
     return(
         <div className='h-full w-full'>
-            <div className='grid md:grid-cols-2 m-10 gap-y-5 gap-x-5'>
+            <div className='grid md:grid-cols-2 gap-y-5 gap-x-5'>
                 <div className='flex flex-col space-y-1'>
                     <Label>1. Have you been convicted of, or entered a plea of guilty or no contest to, or a criminal offense against a learner/ a minor?:</Label>
                     <span className='font-light text-sm'>{data?.offence_convictions?.drug_related_offence}, {data?.offence_convictions?.drug_related_offence_details}</span>
