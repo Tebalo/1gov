@@ -408,6 +408,37 @@ export const teacherSteps = [
     },
 ]
 
+export const learnerSteps = [
+    {
+        id: 'Step 1',
+        name: 'PRELIMINARY INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 2',
+        name: 'PERSONAL INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 3',
+        name: 'STUDY PROGRAMME',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 4',
+        name: 'DECLARATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 5',
+        name: 'RECOMMENDATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 6',
+        name: 'COMMENTS'
+    },
+]
 
 export const studentSteps = [
     {

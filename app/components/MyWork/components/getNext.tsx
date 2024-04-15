@@ -48,7 +48,11 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
     function handleOpen(Id:string | undefined){
         
         if(Id){
-            router.push(`/trls/home/${Id}`);
+            if(response?.registration_type==='Teacher'){
+                router.push(`/trls/home/teacher/${Id}`);
+            }else if(response?.registration_type==='Student-Teacher'){
+                router.push(`/trls/home/student/${Id}`);
+            }
         }
     }
     return(

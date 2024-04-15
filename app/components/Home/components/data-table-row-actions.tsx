@@ -22,7 +22,11 @@ export function DataTableRowActions<TData>({
   const router = useRouter();
   function handleOpen(national_id:string){
     if(national_id){
-      router.push(`/trls/home/${national_id}`);
+      if(record.registration_type === 'Teacher'){
+        router.push(`/trls/home/teacher/${national_id}`);
+      }else if(record.registration_type === 'Student-Teacher'){
+        router.push(`/trls/home/student/${national_id}`);
+      }
   }
   }
   return (

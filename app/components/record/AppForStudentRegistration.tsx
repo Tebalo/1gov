@@ -1,19 +1,19 @@
 'use client'
-import { teacherSteps } from "@/app/lib/store";
+import { learnerSteps } from "@/app/lib/store";
 import Props from "./components/types";
 import {motion} from 'framer-motion';
 import { useState } from "react";
 import { Stepper } from "../Stepper";
-import { Preliminary } from "./components/preliminary";
 import { Button } from "@/components/ui/button";
 import { Bio } from "./components/bio";
-import { Employment } from "./components/employment";
 import { StudyProgramme } from "./components/study-programme";
 import { Qualifications } from "./components/qualifications";
 import { Disability } from "./components/disability";
 import { Offence } from "./components/offence";
 import { Attachments } from "./components/attachments";
 import { Declaration } from "./components/declaration";
+import { StudentPreliminary } from "./components/student-preliminary";
+import { Recommendation } from "./components/recommendation";
 
 
 interface Work{
@@ -25,10 +25,10 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
     const [currentStep, setCurrentStep] = useState(0);
     const delta = currentStep - previousStep
     const next = async () => {
-        const fields = teacherSteps[currentStep].fields
+        const fields = learnerSteps[currentStep].fields
 
-        if (currentStep < teacherSteps.length - 1){
-            if(currentStep === teacherSteps.length - 2){
+        if (currentStep < learnerSteps.length - 1){
+            if(currentStep === learnerSteps.length - 2){
 
             }
 
@@ -54,7 +54,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                 <div className="flex md:m-5 w-full space-x-1 md:h-full">
                     {/* steps */}
                     <nav aria-label="Progress" className="w-48 hidden md:block">
-                        <Stepper currentStep={currentStep} steps={teacherSteps}/>
+                        <Stepper currentStep={currentStep} steps={learnerSteps}/>
                     </nav>
                     {/* content area */}
                     <div className="w-[calc(100%)] pr-2">
@@ -65,7 +65,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
                                 <div className="border md:h-80 h-96 w-full p-3 rounded-lg mb-2 mr-1">
-                                    <Preliminary {...data?.data}/>
+                                <StudentPreliminary {...data?.data}/>
                                 </div>
                             </motion.div>
                         )}
@@ -87,7 +87,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
                                 <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Employment {...data?.data}/>
+                                    <StudyProgramme {...data?.data}/>
                                 </div>
                             </motion.div>
                         )}
@@ -98,7 +98,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
                                 <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Qualifications {...data?.data}/>
+                                    <Declaration {...data?.data}/>
                                 </div>
                             </motion.div>
                         )}
@@ -109,44 +109,11 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
                                 <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Disability {...data?.data}/>
+                                    <Recommendation {...data?.data}/>
                                 </div>
                             </motion.div>
                         )}
                         {currentStep === 5 && (
-                            <motion.div
-                                initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
-                                animate={{y: 0, opacity: 1}}
-                                transition={{duration: 0.3, ease: 'easeInOut'}}
-                                >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Offence {...data?.data}/>
-                                </div>
-                            </motion.div>
-                        )}
-                        {currentStep === 6 && (
-                            <motion.div
-                                initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
-                                animate={{y: 0, opacity: 1}}
-                                transition={{duration: 0.3, ease: 'easeInOut'}}
-                                >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Attachments/>
-                                </div>
-                            </motion.div>
-                        )}
-                        {currentStep === 7 && (
-                            <motion.div
-                                initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
-                                animate={{y: 0, opacity: 1}}
-                                transition={{duration: 0.3, ease: 'easeInOut'}}
-                                >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                <Declaration {...data?.data}/>
-                                </div>
-                            </motion.div>
-                        )}
-                        {currentStep === 8 && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}

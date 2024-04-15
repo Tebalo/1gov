@@ -15,7 +15,6 @@ import { Offence } from "./components/offence";
 import { Attachments } from "./components/attachments";
 import { Declaration } from "./components/declaration";
 
-
 interface Work{
     data: Props,
     userRole: string
@@ -31,7 +30,6 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
             if(currentStep === teacherSteps.length - 2){
 
             }
-
             setPreviousStep(currentStep)
             setCurrentStep(step => step + 1)
         }
@@ -168,16 +166,19 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                             <Button
                             variant='default'
                             onClick={next}
+                     
                             >
                                 Next
                             </Button>
                             <Button
                             variant='outline'
+                           
                             >
                                 Reject
                             </Button>
                             <Button
                             variant='default'
+                            hidden={currentStep !== teacherSteps.length -2}
                             >
                                 Approve
                             </Button>
