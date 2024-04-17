@@ -55,13 +55,16 @@ const items = [
     },
   ] as const
 
-export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; recommend: string | null; endorse: string | null; } => {
+  export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; recommend: string | null; endorse: string | null;        reject_label: string | null;
+    approve_label: string | null;
+    recommend_label: string | null;
+    endorse_label: string | null; } => {
     const statusTransition = statusTransitions[userRole] || statusTransitions['Default'];
     return statusTransition;
 };
 
 export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole) => {
-    const { prev_status, next_status, rej_status, bar_status, inv_status, recommend, endorse } = getNextStatus(data?.userRole);
+    const { prev_status, next_status, rej_status, bar_status, inv_status, recommend, endorse, approve_label, reject_label, recommend_label, endorse_label } = getNextStatus(data?.userRole);
     const [previousStep, setPreviousStep] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const delta = currentStep - previousStep
@@ -163,6 +166,39 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
       }
       const status = form.watch("status"); // watch status changes, for validations and ...
       const evidence = form.watch('evidence')
+      const handleEndorsementStatusUpdate=async (id:string, status:string)=>{
+        if(status){
+            const res = await UpdateEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
+            router.prefetch('/trls/home')
+            if(res !== 201){
+                toast({
+                    title: "Failed!!!",
+                    description: "Something went wrong",
+                    action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                    ),
+                })
+            }else{
+                toast({
+                    title: "Routed successfully",
+                    description: "The record has been routed with the status: "+status,
+                    action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                    ),
+                })
+                router.push('/trls/home')
+            }
+        }else{
+            toast({
+                title: "Failed!!!",
+                description: "Next status cannot be undefined/null",
+                action: (
+                <ToastAction altText="Ok">Ok</ToastAction>
+                ),
+            })
+        }
+    }
+
     return (
         <div className="rounded-lg py-2 px-5 my-2 mr-2 shadow-lg w-full bg-white">
             <div className="w-full">
@@ -297,7 +333,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                             {(prev_status || inv_status || bar_status || rej_status) && (currentStep === teacherSteps.length - 2) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="outline">Reject</Button>
+                                        <Button variant="outline">{reject_label}</Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>
@@ -428,7 +464,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                             {next_status && (currentStep === teacherSteps.length - 2) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="default" className=''>Approve</Button>
+                                        <Button variant="default" className=''>{approve_label}</Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>                                
@@ -447,6 +483,50 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 </AlertDialogContent>
                             </AlertDialog>
                             }
+                            {recommend && (currentStep === teacherSteps.length - 2) &&
+                                <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="outline" className=''>{recommend_label}</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>                                
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action will change the status to <span className='italic font-medium'>{recommend}</span>, and this will route the application to the next level.
+                                            </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                                                    onClick={async () => await handleEndorsementStatusUpdate(data?.data?.teacher_registrations?.national_id, recommend!)}
+                                                    >Continue</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            }
+                            {endorse && (currentStep === teacherSteps.length - 2) &&
+                                <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="default" className=''>{endorse_label}</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>                                
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action will change the status to <span className='italic font-medium'>{endorse}</span>, and this will complete the application process.
+                                            </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                                                    onClick={async () => await handleEndorsementStatusUpdate(data?.data?.teacher_registrations?.national_id, endorse!)}
+                                                    >Continue</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                                }
                         </div>
                     </div>
                 </div>

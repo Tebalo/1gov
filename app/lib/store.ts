@@ -12,6 +12,10 @@ export interface StatusTransition {
         endorse: string | null,
         rej_status: string | null;
         next_status: string | null;
+        reject_label: string | null;
+        approve_label: string | null;
+        recommend_label: string | null;
+        endorse_label: string | null;
     };
 }
 
@@ -96,6 +100,10 @@ export const statusTransitions: StatusTransition = {
         recommend: null,
         endorse: null,
         next_status: 'Default',
+        reject_label: null,
+        approve_label: null,
+        recommend_label: null,
+        endorse_label: null
     },
     'registration_officer': {
         prev_status: 'Pending-Customer-Update',
@@ -105,6 +113,10 @@ export const statusTransitions: StatusTransition = {
         recommend: null,
         endorse: null,
         next_status: 'Pending-Screening',
+        reject_label: 'Return',
+        approve_label: 'Pass',
+        recommend_label: null,
+        endorse_label: null
     },
     'snr_registration_officer': {
         prev_status: null,
@@ -114,6 +126,10 @@ export const statusTransitions: StatusTransition = {
         recommend: null,
         endorse: null,
         next_status: 'Pending-Manager-Review',
+        reject_label: 'Recommend For Rejection',
+        approve_label: 'Recommend For Approval',
+        recommend_label: null,
+        endorse_label: null
     },
     'manager': {
         prev_status: 'Pending-Review',
@@ -123,6 +139,10 @@ export const statusTransitions: StatusTransition = {
         recommend: null,
         endorse: null,
         next_status: 'Manager-Approved',
+        reject_label: 'Reject',
+        approve_label: 'Approve',
+        recommend_label: null,
+        endorse_label: null
     },
     'director': {
         prev_status: null,
@@ -132,6 +152,10 @@ export const statusTransitions: StatusTransition = {
         recommend: 'Endorsement-Recommendation',
         endorse: 'Endorsement-Complete',
         next_status: null,
+        reject_label: null,
+        approve_label: null,
+        recommend_label: 'Recommend',
+        endorse_label: 'Endorse'
     },
     'registrar': {
         prev_status: null,
@@ -141,25 +165,12 @@ export const statusTransitions: StatusTransition = {
         recommend: null,
         endorse: 'Endorsement-Complete',
         next_status: null,
+        reject_label: null,
+        approve_label: null,
+        recommend_label: 'Recommend',
+        endorse_label: 'Endorse'
     },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const citizenOptions = [
     {label: 'Citizen', value: 'citizen'},
