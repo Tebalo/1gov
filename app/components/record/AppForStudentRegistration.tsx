@@ -328,7 +328,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                                     name="status"
                                                     render={({ field }) => (
                                                         <FormItem>
-                                                        <FormLabel>Rejection type</FormLabel>
+                                                        <FormLabel>Reason</FormLabel>
                                                             <Select onValueChange={field.onChange} value={field.value}>
                                                                 <SelectTrigger className="w-[200px]">
                                                                     <SelectValue placeholder="Select a rejection type" />
