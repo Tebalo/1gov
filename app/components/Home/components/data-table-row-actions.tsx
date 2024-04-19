@@ -46,8 +46,8 @@ export function DataTableRowActions<TData>({
         >
           Open
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
+        {/* <DropdownMenuSeparator /> */}
+        {/* <DropdownMenuSub>
           <DropdownMenuSubTrigger>Update status</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup value={record.reg_status}>
@@ -58,12 +58,12 @@ export function DataTableRowActions<TData>({
               ))}
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        </DropdownMenuSub> */}
+        {/* <DropdownMenuSeparator /> */}
+        {/* <DropdownMenuItem>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )
