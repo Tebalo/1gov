@@ -1,6 +1,7 @@
 export const apiUrl = 'http://66.179.253.57:8080/api';
 export const devUrl = 'http://74.208.205.44:8081/api'
 export const authUrl = 'http://jwtauth.26digitaldev.com/api/';
+export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
 
 export interface StatusTransition {

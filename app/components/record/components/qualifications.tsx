@@ -16,13 +16,13 @@ HoverCardContent,
 HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
-import { apiUrl } from '@/app/lib/store';
+import { cmsUrl } from '@/app/lib/store';
 import { FaFilePdf } from "react-icons/fa";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button"
 
 export const Qualifications: React.FC<Props> = (data: Props) => {
-    const path = `${apiUrl}/Qualifications/`
+    const path = `${cmsUrl}`
     return (
         <div className=''>
             <Table>
