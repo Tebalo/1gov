@@ -45,7 +45,7 @@ export const Qualifications: React.FC<Props> = (data: Props) => {
                                 <TableCell>
                                     <Link
                                     href={path+qual.attachments}
-                                    target='_blank'
+                                    target='_self'
                                     rel="noreferrer noopener"
                                     className='cursor-pointer'
                                     >

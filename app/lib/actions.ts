@@ -182,3 +182,16 @@ export async function UpdateEndorsementStatus(id: string, status: string ){
   //revalidatePath('/(portal)/trls/home/', 'page')
   return res.status
 }
+
+export async function BulkRegistrationUpdate(data: string){
+  const jsonData = JSON.parse(data);
+
+  const res = await fetch(`${apiUrl}/processBulkRegistrations/`,{
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(jsonData) 
+   })
+   return res.status
+}

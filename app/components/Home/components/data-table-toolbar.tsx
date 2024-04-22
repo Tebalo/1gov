@@ -21,7 +21,10 @@ import {
 import { regSchema } from "../data/schema";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-
+import { BulkRegistrationUpdate } from "@/app/lib/actions";
+import { ToastAction } from "@/components/ui/toast";
+import {  toast, useToast } from "@/components/ui/use-toast";
+import { useRouter } from 'next/navigation'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -31,10 +34,37 @@ export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
-  const handleBulkStatusUpdate = () => {
+  const { toast } = useToast()
+  const router = useRouter()
+
+  const handleBulkStatusUpdate = async (status: string) => {
     const selectedRows = table.getFilteredSelectedRowModel().flatRows;
-    
-    console.log('Selected rows',selectedRows)
+    const registration_list = selectedRows.map((row) => row.getValue('national_id'))
+    const jsonData = {
+      endorsement_status: status,
+      registration_list
+    }
+    const res = await BulkRegistrationUpdate(JSON.stringify(jsonData))
+    console.log(res)
+    if(res === 201){
+      toast({
+        title: "Routed successfully",
+        description: "The record has been routed with the status: "+status,
+        action: (
+        <ToastAction altText="Ok">Ok</ToastAction>
+        ),
+      }
+    )
+    router.refresh()
+    }else{
+      toast({
+          title: "Failed!!!",
+          description: "Failed to updated the records",
+          action: (
+          <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+      })
+  }
   }
   return (
     <div className="flex items-center justify-between">
@@ -113,10 +143,11 @@ export function DataTableToolbar<TData>({
                 <Button 
                 type="submit"
                 variant='outline'
-                onClick={async () => await handleBulkStatusUpdate}
+                onClick={async () => await handleBulkStatusUpdate('Endorsement-Recommendation')}
                 >Recommend</Button>
                 <Button 
                 type="submit"
+                onClick={async () => await handleBulkStatusUpdate('Endorsement-Complete')}
                 >Endorse</Button>
               </DialogFooter>
             </DialogContent>

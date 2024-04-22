@@ -8,7 +8,6 @@ import { Preliminary } from "./components/preliminary";
 import { Button } from "@/components/ui/button";
 import { Bio } from "./components/bio";
 import { Employment } from "./components/employment";
-import { StudyProgramme } from "./components/study-programme";
 import { Qualifications } from "./components/qualifications";
 import { Disability } from "./components/disability";
 import { Offence } from "./components/offence";
