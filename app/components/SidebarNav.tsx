@@ -66,7 +66,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                 </div>
             </Link>
         </li>}
-        <li className="flex space-x-2">
+        {/* <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/applications' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
                 href="/trls/applications"
@@ -78,7 +78,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                     </span>
                 </div>
             </Link>
-        </li>
+        </li> */}
         {staffRoles.includes(userRole) && <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/settings' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link

@@ -25,18 +25,21 @@ import { BulkRegistrationUpdate } from "@/app/lib/actions";
 import { ToastAction } from "@/components/ui/toast";
 import {  toast, useToast } from "@/components/ui/use-toast";
 import { useRouter } from 'next/navigation'
+import { getSession } from "@/app/auth/auth";
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
+  table: Table<TData>,
+  userRole: string
 }
 
 export function DataTableToolbar<TData>({
   table,
+  userRole
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const { toast } = useToast()
   const router = useRouter()
-
+  const topManagement = ['director','registrar','admin']
   const handleBulkStatusUpdate = async (status: string) => {
     const selectedRows = table.getFilteredSelectedRowModel().flatRows;
     const registration_list = selectedRows.map((row) => row.getValue('national_id'))
@@ -45,7 +48,7 @@ export function DataTableToolbar<TData>({
       registration_list
     }
     const res = await BulkRegistrationUpdate(JSON.stringify(jsonData))
-    console.log(res)
+    
     if(res === 201){
       toast({
         title: "Routed successfully",
@@ -55,7 +58,7 @@ export function DataTableToolbar<TData>({
         ),
       }
     )
-    router.refresh()
+    table.reset()
     }else{
       toast({
           title: "Failed!!!",
@@ -101,7 +104,7 @@ export function DataTableToolbar<TData>({
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
-        {
+        {topManagement.includes(userRole) &&
           (table.getIsSomePageRowsSelected() || table.getIsAllRowsSelected()) &&
             <Dialog>
             <DialogTrigger className="flex" >
@@ -139,7 +142,8 @@ export function DataTableToolbar<TData>({
                   )
                 }
               </DialogHeader>
-              <DialogFooter>
+              <DialogFooter
+              >
                 <Button 
                 type="submit"
                 variant='outline'

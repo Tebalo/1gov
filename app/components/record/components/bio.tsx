@@ -34,11 +34,11 @@ export const Bio: React.FC<Props> = (data: Props) => {
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Postal address:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.postalAddress}</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.postal_address}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Physical address:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.physicalAddress}</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.physical_address}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Email:</Label>
@@ -50,19 +50,19 @@ export const Bio: React.FC<Props> = (data: Props) => {
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Marital status:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.maritalStatus}</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.marital_status}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Next of kin name:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.nextOfKinName}</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.next_of_kin_name}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Next of kin relation:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.nextOfKinRelation}</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.next_of_kin_relation}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Next of kin contact:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.nextOfKinContact}</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.next_of_kin_contact}</span>
                 </div>
             </div>
         </div>

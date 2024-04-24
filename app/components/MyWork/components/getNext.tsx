@@ -70,15 +70,15 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                 <DialogHeader>
                     <DialogTitle>Next Work</DialogTitle>
                     <DialogDescription>
-                        Add description here...
+                        Retrieves next item in a list of applications based on date of creation.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <Suspense fallback={isLoading? 'Loading...':''}>
                     {response ? (
                         <div className="grid grid-cols-1">
-                            <div className="grid grid-cols-2 items-center"><Label>National/Passport: </Label><span className="font-light italic text-sm">{response.national_id}</span></div>
-                            <div className="grid grid-cols-2 items-center"><Label>Registration Number: </Label><span className="font-light italic text-sm">{response.reg_number}</span></div>
+                            <div className="grid grid-cols-2 items-center"><Label>Registration Number: </Label><span className="font-light italic text-sm">{response.national_id}</span></div>
+                            {/* <div className="grid grid-cols-2 items-center"><Label>Registration Number: </Label><span className="font-light italic text-sm">{response.reg_number}</span></div> */}
                             <div className="grid grid-cols-2 items-center"><Label>Registration Status: </Label><span className="font-light italic text-sm">{response.reg_status}</span></div>
                             <div className="grid grid-cols-2 items-center"><Label>Registration Type: </Label><span className="font-light italic text-sm">{response.registration_type}</span></div>
                             <div className="grid grid-cols-2 items-center"><Label>Created At: </Label><span className="font-light italic text-sm">{response.created_at}</span></div>

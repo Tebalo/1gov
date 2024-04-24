@@ -150,6 +150,7 @@ export async function getRegById(Id:string){
       return null
   }
   try{
+    
       return await res.json()
   }catch(error){
       if(error instanceof SyntaxError){

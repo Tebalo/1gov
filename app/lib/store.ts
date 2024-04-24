@@ -115,7 +115,7 @@ export const statusTransitions: StatusTransition = {
         endorse: null,
         next_status: 'Pending-Screening',
         reject_label: 'Return',
-        approve_label: 'Pass',
+        approve_label: 'Pass-Screening',
         recommend_label: null,
         endorse_label: null
     },

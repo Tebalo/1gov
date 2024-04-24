@@ -23,11 +23,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  userRole: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  userRole
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -61,7 +63,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table}/>
+      <DataTableToolbar table={table} userRole={userRole}/>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

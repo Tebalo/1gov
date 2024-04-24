@@ -45,14 +45,14 @@ interface bio_datas {
     pob: string;
     gender: string;
     nationality: string;
-    postalAddress: string;
-    physicalAddress: string;
+    postal_address: string;
+    physical_address: string;
     email: string;
     mobile: string;
-    maritalStatus: string;
-    nextOfKinName: string;
-    nextOfKinRelation: string;
-    nextOfKinContact: string;
+    marital_status: string;
+    next_of_kin_name: string;
+    next_of_kin_relation: string;
+    next_of_kin_contact: string;
     disability: string;
     disability_description: string;
 }

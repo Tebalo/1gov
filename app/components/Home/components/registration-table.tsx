@@ -7,6 +7,7 @@ import { LoadingSkeleton } from "../../LoadingSkeleton";
 
 interface WorkProps{
     status: string;
+    userRole: string;
 }
 interface Registration {
     national_id: string;
@@ -18,7 +19,7 @@ interface Registration {
     updated_by: string;
     created_by: string;
   }
- export const RecordTable: React.FC<WorkProps> = ({status}) => {
+ export const RecordTable: React.FC<WorkProps> = ({status, userRole}) => {
     
     const [response, setResponse] = useState<Registration[] | null>(null)
     const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +40,8 @@ interface Registration {
             {isLoading ? (
                 <LoadingSkeleton/>
             ):response ? (
-                <DataTable data={response} columns={columns} />
-            ): <DataTable data={[]} columns={columns} />}
+                <DataTable data={response} columns={columns} userRole={userRole} />
+            ): <DataTable data={[]} columns={columns} userRole={userRole}/>}
         </div>
     )
  }

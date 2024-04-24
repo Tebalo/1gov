@@ -55,10 +55,10 @@ export const SelectTable = async ({userRole}:Props) => {
                 </div>
                 {reg_Next_Status && !mgt.includes(userRole) && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
             </div>
-            {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RecordTable status={reg_Next_Status}/>)}
-            {table === 'RegistrationApplication' && mgt.includes(userRole) && (reg_Next_Status && <EndorsementTable status={reg_Next_Status}/>)}
-            {table === 'licenseRenewal' && (lic_Next_Status && <RecordTable status={lic_Next_Status}/>)}
-            {table === 'licenseApplication' && <RecordTable status="License" />}
+            {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RecordTable status={reg_Next_Status} userRole={userRole}/>)}
+            {table === 'RegistrationApplication' && mgt.includes(userRole) && (reg_Next_Status && <EndorsementTable status={reg_Next_Status} userRole={userRole}/>)}
+            {table === 'licenseRenewal' && (lic_Next_Status && <RecordTable status={lic_Next_Status} userRole={userRole}/>)}
+            {table === 'licenseApplication' && <RecordTable status="License" userRole={userRole}/>}
         </>
     )
 }

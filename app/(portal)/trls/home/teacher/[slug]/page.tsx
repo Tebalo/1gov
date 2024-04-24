@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 export default async function Page({params}:{params: {slug: string}}){
     const id = await params.slug;
     const work = await getRegById(id)
+
     const session = await getSession();
     const userRole = await session?.user?.roles[0]
     if(!session?.user?.access){

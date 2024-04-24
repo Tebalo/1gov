@@ -2,7 +2,10 @@ import { Label } from '@/components/ui/label';
 import Props from './types';
 import { FaFilePdf } from 'react-icons/fa';
 import Link from 'next/link';
+import { cmsUrl } from '@/app/lib/store';
+
 export const Recommendation: React.FC<Props> = (data: Props) => {
+    const path = `${cmsUrl}`
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-3 mb-2 gap-y-5'>
@@ -12,7 +15,7 @@ export const Recommendation: React.FC<Props> = (data: Props) => {
                 </div>
                 <div className=''>
                     <Link
-                        href={data.institution_recommendations?.attachment}
+                        href={path+data.institution_recommendations?.attachment}
                         target='_blank'
                         rel="noreferrer noopener"
                         className='cursor-pointer'

@@ -288,7 +288,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
                                 <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Attachments/>
+                                    <Attachments {...data?.data}/>
                                 </div>
                             </motion.div>
                         )}
