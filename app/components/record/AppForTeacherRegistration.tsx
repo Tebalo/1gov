@@ -27,6 +27,8 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Payment } from "./components/payments";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Work{
     data: Props,
@@ -221,7 +223,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 w-full p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 w-full p-3 rounded-lg mb-2 mr-1">
                                     <Preliminary {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -232,7 +234,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Bio {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -243,7 +245,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Employment {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -254,7 +256,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Qualifications {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -265,7 +267,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Disability {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -276,7 +278,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Offence {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -287,7 +289,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Attachments {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -298,7 +300,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                 <Declaration {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -309,7 +311,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Payment {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -320,8 +322,84 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <span>Add comment</span>
+                                </div>
+                            </motion.div>
+                        )}
+                        {currentStep === 10 && (
+                            <motion.div
+                                initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
+                                animate={{y: 0, opacity: 1}}
+                                transition={{duration: 0.3, ease: 'easeInOut'}}
+                                >
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
+                                    <ScrollArea className="h-full">
+                                        <div className="px-5">
+                                            <Accordion type="single" collapsible>
+                                                <AccordionItem value="item-1">
+                                                    <AccordionTrigger>PRELIMINARY INFORMATION</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Preliminary {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-2">
+                                                    <AccordionTrigger>PROFILE INFO</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Bio {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-3">
+                                                    <AccordionTrigger>EMPLOYMENT DETAILS</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Employment {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-4">
+                                                    <AccordionTrigger>QUALIFICATIONS</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Qualifications {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-5">
+                                                    <AccordionTrigger>DISABILITY</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Disability {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-6">
+                                                    <AccordionTrigger>OFFENCE</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Offence {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-7">
+                                                    <AccordionTrigger>ATTACHMENTS</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Attachments {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-8">
+                                                    <AccordionTrigger>DECLARATION</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Declaration {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-9">
+                                                    <AccordionTrigger>PAYMENT</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Payment {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-10">
+                                                    <AccordionTrigger>COMMENTS</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <span>Add comment</span>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            </Accordion>
+                                        </div>
+                                    </ScrollArea>
                                 </div>
                             </motion.div>
                         )}

@@ -144,11 +144,12 @@ export function DataTableToolbar<TData>({
               </DialogHeader>
               <DialogFooter
               >
-                <Button 
-                type="submit"
-                variant='outline'
-                onClick={async () => await handleBulkStatusUpdate('Endorsement-Recommendation')}
-                >Recommend</Button>
+              {userRole.includes(topManagement[0]) && 
+              <Button 
+              type="submit"
+              variant='outline'
+              onClick={async () => await handleBulkStatusUpdate('Endorsement-Recommendation')}
+              >Recommend</Button>}
                 <Button 
                 type="submit"
                 onClick={async () => await handleBulkStatusUpdate('Endorsement-Complete')}

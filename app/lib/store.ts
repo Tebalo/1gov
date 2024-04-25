@@ -381,7 +381,7 @@ export const teacherSteps = [
     },
     {
         id: 'Step 2',
-        name: 'Profile Info',
+        name: 'PROFILE INFO',
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
@@ -420,9 +420,14 @@ export const teacherSteps = [
         fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
     },
     {
-        id: 'Step 10',
+        id: 'Step 9',
         name: 'COMMENTS'
     },
+    {
+        id: 'Step 10',
+        name: 'PREVIEW',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    }
 ]
 
 export const learnerSteps = [
@@ -459,6 +464,10 @@ export const learnerSteps = [
     {
         id: 'Step 7',
         name: 'COMMENTS'
+    },
+    {
+        id: 'Step 8',
+        name: 'PREVIEW'
     },
 ]
 

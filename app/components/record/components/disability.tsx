@@ -10,7 +10,7 @@ export const Disability: React.FC<Props> = (data: Props) => {
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Nature of Disability:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.disability_description}t</span>
+                    <span className='font-light text-sm'>{data?.bio_datas?.disability_description}</span>
                 </div>
             </div>
         </div>

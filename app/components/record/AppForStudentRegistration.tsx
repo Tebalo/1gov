@@ -28,6 +28,8 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Payment } from "./components/payments";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface Work{
     data: Props,
@@ -221,8 +223,8 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 w-full p-3 rounded-lg mb-2 mr-1">
-                                <StudentPreliminary {...data?.data}/>
+                                <div className="border md:h-96 h-96 w-full p-3 rounded-lg mb-2 mr-1">
+                                    <StudentPreliminary {...data?.data}/>
                                 </div>
                             </motion.div>
                         )}
@@ -232,7 +234,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Bio {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -243,7 +245,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <StudyProgramme {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -254,7 +256,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Declaration {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -265,7 +267,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Recommendation {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -276,7 +278,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <Payment {...data?.data}/>
                                 </div>
                             </motion.div>
@@ -287,8 +289,66 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 animate={{y: 0, opacity: 1}}
                                 transition={{duration: 0.3, ease: 'easeInOut'}}
                                 >
-                                <div className="border md:h-80 h-96 p-3 rounded-lg mb-2 mr-1">
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
                                     <span>Add comment</span>
+                                </div>
+                            </motion.div>
+                        )}
+                        {currentStep === 7 && (
+                            <motion.div
+                                initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
+                                animate={{y: 0, opacity: 1}}
+                                transition={{duration: 0.3, ease: 'easeInOut'}}
+                                >
+                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
+                                    <ScrollArea className="h-full">
+                                        <div className="px-5">
+                                            <Accordion type="single" collapsible>
+                                                <AccordionItem value="item-1">
+                                                    <AccordionTrigger>PRELIMINARY INFORMATION</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <StudentPreliminary {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-2">
+                                                    <AccordionTrigger>PROFILE INFO</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Bio {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-3">
+                                                    <AccordionTrigger>STUDY PROGRAMME</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <StudyProgramme {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-4">
+                                                    <AccordionTrigger>DECLARATION</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Declaration {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-5">
+                                                    <AccordionTrigger>RECOMMENDATION</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Recommendation {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-6">
+                                                    <AccordionTrigger>PAYMENT</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <Payment {...data?.data}/>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="item-7">
+                                                    <AccordionTrigger>COMMENTS</AccordionTrigger>
+                                                    <AccordionContent>
+                                                        <span>Add comment</span>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            </Accordion>
+                                        </div>
+                                    </ScrollArea>
                                 </div>
                             </motion.div>
                         )}
@@ -304,11 +364,11 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                         <button 
                             type="button" 
                             onClick={next}
-                            hidden={currentStep === studentSteps.length - 1}
+                            hidden={currentStep === learnerSteps.length - 1}
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
                             >Next
                         </button>
-                        {(prev_status || inv_status || bar_status || rej_status) && (currentStep === studentSteps.length - 1) &&
+                        {(prev_status || inv_status || bar_status || rej_status) && (currentStep === learnerSteps.length - 1) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="outline">{reject_label}</Button>
@@ -439,7 +499,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                             </AlertDialogContent>
                                         </AlertDialog>
                                         }
-                            {next_status && (currentStep === studentSteps.length - 1) &&
+                            {next_status && (currentStep === learnerSteps.length - 1) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="default" className=''>{approve_label}</Button>
@@ -461,7 +521,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                 </AlertDialogContent>
                             </AlertDialog>
                             }
-                            {recommend && (currentStep === studentSteps.length - 1) &&
+                            {recommend && (currentStep === learnerSteps.length - 1) &&
                                 <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="outline" className=''>{recommend_label}</Button>
@@ -483,7 +543,7 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                     </AlertDialogContent>
                                 </AlertDialog>
                             }
-                            {endorse && (currentStep === studentSteps.length - 1) &&
+                            {endorse && (currentStep === learnerSteps.length - 1) &&
                                 <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="default" className=''>{endorse_label}</Button>

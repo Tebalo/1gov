@@ -22,7 +22,7 @@ export const Recommendation: React.FC<Props> = (data: Props) => {
                         >
                             <div className='flex space-x-1'>
                                 <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
-                                <span>document.pdf</span>
+                                <span>{data.institution_recommendations?.attachment?.substring(24,data.institution_recommendations?.attachment.length-1)}.pdf</span>
                             </div>
                             <span className='text-xs font-thin italic'>
                                click to open in a new tab.{" "}

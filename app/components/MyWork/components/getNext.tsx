@@ -29,7 +29,7 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
     const [response, setResponse] = useState<Registration | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-
+    const [redirecting, setIsRedirecting] = useState(false);
     async function handleWork(){
         setIsLoading(true);
         const response = await getNext(status)
@@ -40,14 +40,12 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
             setResponse(null)
         }
         
-        // toast({
-        //     title: JSON.stringify(response)
-        //   })
         setIsLoading(false)
     }
     function handleOpen(Id:string | undefined){
-        
+        setIsRedirecting(true)
         if(Id){
+
             if(response?.registration_type==='Teacher'){
                 router.push(`/trls/home/teacher/${Id}`);
             }else if(response?.registration_type==='Student-Teacher'){
@@ -99,9 +97,10 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                     <div className={`${response? 'block':'hidden'}`}>
                         <Button 
                         type="submit" 
-                        className="bg-sky-300 hover:bg-sky-600"
+                        className={`${redirecting ? 'bg-sky-200':'bg-sky-300'} hover:bg-sky-600`}
                         onClick={() => handleOpen(response?.national_id)}
-                        >Open</Button>
+                        disabled={redirecting}
+                        >{redirecting ? (<>Redirecting...</>):(<>Open</>)}</Button>
                     </div>
                 </DialogFooter>
           </DialogContent>

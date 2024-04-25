@@ -12,18 +12,17 @@ export const Attachments: React.FC<Props> = (data: Props) => {
                 <div className='space-y-2'>
                     <Label>Certified copy of OMANG or passport</Label>
                     <div className='flex space-x-1'>
-                        {/* <FaFilePdf style={{ fontSize: '2rem', color: '#FF6666' }}/>
-                        <span>Omang.pdf</span> */}
                         <Link
-                            href={path+data?.attachments?.national_id}
-                            target='_self'
+                            href={path+data?.attachments?.national_id_copy}
+                            target='_blank'
                             rel="noreferrer noopener"
                             className='cursor-pointer'
                             >
                                 <div className='flex space-x-1'>
-                                <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }} />
-                                <span>{data?.attachments?.national_id_copy}.pdf</span>
-                                {/* <span>{qual.attachments}</span> */}
+                                    <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
+                                    <span>
+                                        {data?.attachments?.national_id_copy?.substring(24, data?.attachments?.national_id_copy?.length-1)}.pdf
+                                    </span>
                                 </div>
                         </Link>
                     </div>
@@ -34,20 +33,19 @@ export const Attachments: React.FC<Props> = (data: Props) => {
                 <div className='space-y-2'>
                     <Label>Verification of qualification from BQA</Label>
                     <div className='flex space-x-1'>
-                        {/* <FaFilePdf style={{ fontSize: '2rem', color: '#FF6666' }}/>
-                        <span>doc.pdf</span> */}
-                    <Link
-                        href={path+data?.attachments?.qualification_copy}
-                        target='_self'
-                        rel="noreferrer noopener"
-                        className='cursor-pointer'
-                        >
-                            <div className='flex space-x-1'>
-                            <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }} />
-                            <span>{data?.attachments?.qualification_copy}.pdf</span>
-                            {/* <span>{qual.attachments}</span> */}
-                            </div>
-                    </Link>
+                        <Link
+                            href={path+data?.attachments?.qualification_copy}
+                            target='_self'
+                            rel="noreferrer noopener"
+                            className='cursor-pointer'
+                            >
+                                <div className='flex space-x-1'>
+                                    <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }}/>
+                                    <span>
+                                        {data?.attachments?.qualification_copy.substring(24,data?.attachments?.qualification_copy.length-1)}.pdf
+                                    </span>
+                                </div>
+                        </Link>
                     </div>
                     <span className='text-xs font-thin italic'>
                         click to open in a new tab.{" "}

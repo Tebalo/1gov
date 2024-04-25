@@ -51,7 +51,7 @@ export const Qualifications: React.FC<Props> = (data: Props) => {
                                     >
                                         <div className='flex space-x-1'>
                                         <FaFilePdf style={{ fontSize: '1.5rem', color: '#FF6666' }} />
-                                        <span>doc.pdf</span>
+                                        <span>{qual?.attachments.substring(33, qual?.attachments.length-1)}.pdf</span>
                                         {/* <span>{qual.attachments}</span> */}
                                         </div>
                                     </Link>
