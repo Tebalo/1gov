@@ -39,8 +39,8 @@ interface Registration {
             {isLoading ? (
                 <LoadingSkeleton/>
             ):response ? (
-                <DataTable data={response} columns={columns} />
-            ): <DataTable data={[]} columns={columns} />}
+                <DataTable data={response} columns={columns} userRole=""/>
+            ): <DataTable data={[]} columns={columns} userRole=""/>}
         </div>
     )
  }
