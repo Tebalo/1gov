@@ -265,7 +265,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
                             <Offence {...data?.data}/>
                         </TabsContent>
                         <TabsContent value='attachments'>
-                            <Attachments/>
+                            {/* <Attachments/> */}
                         </TabsContent>
                         <TabsContent value='declaration'>
                             <Declaration {...data?.data}/>
