@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { RecordTable } from "./registration-table"
+import { RegistrationTable } from "./registration-table"
 import { Label } from "@/components/ui/label";
 import {
     Select,
@@ -15,6 +15,7 @@ import {
 import { Work } from "../../MyWork/work";
 import { mgt, roleObjects } from "@/app/lib/store";
 import { EndorsementTable } from "./upper-mgt-table";
+import { LicenseTable } from "./license-table";
 
 interface Props{
     userRole: string
@@ -55,10 +56,10 @@ export const SelectTable = async ({userRole}:Props) => {
                 </div>
                 {reg_Next_Status && !mgt.includes(userRole) && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
             </div>
-            {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RecordTable status={reg_Next_Status} userRole={userRole}/>)}
+            {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RegistrationTable status={reg_Next_Status} userRole={userRole}/>)}
             {table === 'RegistrationApplication' && mgt.includes(userRole) && (reg_Next_Status && <EndorsementTable status={reg_Next_Status} userRole={userRole}/>)}
-            {table === 'licenseRenewal' && (lic_Next_Status && <RecordTable status={lic_Next_Status} userRole={userRole}/>)}
-            {table === 'licenseApplication' && <RecordTable status="License" userRole={userRole}/>}
+            {table === 'licenseRenewal' && (lic_Next_Status && <RegistrationTable status={lic_Next_Status} userRole={userRole}/>)}
+            {table === 'licenseApplication' && <LicenseTable status="License" userRole={userRole}/>}
         </>
     )
 }

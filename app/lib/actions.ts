@@ -2,7 +2,7 @@
 import axios from "axios";
 import { signIn } from "../auth/signIn"
 import { revalidateTag } from "next/cache"
-import { apiUrl, devUrl } from "./store";
+import { apiUrl, devUrl, licUrl } from "./store";
 //import jsCookie from 'js-cookie';
 //import { useRouter } from "next/router";
 
@@ -78,13 +78,12 @@ export async function getRegApplications(status:string, count: string) {
   }catch(error){
     return []
   }
-  
 }
 
 export async function getLicenseApplications(status:string, count: string) {
   
   try{
-    const res = await fetch(`${apiUrl}/license_applications/`, {cache: 'no-store'})
+    const res = await fetch(`${licUrl}/getLicensesByCount?reg_status=${status}&count=${count}`, {cache: 'no-store'})
     const contentType = res.headers.get('content-type');
     if(contentType && contentType.startsWith('application/json')){
       return res.json()
@@ -151,6 +150,29 @@ export async function getRegById(Id:string){
   }
   try{
     
+      return await res.json()
+  }catch(error){
+      if(error instanceof SyntaxError){
+          return {}
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+}
+
+export async function getLicenseById(Id:string){
+  const res = await fetch(`${licUrl}/license-data/${Id}`, {cache:'no-cache'})
+  if(!res.ok){
+      if(res.status === 204){
+            return null
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+  if(res.status === 204){
+      return null
+  }
+  try{
       return await res.json()
   }catch(error){
       if(error instanceof SyntaxError){

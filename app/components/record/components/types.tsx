@@ -56,6 +56,7 @@ interface bio_datas {
     disability: string;
     disability_description: string;
 }
+
 interface employment_details {
     experience_years: number;
     current_institution: string;
@@ -64,6 +65,7 @@ interface employment_details {
     district: string;
     city_or_town: string;
 }
+
 interface teacher_registrations {
     national_id: string;
     reg_number: string;
@@ -85,6 +87,7 @@ interface institution_recommendations{
     recommended:string;
     attachment: string;
 }
+
 interface student_study_programmes{
     name: string;
     completion_year: string;
@@ -93,6 +96,7 @@ interface student_study_programmes{
     mode_of_study: string;
     specialization: string;
 }
+
 interface attachments{
     national_id: string,
     national_id_copy: string,
@@ -101,6 +105,7 @@ interface attachments{
     created_at: string,
     updated_at: string
 }
+
 export default interface Props {
     teacher_registrations: teacher_registrations,
     teacher_preliminary_infos: teacher_preliminary_infos,

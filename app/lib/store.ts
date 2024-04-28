@@ -1,5 +1,6 @@
 export const apiUrl = 'http://66.179.253.57:8080/api';
-export const devUrl = 'http://74.208.205.44:8081/api'
+export const devUrl = 'http://74.208.205.44:8081/api';
+export const licUrl = 'http://66.179.253.57:8081/api'
 export const authUrl = 'http://jwtauth.26digitaldev.com/api/';
 export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
@@ -34,7 +35,7 @@ export const roleObjects: RoleObjects = {
     'registration_officer': {
         reg_application: true,
         lic_application: false,
-        reg_Next_Status: 'Pending-Review',
+        reg_Next_Status: 'Pending-Screening',
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
@@ -42,13 +43,13 @@ export const roleObjects: RoleObjects = {
         reg_application: false,
         lic_application: true,
         reg_Next_Status: null,
-        lic_Next_Status: 'Pending-Review',
+        lic_Next_Status: 'Pending-Screening',
         defaultWork: 'licenseApplication'
     },
     'snr_registration_officer': {
         reg_application: true,
         lic_application: false,
-        reg_Next_Status: 'Pending-Screening',
+        reg_Next_Status: 'Pending-Assessment',
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
@@ -56,13 +57,13 @@ export const roleObjects: RoleObjects = {
         reg_application: false,
         lic_application: true,
         reg_Next_Status: null,
-        lic_Next_Status:'Pending-Screening',
+        lic_Next_Status:'Pending-Assessment',
         defaultWork: 'licenseApplication'
     },
     'manager': {
         reg_application: true,
         lic_application: false,
-        reg_Next_Status: 'Pending-Manager-Review',
+        reg_Next_Status: 'Pending-Manager-Approval',
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
@@ -107,13 +108,13 @@ export const statusTransitions: StatusTransition = {
         endorse_label: null
     },
     'registration_officer': {
-        prev_status: 'Pending-Customer-Update',
+        prev_status: 'Pending-Customer-Action',
         inv_status: null,
         bar_status: null,
         rej_status: null,
         recommend: null,
         endorse: null,
-        next_status: 'Pending-Screening',
+        next_status: 'Pending-Assessment',
         reject_label: 'Return',
         approve_label: 'Pass-Screening',
         recommend_label: null,
@@ -123,10 +124,10 @@ export const statusTransitions: StatusTransition = {
         prev_status: null,
         inv_status: 'Pending-Investigation',
         bar_status: 'Barred',
-        rej_status: 'Senior-RO-Rejected',
+        rej_status: 'Recommended-For-Rejection',
         recommend: null,
         endorse: null,
-        next_status: 'Pending-Manager-Review',
+        next_status: 'Recommended-For-Approval',
         reject_label: 'Recommend For Rejection',
         approve_label: 'Recommend For Approval',
         recommend_label: null,

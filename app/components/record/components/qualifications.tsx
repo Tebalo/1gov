@@ -37,7 +37,7 @@ export const Qualifications: React.FC<Props> = (data: Props) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data.edu_pro_qualifications.map((qual, index) => (
+                    {data?.edu_pro_qualifications?.map((qual, index) => (
                             <TableRow key={index}>
                                 <TableCell className="font-medium">{qual?.level}</TableCell>
                                 <TableCell>{qual?.qualification}</TableCell>

@@ -36,9 +36,9 @@ export function DataTableToolbar<TData>({
   table,
   userRole
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
-  const { toast } = useToast()
-  const router = useRouter()
+  const isFiltered = table.getState().columnFilters.length > 0;
+  const { toast } = useToast();
+  const router = useRouter();
   const topManagement = ['director','registrar','admin']
   const handleBulkStatusUpdate = async (status: string) => {
     const selectedRows = table.getFilteredSelectedRowModel().flatRows;

@@ -19,14 +19,16 @@ interface Registration {
     updated_by: string;
     created_by: string;
   }
- export const RecordTable: React.FC<WorkProps> = ({status, userRole}) => {
+
+
+ export const RegistrationTable: React.FC<WorkProps> = ({status, userRole}) => {
     
     const [response, setResponse] = useState<Registration[] | null>(null)
     const [isLoading, setIsLoading] = useState(false);
 
     async function getApplications(status:string){
         setIsLoading(true);
-        const response: Registration[] = await getRegApplications(status,'20');
+        const response: Registration[] = await getRegApplications(status,'100');
         setResponse(response);
         setIsLoading(false)
     } 
