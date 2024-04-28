@@ -206,7 +206,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
             <div className="w-full">
                 <div className="flex w-full">
                     <div className="flex justify-center mb-2 w-full">
-                        <span className="font-bold text-3xl text-gray-700">Application For Teacher Registration</span>
+                        <span className="font-bold text-3xl text-gray-700">Application For Teacher License</span>
                     </div>
                 </div>
                 <div className="bg-sky-300 w-full h-1 px-20 rounded-lg mb-2"/>
