@@ -1,5 +1,5 @@
 'use client'
-import { teacherSteps } from "@/app/lib/store";
+import { teacherLicenseSteps } from "@/app/lib/store";
 import Props from "./components/types";
 import {motion} from 'framer-motion';
 import { useState } from "react";
@@ -15,7 +15,7 @@ import { Attachments } from "./components/attachments";
 import { Declaration } from "./components/declaration";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { apiUrl, mgt, statusTransitions } from '@/app/lib/store';
-import { UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
+import { UpdateEndorsementStatus, UpdateLicenseEndorsementStatus, UpdateLicenseStatus, UpdateStatus } from '@/app/lib/actions';
 import { useRouter } from 'next/navigation'
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
@@ -74,10 +74,10 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
     const { toast } = useToast()
 
     const next = async () => {
-        const fields = teacherSteps[currentStep].fields
+        const fields = teacherLicenseSteps[currentStep].fields
 
-        if (currentStep < teacherSteps.length - 1){
-            if(currentStep === teacherSteps.length - 2){
+        if (currentStep < teacherLicenseSteps.length - 1){
+            if(currentStep === teacherLicenseSteps.length - 2){
 
             }
             setPreviousStep(currentStep)
@@ -92,10 +92,10 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
     }
     const handleStatusChange=async (id:string, status:string)=>{
         if(status){
-            const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status)
+            const res = await UpdateLicenseStatus(data?.data?.teacher_registrations?.national_id, status)
     
             router.prefetch('/trls/home')
-            if(res !== 201){
+            if(res !== 200){
                 toast({
                     title: "Failed!!!",
                     description: "Something went wrong",
@@ -146,7 +146,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
         }
       })
       async function onSubmit(record: z.infer<typeof FormSchema>) {
-        const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, record.status);
+        const res = await UpdateLicenseStatus(data?.data?.teacher_registrations?.national_id, record.status);
         if(!res){
             toast({
                 title: "Failed!!!",
@@ -170,9 +170,9 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
       const evidence = form.watch('evidence')
       const handleEndorsementStatusUpdate=async (id:string, status:string)=>{
         if(status){
-            const res = await UpdateEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
+            const res = await UpdateLicenseEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
             router.prefetch('/trls/home')
-            if(res !== 201){
+            if(res !== 200){
                 toast({
                     title: "Failed!!!",
                     description: "Something went wrong",
@@ -213,7 +213,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                 <div className="flex md:m-5 w-full space-x-1 md:h-full">
                     {/* steps */}
                     <nav aria-label="Progress" className="w-48 hidden md:block">
-                        <Stepper currentStep={currentStep} steps={teacherSteps}/>
+                        <Stepper currentStep={currentStep} steps={teacherLicenseSteps}/>
                     </nav>
                     {/* content area */}
                     <div className="w-[calc(100%)] pr-2">
@@ -261,18 +261,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </div>
                             </motion.div>
                         )}
-                        {currentStep === 4 && (
-                            <motion.div
-                                initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
-                                animate={{y: 0, opacity: 1}}
-                                transition={{duration: 0.3, ease: 'easeInOut'}}
-                                >
-                                <div className="border md:h-96 h-96 p-3 rounded-lg mb-2 mr-1">
-                                    <Disability {...data?.data}/>
-                                </div>
-                            </motion.div>
-                        )}
-                        {currentStep === 5 && (
+                        {currentStep === 4  && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}
@@ -283,7 +272,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </div>
                             </motion.div>
                         )}
-                        {currentStep === 6 && (
+                        {currentStep === 5 && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}
@@ -294,7 +283,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </div>
                             </motion.div>
                         )}
-                        {currentStep === 7 && (
+                        {currentStep === 6 && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}
@@ -305,7 +294,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </div>
                             </motion.div>
                         )}
-                        {currentStep === 8 && (
+                        {currentStep === 7 && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}
@@ -316,7 +305,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </div>
                             </motion.div>
                         )}
-                        {currentStep === 9 && (
+                        {currentStep === 8 && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}
@@ -327,7 +316,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </div>
                             </motion.div>
                         )}
-                        {currentStep === 10 && (
+                        {currentStep === 9 && (
                             <motion.div
                                 initial={{y: delta >= 0 ? '50%' : '-50%', opacity: 0}}
                                 animate={{y: 0, opacity: 1}}
@@ -415,11 +404,11 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                             <button 
                             type="button" 
                             onClick={next}
-                            hidden={currentStep === teacherSteps.length - 1}
+                            hidden={currentStep === teacherLicenseSteps.length - 1}
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center"
                             >Next
                             </button>
-                            {(prev_status || inv_status || bar_status || rej_status) && (currentStep === teacherSteps.length - 1) &&
+                            {(prev_status || inv_status || bar_status || rej_status) && (currentStep === teacherLicenseSteps.length - 1) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="outline">{reject_label}</Button>
@@ -550,7 +539,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                             </AlertDialogContent>
                                         </AlertDialog>
                                         }
-                            {next_status && (currentStep === teacherSteps.length - 1) &&
+                            {next_status && (currentStep === teacherLicenseSteps.length - 1) &&
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button variant="default" className=''>{approve_label}</Button>
@@ -572,7 +561,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                 </AlertDialogContent>
                             </AlertDialog>
                             }
-                            {recommend && (currentStep === teacherSteps.length - 1) &&
+                            {recommend && (currentStep === teacherLicenseSteps.length - 1) &&
                                 <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="outline" className=''>{recommend_label}</Button>
@@ -594,7 +583,7 @@ export const ApplicationForTeacherLicense: React.FC<Work> = (data, userRole) => 
                                     </AlertDialogContent>
                                 </AlertDialog>
                             }
-                            {endorse && (currentStep === teacherSteps.length - 1) &&
+                            {endorse && (currentStep === teacherLicenseSteps.length - 1) &&
                                 <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="default" className=''>{endorse_label}</Button>

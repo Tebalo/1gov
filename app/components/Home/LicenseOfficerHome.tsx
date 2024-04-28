@@ -16,7 +16,7 @@ async function getTasks() {
   }
 
 export const LicenseOfficerHome = async () => {
-    const tasks = await getRegApplications('Pending-Review','20')
+    //const tasks = await getRegApplications('Pending-Review','20')
     return(
         <>
         <div className="overflow-auto h-screen rounded-lg">

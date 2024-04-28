@@ -54,12 +54,13 @@ export const SelectTable = async ({userRole}:Props) => {
                         </SelectContent>
                     </Select>
                 </div>
-                {reg_Next_Status && !mgt.includes(userRole) && <Work status={reg_Next_Status}/>} {/* Add documentation on stackoverflow */}
+                {reg_Next_Status && !mgt.includes(userRole) && <Work status={reg_Next_Status} service_type="registration"/>} {/* Add documentation on stackoverflow */}
+                {lic_Next_Status && !mgt.includes(userRole) && <Work status={lic_Next_Status} service_type="license"/>}
             </div>
             {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RegistrationTable status={reg_Next_Status} userRole={userRole}/>)}
             {table === 'RegistrationApplication' && mgt.includes(userRole) && (reg_Next_Status && <EndorsementTable status={reg_Next_Status} userRole={userRole}/>)}
             {table === 'licenseRenewal' && (lic_Next_Status && <RegistrationTable status={lic_Next_Status} userRole={userRole}/>)}
-            {table === 'licenseApplication' && <LicenseTable status="License" userRole={userRole}/>}
+            {table === 'licenseApplication' && (lic_Next_Status && <LicenseTable status={lic_Next_Status} userRole={userRole}/>)}
         </>
     )
 }

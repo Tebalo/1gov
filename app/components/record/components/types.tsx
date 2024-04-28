@@ -10,6 +10,10 @@ interface teacher_preliminary_infos {
 }
   
 interface declarations {
+    teaching_standards: string;
+    pro_behaviour: string;
+    declaration: string;
+    cpd: string;
     agreement: boolean;
     signature: string;
 }

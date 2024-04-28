@@ -33,7 +33,7 @@ export const Attachments: React.FC<Props> = (data: Props) => {
                 <div className='space-y-2'>
                     <Label>Verification of qualification from BQA</Label>
                     <div className='flex space-x-1'>
-                        <Link
+                        { data?.attachments?.qualification_copy  && <Link
                             href={path+data?.attachments?.qualification_copy}
                             target='_self'
                             rel="noreferrer noopener"
@@ -45,11 +45,11 @@ export const Attachments: React.FC<Props> = (data: Props) => {
                                         {data?.attachments?.qualification_copy.substring(24,data?.attachments?.qualification_copy.length-1)}.pdf
                                     </span>
                                 </div>
-                        </Link>
+                        </Link>}
                     </div>
-                    <span className='text-xs font-thin italic'>
+                    { data?.attachments?.qualification_copy  &&<span className='text-xs font-thin italic'>
                         click to open in a new tab.{" "}
-                    </span>
+                    </span>}
                 </div>
             </div>
         </div>

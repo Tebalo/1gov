@@ -134,6 +134,28 @@ export async function getNext(status:string){
     }
 }
 
+export async function getNextLicense(status:string){
+    
+  try{
+      const res = await fetch(`${licUrl}/getNext/?reg_status=${status}`, {cache:'no-cache'})
+      const contentType = res.headers.get('content-type');
+      if(!res.ok || res.status === 204){
+        return null
+      }
+      if(contentType && contentType.startsWith('application/json')){
+        return await res.json()
+      }else{
+        return [];
+      }      
+  }catch(error){
+      if(error instanceof SyntaxError){
+          return {}
+      }else{
+          throw new Error('Failed to fetch data')
+      }
+  }
+}
+
 export async function getRegById(Id:string){
   revalidateTag('work')
   const res = await fetch(`${apiUrl}/teacher_registrations/${Id}`, {next:{tags:['work']}})
@@ -191,9 +213,32 @@ export async function UpdateStatus(id: string, status: string ){
             'Content-Type': 'application/json'
         }
     })
-    //revalidatePath('/(portal)/trls/home/', 'page')
     return res.status
 }
+
+export async function UpdateLicenseStatus(id: string, status: string ){
+
+  const res = await fetch(`${licUrl}/license_applications/${id}?reg_status=${status}`,{
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  console.log(res.status)
+  return res.status
+}
+
+export async function UpdateLicenseEndorsementStatus(id: string, status: string ){
+
+  const res = await fetch(`${licUrl}/license_applications/${id}?endorsement_status=${status}`,{
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  return res.status
+}
+
 export async function UpdateEndorsementStatus(id: string, status: string ){
 
   const res = await fetch(`${apiUrl}/teacher_registrations/${id}?endorsement_status=${status}`,{
@@ -202,7 +247,6 @@ export async function UpdateEndorsementStatus(id: string, status: string ){
           'Content-Type': 'application/json'
       }
   })
-  //revalidatePath('/(portal)/trls/home/', 'page')
   return res.status
 }
 

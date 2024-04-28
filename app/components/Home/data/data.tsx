@@ -69,9 +69,14 @@ import {
       icon: CheckCircledIcon,
     },
     {
-      value: "Senior-RO-Rejected",
-      label: "Senior-RO-Rejected",
+      value: "Recommended-For-Rejection",
+      label: "Recommended-For-Rejection",
       icon: CrossCircledIcon,
+    },
+    {
+      value: "Recommended-For-Approval",
+      label: "Recommended-For-Approval",
+      icon: CheckCircledIcon,
     },
     {
       value: "Pending-Review",
@@ -84,8 +89,8 @@ import {
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Pending-SRO-Review",
-      label: "Pending-SRO-Review",
+      value: "Pending-Assessment",
+      label: "Pending-Assessment",
       icon: QuestionMarkCircledIcon,
     },
     {

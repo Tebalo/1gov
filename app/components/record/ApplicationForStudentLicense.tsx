@@ -16,7 +16,7 @@ import { StudentPreliminary } from "./components/student-preliminary";
 import { Recommendation } from "./components/recommendation";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { apiUrl, mgt, statusTransitions } from '@/app/lib/store';
-import { UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
+import { UpdateEndorsementStatus, UpdateLicenseEndorsementStatus, UpdateLicenseStatus, UpdateStatus } from '@/app/lib/actions';
 import { useRouter } from 'next/navigation'
 import { ToastAction } from '@/components/ui/toast';
 import { toast, useToast } from '@/components/ui/use-toast';
@@ -93,10 +93,10 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
     }
     const handleStatusChange=async (id:string, status:string)=>{
         if(status){
-            const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status)
+            const res = await UpdateLicenseStatus(data?.data?.teacher_registrations?.national_id, status)
     
             router.prefetch('/trls/home')
-            if(res !== 201){
+            if(res !== 200){
                 toast({
                     title: "Failed!!!",
                     description: "Something went wrong",
@@ -147,7 +147,7 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
         }
       })
       async function onSubmit(record: z.infer<typeof FormSchema>) {
-        const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, record.status);
+        const res = await UpdateLicenseStatus(data?.data?.teacher_registrations?.national_id, record.status);
         if(!res){
             toast({
                 title: "Failed!!!",
@@ -171,7 +171,7 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
       const evidence = form.watch('evidence')
       const handleEndorsementStatusUpdate=async (id:string, status:string)=>{
         if(status){
-            const res = await UpdateEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
+            const res = await UpdateLicenseEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
             router.prefetch('/trls/home')
             if(res !== 201){
                 toast({

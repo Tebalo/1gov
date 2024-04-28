@@ -1,6 +1,19 @@
 import { Label } from '@/components/ui/label';
 import Props from './types';
 export const Bio: React.FC<Props> = (data: Props) => {
+    const options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: "UTC"
+      };
+    function ConvertTime(time: string){
+        return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
+    }
     return(
         <div className='h-full w-full'>
             <div className='grid md:grid-cols-4 gap-y-5'>
@@ -18,7 +31,7 @@ export const Bio: React.FC<Props> = (data: Props) => {
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Date of birth:</Label>
-                    <span className='font-light text-sm'>{data?.bio_datas?.dob}</span>
+                    <span className='font-light text-sm'>{ConvertTime(data?.bio_datas?.dob)}</span>
                 </div>
                 <div className='flex flex-col space-y-1'>
                     <Label>Place of birth:</Label>

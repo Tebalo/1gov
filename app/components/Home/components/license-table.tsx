@@ -44,7 +44,7 @@ interface Response {
 
     async function getApplications(status:string){
         setIsLoading(true);
-        const response: Response = await getLicenseApplications('Pending-Review','20');
+        const response: Response = await getLicenseApplications(status,'20');
         setResponse(response);
         setIsLoading(false)
     } 

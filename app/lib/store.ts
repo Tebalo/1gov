@@ -120,6 +120,32 @@ export const statusTransitions: StatusTransition = {
         recommend_label: null,
         endorse_label: null
     },
+    'license_officer': {
+        prev_status: 'Pending-Customer-Action',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        recommend: null,
+        endorse: null,
+        next_status: 'Pending-Assessment',
+        reject_label: 'Return',
+        approve_label: 'Pass-Screening',
+        recommend_label: null,
+        endorse_label: null
+    },
+    'snr_license_officer': {
+        prev_status: null,
+        inv_status: 'Pending-Investigation',
+        bar_status: 'Barred',
+        rej_status: 'Recommended-For-Rejection',
+        recommend: null,
+        endorse: null,
+        next_status: 'Recommended-For-Approval',
+        reject_label: 'Recommend For Rejection',
+        approve_label: 'Recommend For Approval',
+        recommend_label: null,
+        endorse_label: null
+    },
     'snr_registration_officer': {
         prev_status: null,
         inv_status: 'Pending-Investigation',
@@ -134,6 +160,19 @@ export const statusTransitions: StatusTransition = {
         endorse_label: null
     },
     'manager': {
+        prev_status: 'Pending-Review',
+        inv_status: null,
+        bar_status: null,
+        rej_status: 'Manager-Rejected',
+        recommend: null,
+        endorse: null,
+        next_status: 'Manager-Approved',
+        reject_label: 'Reject',
+        approve_label: 'Approve',
+        recommend_label: null,
+        endorse_label: null
+    },
+    'license_manager': {
         prev_status: 'Pending-Review',
         inv_status: null,
         bar_status: null,
@@ -373,7 +412,57 @@ export const steps = [
         name: 'COMPLETE'
     },
 ]
-
+export const teacherLicenseSteps = [
+    {
+        id: 'Step 1',
+        name: 'PRELIMINARY INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 2',
+        name: 'PROFILE INFO',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 3',
+        name: 'EMPLOYMENT',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 4',
+        name: 'QUALIFICATIONS',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 6',
+        name: 'OFFENCE',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 7',
+        name: 'ATTACHMENTS',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 8',
+        name: 'DECLARATION',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 9',
+        name: 'PAYMENT',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    },
+    {
+        id: 'Step 9',
+        name: 'COMMENTS'
+    },
+    {
+        id: 'Step 10',
+        name: 'PREVIEW',
+        fields: ['Citizenry','Status','Categories of Practice','Sub-categories']
+    }
+]
 export const teacherSteps = [
     {
         id: 'Step 1',

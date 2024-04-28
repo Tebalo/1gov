@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { FaCogs, FaComments, FaCube, FaHome, FaLayerGroup, FaUser } from 'react-icons/fa';
+import { FaCogs, FaComments, FaCube, FaHome, FaLayerGroup, FaUser, FaUsers } from 'react-icons/fa';
 import { GrDashboard } from "react-icons/gr";
 
 interface SideBarItem { 
@@ -62,6 +62,20 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                 <div className="flex justify-center">
                     <span className="text-gray-100  text-xs lg:text-base lg:font-semibold">
                         Dashboard
+                    </span>
+                </div>
+            </Link>
+        </li>}
+        {staffRoles.includes(userRole) && <li className="flex space-x-2">
+            <div className={`${currentPath === '/trls/users' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
+            <Link
+                href="/trls/users"
+                className={`flex items-center w-full px-2 py-2 rounded-lg justify-start space-x-2 ${currentPath === '/trls/users' ? 'bg-sky-300' : 'text-gray-100'}`}
+            >
+                <FaUsers  style={{fontSize: '1.5rem' , color: '#FFFFFF'}}/>
+                <div className="flex justify-center">
+                    <span className="text-gray-100  text-xs lg:text-base lg:font-semibold">
+                        Users
                     </span>
                 </div>
             </Link>
