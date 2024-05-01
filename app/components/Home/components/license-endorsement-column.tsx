@@ -9,9 +9,8 @@ import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { LicenseTableRowActions } from "./license-table-row-actions"
 
-export const endorse_columns: ColumnDef<Reg>[] = [
+export const license_endorse_columns: ColumnDef<Reg>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -119,6 +118,6 @@ export const endorse_columns: ColumnDef<Reg>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <LicenseTableRowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]
