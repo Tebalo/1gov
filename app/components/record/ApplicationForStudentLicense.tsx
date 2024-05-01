@@ -173,7 +173,7 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
         if(status){
             const res = await UpdateLicenseEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
             router.prefetch('/trls/home')
-            if(res !== 201){
+            if(res !== 200){
                 toast({
                     title: "Failed!!!",
                     description: "Something went wrong",
