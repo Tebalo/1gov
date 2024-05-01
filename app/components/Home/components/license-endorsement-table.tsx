@@ -1,10 +1,9 @@
 "use client"
-import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { getLicenseApplications } from "@/app/lib/actions"
-import React, { Suspense, useEffect, useState } from "react"
+import { getLicenseEndorsementRecords } from "@/app/lib/actions"
+import React, { useEffect, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
-import { licenseColumns } from "./license-columns";
+import { endorse_columns } from "./upper-mgt-columns";
 
 interface WorkProps{
     status: string;
@@ -15,36 +14,25 @@ interface Registration {
     reg_number: string;
     reg_status: string;
     registration_type: string;
+    endorsement_status: string;
     created_at: string;
     updated_at: string;
     updated_by: string;
     created_by: string;
-}
-
-interface License {
-    national_id: string;
-    reg_number: string;
-    reg_status: string;
-    registration_type: string;
-    created_at: string;
-    updated_at: string;
-    updated_by: string;
-    created_by: string;
-}
-
-interface Response {
+  }
+  interface Response {
     service_type: string;
     version: string;
-    teacher_registrations: License[];
+    teacher_registrations: Registration[];
  } 
- export const LicenseTable: React.FC<WorkProps> = ({status, userRole}) => {
+ export const LicenseEndorsementTable: React.FC<WorkProps> = ({status, userRole}) => {
     
     const [response, setResponse] = useState<Response | null>(null)
     const [isLoading, setIsLoading] = useState(false);
 
     async function getApplications(status:string){
         setIsLoading(true);
-        const response: Response = await getLicenseApplications(status,'20');
+        const response: Response = await getLicenseEndorsementRecords(status,'20');
         setResponse(response);
         setIsLoading(false)
     } 
@@ -58,8 +46,8 @@ interface Response {
             {isLoading ? (
                 <LoadingSkeleton/>
             ):response?.teacher_registrations ? (
-                <DataTable data={response.teacher_registrations} columns={licenseColumns} userRole={userRole}/>
-            ): <DataTable data={[]} columns={licenseColumns} userRole={userRole}/>}
+                <DataTable data={response.teacher_registrations} columns={endorse_columns} userRole={userRole}/>
+            ): <DataTable data={[]} columns={endorse_columns} userRole={userRole}/>}
         </div>
     )
  }

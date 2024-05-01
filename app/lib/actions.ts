@@ -109,7 +109,21 @@ export async function getEndorsementRecords(status:string, count: string) {
   }catch(error){
     return []
   }
+}
+
+export async function getLicenseEndorsementRecords(status:string, count: string) {
   
+  try{
+    const res = await fetch(`${licUrl}/getLicensesByCount?endorsement_status=${status}&count=${count}`, {cache: 'no-store'})
+    const contentType = res.headers.get('content-type');
+    if(contentType && contentType.startsWith('application/json')){
+      return res.json()
+    }else{
+      return [];
+    }
+  }catch(error){
+    return []
+  }
 }
 
 export async function getNext(status:string){

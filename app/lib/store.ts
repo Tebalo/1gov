@@ -71,7 +71,7 @@ export const roleObjects: RoleObjects = {
         reg_application: false,
         lic_application: true,
         reg_Next_Status: null,
-        lic_Next_Status: 'Pending-Manager-Review',
+        lic_Next_Status: 'Pending-Manager-Approval',
         defaultWork: 'licenseApplication'
     },
     'director': {

@@ -16,6 +16,7 @@ import { Work } from "../../MyWork/work";
 import { mgt, roleObjects } from "@/app/lib/store";
 import { EndorsementTable } from "./upper-mgt-table";
 import { LicenseTable } from "./license-table";
+import { LicenseEndorsementTable } from "./license-endorsement-table";
 
 interface Props{
     userRole: string
@@ -59,8 +60,9 @@ export const SelectTable = async ({userRole}:Props) => {
             </div>
             {table === 'RegistrationApplication' && !mgt.includes(userRole) && (reg_Next_Status && <RegistrationTable status={reg_Next_Status} userRole={userRole}/>)}
             {table === 'RegistrationApplication' && mgt.includes(userRole) && (reg_Next_Status && <EndorsementTable status={reg_Next_Status} userRole={userRole}/>)}
+            {table === 'licenseApplication' && mgt.includes(userRole) && (lic_Next_Status && <LicenseEndorsementTable status={lic_Next_Status} userRole={userRole}/>)}
             {table === 'licenseRenewal' && (lic_Next_Status && <RegistrationTable status={lic_Next_Status} userRole={userRole}/>)}
-            {table === 'licenseApplication' && (lic_Next_Status && <LicenseTable status={lic_Next_Status} userRole={userRole}/>)}
+            {table === 'licenseApplication' && !mgt.includes(userRole) && (lic_Next_Status && <LicenseTable status={lic_Next_Status} userRole={userRole}/>)}
         </>
     )
 }
