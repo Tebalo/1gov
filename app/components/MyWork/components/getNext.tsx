@@ -42,12 +42,12 @@ interface Response {
 export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
     const {toast} = useToast()
     const [response, setResponse] = useState<Registration | null>(null);
-    const [license, setLicense] = useState<Response | null>(null);
+    const [license, setLicense] = useState<Registration | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [redirecting, setIsRedirecting] = useState(false);
-    const timeString = "2024-04-25T11:10:33.000000Z";
-    const date = new Date(timeString);
+    // const timeString = "2024-04-25T11:10:33.000000Z";
+    // const date = new Date(timeString);
     const options: Intl.DateTimeFormatOptions = {
         year: "numeric",
         month: "2-digit",
@@ -66,8 +66,7 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
         if(service_type==='license'){
             const response = await getNextLicense(status)
             if(response){
-                setLicense(response || null)
-                setResponse(license?.license ||  null)
+                setResponse(response ||  null)
             }else{
                 setLicense(null)
             }
