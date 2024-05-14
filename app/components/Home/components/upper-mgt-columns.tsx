@@ -119,6 +119,6 @@ export const endorse_columns: ColumnDef<Reg>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <LicenseTableRowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]
