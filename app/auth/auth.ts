@@ -4,7 +4,7 @@ import {SignJWT, jwtVerify} from 'jose';
 import {cookies} from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation'
-import { authUrl, secretKey } from '../lib/store';
+import { DeTokenizeUrl, authUrl, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
 /**
  * An authentication context or service that handles user authentication and 
@@ -47,7 +47,7 @@ export async function decrypt(input: string): Promise<any> {
 export async function experiment(formData: FormData){
   const res = await login(formData)
 
-  return res.statusText
+  return res
   // if(res?.ok){
   //   redirect('/trls/home')
   // }else{
@@ -62,30 +62,64 @@ export async function login(formData: FormData) {
         username: formData.get('username'),
         password: formData.get('password')
     }
+    //console.log(payload)
     try{
-        const res = await fetch(`${authUrl}/login/`,{
+        const res = await fetch(`${authUrl}`,{
             method: 'POST',
+            cache:'no-cache',
             headers: {
                 'Content-Type': 'application/json'
             }, 
             body: JSON.stringify({...payload}),
         })
-        if(res.ok){
-          const user = await res.json()
-          // Create the session
-          const expires = new Date(Date.now() + 3600 * 1000);
-          const session = await encrypt({ user, expires });
-          // Save the session in a cookie
-          cookies().set("session", session, { expires, httpOnly: true });
-          redirect('/trls/home')
-        }else{
-          return res.json();
-        }
+        return res.json()
     } catch(error){
       throw error
     }
   }
-
+  export async function validateOTP(formData: FormData) {
+    // Verify credentials && get the user
+  
+    //const user = { email: formData.get("email"), name: "John" };
+    const payload = {
+        username: formData.get('username'),
+        password: formData.get('otp')
+    }
+    //console.log(payload)
+    try{
+        const res = await fetch(`${validateUrl}`,{
+            method: 'POST',
+            cache:'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({...payload}),
+        })
+        return res.json()
+        console.log(res.json())
+    } catch(error){
+      throw error
+    }
+  }
+export async function DeTokenize(){
+  try{
+    const res = await fetch(`${DeTokenizeUrl}`, {cache:'no-cache'})
+    if(res.ok){
+      const user = await res.json()
+      //console.log('miserable:',user)
+      // Create the session
+      const expires = new Date(Date.now() + 3600 * 1000);
+      const session = await encrypt({ user, expires });
+      // Save the session in a cookie
+      cookies().set("session", session, { expires, httpOnly: true });
+      redirect('/trls/home')
+    } else {
+      return res.json();
+    }
+  } catch(error){
+    throw error
+  }
+}
 export async function logout() {
     // Destroy the session
     revalidatePath('/trls/home')

@@ -1,5 +1,4 @@
 'use client'
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { useForm } from 'react-hook-form'
 import {z} from 'zod'
@@ -26,9 +25,7 @@ interface Error{
 }
 export const OneGovID: React.FC = () => {
     const FormSchema = z.object({
-        email: z.string().email({
-            message: 'Invalid email format',
-        }),
+        email: z.string(),
         password: z.string()
     })
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -43,7 +40,7 @@ export const OneGovID: React.FC = () => {
         
         formData.append('username', data.email);
         formData.append('password', data.password);
-
+        
         const res = await login(formData);
         console.log('Json', res)
         if(!res){
@@ -73,7 +70,7 @@ export const OneGovID: React.FC = () => {
                                 <FormControl>
                                     <Input
                                     placeholder=""
-                                    type="email"
+                                    type="text"
                                     {...field}
                                     />
                                 </FormControl>
