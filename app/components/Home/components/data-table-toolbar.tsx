@@ -26,6 +26,7 @@ import { ToastAction } from "@/components/ui/toast";
 import {  toast, useToast } from "@/components/ui/use-toast";
 import { useRouter } from 'next/navigation'
 import { getSession } from "@/app/auth/auth";
+import { useState } from "react";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>,
@@ -39,15 +40,21 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
   const { toast } = useToast();
   const router = useRouter();
-  const topManagement = ['director','registrar','admin']
+  const topManagement = ['director','registrar','admin'];
+  const [response, setResponse] = useState<number | null>(null);
+
   const handleBulkStatusUpdate = async (status: string) => {
     const selectedRows = table.getFilteredSelectedRowModel().flatRows;
-    const registration_list = selectedRows.map((row) => row.getValue('national_id'))
+    const registration_list = selectedRows.map((row) => row.getValue('national_id'));
+
     const jsonData = {
       endorsement_status: status,
       registration_list
     }
-    const res = await BulkRegistrationUpdate(JSON.stringify(jsonData))
+
+    const res = await BulkRegistrationUpdate(JSON.stringify(jsonData));
+
+    setResponse(res);
     
     if(res === 201){
       toast({
@@ -58,7 +65,9 @@ export function DataTableToolbar<TData>({
         ),
       }
     )
-    table.reset()
+    
+    table.reset();
+
     }else{
       toast({
           title: "Failed!!!",
@@ -122,38 +131,46 @@ export function DataTableToolbar<TData>({
                 <DialogDescription>
                   Update selected{" "}({table.getFilteredSelectedRowModel().rows.length}) records in bulk.
                 </DialogDescription>
-                {
+                {response === null &&
                   table.getFilteredSelectedRowModel().rows?.length ? (
                     table.getFilteredSelectedRowModel().rows.map((row) => (
                       <>
-                      <li
-                      key={row.id}
-                      className="flex space-x-2"
-                      >
-                        <Badge variant='outline'>{row.getValue('national_id')}</Badge>
-                        <Badge variant='secondary'>{row.getValue('reg_status')}</Badge>
-                        <Badge variant='default'>{row.getValue('endorsement_status')}</Badge>
-                      </li>
-                      <Separator/>
+                        <li
+                        key={row.id}
+                        className="flex space-x-2"
+                        >
+                          <Badge variant='outline'>{row.getValue('national_id')}</Badge>
+                          <Badge variant='secondary'>{row.getValue('reg_status')}</Badge>
+                          <Badge variant='default'>{row.getValue('endorsement_status')}</Badge>
+                        </li>
+                        <Separator/>
                       </>
                     ))
                   ):(
-                    <></>
+                    <>
+                    
+                    </>
                   )
+                }
+                {response === 201 &&
+                  <>
+                      <span>The record(s) have been processed successfully.</span>
+                  </>
                 }
               </DialogHeader>
               <DialogFooter
               >
-              {userRole.includes(topManagement[0]) && 
+              {userRole.includes(topManagement[0]) && response === null &&
               <Button 
               type="submit"
               variant='outline'
               onClick={async () => await handleBulkStatusUpdate('Endorsement-Recommendation')}
               >Recommend</Button>}
+              {userRole.includes(topManagement[0]) && response === null &&
                 <Button 
                 type="submit"
                 onClick={async () => await handleBulkStatusUpdate('Endorsement-Complete')}
-                >Endorse</Button>
+                >Endorse</Button>}
               </DialogFooter>
             </DialogContent>
           </Dialog>
