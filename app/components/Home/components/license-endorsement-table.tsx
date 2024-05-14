@@ -4,6 +4,7 @@ import { getLicenseEndorsementRecords } from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
 import { endorse_columns } from "./upper-mgt-columns";
+import { license_endorse_columns } from "./license-endorsement-column";
 
 interface WorkProps{
     status: string;
@@ -46,8 +47,8 @@ interface Registration {
             {isLoading ? (
                 <LoadingSkeleton/>
             ):response?.teacher_registrations ? (
-                <DataTable data={response.teacher_registrations} columns={endorse_columns} userRole={userRole}/>
-            ): <DataTable data={[]} columns={endorse_columns} userRole={userRole}/>}
+                <DataTable data={response.teacher_registrations} columns={license_endorse_columns} userRole={userRole}/>
+            ): <DataTable data={[]} columns={license_endorse_columns} userRole={userRole}/>}
         </div>
     )
  }
