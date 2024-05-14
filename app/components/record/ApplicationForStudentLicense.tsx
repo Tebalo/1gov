@@ -391,11 +391,11 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
                                                         <FormLabel>Reason</FormLabel>
                                                             <Select onValueChange={field.onChange} value={field.value}>
                                                                 <SelectTrigger className="w-[200px]">
-                                                                    <SelectValue placeholder="Select a rejection type" />
+                                                                    <SelectValue placeholder="Select..." />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                     <SelectGroup>
-                                                                        <SelectLabel>Rejections</SelectLabel>
+                                                                        <SelectLabel>Selections</SelectLabel>
                                                                         {prev_status &&(<SelectItem value={prev_status}>{prev_status === 'Pending-Review' ? (<>Return to reg-officer</>):(<>Return to customer</>)}</SelectItem>)}
                                                                         {inv_status && (<SelectItem value={inv_status}>Route to investigations</SelectItem>)}
                                                                         {rej_status && (<SelectItem value={rej_status}>Send to rejected</SelectItem>)}
