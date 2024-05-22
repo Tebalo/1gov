@@ -1,6 +1,6 @@
-import { PageTitle } from "./PageTitle";
+import { PageTitle } from "../PageTitle";
 
-export const SnrRegistrationOfficerDashboard = () => {
+export const AdminDashboard = () => {
     return(
         <>
         <div className="overflow-auto h-screen rounded-lg">

@@ -238,8 +238,18 @@ export async function UpdateLicenseStatus(id: string, status: string ){
           'Content-Type': 'application/json'
       }
   })
-  console.log(res.status)
   return res.status
+}
+
+export async function GetReports(){
+  const res = await fetch(`${apiUrl}/StatisticalReports/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    cache: 'no-store'
+  })
+  return res.json()
 }
 
 export async function UpdateLicenseEndorsementStatus(id: string, status: string ){
