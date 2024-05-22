@@ -1,12 +1,12 @@
 import { getSession } from "@/app/auth/auth";
 import { AccessDenied } from "@/app/components/AccessDenied";
-import { AdminDashboard } from "@/app/components/AdminDashboard";
+import { AdminDashboard } from "@/app/components/dashboard/AdminDashboard";
 import { DirectorDashboard } from "@/app/components/DirectorDashboard";
-import { ManagerDashboard } from "@/app/components/ManagerDashboard";
-import { RegistrarDashboard } from "@/app/components/RegistrarDashboard";
-import { RegistrationOfficerDashboard } from "@/app/components/RegistrationOfficerDashboard";
-import { SnrRegistrationOfficerDashboard } from "@/app/components/SnrRegistrationOfficerDashboard";
-import { TeacherDashboard } from "@/app/components/TeacherDashboard";
+import { ManagerDashboard } from "@/app/components/dashboard/ManagerDashboard";
+import { RegistrarDashboard } from "@/app/components/dashboard/RegistrarDashboard";
+import { RegistrationOfficerDashboard } from "@/app/components/dashboard/RegistrationOfficerDashboard";
+import { SnrRegistrationOfficerDashboard } from "@/app/components/dashboard/SnrRegistrationOfficerDashboard";
+import { TeacherDashboard } from "@/app/components/dashboard/TeacherDashboard";
 import { redirect } from "next/navigation";
 
 export default async function Dashboard(){
