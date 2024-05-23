@@ -252,6 +252,17 @@ export async function GetReports(){
   return res.json()
 }
 
+export async function getMonthlyTeacherRegistrations(){
+  const res = await fetch(`${apiUrl}/Monthly-Statistics/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    cache: 'no-store'
+  })
+  return res.json()
+}
+
 export async function UpdateLicenseEndorsementStatus(id: string, status: string ){
 
   const res = await fetch(`${licUrl}/license_applications/${id}?endorsement_status=${status}`,{

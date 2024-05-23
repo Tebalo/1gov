@@ -1,7 +1,7 @@
 import { getSession } from "@/app/auth/auth";
 import { AccessDenied } from "@/app/components/AccessDenied";
 import { AdminDashboard } from "@/app/components/dashboard/AdminDashboard";
-import { DirectorDashboard } from "@/app/components/DirectorDashboard";
+import { DirectorDashboard } from "@/app/components/dashboard/DirectorDashboard";
 import { ManagerDashboard } from "@/app/components/dashboard/ManagerDashboard";
 import { RegistrarDashboard } from "@/app/components/dashboard/RegistrarDashboard";
 import { RegistrationOfficerDashboard } from "@/app/components/dashboard/RegistrationOfficerDashboard";

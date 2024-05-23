@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CalendarDateRangePicker } from "./date-range-picker";
 import { RecentSales } from "./recent-sales";
-import { Overview } from "./overview";
+import { Overview } from "./components/overview";
 import { AllTeacherRegistrations } from "./components/AllTeacherRegistrations";
 import { TeacherRegistrations } from "./components/TeacherRegistrations";
 import { StudentRegistrations } from "./components/StudentRegistrations";
