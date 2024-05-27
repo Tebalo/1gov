@@ -77,15 +77,14 @@ export async function login(formData: FormData) {
       throw error
     }
   }
-  export async function validateOTP(formData: FormData) {
+  export async function validateOTP(username: string, otp: string) {
     // Verify credentials && get the user
   
     //const user = { email: formData.get("email"), name: "John" };
     const payload = {
-        username: formData.get('username'),
-        password: formData.get('otp')
+        username: username,
+        otp: otp
     }
-    //console.log(payload)
     try{
         const res = await fetch(`${validateUrl}`,{
             method: 'POST',
@@ -96,23 +95,32 @@ export async function login(formData: FormData) {
             body: JSON.stringify({...payload}),
         })
         return res.json()
-        console.log(res.json())
     } catch(error){
       throw error
     }
   }
-export async function DeTokenize(){
+export async function DeTokenize(access_token: string){
+  console.log(DeTokenizeUrl,access_token)
   try{
-    const res = await fetch(`${DeTokenizeUrl}`, {cache:'no-cache'})
+    const res = await fetch(`${DeTokenizeUrl}${access_token}`, 
+      {
+        method: 'POST',
+        cache:'no-cache',
+        headers: {
+          'Content-Type': 'application/json'
+      },
+      }
+    )
+
     if(res.ok){
       const user = await res.json()
-      //console.log('miserable:',user)
       // Create the session
       const expires = new Date(Date.now() + 3600 * 1000);
       const session = await encrypt({ user, expires });
       // Save the session in a cookie
-      cookies().set("session", session, { expires, httpOnly: true });
-      redirect('/trls/home')
+      cookies().set("session9", session, { expires, httpOnly: true });
+      return res.json()
+      // redirect('/trls/home')
     } else {
       return res.json();
     }
