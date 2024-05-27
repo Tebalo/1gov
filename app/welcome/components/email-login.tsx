@@ -175,7 +175,7 @@ export const InputOTPControlled: React.FC<OTPProps> = ({username, password}) => 
         </div>
         <div className="flex justify-end">
             {response?.code === undefined && <Button type="submit" className="w-full" onClick={async () => await onOtpSubmit(value)} disabled={isOtpLoading}>{isOtpLoading ? (<>validating...</>): (<>Submit</>)}</Button>}
-            {response?.code === 400 && <Button type="submit" className="w-full" onClick={async () => await onSubmit()} disabled={isOtpLoading}>{isOtpLoading ? (<>validating...</>): (<>Resent OTP</>)}</Button>}
+            {response?.code === 400 && <Button type="submit" className="w-full" onClick={async () => await onSubmit()} disabled={isOtpLoading}>{isOtpLoading ? (<>Fetching...</>): (<>Resent OTP</>)}</Button>}
         </div>
       </div>
     )

@@ -119,8 +119,8 @@ export async function DeTokenize(access_token: string){
       const session = await encrypt({ user, expires });
       // Save the session in a cookie
       cookies().set("session", session, { expires, httpOnly: true });
-      return res.json()
-      // redirect('/trls/home')
+      redirect('/trls/home')
+      // return res.json()
     } else {
       return res.json();
     }
