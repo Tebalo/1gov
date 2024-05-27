@@ -3,13 +3,14 @@ import { PageTitle } from "../PageTitle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarDateRangePicker } from "./date-range-picker";
-import { RecentSales } from "./recent-sales";
+import { RecentSales } from "./components/recent-sales";
 import { Overview } from "./components/overview";
 import { AllTeacherRegistrations } from "./components/AllTeacherRegistrations";
 import { TeacherRegistrations } from "./components/TeacherRegistrations";
 import { StudentRegistrations } from "./components/StudentRegistrations";
 import { MaleTeacherRegistrations } from "./components/MaleTeacherRegistrations";
-import { MonthlyTeacherRegistrations } from "./components/MonthlyTeacherRegistrations";
+import { MonthlyTeacherRegistrations } from "./components/MonthlyTeacherRegistrations-SimpleBarGraph";
+import { ListOfTeacherRegistrationsByStatus } from "./components/TeacherRegistrationByStatus-List";
 
 export const DirectorDashboard = () => {
     return(
@@ -64,7 +65,7 @@ export const DirectorDashboard = () => {
                                                 </CardDescription>
                                             </CardHeader>
                                             <CardContent>
-                                                <RecentSales />
+                                                <ListOfTeacherRegistrationsByStatus />
                                             </CardContent>
                                         </Card>
                                     </div>
