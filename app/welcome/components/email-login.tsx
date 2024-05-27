@@ -23,6 +23,7 @@ import {
   } from "@/components/ui/input-otp"
 
 import * as React from "react"
+import { redirect } from "next/dist/server/api-utils"
 interface field{
     fieldName: string,
     fieldLabel: string,
@@ -120,7 +121,8 @@ export const InputOTPControlled: React.FC<OTPProps> = ({username, password}) => 
             if(response?.access_token){
                 const token = await DeTokenize(response?.access_token);
                 console.log('token',token)
-                setDetokenizedAccessToken(token)
+                await setDetokenizedAccessToken(token)
+                // redirect('/trls/home')
             }
             setIsOtpLoading(false)
         }
