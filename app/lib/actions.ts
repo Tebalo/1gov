@@ -238,8 +238,40 @@ export async function UpdateLicenseStatus(id: string, status: string ){
           'Content-Type': 'application/json'
       }
   })
-  console.log(res.status)
   return res.status
+}
+
+export async function GetReports(){
+  const res = await fetch(`${apiUrl}/StatisticalReports/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    cache: 'no-store'
+  })
+  return res.json()
+}
+
+export async function getMonthlyTeacherRegistrations(){
+  const res = await fetch(`${apiUrl}/Monthly-Statistics/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    cache: 'no-store'
+  })
+  return res.json()
+}
+
+export async function getTeacherRegistrationsByStatus(){
+  const res = await fetch(`${apiUrl}/Status-Statistics/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    cache: 'no-store'
+  })
+  return res.json()
 }
 
 export async function UpdateLicenseEndorsementStatus(id: string, status: string ){

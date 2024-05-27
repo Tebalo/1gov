@@ -396,10 +396,10 @@ export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole
                                                                 <SelectContent>
                                                                     <SelectGroup>
                                                                         <SelectLabel>Selections</SelectLabel>
-                                                                        {prev_status &&(<SelectItem value={prev_status}>{prev_status === 'Pending-Review' ? (<>Reg-officer</>):(<>Customer</>)}</SelectItem>)}
-                                                                        {inv_status && (<SelectItem value={inv_status}>Investigations</SelectItem>)}
-                                                                        {rej_status && (<SelectItem value={rej_status}>Rejected</SelectItem>)}
-                                                                        {bar_status && (<SelectItem value={bar_status}>Barred</SelectItem>)}
+                                                                        {prev_status &&(<SelectItem value={prev_status}>{prev_status === 'Pending-Review' ? (<>Return to reg-officer</>):(<>Return to customer</>)}</SelectItem>)}
+                                                                        {inv_status && (<SelectItem value={inv_status}>Route to investigations</SelectItem>)}
+                                                                        {rej_status && (<SelectItem value={rej_status}>Send to rejected</SelectItem>)}
+                                                                        {bar_status && (<SelectItem value={bar_status}>Send to barred</SelectItem>)}
                                                                     </SelectGroup>
                                                                 </SelectContent>
                                                             </Select>
