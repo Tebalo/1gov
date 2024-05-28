@@ -123,7 +123,7 @@ export async function DeTokenize(access_token: string){
       // Save the session in a cookie
       cookies().set("session", session, { expires, httpOnly: true });
       console.log('Session cookie set'); // Confirm cookie set
-      // redirect('/trls/home')
+      redirect('/trls/home')
       //return await res.json()
     } else {
       console.log('Response error data:', await res.json());
