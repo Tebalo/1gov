@@ -87,7 +87,7 @@ const NavUtils: React.FC<SidebarProps> = ({ userRole}) =>{
                         <AvatarImage src="/avatars/01.png" alt="Avatar" />
                         <AvatarFallback>{userRole ? userRole[0] : ''}</AvatarFallback>
                     </Avatar>
-                    <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole ? userRole : 'Access Revoked'}</span></div>
+                    <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
                 </div>
                 </Button>
             </PopoverTrigger>

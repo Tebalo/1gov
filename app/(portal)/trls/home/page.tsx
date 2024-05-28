@@ -16,9 +16,9 @@ import { redirect } from "next/navigation";
 export default async function Home(){
     const session = await getSession();
     // const userRole = session?.user?.roles[0]
-    const userRole = session?.real_access?.roles[0]
-    console.log('home', session?.realm_access?.roles)
-    if(!session?.realm_access){
+    const userRole = session?.user?.realm_access?.roles[0]
+    console.log('home', session?.user?.realm_access?.roles[0])
+    if(!session?.user?.realm_access){
         redirect('/welcome')
     }
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){

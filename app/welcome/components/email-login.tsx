@@ -24,6 +24,9 @@ import {
 
 import * as React from "react"
 import { redirect } from "next/dist/server/api-utils"
+
+import { useRouter } from 'next/navigation'
+
 interface field{
     fieldName: string,
     fieldLabel: string,
@@ -109,7 +112,7 @@ export const InputOTPControlled: React.FC<OTPProps> = ({username, password}) => 
     const [response, setOTPResponse] = useState<OTPResponse | null>(null)
     const [access, setAccess] = useState<Response | null>(null)
     const [detokenizedAccessToken, setDetokenizedAccessToken] = useState<DeTokenizeResponse | null>(null)
-
+    const router = useRouter()
     async function onOtpSubmit(otp: string){
         setIsOtpLoading(true)
 
@@ -119,8 +122,8 @@ export const InputOTPControlled: React.FC<OTPProps> = ({username, password}) => 
             await setOTPResponse(res)
             
             if(res?.access_token){
-                const json = await DeTokenize(res?.access_token);
-                console.log('token',json)
+                await DeTokenize(res?.access_token);
+                router.push('/trls/home')
                 // await setDetokenizedAccessToken(token)
                 // redirect('/trls/home')
             }else{

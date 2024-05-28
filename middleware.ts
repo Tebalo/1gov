@@ -4,9 +4,9 @@ import { getSession, updateSession } from "./app/auth/auth";
 export async function  middleware(request:NextRequest) {
     //return await updateSession(request);
     const session = await getSession();
-    console.log('middleware', session)
-    console.log('boolean', session?.active)
-    if(!session?.realm_access && !request?.nextUrl?.pathname?.startsWith('/welcome')){
+
+    console.log('ROLE 1', session?.user?.realm_access?.roles[0])
+    if(!session?.user?.realm_access?.roles[0] && !request?.nextUrl?.pathname?.startsWith('/welcome')){
       return Response.redirect(new URL('/welcome', request.url))
     }else if(session?.user?.access && (request?.nextUrl?.pathname === '/')){
       return Response.redirect(new URL('/trls//home', request.url))
