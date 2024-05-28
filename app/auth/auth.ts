@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation'
 import { DeTokenizeUrl, authUrl, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
+import { isRedirectError } from 'next/dist/client/components/redirect';
 /**
  * An authentication context or service that handles user authentication and 
  * role-based authorization
@@ -63,6 +64,7 @@ export async function login(formData: FormData) {
         password: formData.get('password')
     }
     //console.log(payload)
+    
     try{
         const res = await fetch(`${authUrl}`,{
             method: 'POST',
@@ -74,6 +76,9 @@ export async function login(formData: FormData) {
         })
         return res.json()
     } catch(error){
+      if (isRedirectError(error)) {
+        throw error;
+        }
       throw error
     }
   }
@@ -100,9 +105,8 @@ export async function login(formData: FormData) {
     }
   }
 export async function DeTokenize(access_token: string){
-
+  let success = false
   try{
-    console.log('DeTokenize called with access_token:', access_token); // Log input
     const res = await fetch(`${DeTokenizeUrl}${access_token}`, 
       {
         method: 'POST',
@@ -112,26 +116,24 @@ export async function DeTokenize(access_token: string){
       },
       }
     )
-    console.log('Response status:', res.status); // Log response status
     if(res.ok){
       const user = await res.json()
-      console.log('User data:', user); // Log user data
+
       // Create the session
       const expires = new Date(Date.now() + 3600 * 1000);
       const session = await encrypt({ user, expires });
-      console.log('Session created:', session); // Log session data
+
       // Save the session in a cookie
       cookies().set("session", session, { expires, httpOnly: true });
-      console.log('Session cookie set'); // Confirm cookie set
-      redirect('/trls/home')
-      //return await res.json()
     } else {
-      console.log('Response error data:', await res.json());
       return await res.json();
     }
   } catch(error){
-    console.error('DeTokenize error:', error);
     throw error
+  }finally{
+    if(success){
+      redirect('/trls/home')
+    }
   }
 }
 export async function logout() {

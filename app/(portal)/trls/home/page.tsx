@@ -17,7 +17,8 @@ export default async function Home(){
     const session = await getSession();
     // const userRole = session?.user?.roles[0]
     const userRole = session?.real_access?.roles[0]
-    if(!session?.real_access){
+    console.log('home', session?.realm_access?.roles)
+    if(!session?.realm_access){
         redirect('/welcome')
     }
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
