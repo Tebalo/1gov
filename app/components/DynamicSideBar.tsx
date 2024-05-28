@@ -5,8 +5,9 @@ import NavUtils from "./NavComponents/NavUtilis";
 
 const DynamicSidebar: React.FC = async ({}) => {
     const session = await getSession();
-    const userRole = session?.user?.roles[0] 
-
+    console.log(session)
+    const userRole = session?.user?.realm_access?.roles[0]
+    const username = session?.user?.username
     return (
         <aside id="dynamic-sidebar" className=" top-0 left-0 lg:w-52 shadow-xl transition-transform -translate-x-full sm:translate-x-0 hidden md:block" aria-label="Sidebar">
             <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
@@ -21,7 +22,7 @@ const DynamicSidebar: React.FC = async ({}) => {
                     />
                 </div>
                 <div className="absolute bottom-0 w-full border-t bg-sky-400">
-                        <NavUtils userRole={userRole}/>
+                        <NavUtils userRole={username}/>
                 </div>
             </div>
         </aside>

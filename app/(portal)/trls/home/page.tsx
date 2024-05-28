@@ -15,29 +15,31 @@ import { redirect } from "next/navigation";
 
 export default async function Home(){
     const session = await getSession();
-    const userRole = session?.user?.roles[0]
-    if(!session?.user?.access){
+    // const userRole = session?.user?.roles[0]
+    const userRole = session?.user?.realm_access?.roles[0]
+    console.log('home', session?.user?.realm_access?.roles[0])
+    if(!session?.user?.realm_access){
         redirect('/welcome')
     }
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
         return <TeacherHome/>
-    } else if(userRole === 'registration_officer'){
+    } else if(userRole === 'registration_officer' || userRole === 'REGISTRATION_OFFICER'){
         return <RegistrationOfficerHome/>
-    } else if(userRole === 'snr_registration_officer'){
+    } else if(userRole === 'snr_registration_officer' || userRole === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerHome/>
-    } else if(userRole === 'manager'){
+    } else if(userRole === 'manager' || userRole === 'MANAGER'){
         return <ManagerHome/>
-    } else if(userRole === 'director'){
+    } else if(userRole === 'director' || userRole === 'DIRECTOR'){
         return <DirectorHome/>
-    } else if(userRole === 'registrar'){
+    } else if(userRole === 'registrar' || userRole === 'REGISTRAR'){
         return <RegistrarHome/>
-    }else if(userRole === 'license_officer'){
+    }else if(userRole === 'license_officer' || userRole === 'LICENSE_OFFICER'){
         return <LicenseOfficerHome/>
-    } else if(userRole === 'snr_license_officer'){
+    } else if(userRole === 'snr_license_officer' || userRole === 'SNR_LICENSE_OFFICER'){
         return <SnrLicenseOfficerHome/>
-    } else if(userRole === 'license_manager'){
+    } else if(userRole === 'license_manager' || userRole === 'LICENSE_MANAGER'){
         return <LicenseManagerHome/>
-    } else if(userRole === "admin"){
+    } else if(userRole === "admin" || userRole === "ADMIN"){
         return <AdminHome/>
     } else {
         return <AccessDenied/>
