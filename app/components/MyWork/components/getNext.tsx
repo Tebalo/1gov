@@ -66,6 +66,7 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
         if(service_type==='license'){
             const response = await getNextLicense(status)
             if(response){
+                console.log(response)
                 setResponse(response ||  null)
             }else{
                 setLicense(null)

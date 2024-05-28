@@ -388,7 +388,7 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
                                                     name="status"
                                                     render={({ field }) => (
                                                         <FormItem>
-                                                        <FormLabel>Reason</FormLabel>
+                                                        <FormLabel>Send to</FormLabel>
                                                             <Select onValueChange={field.onChange} value={field.value}>
                                                                 <SelectTrigger className="w-[200px]">
                                                                     <SelectValue placeholder="Select..." />
@@ -397,9 +397,9 @@ export const ApplicationForStudentLicense: React.FC<Work> = (data, userRole) => 
                                                                     <SelectGroup>
                                                                         <SelectLabel>Selections</SelectLabel>
                                                                         {prev_status &&(<SelectItem value={prev_status}>{prev_status === 'Pending-Review' ? (<>Return to reg-officer</>):(<>Return to customer</>)}</SelectItem>)}
-                                                                        {inv_status && (<SelectItem value={inv_status}>Route to investigations</SelectItem>)}
-                                                                        {rej_status && (<SelectItem value={rej_status}>Send to rejected</SelectItem>)}
-                                                                        {bar_status && (<SelectItem value={bar_status}>Send to barred</SelectItem>)}
+                                                                        {inv_status && (<SelectItem value={inv_status}>Investigations</SelectItem>)}
+                                                                        {rej_status && (<SelectItem value={rej_status}>Rejected</SelectItem>)}
+                                                                        {bar_status && (<SelectItem value={bar_status}>Barred</SelectItem>)}
                                                                     </SelectGroup>
                                                                 </SelectContent>
                                                             </Select>
