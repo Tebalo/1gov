@@ -118,12 +118,15 @@ export const InputOTPControlled: React.FC<OTPProps> = ({username, password}) => 
         if(res){
             await setOTPResponse(res)
             
-            if(response?.access_token){
-                const token = await DeTokenize(response?.access_token);
-                console.log('token',token)
-                await setDetokenizedAccessToken(token)
+            if(res?.access_token){
+                const json = await DeTokenize(res?.access_token);
+                console.log('token',json)
+                // await setDetokenizedAccessToken(token)
                 // redirect('/trls/home')
+            }else{
+                setIsOtpLoading(false)
             }
+        }else{
             setIsOtpLoading(false)
         }
     }
@@ -136,9 +139,11 @@ export const InputOTPControlled: React.FC<OTPProps> = ({username, password}) => 
         formData.append('password', password);
 
         const res = await login(formData); // json respons
-        console.log(res) // print json response
+
         if(res){
             setAccess(res || null) // setting
+            setIsOtpLoading(false)
+        }else{
             setIsOtpLoading(false)
         }
     }
