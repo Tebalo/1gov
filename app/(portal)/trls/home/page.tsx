@@ -25,7 +25,6 @@ export default async function Home(){
     //         break;
     //     }
     // }
-    console.log('home', session?.user?.realm_access?.roles[0])
     if(!session?.user?.realm_access){
         redirect('/welcome')
     }
