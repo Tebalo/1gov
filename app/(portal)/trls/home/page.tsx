@@ -15,16 +15,16 @@ import { redirect } from "next/navigation";
 
 export default async function Home(){
     const session = await getSession();
-    // const userRole = session?.user?.roles[0]
+    const userRole = session?.user?.roles[0]
     const roles = ['REGISTRATION_OFFICER','SNR_REGISTRATION_OFFICER', 'MANAGER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN']
     // const userRole = session?.user?.realm_access?.roles[0]
-    let userRole = ''
-    for(const role in session?.user?.realm_access?.roles){
-        if(roles.includes(role)){
-            userRole = role
-            break;
-        }
-    }
+    // let userRole = ''
+    // for(const role of session?.user?.realm_access?.roles || []){
+    //     if(roles.includes(role)){
+    //         userRole = role
+    //         break;
+    //     }
+    // }
     console.log('home', session?.user?.realm_access?.roles[0])
     if(!session?.user?.realm_access){
         redirect('/welcome')
