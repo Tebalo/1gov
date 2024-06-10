@@ -20,8 +20,9 @@ export default async function Home(){
     // const userRole = session?.user?.realm_access?.roles[0]
     let userRole = ''
     for(const role in session?.user?.realm_access?.roles){
-        if(role in roles){
-         return userRole = role
+        if(roles.includes(role)){
+            userRole = role
+            break;
         }
     }
     console.log('home', session?.user?.realm_access?.roles[0])
