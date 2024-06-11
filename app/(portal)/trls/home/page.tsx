@@ -22,7 +22,7 @@ async function getRole() {
     }
     for(const role of session?.user?.realm_access?.roles || []){
         if(roles.includes(role)){
-            userRole = role;
+            userRole = await role;
             break;
         }
     }
