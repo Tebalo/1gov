@@ -12,22 +12,27 @@ import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistratio
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { redirect } from "next/navigation";
 
-export default async function Home(){
+async function getRole() {
     const session = await getSession();
-    //const userRole = session?.user?.realm_access?.roles[0]
+    let userRole = '';
     const roles = ['REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'MANAGER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
     
-    let userRole = '';
-
+    if(!session?.user?.realm_access){
+        redirect('/welcome');
+    }
     for(const role of session?.user?.realm_access?.roles || []){
         if(roles.includes(role)){
             userRole = role;
             break;
         }
     }
-    if(!session?.user?.realm_access){
-        redirect('/welcome');
-    }
+    return userRole;
+}
+
+export default async function Home(){
+    const session = await getSession();
+    const userRole = await getRole()
+
 
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
         return <TeacherHome/>
