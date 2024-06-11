@@ -38,12 +38,11 @@ const NavUtils: React.FC<SidebarProps> = ({ userRole}) =>{
             <PopoverTrigger asChild>
                 <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
                 <div className="flex lg:justify-start justify-center md:w-full items-center">
-                    {/*<div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div>*/}
                 <Avatar className="h-6 w-6">
                         <AvatarImage src="/avatars/01.png" alt="Avatar" />
                         <AvatarFallback>{userRole ? userRole[0] : ''}</AvatarFallback>
                     </Avatar>
-                    <div><span className="flex-1 hidden lg:block ms-2 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
+                    <div><span className="flex-1 hidden lg:block ms-1 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
                 </div>
                 </Button>
             </PopoverTrigger>
