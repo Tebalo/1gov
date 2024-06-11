@@ -1,22 +1,8 @@
-import { Work } from "../MyWork/work";
 import { PageTitle } from "../PageTitle";
-import { columns } from "./components/columns";
-import { DataTable } from "./components/data-table";
-import { regSchema} from "./data/schema";
-import { z } from "zod"
-import { getAll, getRegApplications } from "@/app/lib/actions";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SelectTable } from "./components/select-table";
 
-// Simulate a database read for tasks.
-async function getTasks() {
-    const data = await getAll()  
-    return z.array(regSchema).parse(data)
-  }
-
 export const SnrLicenseOfficerHome = async () => {
-    const tasks = await getRegApplications('Pending-Review','20')
     return(
         <>
         <div className="overflow-auto h-screen rounded-lg">

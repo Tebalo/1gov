@@ -1,9 +1,4 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Work } from "../MyWork/work";
 import { PageTitle } from "../PageTitle";
-import { DataTable } from "./components/data-table";
-import { columns } from "./components/columns";
-import { getRegApplications } from "@/app/lib/actions";
 import {
   Select,
   SelectContent,
@@ -13,17 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Suspense } from "react";
 import { Label } from "@/components/ui/label";
 import { SelectTable } from "./components/select-table";
 
 export const DirectorHome = async () => {
-    let tasks = await getRegApplications('Pending-Director-Review','20')
-    if(!tasks){
-      tasks = []
-    }
     return(
       <>
       <div className="overflow-auto h-screen rounded-lg">

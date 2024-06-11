@@ -4,7 +4,6 @@ import { SelectTable } from "./components/select-table";
 
 
 export const RegistrationOfficerHome = async () => {
-    //const tasks = await getRegApplications('Pending-Review','20')
     return(
         <>
         <div className="overflow-auto h-screen rounded-lg">
