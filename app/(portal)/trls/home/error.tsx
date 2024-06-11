@@ -16,7 +16,7 @@ export default function Error({
  
   return (
     <main className="flex h-full flex-col items-center justify-center">
-      <h2 className="text-center text-black">Something went wrong! {error && (<span>{error.message},{error.name},{error.digest}</span>)}</h2>
+      <h2 className="text-center text-black">Something went wrong! {error && (<span className='grid grid-cols-2'><div>Message: {error?.message}</div><div>Name: {error?.name}</div><div>Digest: {error?.digest}</div><div>Stack: {error?.stack}</div> <div>Cause: {}</div> </span>)}</h2>
       <button
         className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
         onClick={
