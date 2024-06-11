@@ -12,30 +12,25 @@ import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistratio
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { redirect } from "next/navigation";
 
-
 export default async function Home(){
     const session = await getSession();
-    // const userRole = session?.user?.roles[0]
     //const userRole = session?.user?.realm_access?.roles[0]
-    console.log('home', session?.user?.realm_access?.roles[0])
+    const roles = ['REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'MANAGER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
+    
+    let userRole = '';
 
-    //const userRole = session?.user?.roles[0]
-    const roles = ['REGISTRATION_OFFICER','SNR_REGISTRATION_OFFICER', 'MANAGER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN']
-    //const userRole = session?.user?.realm_access?.roles[0]
-    let userRole = ''
     for(const role of session?.user?.realm_access?.roles || []){
         if(roles.includes(role)){
-            userRole = role
+            userRole = role;
             break;
         }
     }
+    console.log(session?.user?.realm_access?.roles)
+
     if(!session?.user?.realm_access){
-        redirect('/welcome')
+        redirect('/welcome');
     }
-    
-    if(!session?.user?.realm_access){
-        redirect('/welcome')
-    }
+
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
         return <TeacherHome/>
     } else if(userRole === 'registration_officer' || userRole === 'REGISTRATION_OFFICER'){
