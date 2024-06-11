@@ -5,15 +5,28 @@ import WorkArea from "@/app/components/record/work-area";
 import { getRegById } from "@/app/lib/actions";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+async function getRole() {
+    const session = await getSession();
+    let userRole = '';
+    const roles = ['REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'MANAGER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
+    
+    if(!session?.user?.realm_access){
+        redirect('/welcome');
+    }
+    for(const role of session?.user?.realm_access?.roles || []){
+        if(roles.includes(role)){
+            userRole = role;
+            break;
+        }
+    }
+    return userRole;
+}
 
 export default async function Page({params}:{params: {slug: string}}){
     const id = await params.slug;
     const work = await getRegById(id)
     const session = await getSession();
-    const userRole = await session?.user?.roles[0]
-    if(!session?.user?.access){
-        redirect('/welcome')
-    }
+    const userRole = await getRole()
     return (
         <main className="h-full">
             <div className="flex flex-row h-full gap-0">
