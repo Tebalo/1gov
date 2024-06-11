@@ -16,7 +16,7 @@ export async function  middleware(request:NextRequest) {
         }
     }
 
-    if(!userRole && !request?.nextUrl?.pathname?.startsWith('/welcome')){
+    if(userRole==='' && !request?.nextUrl?.pathname?.startsWith('/welcome')){
       return Response.redirect(new URL('/welcome', request.url))
     }else if(session?.user?.access && (request?.nextUrl?.pathname === '/')){
       return Response.redirect(new URL('/trls//home', request.url))
