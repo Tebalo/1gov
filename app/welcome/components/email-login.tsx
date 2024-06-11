@@ -229,16 +229,6 @@ export const Email: React.FC = () => {
             setResponse(res || null) // setting
             setIsLoading(false)
         }
-        // if(!res){
-        //     setIsRedirecting(true)
-        // }
-        // if(res){
-        //     setResponse(res || null)
-        //     console.log(response)
-        // }else{
-        //     setResponse(null)
-        // }
-        // setIsLoading(false)
     }
 
     const email = form.watch('email');
@@ -256,10 +246,10 @@ export const Email: React.FC = () => {
                             name="email"
                             render={({field}) =>{
                                 return <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>1GOV ID</FormLabel>
                                     <FormControl>
                                         <Input
-                                        placeholder="name@botepco.com"
+                                        placeholder="123456789"
                                         type="text"
                                         {...field}
                                         />
@@ -276,7 +266,7 @@ export const Email: React.FC = () => {
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
                                         <Input
-                                        placeholder=""
+                                        placeholder="********"
                                         type="password"
                                         {...field}
                                         />
@@ -291,55 +281,6 @@ export const Email: React.FC = () => {
             </Form>}
             {response && response?.code !== 401 && 
                 <InputOTPControlled username={email} password={password}/>
-                // <Form {...otpform}>
-                //     <form onSubmit={otpform.handleSubmit(onOtpSubmit)}>
-                //         <div className="grid gap-4 py-4">
-                //             {/* <FormField
-                //                 control={form.control}
-                //                 name="email"
-                //                 render={({field}) =>{
-                //                     return <FormItem>
-                //                         <FormLabel>Email</FormLabel>
-                //                         <FormControl>
-                //                             <Input
-                //                             placeholder="name@botepco.com"
-                //                             type="text"
-                //                             {...field}
-                //                             />
-                //                         </FormControl>
-                //                         <FormMessage/>
-                //                     </FormItem>
-                //                 }}
-                //             />  */}
-                //             <FormField
-                //                 control={otpform.control}
-                //                 name="otp"
-                //                 render={({ field }) => (
-                //                     <FormItem>
-                //                     <FormLabel>One-Time Password</FormLabel>
-                //                     <FormControl>
-                //                         <InputOTP maxLength={6} {...field}>
-                //                         <InputOTPGroup>
-                //                             <InputOTPSlot index={0} />
-                //                             <InputOTPSlot index={1} />
-                //                             <InputOTPSlot index={2} />
-                //                             <InputOTPSlot index={3} />
-                //                             <InputOTPSlot index={4} />
-                //                             <InputOTPSlot index={5} />
-                //                         </InputOTPGroup>
-                //                         </InputOTP>
-                //                     </FormControl>
-                //                     <FormDescription>
-                //                         Please enter the one-time password sent to your phone.
-                //                     </FormDescription>
-                //                     <FormMessage />
-                //                     </FormItem>
-                //                 )}
-                //             />
-                //             <Button type="submit" disabled={isOtpLoading}>{isOtpLoading ? (<>validating...</>): (<>Submit</>)}</Button>
-                //         </div>
-                //     </form>
-                // </Form>
             }
         </>
     )

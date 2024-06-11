@@ -74,8 +74,8 @@ export default function Welcome() {
                             </DialogHeader>
                             <Tabs defaultValue="email" className="w-full">
                                 <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="email">Email</TabsTrigger>
-                                    <TabsTrigger value="onegov">1Gov ID</TabsTrigger>
+                                    <TabsTrigger value="email">1Gov ID</TabsTrigger>
+                                    <TabsTrigger value="onegov" disabled>Email</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="email">
                                     <Email/>
