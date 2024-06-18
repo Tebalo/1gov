@@ -61,7 +61,7 @@ const items = [
     approve_label: string | null;
     recommend_label: string | null;
     endorse_label: string | null; } => {
-    const statusTransition = statusTransitions[userRole] || statusTransitions['Default'];
+    const statusTransition = statusTransitions[userRole.toLowerCase()] || statusTransitions['Default'];
     return statusTransition;
 };
 

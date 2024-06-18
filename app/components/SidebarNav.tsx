@@ -24,6 +24,7 @@ const user: SideBarItem[] = [
 const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
     const currentPath = usePathname();
     const staffRoles = ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', , 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN','registration_officer','snr_registration_officer','manager','director','registrar','admin']
+    const adminRoles = ['ADMIN','admin']
     return(
     <ul className="space-y-2 font-medium">
         <li className="flex space-x-2">
@@ -53,7 +54,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                 </div>
             </Link>
         </li>}
-        {staffRoles.includes(userRole) && <li className="flex space-x-2">
+        {adminRoles.includes(userRole) && <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/users' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
                 href="/trls/users"
@@ -80,7 +81,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                 </div>
             </Link>
         </li> */}
-        {staffRoles.includes(userRole) && <li className="flex space-x-2">
+        {adminRoles.includes(userRole) && <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/settings' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
                 href="/trls/settings"

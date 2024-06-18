@@ -14,6 +14,22 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 const key = new TextEncoder().encode(secretKey);
 
+export async function getRole() {
+  const session = await getSession();
+  let userRole = '';
+  const roles = ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', , 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
+  
+  if(!session?.user?.realm_access){
+      redirect('/welcome');
+  }
+  for(const role of session?.user?.realm_access?.roles || []){
+      if(roles.includes(role)){
+          userRole = await role;
+          break;
+      }
+  }
+  return userRole;
+}
 
 export async function encrypt(payload: any) {
     return await new SignJWT(payload)
