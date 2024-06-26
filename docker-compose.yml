@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - .:/usr/app
+      - /usr/app/node_modules
+    command: ["pm2-runtime", "npm", "--", "start"]
+    restart: always
