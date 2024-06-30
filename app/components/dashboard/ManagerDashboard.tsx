@@ -10,6 +10,7 @@ import { TeacherRegistrations } from "./components/TeacherRegistrations";
 import { StudentRegistrations } from "./components/StudentRegistrations";
 import { MaleTeacherRegistrations } from "./components/MaleTeacherRegistrations";
 import { MonthlyTeacherRegistrations } from "./components/MonthlyTeacherRegistrations-SimpleBarGraph";
+import { ListOfTeacherRegistrationsByStatus } from "./components/TeacherRegistrationByStatus-List";
 export const ManagerDashboard = () => {
     return(
         <>
@@ -61,7 +62,7 @@ export const ManagerDashboard = () => {
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <RecentSales />
+                                        <ListOfTeacherRegistrationsByStatus />
                                     </CardContent>
                                     </Card>
                                 </div>

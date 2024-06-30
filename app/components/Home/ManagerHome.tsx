@@ -1,11 +1,9 @@
 import { PageTitle } from "../PageTitle";
-import { getRegApplications } from "@/app/lib/actions";
 
 import { Label } from "@/components/ui/label";
 import { SelectTable } from "./components/select-table";
 
 export const ManagerHome = async () => {
-  const tasks = await getRegApplications('Pending-Manager-Review','20')
     return(
         <>
           <div className="overflow-auto h-screen rounded-lg">

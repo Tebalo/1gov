@@ -58,7 +58,7 @@ export const getNextStatus = (userRole: string): { prev_status: string | null; i
     approve_label: string | null;
     recommend_label: string | null;
     endorse_label: string | null; } => {
-    const statusTransition = statusTransitions[userRole] || statusTransitions['Default'];
+    const statusTransition = statusTransitions[userRole.toLowerCase()] || statusTransitions['Default'];
     return statusTransition;
 };
 export const ApplicationForStudentRegistration: React.FC<Work> = (data, userRole) => {

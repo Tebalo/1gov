@@ -14,6 +14,22 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 const key = new TextEncoder().encode(secretKey);
 
+export async function getRole() {
+  const session = await getSession();
+  let userRole = '';
+  const roles = ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', , 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
+  
+  if(!session?.user?.realm_access){
+      redirect('/welcome');
+  }
+  for(const role of session?.user?.realm_access?.roles || []){
+      if(roles.includes(role)){
+          userRole = await role;
+          break;
+      }
+  }
+  return userRole;
+}
 
 export async function encrypt(payload: any) {
     return await new SignJWT(payload)
@@ -49,21 +65,13 @@ export async function experiment(formData: FormData){
   const res = await login(formData)
 
   return res
-  // if(res?.ok){
-  //   redirect('/trls/home')
-  // }else{
-  //   return res?.json()
-  // }
 }
 export async function login(formData: FormData) {
-    // Verify credentials && get the user
-  
-    //const user = { email: formData.get("email"), name: "John" };
+
     const payload = {
         username: formData.get('username'),
         password: formData.get('password')
     }
-    //console.log(payload)
     
     try{
         const res = await fetch(`${authUrl}`,{
@@ -83,9 +91,6 @@ export async function login(formData: FormData) {
     }
   }
   export async function validateOTP(username: string, otp: string) {
-    // Verify credentials && get the user
-  
-    //const user = { email: formData.get("email"), name: "John" };
     const payload = {
         username: username,
         otp: otp
@@ -168,21 +173,12 @@ export async function updateSession(request: NextRequest) {
 export const register = async (username:string, password:string, roles:[]) => {
     try{
         const response = await axios.post(`${authUrl}/register/`, { username, password, roles });
-        //setAuthCookie(response.data);
+
         return response.data;
     } catch(error){
         throw error;
     }
 }
-
-// export const login = async (username:string,password:string) => {
-//     try{
-//         const response = await axios.post(`${authUrl}/login/`, { username, password });
-//         return response.data;
-//     } catch(error){
-//         throw error;
-//     }
-// }
 
 const setAuthCookie = (authData: any) => {
     const {access, refresh} = authData;

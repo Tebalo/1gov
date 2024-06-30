@@ -1,11 +1,8 @@
 import { PageTitle } from "../PageTitle";
-import { getRegApplications } from "@/app/lib/actions";
 import { SelectTable } from "./components/select-table";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const RegistrarHome = async () => {
-   const tasks = await getRegApplications('Pending-Registrar-Review','20')
     return(
     <>
       <div className="overflow-auto h-screen rounded-lg">

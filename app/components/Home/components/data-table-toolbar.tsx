@@ -25,7 +25,6 @@ import { BulkRegistrationUpdate } from "@/app/lib/actions";
 import { ToastAction } from "@/components/ui/toast";
 import {  toast, useToast } from "@/components/ui/use-toast";
 import { useRouter } from 'next/navigation'
-import { getSession } from "@/app/auth/auth";
 import { useState } from "react";
 
 interface DataTableToolbarProps<TData> {

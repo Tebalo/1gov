@@ -4,7 +4,7 @@ import Link from "next/link";
 import {motion} from 'framer-motion';
 import {useFormState, useFormStatus } from 'react-dom'
 import { z } from 'zod';
-import { authenticate, getSession } from "../auth/auth";
+import { authenticate} from "../auth/auth";
 
 const loginSchema = z.object({
     email: z.string().email('Invalid email format'),
@@ -56,7 +56,6 @@ function OneGovID(){
   
   function Email(){
     const [errorMessage, dispatch] = useFormState(authenticate, undefined)
-    //const session = await getSession();
     return(
       <section>
         <form action={dispatch}>

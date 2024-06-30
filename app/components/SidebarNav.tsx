@@ -1,7 +1,6 @@
 'use client'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/router';
 import { FaCogs, FaComments, FaCube, FaHome, FaLayerGroup, FaUser, FaUsers } from 'react-icons/fa';
 import { GrDashboard } from "react-icons/gr";
 
@@ -12,8 +11,6 @@ interface SideBarItem {
 }
 
 interface SidebarProps {
-    //sidebarItems: SideBarItem[];
-    //currentPath: string;
     userRole: string;
     activeLinkColor?: string;
     inactiveLinkColor?: string;
@@ -26,19 +23,10 @@ const user: SideBarItem[] = [
 
 const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
     const currentPath = usePathname();
-    const staffRoles = ['registration_officer','snr_registration_officer','manager','director','registrar','admin']
+    const staffRoles = ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', , 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN','registration_officer','snr_registration_officer','manager','director','registrar','admin']
+    const adminRoles = ['ADMIN','admin']
     return(
     <ul className="space-y-2 font-medium">
-        {/*{sidebarItems.map((item) =>(
-            <li key={item.path} className="flex space-x-2">
-                <div className={`${currentPath === item.path ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg':''}`}></div>
-                <Link href={item.path} className={`lg:flex items-center w-full lg:px-2 py-1 rounded-lg justify-start space-x-2 ${currentPath === item.path ? 'bg-sky-300':'text-gray-100'}`}>
-                    <div className="flex justify-center">{item.icon}</div>
-                    <div className="flex justify-center"><span className="text-gray-100  text-xs lg:text-base lg:font-semibold">{item.title}</span></div>
-                </Link>
-            </li>
-            )
-        )}*/}
         <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/home' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
@@ -66,7 +54,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                 </div>
             </Link>
         </li>}
-        {staffRoles.includes(userRole) && <li className="flex space-x-2">
+        {adminRoles.includes(userRole) && <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/users' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
                 href="/trls/users"
@@ -93,7 +81,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ userRole}) => {
                 </div>
             </Link>
         </li> */}
-        {staffRoles.includes(userRole) && <li className="flex space-x-2">
+        {adminRoles.includes(userRole) && <li className="flex space-x-2">
             <div className={`${currentPath === '/trls/settings' ? 'bg-sky-200 w-2 md:h-18 lg:h-12 my-1 rounded-lg': ''}}`}></div>
             <Link
                 href="/trls/settings"

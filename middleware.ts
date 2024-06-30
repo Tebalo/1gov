@@ -5,10 +5,20 @@ export async function  middleware(request:NextRequest) {
     //return await updateSession(request);
     const session = await getSession();
 
-    console.log('ROLE 1', session?.user?.realm_access?.roles[0])
-    if(!session?.user?.realm_access?.roles[0] && !request?.nextUrl?.pathname?.startsWith('/welcome')){
+    // const roles = ['REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'MANAGER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
+    
+    // let userRole = '';
+
+    // for(const role of session?.user?.realm_access?.roles || []){
+    //     if(roles.includes(role)){
+    //         userRole = role;
+    //         break;
+    //     }
+    // }
+
+    if(!session && !request?.nextUrl?.pathname?.startsWith('/welcome')){
       return Response.redirect(new URL('/welcome', request.url))
-    }else if(session?.user?.access && (request?.nextUrl?.pathname === '/')){
+    }else if(session?.user?.realm_access && (request?.nextUrl?.pathname === '/')){
       return Response.redirect(new URL('/trls//home', request.url))
     }
 }

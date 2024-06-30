@@ -34,60 +34,15 @@ const NavUtils: React.FC<SidebarProps> = ({ userRole}) =>{
       };
     return(
         <>
-            {/* <Popover>
-            <PopoverTrigger asChild>
-                <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
-                <div className="flex lg:justify-start justify-center md:w-full">
-                    <div className=""><FaExchangeAlt style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div> 
-                    <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">Switch Portal</span></div>
-                </div>
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-60" side='right' align="start">
-                <div className="grid gap-2">
-                    <div className="grid gap-2">
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="width">Customer</Label>
-                        </div>
-                        <Separator />
-                        <div className="grid grid-cols-2 items-center gap-4">
-                            <Label htmlFor="maxWidth" className="col-span-2">Registration Officer</Label>
-                        </div>
-                        <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <div className=""><Label htmlFor="height" className="">Snr. Registration Officer</Label></div>
-                            <div className=""><span className="flex w-3 h-3 me-3 bg-green-500 rounded-full"></span></div>
-                        </div>
-                        <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="maxHeight" className="col-span-2">Manager</Label>
-                        </div>
-                        <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="maxHeight" className="col-span-2">Director</Label>
-                        </div>
-                        <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="maxHeight" className="col-span-2">Register</Label>
-                        </div>
-                        <Separator />
-                        <div className="flex items-center w-full justify-between">
-                            <Label htmlFor="maxHeight" className="col-span-2">Admin</Label>
-                        </div>
-                    </div>
-                </div>
-            </PopoverContent>
-        </Popover> */}
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px=0">
                 <div className="flex lg:justify-start justify-center md:w-full items-center">
-                    {/*<div className=""><FaRegistered style={{ fontSize: '1.5rem', color: '#FFFFFF' }}/></div>*/}
                 <Avatar className="h-6 w-6">
                         <AvatarImage src="/avatars/01.png" alt="Avatar" />
                         <AvatarFallback>{userRole ? userRole[0] : ''}</AvatarFallback>
                     </Avatar>
-                    <div><span className="flex-1 hidden lg:block ms-3 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
+                    <div><span className="flex-1 hidden lg:block ms-1 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{userRole}</span></div>
                 </div>
                 </Button>
             </PopoverTrigger>

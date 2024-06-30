@@ -1,4 +1,4 @@
-import { getSession } from "@/app/auth/auth";
+import { getRole, getSession } from "@/app/auth/auth";
 import { ApplicationForStudentRegistration } from "@/app/components/record/AppForStudentRegistration";
 import CaseDetails from "@/app/components/record/record-details";
 import WorkArea from "@/app/components/record/work-area";
@@ -10,10 +10,8 @@ export default async function Page({params}:{params: {slug: string}}){
     const id = await params.slug;
     const work = await getRegById(id)
     const session = await getSession();
-    const userRole = await session?.user?.roles[0]
-    if(!session?.user?.access){
-        redirect('/welcome')
-    }
+    const userRole = await getRole();
+
     return (
         <main className="h-full">
             <div className="flex flex-row h-full gap-0">
