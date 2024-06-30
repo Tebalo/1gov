@@ -7,19 +7,15 @@ import { Stepper } from "../Stepper";
 import { Button } from "@/components/ui/button";
 import { Bio } from "./components/bio";
 import { StudyProgramme } from "./components/study-programme";
-import { Qualifications } from "./components/qualifications";
-import { Disability } from "./components/disability";
-import { Offence } from "./components/offence";
-import { Attachments } from "./components/attachments";
 import { Declaration } from "./components/declaration";
 import { StudentPreliminary } from "./components/student-preliminary";
 import { Recommendation } from "./components/recommendation";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { apiUrl, mgt, statusTransitions } from '@/app/lib/store';
+import { statusTransitions } from '@/app/lib/store';
 import { UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
 import { useRouter } from 'next/navigation'
 import { ToastAction } from '@/components/ui/toast';
-import { toast, useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
