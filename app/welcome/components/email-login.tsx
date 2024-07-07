@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -25,11 +24,9 @@ import {
 
 import { login, validateOTP, DeTokenize } from "@/app/auth/auth"
 
-// Move interfaces to a separate types file for better organization
-import { Response, OTPResponse, DeTokenizeResponse } from '@/types/auth'
 
-import { EyeIcon, EyeOffIcon } from "lucide-react" 
-import { Loader2 } from "lucide-react" 
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
+import { AuthResponse } from "@/app/lib/types"
 
 const FormSchema = z.object({
     email: z.string(),
@@ -41,7 +38,6 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
     const [isOtpLoading, setIsOtpLoading] = useState(false)
     const [isResendLoading, setIsResendLoading] = useState(false)
     const [isRedirecting, setIsRedirecting] = useState(false)
-    const [otpResponse, setOTPResponse] = useState<OTPResponse | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const router = useRouter()
@@ -51,16 +47,16 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
         setErrorMessage(null)
         setSuccessMessage(null)
         try {
-            const res = await validateOTP(username, value)
-            setOTPResponse(res)
-            if (res?.access_token) {
+            const authResponse: AuthResponse = await validateOTP(username, value)
+            if (authResponse.access_token) {
                 setIsRedirecting(true)
-                await DeTokenize(res.access_token)
+                await DeTokenize(authResponse)
                 router.push('/trls/home')
             } else {
                 setErrorMessage('OTP validation failed. Please try again.')
             }
         } catch (error) {
+            console.error('OTP validation error:', error)
             setErrorMessage('An error occurred during OTP validation. Please try again.')
         } finally {
             setIsOtpLoading(false)
@@ -79,6 +75,7 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
             setSuccessMessage('OTP resent successfully.')
             setValue("") // Clear the OTP input
         } catch (error) {
+            console.error('Resend OTP error:', error)
             setErrorMessage('Failed to resend OTP. Please try again.')
         } finally {
             setIsResendLoading(false)
@@ -148,9 +145,9 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
 }
 
 export const Email: React.FC = () => {
-    const [response, setResponse] = useState<Response | null>(null)
+    const [authResponse, setAuthResponse] = useState<AuthResponse | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [showPassword, setShowPassword] = useState(false) // New state for password visibility
+    const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema)
@@ -163,7 +160,7 @@ export const Email: React.FC = () => {
             formData.append('username', data.email)
             formData.append('password', data.password)
             const res = await login(formData)
-            setResponse(res)
+            setAuthResponse(res)
         } catch (error) {
             console.error('Login error:', error)
         } finally {
@@ -179,11 +176,11 @@ export const Email: React.FC = () => {
 
     return (
         <>
-            {(response?.code === 401 || response === null) ? (
+            {(!authResponse || authResponse.error) ? (
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="grid gap-4 py-4">
-                            {response?.code === 400 && <p className="text-red-600 text-sm">Invalid user credentials</p>}
+                            {authResponse?.error && <p className="text-red-600 text-sm">{authResponse.error_description || 'Invalid user credentials'}</p>}
                             <FormField
                                 control={form.control}
                                 name="email"
