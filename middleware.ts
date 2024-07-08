@@ -3,7 +3,7 @@ import { getSession, updateSession } from "./app/auth/auth";
 
 export async function middleware(request: NextRequest) {
   // First, try to update the session
-  // const updatedResponse = await updateSession(request);
+  const updatedResponse = await updateSession(request);
   
   // Get the current session
   const session = await getSession();
@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
 
   // If there's an updated response from updateSession, return it
   // This ensures any cookie updates are applied
-  return NextResponse.next();
+  return updatedResponse || NextResponse.next();
 }
 
 export const config = {
