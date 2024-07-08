@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
 import { DeTokenizeUrl, authUrl, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
-import { AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
+import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
 
 // Constants
 const key = new TextEncoder().encode(secretKey);
@@ -20,15 +20,6 @@ async function fetchWithErrorHandling(url: string, options: RequestInit): Promis
     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
   }
   return response.json();
-}
-
-// Main functions
-export async function getRole(): Promise<UserRole | ''> {
-  const session = await getSession();
-  if (!session?.user?.realm_access) {
-    redirect('/welcome');
-  }
-  return ROLES.find(role => session.user.realm_access?.roles.includes(role)) || '';
 }
 
 export async function encrypt(payload: any): Promise<string> {
@@ -117,9 +108,7 @@ export async function DeTokenize(authResponse: AuthResponse) {
 
     const expires = new Date(decodedToken.exp * 1000); // Convert expiration to milliseconds
     const session: Session = { 
-      auth: authResponse, 
-      user: decodedToken, 
-      expires 
+      auth: authResponse
     };
     const encryptedSession = await encrypt(session);
     cookies().set("session", encryptedSession, { expires, httpOnly: true });
@@ -131,6 +120,62 @@ export async function DeTokenize(authResponse: AuthResponse) {
   }
 }
 
+export async function decryptAccessToken(authResponse: AuthResponse){
+  try {
+    const decodedToken: DecodedToken = await fetchWithErrorHandling(`${DeTokenizeUrl}${authResponse.access_token}`, {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return decodedToken;
+  }catch(error){
+    console.error('Decryption error', error);
+    throw error;
+  }
+}
+
+export async function storeSession(authResponse: AuthResponse){
+  try{
+    const session: Session = {
+      auth: authResponse,
+      expires: new Date(Date.now() + 1800 * 1000).toString(),
+    }
+    const profile = await decryptAccessToken(authResponse)
+    await storeAccessGroups(profile)
+    const expires = new Date(Date.now() + session.auth.expires_in * 1000);
+    const encryptedSession = await encrypt(session)
+    cookies().set("session", encryptedSession, {expires, httpOnly: true});
+    redirect('/trls/home');
+  }catch (error){
+    throw error
+  }
+}
+
+export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
+  return roles.filter(role => ROLES.includes(role as UserRole)) as UserRole[];
+}
+
+export async function storeAccessGroups(decodedToken: DecodedToken){
+  try{
+    const expires = new Date(Date.now() + 1800 * 1000);
+    const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+    const access_group: AccessGroup = {
+      persona: personas,
+      current: personas[0],
+      username: decodedToken.name
+    }
+    const encryptedAccessGroup = await encrypt(access_group);
+    cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
+  } catch(error){
+    throw error;
+  }
+}
+export async function getAccessGroups(): Promise<AccessGroup | null>{
+  const encryptedAccessGroup = cookies().get("access")?.value;
+  if (!encryptedAccessGroup) return null;
+  return decrypt(encryptedAccessGroup);
+}
+
 export async function logout() {
   revalidatePath('/trls/home');
   cookies().set("session", "", { expires: new Date(0) });
@@ -138,6 +183,7 @@ export async function logout() {
 
 export async function getSession(): Promise<Session | null> {
   const encryptedSession = cookies().get("session")?.value;
+  
   if (!encryptedSession) return null;
   return decrypt(encryptedSession);
 }
@@ -148,13 +194,24 @@ export async function updateSession(request: NextRequest) {
   if (!session) return;
 
   const parsed: Session = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 3600 * 1000);
+  const expires = new Date(Date.now() + parsed.auth.expires_in * 1000);
   const res = NextResponse.next();
   res.cookies.set({
     name: "session",
     value: await encrypt(parsed),
     httpOnly: true,
-    expires: parsed.expires,
+    expires: expires,
   });
   return res;
+}
+
+// Main functions
+export async function getRole(): Promise<string | null> {
+  const access = await getAccessGroups();
+
+  if (!access) {
+    //redirect('/welcome');
+    return null
+  }
+  return access?.current ?? null;
 }

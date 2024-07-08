@@ -10,48 +10,29 @@ import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOffic
 import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHome";
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
-import { redirect } from "next/navigation";
-
-// async function getRole() {
-//     const session = await getSession();
-//     let userRole = '';
-//     const roles = ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', , 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
-    
-//     if(!session?.user?.realm_access){
-//         redirect('/welcome');
-//     }
-//     for(const role of session?.user?.realm_access?.roles || []){
-//         if(roles.includes(role)){
-//             userRole = await role;
-//             break;
-//         }
-//     }
-//     return userRole;
-// }
 
 export default async function Home(){
-    const session = await getSession();
     const userRole = await getRole()
-    console.log('user role:', userRole)
+
     if(userRole?.includes('teacher') || userRole?.startsWith('teacher')){
         return <TeacherHome/>
-    } else if(userRole.toUpperCase() === 'REGISTRATION_OFFICER'){
+    } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
         return <RegistrationOfficerHome/>
-    } else if(userRole.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
+    } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerHome/>
     } else if(userRole === 'MANAGER'){
         return <ManagerHome/>
-    } else if(userRole.toUpperCase() === 'DIRECTOR'){
+    } else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <DirectorHome/>
-    } else if(userRole.toUpperCase() === 'REGISTRAR'){
+    } else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarHome/>
-    }else if(userRole.toUpperCase() === 'LICENSE_OFFICER'){
+    }else if(userRole?.toUpperCase() === 'LICENSE_OFFICER'){
         return <LicenseOfficerHome/>
-    } else if(userRole.toUpperCase() === 'SNR_LICENSE_OFFICER'){
+    } else if(userRole?.toUpperCase() === 'SNR_LICENSE_OFFICER'){
         return <SnrLicenseOfficerHome/>
-    } else if(userRole.toUpperCase() === 'LICENSE_MANAGER'){
+    } else if(userRole?.toUpperCase() === 'LICENSE_MANAGER'){
         return <LicenseManagerHome/>
-    } else if(userRole.toUpperCase() === "ADMIN"){
+    } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminHome/>
     } else {
         return <AccessDenied/>

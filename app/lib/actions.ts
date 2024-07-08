@@ -4,21 +4,20 @@ import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, devUrl, licUrl } from "./store";
 import { Session } from './types';
-import { refreshToken } from '../auth/auth';
+import { getSession, refreshToken } from '../auth/auth';
 
 
-// Helper function to get the session
-async function getSession(): Promise<Session | null> {
-  const sessionCookie = cookies().get("session")?.value;
-  if (!sessionCookie) return null;
-  return JSON.parse(sessionCookie) as Session;
-}
+
 
 // Helper function for API calls
 async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
   let session = await getSession();
-  
-  if (!session || new Date(session.expires) <= new Date()) {
+  const time = await session?.expires || ''
+  console.log('Expires', time)
+  console.log('URL', url)
+  // console.log('SESSION', session)
+
+  if (!session || new Date(time) <= new Date()) {
     const refreshed = await refreshToken();
     if (!refreshed) {
       throw new Error('Session expired and refresh failed');
@@ -101,7 +100,7 @@ export async function getLicenseEndorsementRecords(status: string, count: string
 export async function getNext(status: string) {
   try {
     const res = await fetchWithAuth(`${apiUrl}/getNext/?reg_status=${status}`, { cache: 'no-cache' });
-    if (!res.ok || res.status === 204) return null;
+    if (!res.ok || res.status !== 200) return null;
     return res.headers.get('content-type')?.startsWith('application/json') ? res.json() : null;
   } catch (error) {
     console.error('Error fetching next item:', error);

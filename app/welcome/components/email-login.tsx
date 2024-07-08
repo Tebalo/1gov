@@ -22,7 +22,7 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 
-import { login, validateOTP, DeTokenize } from "@/app/auth/auth"
+import { login, validateOTP, DeTokenize, storeSession } from "@/app/auth/auth"
 
 
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
@@ -50,8 +50,8 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
             const authResponse: AuthResponse = await validateOTP(username, value)
             if (authResponse.access_token) {
                 setIsRedirecting(true)
-                await DeTokenize(authResponse)
-                router.push('/trls/home')
+                await storeSession(authResponse)
+                //router.push('/trls/home')
             } else {
                 setErrorMessage('OTP validation failed. Please try again.')
             }

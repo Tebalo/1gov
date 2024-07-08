@@ -1,9 +1,10 @@
 import React from 'react';
 import { Logo } from "./Logo";
-import { getRole, getSession } from "../auth/auth";
+import { getAccessGroups, getRole, getSession } from "../auth/auth";
 import SidebarNav from "./SidebarNav";
 import NavUtils from "./NavComponents/NavUtilis";
-import { Session, UserRole } from '../lib/types';
+import { AccessGroup, Session, UserRole } from '../lib/types';
+import { access } from 'fs';
 
 
 interface SidebarProps {
@@ -12,13 +13,13 @@ interface SidebarProps {
 
 const DynamicSidebar: React.FC<SidebarProps> = async () => {
   let session: Session | null = null;
-  let userRole: UserRole | '' = '';
-  let userName: string = '';
+  let userRole: string | '' = '';
+  let access_profile: AccessGroup | null = null;
 
   try {
-    session = await getSession();
-    userRole = await getRole();
-    userName = session?.user?.name || '';
+    //session = await getSession();
+    userRole = await getRole() || '';
+    access_profile = await getAccessGroups() || null;
   } catch (error) {
     console.error('Error fetching session or role:', error);
     // Handle error appropriately, maybe show an error message or redirect
@@ -41,7 +42,7 @@ const DynamicSidebar: React.FC<SidebarProps> = async () => {
           <SidebarNav userRole={userRole} />
         </div>
         <div className="absolute bottom-0 w-full border-t bg-sky-400">
-          <NavUtils userRole={userName} />
+          {access_profile?.username && <NavUtils userRole={access_profile?.username} />}
         </div>
       </div>
     </aside>

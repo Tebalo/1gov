@@ -55,8 +55,14 @@ export interface DecodedToken {
 
 export interface Session {
   auth: AuthResponse;
-  user: DecodedToken;
-  expires: Date;
+  user?: DecodedToken;
+  expires?: string
+}
+
+export interface AccessGroup {
+  persona: string[],
+  current: string;
+  username: string;
 }
 
 export interface LoginPayload {
