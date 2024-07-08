@@ -10,6 +10,7 @@ import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOffic
 import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHome";
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
+import { redirect } from "next/navigation";
 
 export default async function Home(){
     const userRole = await getRole()
@@ -35,6 +36,6 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminHome/>
     } else {
-        return <AccessDenied/>
+        return redirect('/welcome')
     }
 }

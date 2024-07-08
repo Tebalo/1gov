@@ -17,7 +17,7 @@ export default async function Page({params}:{params: {slug: string}}){
             <div className="flex flex-row h-full gap-0">
                 {work ? (
                     <>
-                        <ApplicationForStudentRegistration data={work} userRole={userRole}/>
+                        {userRole && <ApplicationForStudentRegistration data={work} userRole={userRole}/>}
                     </>):(
                         <div className="w-full md:h-96 items-center flex justify-center">
                             <div>

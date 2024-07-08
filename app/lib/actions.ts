@@ -5,6 +5,7 @@ import { revalidateTag } from "next/cache";
 import { apiUrl, devUrl, licUrl } from "./store";
 import { Session } from './types';
 import { getSession, refreshToken } from '../auth/auth';
+import { redirect } from 'next/navigation';
 
 
 
@@ -13,9 +14,9 @@ import { getSession, refreshToken } from '../auth/auth';
 async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
   let session = await getSession();
   const time = await session?.expires || ''
-  console.log('Expires', time)
+  //console.log('Expires', time)
   console.log('URL', url)
-  // console.log('SESSION', session)
+  console.log('SESSION', session?.auth)
 
   if (!session || new Date(time) <= new Date()) {
     const refreshed = await refreshToken();
@@ -38,7 +39,8 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
 }
 
 export async function logout() {
-  cookies().set("session", "", { expires: new Date(0) });
+  await cookies().set("session", "", { expires: new Date(0) });
+  return redirect('/welcome');
   // Redirect logic should be handled on the client side
 }
 

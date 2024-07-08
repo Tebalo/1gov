@@ -10,14 +10,13 @@ export default async function Page({params}:{params: {slug: string}}){
     const id = await params.slug;
     const work = await getRegById(id)
 
-    const session = await getSession();
     const userRole = await getRole()
     return (
         <main className="h-full">
             <div className="flex flex-row h-full gap-0">
                 {work ? (
                     <>
-                        <ApplicationForTeacherRegistration data={work} userRole={userRole}/>
+                        {userRole &&<ApplicationForTeacherRegistration data={work} userRole={userRole}/>}
                     </>):(
                         <div className="w-full md:h-96 items-center flex justify-center">
                             <div>

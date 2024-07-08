@@ -39,10 +39,10 @@ const DynamicSidebar: React.FC<SidebarProps> = async () => {
           />
         </div>
         <div className="my-10 ml-5">
-          <SidebarNav userRole={userRole} />
+          <SidebarNav currentPersona={access_profile?.current || ''} />
         </div>
         <div className="absolute bottom-0 w-full border-t bg-sky-400">
-          {access_profile?.username && <NavUtils userRole={access_profile?.username} />}
+          <NavUtils accessProfile={access_profile} />
         </div>
       </div>
     </aside>

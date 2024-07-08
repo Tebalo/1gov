@@ -177,8 +177,9 @@ export async function getAccessGroups(): Promise<AccessGroup | null>{
 }
 
 export async function logout() {
-  revalidatePath('/trls/home');
   cookies().set("session", "", { expires: new Date(0) });
+  revalidatePath('/trls/home');
+  redirect('/welcome');
 }
 
 export async function getSession(): Promise<Session | null> {
