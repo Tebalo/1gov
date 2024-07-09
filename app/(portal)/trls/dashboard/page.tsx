@@ -9,6 +9,7 @@ import { SnrRegistrationOfficerDashboard } from "@/app/components/dashboard/SnrR
 import { TeacherDashboard } from "@/app/components/dashboard/TeacherDashboard";
 import { redirect } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
 
 export default async function Dashboard(){
     const userRole = await getRole()

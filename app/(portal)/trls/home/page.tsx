@@ -11,7 +11,7 @@ import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHo
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { redirect } from "next/navigation";
-
+export const dynamic = 'force-dynamic';
 export default async function Home(){
     const userRole = await getRole()
 
