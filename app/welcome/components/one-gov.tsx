@@ -47,7 +47,7 @@ export const OneGovID: React.FC = () => {
             setIsRedirecting(true)
         }
         if(res){
-            setResponse(res || null)
+            
         }else{
             setResponse(null)
         }
