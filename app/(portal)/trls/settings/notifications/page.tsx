@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Separator } from "@/components/ui/separator"
 import { NotificationsForm } from "./notifications-form"
 

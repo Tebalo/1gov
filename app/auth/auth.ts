@@ -1,197 +1,253 @@
 'use server'
-import axios from 'axios';
-import {SignJWT, jwtVerify} from 'jose';
-import {cookies} from 'next/headers';
+
+import { SignJWT, jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 import { DeTokenizeUrl, authUrl, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
-import { isRedirectError } from 'next/dist/client/components/redirect';
-/**
- * An authentication context or service that handles user authentication and 
- * role-based authorization
-*/
+import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
 
+// Constants
 const key = new TextEncoder().encode(secretKey);
+const ROLES: UserRole[] = ['REGISTRATION_OFFICER', 'MANAGER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
 
-export async function getRole() {
-  const session = await getSession();
-  let userRole = '';
-  const roles = ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', , 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
-  
-  if(!session?.user?.realm_access){
-      redirect('/welcome');
+// Helper functions
+async function fetchWithErrorHandling(url: string, options: RequestInit): Promise<any> {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
   }
-  for(const role of session?.user?.realm_access?.roles || []){
-      if(roles.includes(role)){
-          userRole = await role;
-          break;
-      }
-  }
-  return userRole;
+  return response.json();
 }
 
-export async function encrypt(payload: any) {
-    return await new SignJWT(payload)
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("3600 sec from now")
-      .sign(key);
+export async function encrypt(payload: any): Promise<string> {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("3600 sec from now")
+    .sign(key);
 }
 
 export async function decrypt(input: string): Promise<any> {
-    const { payload } = await jwtVerify(input, key, {
-      algorithms: ["HS256"],
+  const { payload } = await jwtVerify(input, key, {
+    algorithms: ["HS256"],
+  });
+  return payload;
+}
+
+export async function authenticate(_currentState: unknown, formData: FormData) {
+  try {
+    const authResponse = await login(formData);
+    if (authResponse.access_token) {
+      await DeTokenize(authResponse);
+      return redirect('/trls/home');
+    }
+    return 'Authentication failed. Please try again.';
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return 'Authentication failed. Please try again.';
+  }
+}
+
+export async function refreshToken(): Promise<boolean> {
+  const session = await getSession();
+  if (!session || !session.auth.refresh_token) return false;
+
+  try {
+    const response = await fetch(`${authUrl}/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: session.auth.refresh_token }),
     });
-    return payload;
-  }
-  export async function authenticate(_currentState: unknown, formData: FormData) {
-    try {
-        const res = await login(formData)
-    } catch (error) {
-      if (error) {
-        switch (error) {
-          case 'CredentialsSignin':
-            return 'Invalid credentials.'
-          default:
-            return 'Something went wrong.'
-        }
-      }
-      throw error
-    }
-    return redirect('/trls/home');
-  }
-export async function experiment(formData: FormData){
-  const res = await login(formData)
 
-  return res
+    if (!response.ok) throw new Error('Failed to refresh token');
+
+    const newAuthResponse: AuthResponse = await response.json();
+    await DeTokenize(newAuthResponse);
+    return true;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return false;
+  }
 }
-export async function login(formData: FormData) {
 
-    const payload = {
-        username: formData.get('username'),
-        password: formData.get('password')
-    }
+export async function login(formData: FormData): Promise<AuthResponse> {
+  const payload: LoginPayload = {
+    username: formData.get('username') as string,
+    password: formData.get('password') as string
+  };
+
+  return fetchWithErrorHandling(`${authUrl}`, {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function validateOTP(username: string, otp: string): Promise<AuthResponse> {
+  const payload: OTPPayload = { username, otp };
+
+  return fetchWithErrorHandling(`${validateUrl}`, {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function DeTokenize(authResponse: AuthResponse) {
+  try {
+    const decodedToken: DecodedToken = await fetchWithErrorHandling(`${DeTokenizeUrl}${authResponse.access_token}`, {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const expires = new Date(decodedToken.exp * 1000); // Convert expiration to milliseconds
+    const session: Session = { 
+      auth: authResponse
+    };
+    const encryptedSession = await encrypt(session);
+    cookies().set("session", encryptedSession, { expires, httpOnly: true });
     
-    try{
-        const res = await fetch(`${authUrl}`,{
-            method: 'POST',
-            cache:'no-cache',
-            headers: {
-                'Content-Type': 'application/json'
-            }, 
-            body: JSON.stringify({...payload}),
-        })
-        return res.json()
-    } catch(error){
-      if (isRedirectError(error)) {
-        throw error;
-        }
-      throw error
-    }
+    redirect('/trls/home');
+  } catch (error) {
+    console.error('DeTokenize error:', error);
+    throw error;
   }
-  export async function validateOTP(username: string, otp: string) {
-    const payload = {
-        username: username,
-        otp: otp
-    }
-    try{
-        const res = await fetch(`${validateUrl}`,{
-            method: 'POST',
-            cache:'no-cache',
-            headers: {
-                'Content-Type': 'application/json'
-            }, 
-            body: JSON.stringify({...payload}),
-        })
-        return res.json()
-    } catch(error){
-      throw error
-    }
+}
+
+export async function decryptAccessToken(authResponse: AuthResponse){
+  try {
+    const decodedToken: DecodedToken = await fetchWithErrorHandling(`${DeTokenizeUrl}${authResponse.access_token}`, {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return decodedToken;
+  }catch(error){
+    console.error('Decryption error', error);
+    throw error;
   }
-export async function DeTokenize(access_token: string){
-  let success = false
+}
+
+export async function storeSession(authResponse: AuthResponse){
   try{
-    const res = await fetch(`${DeTokenizeUrl}${access_token}`, 
-      {
-        method: 'POST',
-        cache:'no-cache',
-        headers: {
-          'Content-Type': 'application/json'
-      },
-      }
-    )
-    if(res.ok){
-      const user = await res.json()
-
-      // Create the session
-      const expires = new Date(Date.now() + 3600 * 1000);
-      const session = await encrypt({ user, expires });
-
-      // Save the session in a cookie
-      cookies().set("session", session, { expires, httpOnly: true });
-    } else {
-      return await res.json();
+    const session: Session = {
+      auth: authResponse,
+      expires: new Date(Date.now() + 1800 * 1000).toString(),
     }
-  } catch(error){
+    const profile = await decryptAccessToken(authResponse)
+    await storeAccessGroups(profile)
+    const expires = new Date(Date.now() + session.auth.expires_in * 1000);
+    const encryptedSession = await encrypt(session)
+    cookies().set("session", encryptedSession, {expires, httpOnly: true});
+    redirect('/trls/home');
+  }catch (error){
     throw error
-  }finally{
-    if(success){
-      redirect('/trls/home')
-    }
   }
 }
+
+export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
+  return roles.filter(role => ROLES.includes(role as UserRole)) as UserRole[];
+}
+
+export async function storeAccessGroups(decodedToken: DecodedToken){
+  try{
+    const expires = new Date(Date.now() + 1800 * 1000);
+    const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+    const access_group: AccessGroup = {
+      persona: personas,
+      current: personas[0],
+      username: decodedToken.name
+    }
+    const encryptedAccessGroup = await encrypt(access_group);
+    cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
+  } catch(error){
+    throw error;
+  }
+}
+export async function getAccessGroups(): Promise<AccessGroup | null>{
+  const encryptedAccessGroup = cookies().get("access")?.value;
+  if (!encryptedAccessGroup) return null;
+  return decrypt(encryptedAccessGroup);
+}
+
+export async function updateAccessGroup(newCurrentPersona: string): Promise<void> {
+  try {
+    // Get the current AccessGroup
+    const currentAccessGroup = await getAccessGroups();
+    
+    if (!currentAccessGroup) {
+      throw new Error('No access group found');
+    }
+
+    // Check if the new persona is valid
+    if (!currentAccessGroup.persona.includes(newCurrentPersona)) {
+      throw new Error('Invalid persona');
+    }
+
+    // Create updated AccessGroup
+    const updatedAccessGroup: AccessGroup = {
+      ...currentAccessGroup,
+      current: newCurrentPersona
+    };
+
+    // Encrypt and store the updated AccessGroup
+    const encryptedAccessGroup = await encrypt(updatedAccessGroup);
+    
+    // Set expiration time (30 minutes from now)
+    const expires = new Date(Date.now() + 1800 * 1000);
+
+    // Update the cookie
+    cookies().set('access', encryptedAccessGroup, { expires, httpOnly: true });
+    redirect('/trls/home')
+  } catch (error) {
+    console.error('Error updating access group:', error);
+    throw error;
+  }
+}
+
 export async function logout() {
-    // Destroy the session
-    revalidatePath('/trls/home')
-    cookies().set("session", "", { expires: new Date(0) });
+  cookies().set("session", "", { expires: new Date(0) });
+  revalidatePath('/trls/home');
+  redirect('/welcome');
 }
+
+export async function getSession(): Promise<Session | null> {
+  const encryptedSession = cookies().get("session")?.value;
   
-export async function getSession() {
-    const session = cookies().get("session")?.value;
-    if (!session) return null;
-    return await decrypt(session);
+  if (!encryptedSession) return null;
+  return decrypt(encryptedSession);
 }
+
 
 export async function updateSession(request: NextRequest) {
-    const session = request.cookies.get("session")?.value;
-    if (!session) return;
-  
-    // Refresh the session so it doesn't expire
-    const parsed = await decrypt(session);
-    parsed.expires = new Date(Date.now() + 3600 * 1000);
-    const res = NextResponse.next();
-    res.cookies.set({
-      name: "session",
-      value: await encrypt(parsed),
-      httpOnly: true,
-      expires: parsed.expires,
-    });
-    return res;
+  const session = request.cookies.get("session")?.value;
+  if (!session) return;
+
+  const parsed: Session = await decrypt(session);
+  const expires = new Date(Date.now() + parsed.auth.expires_in * 1000);
+  const res = NextResponse.next();
+  res.cookies.set({
+    name: "session",
+    value: await encrypt(parsed),
+    httpOnly: true,
+    expires: expires,
+  });
+  return res;
+}
+
+// Main functions
+export async function getRole(): Promise<string | null> {
+  const access = await getAccessGroups();
+
+  if (!access) {
+    //redirect('/welcome');
+    return null
   }
-
-export const register = async (username:string, password:string, roles:[]) => {
-    try{
-        const response = await axios.post(`${authUrl}/register/`, { username, password, roles });
-
-        return response.data;
-    } catch(error){
-        throw error;
-    }
+  return access?.current ?? null;
 }
-
-const setAuthCookie = (authData: any) => {
-    const {access, refresh} = authData;
-}
-
-/**
- * Authorized API request from the app to the backend app, include the JWT
- * token in the Authorization header
-*/
-const authAxios = axios.create({
-    baseURL: authUrl,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    withCredentials: true, // Include cookies in requests
-})

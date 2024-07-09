@@ -10,7 +10,6 @@ import {
   } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import getHistory from "@/app/lib/actions"
 
 interface StatusChange {
     newStatus: string;

@@ -32,7 +32,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Work{
     data: Props,
-    userRole: string
+    userRole: string | '',
 }
 const items = [
     {

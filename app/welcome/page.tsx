@@ -1,105 +1,114 @@
 import Image from "next/image";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-  } from "@/components/ui/tabs"
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Email } from "./components/email-login";
 import { OneGovID } from "./components/one-gov";
-import Logo from '@/public/Code-of-Arms-colour.png'
+import Logo from '@/public/Code-of-Arms-colour.png';
+import MainIcon from '@/public/main-icon.png';
 
 export default function Welcome() {
-    return (
-        <main className="bg-sky-400 w-full h-screen">
-            <div className="flex md:justify-start justify-center md:py-10 py-0">
-                <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 md:w-72 w-48">
-                    <Image
-                        src={Logo}
-                        width={350}
-                        height={350}
-                        priority
-                        alt="Picture of the coat of arms"
-                    />
-                </div>
-            </div>
-            <div className="flex justify-center md:justify-start">
-                <div className="grid grid-cols-1 md:grid-cols-1 md:m-10 md:justify-start justify-center">
-                    <div className="flex justify-center md:justify-start">
-                        <h1 className="text-4xl font-bold">Welcome to</h1>
-                    </div>
-                    <div className="flex justify-center md:justify-start">
-                        <div className="flex md:rounded-r-lg rounded-b-l p-5 md:hidden w-44">
-                            <Image
-                                src="/main-icon.png"
-                                width={350}
-                                height={350}
-                                priority={true}
-                                alt="Picture of the coat of arms"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex md:flex-row flex-col items-center md:items-start my-2">
-                        <div className="flex md:text-white text-black text-5xl justify-center md:justify-start md:w-fit">
-                            <h2 className="font-bold">Bo</h2>
-                            <h2 className="font-light md:mr-2">tepco</h2>
-                        </div>
-                            <h2 className="font-bold text-5xl md:text-white text-black md:w-fit">e-Services Portal</h2> 
-                        </div>
-                </div>
-            </div>
-            <div className="flex md:justify-end justify-center mb-5">
-                <div className="rounded-lg bg-teal-800 hidden"></div>
-                <div className="flex space-x-1 md:space-x-10 md:pr-10">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="px-10 py-4">Login</Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                            <DialogTitle>Login</DialogTitle>
-                            <DialogDescription>
-                                Complete the form below to access your account.
-                            </DialogDescription>
-                            </DialogHeader>
-                            <Tabs defaultValue="email" className="w-full">
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="email">1Gov ID</TabsTrigger>
-                                    <TabsTrigger value="onegov" disabled>Email</TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="email">
-                                    <Email/>
-                                </TabsContent>
-                                <TabsContent value="onegov">
-                                    <OneGovID/>
-                                </TabsContent>
-                            </Tabs> 
-                            <DialogFooter>
-                                {/* <Button type="submit">Submit</Button> */}
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button>Register</Button>
-                        </DialogTrigger>
-                    </Dialog>
-                </div>
-            </div>
-            <div className="flex flex-col md:hidden items-center">
-                <button type="button" className="text-white bg-sky-300 hover:bg-sky-350 w-fit hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-base px-10 py-1.5 text-center me-2 mb-2">Get In Touch</button>
-                <p className="text-sm">@ 2024 Botepco Portal v4.0.0</p>
-            </div>
-        </main>
-    );
+  return (
+    <main className="bg-sky-400 min-h-screen flex flex-col">
+      <header className="flex md:justify-start justify-center md:py-10 py-5">
+        <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 md:w-72 w-48">
+          <Image
+            src={Logo}
+            width={350}
+            height={350}
+            priority
+            alt="Coat of arms"
+          />
+        </div>
+      </header>
+
+      <section className="flex-grow flex flex-col justify-center items-center md:items-start md:ml-10">
+        <h1 className="text-4xl font-bold text-white mb-4">Welcome to</h1>
+        
+        <div className="md:hidden mb-4">
+          <Image
+            src={MainIcon}
+            width={176}
+            height={176}
+            priority
+            alt="Main icon"
+          />
+        </div>
+
+        <div className="flex flex-col md:flex-row items-center md:items-start mb-6">
+          <h2 className="text-5xl font-bold text-white">
+            <span className="font-light">Bo</span>tepco
+          </h2>
+          <h2 className="text-5xl font-bold text-white ml-2">e-Services Portal</h2>
+        </div>
+      </section>
+
+      <footer className="mt-auto">
+        <div className="flex justify-center md:justify-end space-x-4 md:space-x-10 md:pr-10 mb-5">
+          <LoginDialog />
+          <RegisterDialog />
+        </div>
+
+        <div className="flex flex-col items-center mb-4">
+          <Button variant="secondary" className="mb-2">Get In Touch</Button>
+          <p className="text-sm text-white">© 2024 Botepco Portal v1.26.04</p>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+function LoginDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="px-10 py-4">Login</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Login</DialogTitle>
+          <DialogDescription>
+            Complete the form below to access your account.
+          </DialogDescription>
+        </DialogHeader>
+        <Tabs defaultValue="email" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="email">1Gov ID</TabsTrigger>
+            <TabsTrigger value="onegov" disabled>Email</TabsTrigger>
+          </TabsList>
+          <TabsContent value="email">
+            <Email />
+          </TabsContent>
+          <TabsContent value="onegov">
+            <OneGovID />
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RegisterDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>Register</Button>
+      </DialogTrigger>
+      <DialogContent>
+        {/* Add registration form content here */}
+      </DialogContent>
+    </Dialog>
+  );
 }
