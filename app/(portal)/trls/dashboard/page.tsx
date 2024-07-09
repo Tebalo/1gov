@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { getRole, getSession } from "@/app/auth/auth";
 import { AccessDenied } from "@/app/components/AccessDenied";
 import { AdminDashboard } from "@/app/components/dashboard/AdminDashboard";
@@ -7,9 +8,6 @@ import { RegistrarDashboard } from "@/app/components/dashboard/RegistrarDashboar
 import { RegistrationOfficerDashboard } from "@/app/components/dashboard/RegistrationOfficerDashboard";
 import { SnrRegistrationOfficerDashboard } from "@/app/components/dashboard/SnrRegistrationOfficerDashboard";
 import { TeacherDashboard } from "@/app/components/dashboard/TeacherDashboard";
-import { redirect } from "next/navigation";
-
-export const dynamic = 'force-dynamic';
 
 export default async function Dashboard(){
     const userRole = await getRole()

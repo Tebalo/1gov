@@ -1,7 +1,8 @@
+export const dynamic = 'force-dynamic';
 import { Separator } from "@/components/ui/separator"
 import { NotificationsForm } from "./notifications-form"
 
-export const dynamic = 'force-dynamic';
+
 export default function SettingsNotificationsPage() {
   return (
     <div className="space-y-6">

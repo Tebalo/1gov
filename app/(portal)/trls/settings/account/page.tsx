@@ -1,7 +1,6 @@
+export const dynamic = 'force-dynamic';
 import { Separator } from "@/components/ui/separator"
 import { AccountForm } from "./account-form"
-
-export const dynamic = 'force-dynamic';
 
 export default function SettingsAccountPage() {
   return (
