@@ -176,6 +176,41 @@ export async function getAccessGroups(): Promise<AccessGroup | null>{
   return decrypt(encryptedAccessGroup);
 }
 
+export async function updateAccessGroup(newCurrentPersona: string): Promise<void> {
+  try {
+    // Get the current AccessGroup
+    const currentAccessGroup = await getAccessGroups();
+    
+    if (!currentAccessGroup) {
+      throw new Error('No access group found');
+    }
+
+    // Check if the new persona is valid
+    if (!currentAccessGroup.persona.includes(newCurrentPersona)) {
+      throw new Error('Invalid persona');
+    }
+
+    // Create updated AccessGroup
+    const updatedAccessGroup: AccessGroup = {
+      ...currentAccessGroup,
+      current: newCurrentPersona
+    };
+
+    // Encrypt and store the updated AccessGroup
+    const encryptedAccessGroup = await encrypt(updatedAccessGroup);
+    
+    // Set expiration time (30 minutes from now)
+    const expires = new Date(Date.now() + 1800 * 1000);
+
+    // Update the cookie
+    cookies().set('access', encryptedAccessGroup, { expires, httpOnly: true });
+    redirect('/trls/home')
+  } catch (error) {
+    console.error('Error updating access group:', error);
+    throw error;
+  }
+}
+
 export async function logout() {
   cookies().set("session", "", { expires: new Date(0) });
   revalidatePath('/trls/home');

@@ -18,7 +18,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { logout } from "@/app/auth/auth";
+import { logout, updateAccessGroup } from "@/app/auth/auth";
 import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight } from 'lucide-react';
 
@@ -54,9 +54,11 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
     }
   };
 
-  const switchPortal = (persona: string) => {
+  const switchPortal = async (persona: string) => {
     // Implement portal switching logic here
-    console.log(`Switching to ${portalNames[persona] || persona} Portal`);
+    //console.log(`Switching to ${portalNames[persona] || persona} Portal`);
+
+    await updateAccessGroup(persona)
     setIsPortalOpen(false);
     setIsOpen(false);
   };
@@ -96,7 +98,7 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
                       {accessProfile?.persona.map((persona) => (
                           <div
                               key={persona}
-                              className="cursor-pointer bg-gray-100 hover:bg-slate-200 p-1 rounded flex items-center justify-between"
+                              className="cursor-pointer bg-gray-50 hover:bg-slate-200 py-2 px-1 rounded flex items-center justify-between"
                               onClick={() => switchPortal(persona)}
                           >
                               <Label className="font-normal cursor-pointer">{portalNames[persona] || persona}</Label>
