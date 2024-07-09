@@ -49,7 +49,7 @@ export default function Welcome() {
 
         <div className="flex flex-col md:flex-row items-center md:items-start mb-6">
           <h2 className="text-5xl font-bold text-white">
-            <span className="font-light">Bo</span>tepco
+            <span className="font-light">T</span>RLS
           </h2>
           <h2 className="text-5xl font-bold text-white ml-2">e-Services Portal</h2>
         </div>
@@ -63,7 +63,7 @@ export default function Welcome() {
 
         <div className="flex flex-col items-center mb-4">
           <Button variant="secondary" className="mb-2">Get In Touch</Button>
-          <p className="text-sm text-white">© 2024 Botepco Portal v1.26.04</p>
+          <p className="text-sm text-white">© 2024 TRLS Portal v1.26.04</p>
         </div>
       </footer>
     </main>
