@@ -7,8 +7,9 @@ import { useToast } from "@/components/ui/use-toast";
 import React, { Suspense, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
 import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
-interface WorkProps{
+interface WorkProps {
     status: string;
 }
 
@@ -19,8 +20,7 @@ interface Registration {
     registration_type: string;
     created_at: string;
     updated_at: string;
-  }
-  
+}
 
 export const GetNext: React.FC<WorkProps> = ({status}) => {
     const {toast} = useToast()
@@ -33,20 +33,39 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
         const response = await getNext(status)
         if(response){
             setResponse(response[0] || null)
-        }else{
+        } else {
             setResponse(null)
         }
-        
-        // toast({
-        //     title: JSON.stringify(response)
-        //   })
         setIsLoading(false)
     }
+
     function handleOpen(Id:string | undefined){
         if(Id){
             router.push(`/trls/home/${Id}`);
         }
     }
+
+    function getSLAStatus(createdAt: string) {
+        const created = new Date(createdAt);
+        const today = new Date();
+        const diffTime = today.getTime() - created.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const remainingDays = 30 - diffDays;
+
+        let badgeColor = "bg-green-100 text-green-800";
+        let displayText = `${remainingDays} days left`;
+
+        if (remainingDays <= 5 && remainingDays > 0) {
+            badgeColor = "bg-yellow-100 text-yellow-800";
+        } else if (remainingDays <= 0) {
+            badgeColor = "bg-red-100 text-red-800";
+            const overdueDays = Math.abs(remainingDays);
+            displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+        }
+
+        return { badgeColor, displayText };
+    }
+
     return(
         <>
         <Dialog>
@@ -57,8 +76,8 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                 >
                     Get Next Work
                 </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Next Work</DialogTitle>
                     <DialogDescription>
@@ -68,13 +87,18 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                 <div className="grid gap-4 py-4">
                     <Suspense fallback={isLoading? 'Loading...':''}>
                     {response ? (
-                        <div className="grid grid-cols-1">
+                        <div className="grid grid-cols-1 gap-2">
                             <div className="grid grid-cols-2 items-center"><Label>National/Passport: </Label><span className="font-light italic text-sm">{response.national_id}</span></div>
                             <div className="grid grid-cols-2 items-center"><Label>Registration Number: </Label><span className="font-light italic text-sm">{response.reg_number}</span></div>
                             <div className="grid grid-cols-2 items-center"><Label>Registration Status: </Label><span className="font-light italic text-sm">{response.reg_status}</span></div>
                             <div className="grid grid-cols-2 items-center"><Label>Registration Type: </Label><span className="font-light italic text-sm">{response.registration_type}</span></div>
-                            <div className="grid grid-cols-2 items-center"><Label>Created At: </Label><span className="font-light italic text-sm">{response.created_at}</span></div>
                             <div className="grid grid-cols-2 items-center"><Label>Updated At: </Label><span className="font-light italic text-sm">{response.updated_at}</span></div>
+                            <div className="grid grid-cols-2 items-center">
+                                <Label>SLA Status: </Label>
+                                <Badge className={`${getSLAStatus(response.created_at).badgeColor} font-semibold`}>
+                                    {getSLAStatus(response.created_at).displayText}
+                                </Badge>
+                            </div>
                         </div>
                     ) : (
                         <div className="w-full flex justify-center">
@@ -96,7 +120,7 @@ export const GetNext: React.FC<WorkProps> = ({status}) => {
                         >Open</Button>
                     </div>
                 </DialogFooter>
-          </DialogContent>
+            </DialogContent>
         </Dialog>
         </>
     )

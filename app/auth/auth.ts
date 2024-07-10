@@ -157,7 +157,7 @@ export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
 
 export async function storeAccessGroups(decodedToken: DecodedToken){
   try{
-    const expires = new Date(Date.now() + 1800 * 1000);
+    const expires = new Date(Date.now() + 3600 * 1000);
     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
     const access_group: AccessGroup = {
       persona: personas,
@@ -200,7 +200,7 @@ export async function updateAccessGroup(newCurrentPersona: string): Promise<void
     const encryptedAccessGroup = await encrypt(updatedAccessGroup);
     
     // Set expiration time (30 minutes from now)
-    const expires = new Date(Date.now() + 1800 * 1000);
+    const expires = new Date(Date.now() + 3600 * 1000);
 
     // Update the cookie
     cookies().set('access', encryptedAccessGroup, { expires, httpOnly: true });
@@ -213,6 +213,7 @@ export async function updateAccessGroup(newCurrentPersona: string): Promise<void
 
 export async function logout() {
   cookies().set("session", "", { expires: new Date(0) });
+  cookies().set("access", "", { expires: new Date(0) });
   revalidatePath('/trls/home');
   redirect('/welcome');
 }
@@ -246,7 +247,7 @@ export async function getRole(): Promise<string | null> {
   const access = await getAccessGroups();
 
   if (!access) {
-    //redirect('/welcome');
+    redirect('/welcome');
     return null
   }
   return access?.current ?? null;
