@@ -14,11 +14,11 @@ import { Offence } from "./components/offence";
 import { Attachments } from "./components/attachments";
 import { Declaration } from "./components/declaration";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { apiUrl, mgt, statusTransitions } from '@/app/lib/store';
+import { statusTransitions } from '@/app/lib/store';
 import { UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
 import { useRouter } from 'next/navigation'
 import { ToastAction } from '@/components/ui/toast';
-import { toast, useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
@@ -34,6 +34,7 @@ interface Work{
     data: Props,
     userRole: string | '',
 }
+
 const items = [
     {
       id: "national_id_copy",
@@ -55,9 +56,9 @@ const items = [
       id: "attachment",
       label: "Recommendation attachment",
     },
-  ] as const
+] as const
 
-  export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; recommend: string | null; endorse: string | null;        reject_label: string | null;
+export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; recommend: string | null; endorse: string | null;        reject_label: string | null;
     approve_label: string | null;
     recommend_label: string | null;
     endorse_label: string | null; } => {
@@ -83,13 +84,15 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
             setPreviousStep(currentStep)
             setCurrentStep(step => step + 1)
         }
-    }   
+    } 
+
     const prev = () => {
         if (currentStep > 0){
             setPreviousStep(step => step + 1)
             setCurrentStep(step => step - 1)
         }
     }
+
     const handleStatusChange=async (id:string, status:string)=>{
         if(status){
             const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status)
@@ -123,6 +126,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
             })
         }
     }
+
     const FormSchema = z.object({
         status: z
           .string({
@@ -139,20 +143,21 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
             message: "You have to select at least one item.",
         }),
     })
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
             items: ['attachment'],
         }
       })
-      async function onSubmit(record: z.infer<typeof FormSchema>) {
+    async function onSubmit(record: z.infer<typeof FormSchema>) {
         const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, record.status);
         if(!res){
             toast({
                 title: "Failed!!!",
                 description: "Something went wrong",
                 action: (
-                  <ToastAction altText="Ok">Ok</ToastAction>
+                    <ToastAction altText="Ok">Ok</ToastAction>
                 ),
             })
         }else{
@@ -165,10 +170,12 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
             })
             router.push('/trls/home')
         }
-      }
-      const status = form.watch("status"); // watch status changes, for validations and ...
-      const evidence = form.watch('evidence')
-      const handleEndorsementStatusUpdate=async (id:string, status:string)=>{
+    }
+    
+    const status = form.watch("status"); // watch status changes, for validations and ...
+    const evidence = form.watch('evidence')
+
+    const handleEndorsementStatusUpdate=async (id:string, status:string)=>{
         if(status){
             const res = await UpdateEndorsementStatus(data?.data?.teacher_registrations?.national_id, status)
             router.prefetch('/trls/home')
