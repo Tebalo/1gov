@@ -168,9 +168,7 @@ interface TeacherRegistrationViewProps {
       required_error: 'Please select rejection type.',
     }),
     evidence: z.any().optional(),
-    items: z.array(z.string()).refine((value) => value.some((item) => item), {
-      message: "You have to select at least one item.",
-    }),
+    items: z.array(z.string().optional())
   });
   const TeacherRegistrationView: React.FC<TeacherRegistrationViewProps> = ({ data, userRole }) => {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -222,7 +220,7 @@ interface TeacherRegistrationViewProps {
     const status = form.watch("status"); // watch status changes, for validations and ...
     const evidence = form.watch('evidence')
     const onSubmit = async (record: z.infer<typeof FormSchema>) => {
-        if (record.status === prev_status && prev_status !== 'Pending-Review') {
+        if (record.status === prev_status && prev_status === 'Pending-Customer-Action') {
             // Only validate items if returning to customer
             if (record.items.length === 0) {
               form.setError('items', {
@@ -294,10 +292,10 @@ interface TeacherRegistrationViewProps {
         <h1 className="text-3xl font-bold mb-8">Teacher Registration Application</h1>
         <div className="bg-white shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
           {renderSection("Personal Information", renderPersonalInfo(data))}
-          {renderSection("Qualifications", renderQualifications(data))}
+          {renderSection("Qualifications", renderQualifications(data, setPdfUrl))}
           {renderSection("Employment", renderEmployment(data))}
           {renderSection("Documents", renderDocuments(data, setPdfUrl))}
-          {renderSection("Offences", renderOffences(data))}
+          {renderSection("Offences", renderOffences(data, setPdfUrl))}
           {renderSection("Declaration", renderDeclaration(data))}
         </div>
   
@@ -328,7 +326,7 @@ interface TeacherRegistrationViewProps {
                               <SelectLabel>Selections</SelectLabel>
                               {prev_status && (
                                 <SelectItem value={prev_status}>
-                                  {prev_status === 'Pending-Review' ? 'Return to reg-officer' : 'Return to customer'}
+                                  {prev_status === 'Pending-Screening' ? 'Return to reg-officer' : 'Return to customer'}
                                 </SelectItem>
                               )}
                               {inv_status && <SelectItem value={inv_status}>Investigations</SelectItem>}
@@ -364,7 +362,7 @@ interface TeacherRegistrationViewProps {
                       )}
                     />
                   )}
-                  {status === prev_status && prev_status !== 'Pending-Review' && (
+                  {status === prev_status && prev_status !== 'Pending-Screening' && (
                     <FormField
                       control={form.control}
                       name="items"
@@ -532,16 +530,32 @@ interface TeacherRegistrationViewProps {
     </div>
   );
   
-  const OffenceItem: React.FC<{ label: string; value: string; details: string | null }> = ({ label, value, details }) => (
-    <div className="mb-4">
-      <h4 className="text-lg font-medium">{label}</h4>
-      <p className={`text-lg ${value === 'Yes' ? 'text-red-600' : 'text-green-600'}`}>
-        {value === 'Yes' ? <FaExclamationTriangle className="inline mr-2" /> : <FaCheckCircle className="inline mr-2" />}
-        {value}
-      </p>
-      {value === 'Yes' && details && <p className="mt-2">{details}</p>}
-    </div>
-  );
+  const OffenceItem: React.FC<{label: string; value: string; details: string | null; onView?: (url: string) => void}> = ({ label, value, details, onView }) => {
+    const isDocument = details?.startsWith('http');
+  
+    return (
+      <div className="mb-4">
+        <h4 className="text-lg font-medium">{label}</h4>
+        <p className={`text-lg ${value === 'Yes' ? 'text-red-600' : 'text-green-600'}`}>
+          {value === 'Yes' ? <FaExclamationTriangle className="inline mr-2" /> : <FaCheckCircle className="inline mr-2" />}
+          {value}
+        </p>
+        {value === 'Yes' && details && (
+          isDocument ? (
+            <div className="flex items-center mt-2">
+              <FaFilePdf className="text-red-500 mr-2" />
+              <span className="font-medium mr-2">Supporting Document:</span>
+              <button onClick={() => onView && onView(details)} className="text-blue-500 hover:underline mr-2">View</button>
+              <a href={details} download className="text-green-500 hover:underline">Download</a>
+            </div>
+          ) : (
+            <p className="mt-2">{details}</p>
+          )
+        )}
+      </div>
+    );
+  };
+  
   
   const renderPersonalInfo = (data: TeacherRegistrationData) => (
     <div className="grid grid-cols-2 gap-4">
@@ -556,7 +570,7 @@ interface TeacherRegistrationViewProps {
     </div>
   );
   
-  const renderQualifications = (data: TeacherRegistrationData) => (
+  const renderQualifications = (data: TeacherRegistrationData, onView: (url: string) => void) => (
     <div>
       {data.edu_pro_qualifications.map((qual, index) => (
         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
@@ -566,6 +580,7 @@ interface TeacherRegistrationViewProps {
             <InfoItem label="Institution" value={qual.institution} />
             <InfoItem label="Year" value={qual.qualification_year} />
             <InfoItem label="Major Subjects" value={qual.major_subjects} />
+            <DocumentItem label="Qualification Attachment" url={qual.attachments} onView={onView} />
           </div>
         </div>
       ))}
@@ -591,7 +606,7 @@ interface TeacherRegistrationViewProps {
     </div>
   );
   
-  const renderOffences = (data: TeacherRegistrationData) => (
+  const renderOffences = (data: TeacherRegistrationData, onView: (url: string) => void) => (
     <div>
       <OffenceItem 
         label="Student Related Offence" 
@@ -607,11 +622,13 @@ interface TeacherRegistrationViewProps {
         label="License Flag" 
         value={data.offence_convictions.license_flag} 
         details={data.offence_convictions.license_flag_details}
+        onView={onView}
       />
       <OffenceItem 
         label="Misconduct Flag" 
         value={data.offence_convictions.misconduct_flag} 
         details={data.offence_convictions.misconduct_flag_details}
+        onView={onView}
       />
     </div>
   );

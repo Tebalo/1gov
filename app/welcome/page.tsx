@@ -63,7 +63,7 @@ export default function Welcome() {
 
         <div className="flex flex-col items-center mb-4">
           <Button variant="secondary" className="mb-2">Get In Touch</Button>
-          <p className="text-sm text-white">©2024 TRLS Portal v1.01.01</p>
+          <p className="text-sm text-white">©2024 TRLS Portal v1.01.04</p>
         </div>
       </footer>
     </main>

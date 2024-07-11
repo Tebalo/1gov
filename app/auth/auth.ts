@@ -56,14 +56,14 @@ export async function refreshToken(): Promise<boolean> {
   if (!session || !session.auth.refresh_token) return false;
 
   try {
-    const response = await fetch(`${authUrl}/refresh`, {
-      method: 'POST',
+    const refreshTokenEncoded = encodeURIComponent(session.auth.refresh_token);
+    const response = await fetch(`${authUrl}/auth/refresh-token?token=${refreshTokenEncoded}`, {
+      method: 'POST', // Changed to GET since we're passing the token as a URL parameter
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: session.auth.refresh_token }),
     });
 
     if (!response.ok) throw new Error('Failed to refresh token');
-
+    
     const newAuthResponse: AuthResponse = await response.json();
     await DeTokenize(newAuthResponse);
     return true;
@@ -226,20 +226,51 @@ export async function getSession(): Promise<Session | null> {
 }
 
 
-export async function updateSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-  if (!session) return;
+const TOKEN_REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
 
-  const parsed: Session = await decrypt(session);
-  const expires = new Date(Date.now() + parsed.auth.expires_in * 1000);
-  const res = NextResponse.next();
-  res.cookies.set({
-    name: "session",
-    value: await encrypt(parsed),
-    httpOnly: true,
-    expires: expires,
-  });
-  return res;
+export async function updateSession(request: NextRequest) {
+  const sessionCookie = request.cookies.get("session")?.value;
+  if (!sessionCookie) return;
+
+  try {
+    let parsed: Session = await decrypt(sessionCookie);
+    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+
+    // Decode the access token to get more accurate expiration information
+    const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
+
+    // Check if token is close to expiration
+    if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+      // Token is close to expiring, attempt to refresh
+      const refreshSuccessful = await refreshToken();
+      if (refreshSuccessful) {
+        // If refresh was successful, get the updated session
+        const updatedSessionCookie = request.cookies.get("session")?.value;
+        if (updatedSessionCookie) {
+          parsed = await decrypt(updatedSessionCookie);
+        }
+      }
+    }
+
+    // Update the expiration time based on the token's exp claim
+    const newExpirationTime = new Date(decodedToken.exp * 1000);
+    parsed.expires = newExpirationTime.toString();
+
+    const res = NextResponse.next();
+    res.cookies.set({
+      name: "session",
+      value: await encrypt(parsed),
+      httpOnly: true,
+      expires: newExpirationTime,
+    });
+    return res;
+  } catch (error) {
+    console.error('Error updating session:', error);
+    // If there's an error, clear the session cookie
+    const res = NextResponse.next();
+    res.cookies.delete("session");
+    return res;
+  }
 }
 
 // Main functions
