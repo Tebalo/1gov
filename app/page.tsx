@@ -2,7 +2,7 @@ import Link from 'next/link';
 import '../styles/animations.css';
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-sky-600 to-gray-600">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-sky-400 to-sky-600">
       <div className="text-center">
         <h1 className="text-5xl font-bold text-white mb-8 animate-fade-in-down">
           Welcome to Teacher Registrations and Licensing Application

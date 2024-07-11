@@ -21,7 +21,7 @@ import MainIcon from '@/public/main-icon.png';
 
 export default function Welcome() {
   return (
-    <main className="bg-sky-400 min-h-screen flex flex-col">
+    <main className="min-h-screen flex flex-col bg-gradient-to-r from-sky-400 to-sky-600">
       <header className="flex md:justify-start justify-center md:py-10 py-5">
         <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 md:w-72 w-48">
           <Image
@@ -63,7 +63,7 @@ export default function Welcome() {
 
         <div className="flex flex-col items-center mb-4">
           <Button variant="secondary" className="mb-2">Get In Touch</Button>
-          <p className="text-sm text-white">© 2024 TRLS Portal v1.26.04</p>
+          <p className="text-sm text-white">©2024 TRLS Portal v1.01.01</p>
         </div>
       </footer>
     </main>

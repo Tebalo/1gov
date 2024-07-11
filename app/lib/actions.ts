@@ -6,6 +6,7 @@ import { apiUrl, devUrl, licUrl } from "./store";
 import { Session } from './types';
 import { getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
+import { options } from './schema';
 
 
 
@@ -14,9 +15,9 @@ import { redirect } from 'next/navigation';
 async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
   let session = await getSession();
   const time = await session?.expires || ''
-  //console.log('Expires', time)
-  console.log('URL', url)
-  console.log('SESSION', session?.auth)
+  // console.log('Expires', time)
+  // console.log('URL', url)
+  // console.log('SESSION', session?.auth)
 
   if (!session || new Date(time) <= new Date()) {
     const refreshed = await refreshToken();
@@ -31,7 +32,12 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
   if (session?.auth?.access_token) {
     headers.set('Authorization', `Bearer ${session.auth.access_token}`);
   }
-
+  // const response = await fetch(url, {
+  //   ...options,
+  //   headers,
+  // });
+  // console.log(response.body)
+  // return response;
   return fetch(url, {
     ...options,
     headers,
@@ -205,4 +211,73 @@ export async function BulkRegistrationUpdate(data: string) {
     body: JSON.stringify(jsonData),
   });
   return res.status;
+}
+
+export async  function ConvertTime(time: string){
+  return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
+}
+
+export async function getRelativeTime(updateTime: string) {
+  const now = new Date();
+  const updated = new Date(updateTime);
+  const diffSeconds = Math.floor((now.getTime() - updated.getTime()) / 1000);
+  
+  if (diffSeconds < 60) {
+      return "Updated seconds ago";
+  } else if (diffSeconds < 3600) {
+      const minutes = Math.floor(diffSeconds / 60);
+      return `Updated ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  } else if (diffSeconds < 86400) {
+      const hours = Math.floor(diffSeconds / 3600);
+      return `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
+  } else if (diffSeconds < 604800) {
+      const days = Math.floor(diffSeconds / 86400);
+      if (days === 1) {
+          return "Updated a day ago";
+      } else {
+          return `Updated ${days} days ago`;
+      }
+  } else if (diffSeconds < 2592000) {
+      const weeks = Math.floor(diffSeconds / 604800);
+      if (weeks === 1) {
+          return "Updated a week ago";
+      } else {
+          return `Updated ${weeks} weeks ago`;
+      }
+  } else if (diffSeconds < 31536000) {
+      const months = Math.floor(diffSeconds / 2592000);
+      if (months === 1) {
+          return "Updated a month ago";
+      } else {
+          return `Updated ${months} months ago`;
+      }
+  } else {
+      const years = Math.floor(diffSeconds / 31536000);
+      if (years === 1) {
+          return "Updated a year ago";
+      } else {
+          return `Updated ${years} years ago`;
+      }
+  }
+}
+
+export async function getSLAStatus(createdAt: string) {
+  const created = new Date(createdAt);
+  const today = new Date();
+  const diffTime = today.getTime() - created.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const remainingDays = 30 - diffDays;
+
+  let badgeColor = "bg-green-100 text-green-800";
+  let displayText = `${remainingDays} days left`;
+
+  if (remainingDays <= 5 && remainingDays > 0) {
+      badgeColor = "bg-yellow-100 text-yellow-800";
+  } else if (remainingDays <= 0) {
+      badgeColor = "bg-red-100 text-red-800";
+      const overdueDays = Math.abs(remainingDays);
+      displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+  }
+
+  return { badgeColor, displayText };
 }

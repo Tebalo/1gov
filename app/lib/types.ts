@@ -74,3 +74,12 @@ export interface OTPPayload {
   username: string;
   otp: string;
 }
+
+export interface Registration {
+  national_id: string;
+  reg_number: string;
+  reg_status: string;
+  registration_type: string;
+  created_at: string;
+  updated_at: string;
+}

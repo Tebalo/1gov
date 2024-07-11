@@ -1,5 +1,5 @@
-export const devUrl = 'http://66.179.253.57:8080/api';
-export const apiUrl = 'http://74.208.205.44:8080/api';
+export const apiUrl = 'http://10.0.25.164:8080/api';
+export const devUrl = 'http://74.208.205.44:8080/api';
 export const licUrl = 'http://66.179.253.57:8081/api'
 export const authUrlOLD = 'http://jwtauth.26digitaldev.com/api/';
 export const authUrl = 'https://gateway-cus-acc.gov.bw/auth/login/sms';

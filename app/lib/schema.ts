@@ -294,3 +294,14 @@ export const FormDataSchema = z.object({
   practice_category:z.string().min(1,'Practice category is required').optional(),
   sub_cateogry:z.string().min(1,'Sub-category is required').optional(),
 })
+
+export const options: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
+  timeZone: "UTC"
+};

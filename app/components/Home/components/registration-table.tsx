@@ -2,7 +2,7 @@
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { getRegApplications } from "@/app/lib/actions"
-import React, { Suspense, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
 
 interface WorkProps{
@@ -20,6 +20,7 @@ interface Registration {
     created_by: string;
   }
 
+  
 
  export const RegistrationTable: React.FC<WorkProps> = ({status, userRole}) => {
     

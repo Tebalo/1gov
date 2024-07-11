@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import React, { Suspense, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
 import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 interface WorkProps{
     status: string;
@@ -23,31 +24,14 @@ interface Registration {
     updated_by: string;
     created_by: string;
 }
-interface license {
-    national_id: string;
-    reg_number: string;
-    reg_status: string;
-    registration_type: string;
-    created_at: string;
-    updated_at: string;
-    updated_by: string;
-    created_by: string;
-}
-interface Response {
-    services_type: string;
-    version: string;
-    license: license;
-}
 
 export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
     const {toast} = useToast()
     const [response, setResponse] = useState<Registration | null>(null);
-    const [license, setLicense] = useState<Registration | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [redirecting, setIsRedirecting] = useState(false);
-    // const timeString = "2024-04-25T11:10:33.000000Z";
-    // const date = new Date(timeString);
+
     const options: Intl.DateTimeFormatOptions = {
         year: "numeric",
         month: "2-digit",
@@ -57,10 +41,77 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
         second: "2-digit",
         hour12: false,
         timeZone: "UTC"
-      };
+    };
+
     function ConvertTime(time: string){
         return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
     }
+
+    function getRelativeTime(updateTime: string) {
+        const now = new Date();
+        const updated = new Date(updateTime);
+        const diffSeconds = Math.floor((now.getTime() - updated.getTime()) / 1000);
+        
+        if (diffSeconds < 60) {
+            return "Updated seconds ago";
+        } else if (diffSeconds < 3600) {
+            const minutes = Math.floor(diffSeconds / 60);
+            return `Updated ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        } else if (diffSeconds < 86400) {
+            const hours = Math.floor(diffSeconds / 3600);
+            return `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
+        } else if (diffSeconds < 604800) {
+            const days = Math.floor(diffSeconds / 86400);
+            if (days === 1) {
+                return "Updated a day ago";
+            } else {
+                return `Updated ${days} days ago`;
+            }
+        } else if (diffSeconds < 2592000) {
+            const weeks = Math.floor(diffSeconds / 604800);
+            if (weeks === 1) {
+                return "Updated a week ago";
+            } else {
+                return `Updated ${weeks} weeks ago`;
+            }
+        } else if (diffSeconds < 31536000) {
+            const months = Math.floor(diffSeconds / 2592000);
+            if (months === 1) {
+                return "Updated a month ago";
+            } else {
+                return `Updated ${months} months ago`;
+            }
+        } else {
+            const years = Math.floor(diffSeconds / 31536000);
+            if (years === 1) {
+                return "Updated a year ago";
+            } else {
+                return `Updated ${years} years ago`;
+            }
+        }
+    }
+
+    function getSLAStatus(createdAt: string) {
+        const created = new Date(createdAt);
+        const today = new Date();
+        const diffTime = today.getTime() - created.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const remainingDays = 30 - diffDays;
+
+        let badgeColor = "bg-green-100 text-green-800";
+        let displayText = `${remainingDays} days left`;
+
+        if (remainingDays <= 5 && remainingDays > 0) {
+            badgeColor = "bg-yellow-100 text-yellow-800";
+        } else if (remainingDays <= 0) {
+            badgeColor = "bg-red-100 text-red-800";
+            const overdueDays = Math.abs(remainingDays);
+            displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+        }
+
+        return { badgeColor, displayText };
+    }
+
     async function handleWork(){
         setIsLoading(true);
         if(service_type==='license'){
@@ -68,7 +119,7 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
             if(response){
                 setResponse(response ||  null)
             }else{
-                setLicense(null)
+                setResponse(null)
             }
         }else if(service_type==='registration'){
             const response = await getNext(status)
@@ -80,12 +131,13 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
         }
         setIsLoading(false)
     }
+
     function handleOpen(Id:string | undefined){
         setIsRedirecting(true)
         if(Id){
             if(service_type==='registration'){
                 if(response?.registration_type==='Teacher'){
-                    router.push(`/trls/home/teacher/${Id}`);
+                    router.push(`/trls/home/object/${Id}`);
                 }else if(response?.registration_type==='Student-Teacher'){
                     router.push(`/trls/home/student/${Id}`);
                 }
@@ -98,58 +150,72 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
             }
         }
     }
+
     return(
         <>
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                onClick={handleWork}
-                className="bg-sky-400 hover:bg-sky-600"
-                >
-                    Get Next Work
-                </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Next Work</DialogTitle>
-                    <DialogDescription>
-                        Retrieves next item in a list of applications based on date of creation.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <Suspense fallback={isLoading? 'Loading...':''}>
-                    {response ? (
-                        <div className="grid grid-cols-1">
-                            <div className="grid grid-cols-2 items-center"><Label>Registration Number: </Label><span className="font-light italic text-sm">{response.national_id}</span></div>
-                            {/* <div className="grid grid-cols-2 items-center"><Label>Registration Number: </Label><span className="font-light italic text-sm">{response.reg_number}</span></div> */}
-                            <div className="grid grid-cols-2 items-center"><Label>Registration Status: </Label><span className="font-light italic text-sm">{response.reg_status}</span></div>
-                            <div className="grid grid-cols-2 items-center"><Label>Registration Type: </Label><span className="font-light italic text-sm">{response.registration_type}</span></div>
-                            <div className="grid grid-cols-2 items-center"><Label>Created At: </Label><span className="font-light italic text-sm">{ConvertTime(response.created_at)}</span></div>
-                            <div className="grid grid-cols-2 items-center"><Label>Updated At: </Label><span className="font-light italic text-sm">{ConvertTime(response.updated_at)}</span></div>
-                        </div>
-                    ) : (
-                        <div className="w-full flex justify-center">
-                            {isLoading ? (
-                                <LoadingSkeleton/>
-                            ):(
-                            <Label>No work found!!!</Label>
-                            )}
-                        </div>
-                    )}
-                    </Suspense>
-                </div>
-                <DialogFooter>
-                    <div className={`${response? 'block':'hidden'}`}>
-                        <Button 
-                        type="submit" 
-                        className={`${redirecting ? 'bg-sky-200':'bg-sky-300'} hover:bg-sky-600`}
-                        onClick={() => handleOpen(response?.national_id)}
-                        disabled={redirecting}
-                        >{redirecting ? (<>Redirecting...</>):(<>Open</>)}</Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button
+                    onClick={handleWork}
+                    className="bg-sky-400 hover:bg-sky-600 text-white font-semibold"
+                    >
+                        Get Next Work
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-sky-700">Next Work</DialogTitle>
+                        <DialogDescription className="text-gray-600">
+                            Retrieves the next item in the list of applications based on creation date.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Suspense fallback={<LoadingSkeleton />}>
+                        {isLoading ? (
+                            <LoadingSkeleton />
+                        ) : response ? (
+                            <div className="space-y-4">
+                                <InfoItem label="Registration Number" value={response.national_id} />
+                                <InfoItem label="Registration Status" value={response.reg_status} />
+                                <InfoItem label="Registration Type" value={response.registration_type} />
+                                <InfoItem label="Created" value={ConvertTime(response.created_at)} />
+                                <InfoItem label="Updated" value={getRelativeTime(response.updated_at)} />
+                                <div className="flex justify-between items-center">
+                                    <Label className="font-semibold text-gray-700">SLA Status:</Label>
+                                    <Badge className={`${getSLAStatus(response.created_at).badgeColor} font-semibold px-3 py-1`}>
+                                        {getSLAStatus(response.created_at).displayText}
+                                    </Badge>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-center text-gray-600 font-semibold">
+                                No work found!
+                            </div>
+                        )}
+                        </Suspense>
                     </div>
-                </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                    <DialogFooter>
+                        {response && (
+                            <Button 
+                            type="submit" 
+                            className={`${redirecting ? 'bg-sky-200' : 'bg-sky-400'} hover:bg-sky-600 text-white font-semibold transition-colors`}
+                            onClick={() => handleOpen(response?.national_id)}
+                            disabled={redirecting}
+                            >
+                                {redirecting ? 'Redirecting...' : 'Open'}
+                            </Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
+
+// Helper component for info items
+const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+    <div className="flex justify-between items-center">
+        <Label className="font-semibold text-gray-700">{label}</Label>
+        <span className="text-sm text-gray-600">{value}</span>
+    </div>
+);
