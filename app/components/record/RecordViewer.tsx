@@ -16,6 +16,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
 
 interface TeacherRegistration {
     national_id: string;
@@ -292,14 +294,17 @@ interface TeacherRegistrationViewProps {
         <h1 className="text-3xl font-bold mb-8">Teacher Registration Application</h1>
         <div className="bg-white shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
           {renderSection("Personal Information", renderPersonalInfo(data))}
+          <Separator/>
           {renderSection("Qualifications", renderQualifications(data, setPdfUrl))}
+          <Separator/>
           {renderSection("Employment", renderEmployment(data))}
+          <Separator/>
           {renderSection("Documents", renderDocuments(data, setPdfUrl))}
+          <Separator/>
           {renderSection("Offences", renderOffences(data, setPdfUrl))}
+          <Separator/>
           {renderSection("Declaration", renderDeclaration(data))}
-        </div>
-  
-        <div className="mt-8 space-x-4">
+        <div className="mt-8 space-x-4 flex justify-end">
           {(prev_status || inv_status || bar_status || rej_status) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -505,13 +510,15 @@ interface TeacherRegistrationViewProps {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
     );
   };
   
   
   const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-    <div className="mb-2">
-      <span className="font-medium">{label}:</span> {value}
+    <div className=" flex items-center justify-normal space-x-2">
+      <Label className="font-semibold text-gray-700">{label}:</Label> 
+      <span className="text-sm text-gray-600">{value}</span>
     </div>
   );
   
@@ -558,7 +565,7 @@ interface TeacherRegistrationViewProps {
   
   
   const renderPersonalInfo = (data: TeacherRegistrationData) => (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       <InfoItem label="Name" value={`${data.bio_datas.forenames} ${data.bio_datas.surname}`} />
       <InfoItem label="National ID" value={data.bio_datas.national_id} />
       <InfoItem label="Date of Birth" value={new Date(data.bio_datas.dob).toLocaleDateString()} />
@@ -588,7 +595,7 @@ interface TeacherRegistrationViewProps {
   );
   
   const renderEmployment = (data: TeacherRegistrationData) => (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       <InfoItem label="Current Institution" value={data.employment_details.current_institution} />
       <InfoItem label="Institution Type" value={data.employment_details.institution_type} />
       <InfoItem label="Region" value={data.employment_details.region} />
@@ -599,7 +606,7 @@ interface TeacherRegistrationViewProps {
   );
   
   const renderDocuments = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <div>
+    <div className='bg-gray-100 rounded-lg p-4'>
       <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />
       <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />
       <DocumentItem label="Proof of Payment" url={data.attachments.proof_of_payment} onView={onView} />
@@ -607,7 +614,7 @@ interface TeacherRegistrationViewProps {
   );
   
   const renderOffences = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <div>
+    <div className='bg-gray-100 rounded-lg p-4'>
       <OffenceItem 
         label="Student Related Offence" 
         value={data.offence_convictions.student_related_offence} 

@@ -11,6 +11,7 @@ import { StudentRegistrations } from "./components/StudentRegistrations";
 import { MaleTeacherRegistrations } from "./components/MaleTeacherRegistrations";
 import { MonthlyTeacherRegistrations } from "./components/MonthlyTeacherRegistrations-SimpleBarGraph";
 import { ListOfTeacherRegistrationsByStatus } from "./components/TeacherRegistrationByStatus-List";
+import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
 
 export const RegistrationOfficerDashboard = () => {
     return(
@@ -31,7 +32,7 @@ export const RegistrationOfficerDashboard = () => {
                         <Tabs defaultValue="overview" className="space-y-4">
                             <TabsList>
                                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                                <TabsTrigger value="analytics" disabled>
+                                <TabsTrigger value="analytics">
                                     Analytics
                                 </TabsTrigger>
                                 <TabsTrigger value="reports" disabled>
@@ -63,7 +64,7 @@ export const RegistrationOfficerDashboard = () => {
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <ListOfTeacherRegistrationsByStatus />
+                                        <HorizontalBarChartStatus />
                                     </CardContent>
                                     </Card>
                                 </div>

@@ -163,6 +163,7 @@ export const Email: React.FC = () => {
             setAuthResponse(res)
         } catch (error) {
             console.error('Login error:', error)
+            // setAuthResponse({ error: 'Login failed', message: 'An error occurred during login' })
         } finally {
             setIsLoading(false)
         }
@@ -180,7 +181,7 @@ export const Email: React.FC = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="grid gap-4 py-4">
-                            {authResponse?.error && <p className="text-red-600 text-sm">{authResponse.error_description || 'Invalid user credentials'}</p>}
+                            {authResponse?.code == 401 && <p className="text-red-600 text-sm">{authResponse.message || 'Invalid user credentials'}</p>}
                             <FormField
                                 control={form.control}
                                 name="email"
