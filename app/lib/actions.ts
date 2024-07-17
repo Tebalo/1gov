@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
-import { apiUrl, devUrl, licUrl } from "./store";
+import { apiUrl, licUrl } from "./store";
 import { Session } from './types';
 import { getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
