@@ -18,6 +18,7 @@ export interface AuthResponse {
   error: string | null;
   error_description: string | null;
   error_uri: string | null;
+  code: number | null;
 }
 
 export interface DecodedToken {

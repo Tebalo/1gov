@@ -37,6 +37,7 @@ TODO:
 14. https://tailwindcss.com/docs/cursor#setting-the-cursor-style
 15. Display a file: https://nextjs.org/docs/app/building-your-application/routing/intercepting-routes 
 16. Parallel routes: https://nextjs.org/docs/app/building-your-application/routing/parallel-routes
+17. DasyUI: https://daisyui.com/components/timeline/
 
 Erros and Resolutions
 1. https://github.com/shadcn-ui/ui/issues/800: My mistake was that my editor auto imported Form component from react-hook-form when it should have been imported from @/components/ui/form. Hope this helps somebody.
