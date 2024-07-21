@@ -21,7 +21,7 @@ export default async function Page({params}:{params: {slug: string}}){
                                 <h2 className="text-center text-black text-3xl">Work not found!</h2>
                                 <div className="flex items-center justify-center">
                                     <Link
-                                    href='/trls/home'
+                                    href='/trls/work'
                                     scroll={false}
                                     >
                                         <button
