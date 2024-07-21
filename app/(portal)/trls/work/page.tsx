@@ -1,6 +1,5 @@
-export const dynamic = 'force-dynamic';
-
-import { getRole} from "@/app/auth/auth";
+import { getRole, getSession } from "@/app/auth/auth";
+import { AccessDenied } from "@/app/components/AccessDenied";
 import { AdminHome } from "@/app/components/Home/AdminHome";
 import { DirectorHome } from "@/app/components/Home/DirectorHome";
 import { LicenseManagerHome } from "@/app/components/Home/LicenseManagerHome";
@@ -12,7 +11,7 @@ import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHo
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { redirect } from "next/navigation";
-
+export const dynamic = 'force-dynamic';
 export default async function Home(){
     const userRole = await getRole()
 

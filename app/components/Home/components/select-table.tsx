@@ -1,14 +1,15 @@
 // components/SelectTable.tsx
 'use client'
-import { useState } from "react"
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Work } from "../../MyWork/work";
 import { mgt, roleObjects } from "@/app/lib/store";
 import { RegistrationTable } from "./registration-table";
 import { EndorsementTable } from "./upper-mgt-table";
 import { LicenseTable } from "./license-table";
 import { LicenseEndorsementTable } from "./license-endorsement-table";
+import { Search } from "../../Search";
 
 interface Props {
   userRole: string
@@ -41,28 +42,35 @@ export const SelectTable = ({ userRole }: Props) => {
     
   return (
     <>
-      <div className="flex space-x-2 items-end">
-        <div>
-          <Label className="font-light">Show work for</Label>
-          <Select onValueChange={handleSelectChange} value={table}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select an application..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Application Type</SelectLabel>
-                {reg_application && <SelectItem value="RegistrationApplication">Registration</SelectItem>}
-                {lic_application && <SelectItem value="licenseApplication">License</SelectItem>}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+      <div className="grid grid-cols-2 pb-5">
+        <div className="">
+          <div className="flex space-x-2 items-end">
+            <div className="">
+              <Label className="font-light">Show work for</Label>
+              <Select onValueChange={handleSelectChange} value={table}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select an application..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Application Type</SelectLabel>
+                    {reg_application && <SelectItem value="RegistrationApplication">Registration</SelectItem>}
+                    {lic_application && <SelectItem value="licenseApplication">License</SelectItem>}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            {!mgt.includes(userRole) && (
+              <>
+                {reg_Next_Status && <Work status={reg_Next_Status} service_type="registration" />}
+                {lic_Next_Status && <Work status={lic_Next_Status} service_type="license" />}
+              </>
+            )}
+          </div>
         </div>
-        {!mgt.includes(userRole) && (
-          <>
-            {reg_Next_Status && <Work status={reg_Next_Status} service_type="registration" />}
-            {lic_Next_Status && <Work status={lic_Next_Status} service_type="license" />}
-          </>
-        )}
+        <div className="place-self-end">
+          <Search/>
+        </div>
       </div>
       {renderTable()}
     </>

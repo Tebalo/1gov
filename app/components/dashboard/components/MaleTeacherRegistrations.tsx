@@ -39,7 +39,7 @@ export const MaleTeacherRegistrations = () => {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
-                        Male Teacher Registrations
+                        Male Registrations
                         </CardTitle>
                         <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -58,9 +58,9 @@ export const MaleTeacherRegistrations = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{response?.males_count}</div>
-                        <p className="text-xs text-muted-foreground">
+                        {/* <p className="text-xs text-muted-foreground">
                         +{response?.males_count}% from last month
-                        </p>
+                        </p> */}
                     </CardContent>
                 </Card>
                 ):<></>

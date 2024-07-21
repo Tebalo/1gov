@@ -58,9 +58,9 @@ export const AllTeacherRegistrations = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{response?.all_teacher_registrations_count}</div>
-                        <p className="text-xs text-muted-foreground">
+                        {/* <p className="text-xs text-muted-foreground">
                         +{response?.all_teacher_registrations_count}% from last month
-                        </p>
+                        </p> */}
                     </CardContent>
                 </Card>
                 ):<></>

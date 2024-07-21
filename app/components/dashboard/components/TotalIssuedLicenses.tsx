@@ -12,7 +12,7 @@ interface Report {
     females_count: number;
 }
 
-export const FemaleTeacherRegistrations = () => {
+export const TotalIssuedLicenses = () => {
     const [response, setResponse] = useState<Report | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +39,7 @@ export const FemaleTeacherRegistrations = () => {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
-                        Female Registrations
+                        Total Issued Licenses
                         </CardTitle>
                         <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +57,7 @@ export const FemaleTeacherRegistrations = () => {
                         </svg>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{response?.females_count}</div>
+                        <div className="text-2xl font-bold">0</div>
                         {/* <p className="text-xs text-muted-foreground">
                         +{response?.females_count}% from last month
                         </p> */}

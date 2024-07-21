@@ -24,9 +24,9 @@ export function DataTableRowActions<TData>({
 
   function handleOpen() {
     if (record.registration_type === 'Teacher') {
-      router.push(`/trls/home/object/${record.national_id}`);
+      router.push(`/trls/work/object/${record.national_id}`);
     } else if (record.registration_type === 'Student-Teacher') {
-      router.push(`/trls/home/student/${record.national_id}`);
+      router.push(`/trls/work/student/${record.national_id}`);
     }
   }
 
