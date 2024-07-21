@@ -11,7 +11,7 @@ import {
 import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Suspense } from "react";
 import { Label } from "@/components/ui/label";
-import { SelectTable } from "./components/select-table";
+
 
 export const DirectorHome = async () => {
     return(

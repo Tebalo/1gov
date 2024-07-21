@@ -187,7 +187,7 @@ export const Email: React.FC = () => {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>1Gov ID</FormLabel>
                                         <FormControl>
                                             <Input placeholder="123456789" type="text" {...field} />
                                         </FormControl>

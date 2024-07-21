@@ -19,6 +19,7 @@ import { OneGovID } from "./components/one-gov";
 import Logo from '@/public/Code-of-Arms-colour.png';
 import MainIcon from '@/public/main-icon.png';
 import { version } from "../lib/store";
+import Link from "next/link";
 
 export default function Welcome() {
   return (
@@ -84,18 +85,7 @@ function LoginDialog() {
             Complete the form below to access your account.
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="email" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="email">1Gov ID</TabsTrigger>
-            <TabsTrigger value="onegov" disabled>Email</TabsTrigger>
-          </TabsList>
-          <TabsContent value="email">
-            <Email />
-          </TabsContent>
-          <TabsContent value="onegov">
-            <OneGovID />
-          </TabsContent>
-        </Tabs>
+        <Email />
       </DialogContent>
     </Dialog>
   );
@@ -103,13 +93,10 @@ function LoginDialog() {
 
 function RegisterDialog() {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Register</Button>
-      </DialogTrigger>
-      <DialogContent>
-        {/* Add registration form content here */}
-      </DialogContent>
-    </Dialog>
+    <Button asChild>
+      <Link href="https://1gov.gov.bw/welcome" target="_blank" rel="noopener noreferrer">
+        Register
+      </Link>
+    </Button>
   );
 }
