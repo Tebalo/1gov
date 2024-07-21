@@ -57,6 +57,7 @@ export async function refreshToken(): Promise<boolean> {
 
   try {
     const refreshTokenEncoded = encodeURIComponent(session.auth.refresh_token);
+    console.log(refreshTokenEncoded)
     const response = await fetch(`${authUrl}/auth/refresh-token?token=${refreshTokenEncoded}`, {
       method: 'POST', // Changed to GET since we're passing the token as a URL parameter
       headers: { 'Content-Type': 'application/json' },
@@ -238,13 +239,14 @@ export async function updateSession(request: NextRequest) {
 
     // Decode the access token to get more accurate expiration information
     const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
-
+    console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
     // Check if token is close to expiration
     if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
       // Token is close to expiring, attempt to refresh
       const refreshSuccessful = await refreshToken();
       if (refreshSuccessful) {
         // If refresh was successful, get the updated session
+        console.log("Updated access token")
         const updatedSessionCookie = request.cookies.get("session")?.value;
         if (updatedSessionCookie) {
           parsed = await decrypt(updatedSessionCookie);
