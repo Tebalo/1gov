@@ -47,7 +47,9 @@ export function HorizontalBarChartStatus() {
     setIsLoading(true);
     try {
       const data: DataPoint[] = await getStatuses();
-      setResponse(data);
+      // Filter out data points where total is 0
+      const filteredData = data.filter(item => item.total > 0);
+      setResponse(filteredData);
     } catch (error) {
       console.error("Error fetching statuses:", error);
       setResponse([]);
