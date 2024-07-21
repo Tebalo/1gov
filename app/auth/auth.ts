@@ -4,7 +4,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
-import { DeTokenizeUrl, authUrl, secretKey, validateUrl } from '../lib/store';
+import { DeTokenizeUrl, authUrl, iamURL, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
 import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
 
@@ -13,13 +13,30 @@ const key = new TextEncoder().encode(secretKey);
 const ROLES: UserRole[] = ['REGISTRATION_OFFICER', 'MANAGER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
 
 // Helper functions
-async function fetchWithErrorHandling(url: string, options: RequestInit): Promise<any> {
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+async function fetchWithErrorHandling(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<any> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error === 'AbortError') {
+      throw new Error(`Request timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
-  return response.json();
 }
 
 export async function encrypt(payload: any): Promise<string> {
@@ -51,28 +68,7 @@ export async function authenticate(_currentState: unknown, formData: FormData) {
   }
 }
 
-export async function refreshToken(): Promise<boolean> {
-  const session = await getSession();
-  if (!session || !session.auth.refresh_token) return false;
 
-  try {
-    const refreshTokenEncoded = encodeURIComponent(session.auth.refresh_token);
-    console.log(refreshTokenEncoded)
-    const response = await fetch(`${authUrl}/auth/refresh-token?token=${refreshTokenEncoded}`, {
-      method: 'POST', // Changed to GET since we're passing the token as a URL parameter
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) throw new Error('Failed to refresh token');
-    
-    const newAuthResponse: AuthResponse = await response.json();
-    await DeTokenize(newAuthResponse);
-    return true;
-  } catch (error) {
-    console.error('Error refreshing token:', error);
-    return false;
-  }
-}
 
 export async function login(formData: FormData): Promise<AuthResponse> {
   const payload: LoginPayload = {
@@ -85,7 +81,7 @@ export async function login(formData: FormData): Promise<AuthResponse> {
     cache: 'no-cache',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  });
+  }, 60000); // 60 seconds timeout because 1gov...
 }
 
 export async function validateOTP(username: string, otp: string): Promise<AuthResponse> {
@@ -118,6 +114,79 @@ export async function DeTokenize(authResponse: AuthResponse) {
   } catch (error) {
     console.error('DeTokenize error:', error);
     throw error;
+  }
+}
+
+export async function refreshTokenAction(refreshToken: string): Promise<boolean> {
+  try {
+    const refreshTokenEncoded = encodeURIComponent(refreshToken);
+    const response = await fetch(`${iamURL}/auth/refresh-token?token=${refreshTokenEncoded}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) throw new Error('Failed to refresh token');
+    
+    const newAuthResponse: AuthResponse = await response.json();
+    
+    // Decrypt the token to get expiration
+    const decodedToken = await decryptAccessToken(newAuthResponse);
+    const expires = new Date(decodedToken.exp * 1000);
+
+    const session: Session = { auth: newAuthResponse };
+    const encryptedSession = await encrypt(session);
+    
+    cookies().set("session", encryptedSession, { 
+      expires, 
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === 'production',
+      // sameSite: 'strict'
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return false;
+  }
+}
+
+export async function refreshToken(): Promise<boolean> {
+  const session = await getSession();
+  if (!session || !session.auth.refresh_token) return false;
+
+  return refreshTokenAction(session.auth.refresh_token);
+}
+
+const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 5 minutes in seconds
+
+export async function updateSession(request: NextRequest) {
+  const sessionCookie = request.cookies.get("session")?.value;
+  if (!sessionCookie) return;
+
+  try {
+    let parsed: Session = await decrypt(sessionCookie);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
+    console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
+    if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+      // Token is close to expiring, attempt to refresh
+      const refreshSuccessful = await refreshToken();
+      if (refreshSuccessful) {
+        // If refresh was successful, we don't need to do anything else
+        // The cookie has been updated in the refreshTokenAction
+        return NextResponse.next();
+      }
+    }
+
+    // If we didn't refresh, just return the next response
+    return NextResponse.next();
+  } catch (error) {
+    console.error('Error updating session:', error);
+    // If there's an error, clear the session cookie
+    const res = NextResponse.next();
+    res.cookies.delete("session");
+    return res;
   }
 }
 
@@ -158,7 +227,7 @@ export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
 
 export async function storeAccessGroups(decodedToken: DecodedToken){
   try{
-    const expires = new Date(Date.now() + 3600 * 1000);
+    const expires = new Date(Date.now() + 36000 * 1000);
     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
     const access_group: AccessGroup = {
       persona: personas,
@@ -224,55 +293,6 @@ export async function getSession(): Promise<Session | null> {
   
   if (!encryptedSession) return null;
   return decrypt(encryptedSession);
-}
-
-
-const TOKEN_REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
-
-export async function updateSession(request: NextRequest) {
-  const sessionCookie = request.cookies.get("session")?.value;
-  if (!sessionCookie) return;
-
-  try {
-    let parsed: Session = await decrypt(sessionCookie);
-    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-
-    // Decode the access token to get more accurate expiration information
-    const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
-    console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
-    // Check if token is close to expiration
-    if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
-      // Token is close to expiring, attempt to refresh
-      const refreshSuccessful = await refreshToken();
-      if (refreshSuccessful) {
-        // If refresh was successful, get the updated session
-        console.log("Updated access token")
-        const updatedSessionCookie = request.cookies.get("session")?.value;
-        if (updatedSessionCookie) {
-          parsed = await decrypt(updatedSessionCookie);
-        }
-      }
-    }
-
-    // Update the expiration time based on the token's exp claim
-    const newExpirationTime = new Date(decodedToken.exp * 1000);
-    parsed.expires = newExpirationTime.toString();
-
-    const res = NextResponse.next();
-    res.cookies.set({
-      name: "session",
-      value: await encrypt(parsed),
-      httpOnly: true,
-      expires: newExpirationTime,
-    });
-    return res;
-  } catch (error) {
-    console.error('Error updating session:', error);
-    // If there's an error, clear the session cookie
-    const res = NextResponse.next();
-    res.cookies.delete("session");
-    return res;
-  }
 }
 
 // Main functions

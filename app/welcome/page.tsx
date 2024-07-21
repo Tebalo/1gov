@@ -18,6 +18,7 @@ import { Email } from "./components/email-login";
 import { OneGovID } from "./components/one-gov";
 import Logo from '@/public/Code-of-Arms-colour.png';
 import MainIcon from '@/public/main-icon.png';
+import { version } from "../lib/store";
 
 export default function Welcome() {
   return (
@@ -63,7 +64,7 @@ export default function Welcome() {
 
         <div className="flex flex-col items-center mb-4">
           <Button variant="secondary" className="mb-2">Get In Touch</Button>
-          <p className="text-sm text-white">©2024 TRLS Portal v1.01.05</p>
+          <p className="text-sm text-white">©2024 TRLS Portal {version}</p>
         </div>
       </footer>
     </main>
