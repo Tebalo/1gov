@@ -9,36 +9,43 @@ import { redirect } from 'next/navigation';
 import { options } from './schema';
 
 
-async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
-  let session = await getSession();
-  const time = await session?.expires || ''
-  // console.log('Expires', time)
-  // console.log('URL', url)
-  // console.log('SESSION', session?.auth)
+async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  if (!session || new Date(time) <= new Date()) {
-    const refreshed = await refreshToken();
-    if (!refreshed) {
-      throw new Error('Session expired and refresh failed');
+  try {
+    let session = await getSession();
+    const time = await session?.expires || '';
+
+    if (!session || new Date(time) <= new Date()) {
+      const refreshed = await refreshToken();
+      if (!refreshed) {
+        throw new Error('Session expired and refresh failed');
+      }
+      session = await getSession();
     }
-    session = await getSession();
-  }
 
-  const headers = new Headers(options.headers);
-  
-  if (session?.auth?.access_token) {
-    headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+    const headers = new Headers(options.headers);
+    
+    if (session?.auth?.access_token) {
+      headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+      signal: controller.signal
+    });
+
+    return response;
+  } catch (error) {
+    if (error === 'AbortError') {
+      throw new Error(`Request timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
-  // const response = await fetch(url, {
-  //   ...options,
-  //   headers,
-  // });
-  // console.log(response.body)
-  // return response;
-  return fetch(url, {
-    ...options,
-    headers,
-  });
 }
 
 export async function logout() {

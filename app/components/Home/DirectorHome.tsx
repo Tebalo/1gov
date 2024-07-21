@@ -11,22 +11,18 @@ import {
 import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Suspense } from "react";
 import { Label } from "@/components/ui/label";
-import { SelectTable } from "./components/select-table";
+
 
 export const DirectorHome = async () => {
     return(
       <>
       <div className="overflow-auto h-screen rounded-lg">
         <div className="mb-5">
-            <PageTitle Title="Teacher Registration and Licensing"/>
+            <PageTitle Title="Welcome to Teacher Registration and Licensing System"/>
         </div>
         <div className="w-full">
             <div className="rounded-lg">
                 <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4">
-                    <div className="p-2 space-y-2 md:col-span-3 items-center justify-center md:h-fit border border-gray-200 rounded bg-gray-50">                      
-                      <Label>My Work</Label>
-                      <SelectTable userRole={"director"} />
-                    </div>
                     <div className="flex-row items-center justify-center border shadow border-gray-200 p-1 h-fit rounded bg-gray-50 space-x-2">
                       <Label>Applications by status</Label>
                       <div>
