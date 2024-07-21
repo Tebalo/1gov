@@ -14,6 +14,7 @@ import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bell, CheckCircle, Clock, List } from "lucide-react";
+import { HorizontalBarChartStatus } from "../dashboard/components/horizontal-bar-chart";
 
 // Mock data for worklist, followed items, and notifications
 const worklistItems = [
@@ -81,7 +82,7 @@ export const RegistrationOfficerHome = () => {
               </SelectContent>
             </Select>
             <Suspense fallback="Loading...">
-              <ApplicationStatusPieChart />
+              <HorizontalBarChartStatus />
             </Suspense>
           </CardContent>
         </Card>
