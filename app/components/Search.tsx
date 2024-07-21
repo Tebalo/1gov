@@ -1,36 +1,36 @@
-'use client'
-import { getNext, getNextLicense } from "@/app/lib/actions";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Search as SearchIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
 import React, { Suspense, useState } from "react"
-import { LoadingSkeleton } from "../../LoadingSkeleton";
-import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
-
-interface WorkProps{
-    status: string;
-    service_type: string;
-}
+import { searchById } from "../lib/actions"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { LoadingSkeleton } from "./LoadingSkeleton"
+import { Badge } from "@/components/ui/badge"
 
 interface Registration {
     national_id: string;
     reg_number: string;
     reg_status: string;
     registration_type: string;
+    endorsement_status: string;
+    pending_customer_action: string;
+    license_link: string;
+    rejection_reason: string;
     created_at: string;
     updated_at: string;
     updated_by: string;
     created_by: string;
 }
 
-export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
-    const {toast} = useToast()
+
+export const Search: React.FC = () => {
     const [response, setResponse] = useState<Registration | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [redirecting, setIsRedirecting] = useState(false);
+    const [inputId, setInputId] = useState("");
 
     const options: Intl.DateTimeFormatOptions = {
         year: "numeric",
@@ -112,22 +112,13 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
         return { badgeColor, displayText };
     }
 
-    async function handleWork(){
+    async function search(id: string){
         setIsLoading(true);
-        if(service_type==='license'){
-            const response = await getNextLicense(status)
-            if(response){
-                setResponse(response ||  null)
-            }else{
-                setResponse(null)
-            }
-        }else if(service_type==='registration'){
-            const response = await getNext(status)
-            if(response){
-                setResponse(response || null)
-            }else{
-                setResponse(null)
-            }
+        const response = await searchById(id)
+        if(response){
+            setResponse(response ||  null)
+        }else{
+            setResponse(null)
         }
         setIsLoading(false)
     }
@@ -135,37 +126,41 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
     function handleOpen(Id:string | undefined){
         setIsRedirecting(true)
         if(Id){
-            if(service_type==='registration'){
-                if(response?.registration_type==='Teacher'){
-                    router.push(`/trls/work/object/${Id}`);
-                }else if(response?.registration_type==='Student-Teacher'){
-                    router.push(`/trls/work/student/${Id}`);
-                }
-            }else if(service_type==='license'){
-                if(response?.registration_type==='Teacher'){
-                    router.push(`/trls/work/license/teacher/${Id}`);
-                }else if(response?.registration_type==='Student-Teacher'){
-                    router.push(`/trls/work/license/student/${Id}`);
-                }
+            if(response?.registration_type==='Teacher'){
+                router.push(`/trls/work/object/${Id}`);
+            }else if(response?.registration_type==='Student-Teacher'){
+                router.push(`/trls/work/student/${Id}`);
             }
         }
     }
 
-    return(
-        <>
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button
-                    onClick={handleWork}
-                    >
-                        Get Next Work
-                    </Button>
-                </DialogTrigger>
+  return (
+    <div className="flex w-full max-w-sm items-end space-x-2">
+      <div className="flex-grow">
+        <Input 
+            type="text" 
+            id="ID" 
+            placeholder="Search for records by ID" 
+            value={inputId}
+            onChange={(e) => setInputId(e.target.value)}
+        />
+      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+            <Button 
+            type="submit" 
+            className="flex items-center"
+            onClick={() => search(inputId)}
+            >
+                <SearchIcon className="h-4 w-4 mr-2" />
+                Search
+            </Button>
+            </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold text-sky-700">Next Work</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold text-sky-700">Record Details</DialogTitle>
                         <DialogDescription className="text-gray-600">
-                            Retrieves the next item in the list of applications based on creation date.
+                            Search results..
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4">
@@ -176,6 +171,7 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
                             <div className="space-y-4">
                                 <InfoItem label="Registration Number" value={response.national_id} />
                                 <InfoItem label="Registration Status" value={response.reg_status} />
+                                <InfoItem label="Endorsement Status" value={response.endorsement_status} />
                                 <InfoItem label="Registration Type" value={response.registration_type} />
                                 <InfoItem label="Created" value={ConvertTime(response.created_at)} />
                                 <InfoItem label="Updated" value={getRelativeTime(response.updated_at)} />
@@ -188,7 +184,7 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
                             </div>
                         ) : (
                             <div className="text-center text-gray-600 font-semibold">
-                                No work found!
+                                We couldn&rsquo;t find any work matching the provided ID.
                             </div>
                         )}
                         </Suspense>
@@ -207,8 +203,8 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </>
-    )
+    </div>
+  )
 }
 
 // Helper component for info items

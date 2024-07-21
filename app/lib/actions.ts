@@ -9,9 +9,6 @@ import { redirect } from 'next/navigation';
 import { options } from './schema';
 
 
-
-
-// Helper function for API calls
 async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
   let session = await getSession();
   const time = await session?.expires || ''
@@ -116,6 +113,16 @@ export async function getNext(status: string) {
   }
 }
 
+export async function searchById(id: string){
+  try{
+    const res = await fetchWithAuth(`${apiUrl}/search-record/?search=${id}`, { cache: 'no-cache' });
+    if (!res.ok || res.status !== 200) return null;
+    return res.headers.get('content-type')?.startsWith('application/json') ? res.json() : null;
+  } catch (error){
+    console.error('Error fetching record', error)
+  }
+}
+
 export async function getNextLicense(status: string) {
   try {
     const res = await fetchWithAuth(`${licUrl}/getNext/?reg_status=${status}`, { cache: 'no-cache' });
@@ -161,6 +168,7 @@ export async function UpdateStatus(id: string, status: string) {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
   });
+  console.log(res.status)
   return res.status;
 }
 
@@ -179,6 +187,11 @@ export async function GetReports() {
 
 export async function getMonthlyTeacherRegistrations() {
   const res = await fetchWithAuth(`${apiUrl}/Monthly-Statistics/`);
+  return res.json();
+}
+
+export async function getStatuses() {
+  const res = await fetchWithAuth(`${apiUrl}/Status-Statistics-Graph/`);
   return res.json();
 }
 

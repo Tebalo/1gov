@@ -2,6 +2,7 @@
 
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
+import { useEffect, useState } from "react";
 
 import {
   Card,
@@ -17,18 +18,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { month: "Pending-Screening", desktop: 186, mobile: 80 },
-  { month: "Pending-Assessment", desktop: 305, mobile: 200 },
-  { month: "Pending-Manager-Approval", desktop: 237, mobile: 120 },
-  { month: "Pending-Endorsement", desktop: 73, mobile: 190 },
-  { month: "Endorsement-Recommendation", desktop: 209, mobile: 130 },
-  { month: "Endorsement-Complete", desktop: 214, mobile: 140 },
-]
+import { getStatuses } from "@/app/lib/actions";
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
+    label: "Total",
     color: "hsl(var(--chart-1))",
   },
   mobile: {
@@ -40,18 +34,43 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+interface DataPoint {
+  status: string;
+  total: number;
+}
+
 export function HorizontalBarChartStatus() {
+  const [response, setResponse] = useState<DataPoint[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function getStatusStatistics() {
+    setIsLoading(true);
+    try {
+      const data: DataPoint[] = await getStatuses();
+      setResponse(data);
+    } catch (error) {
+      console.error("Error fetching statuses:", error);
+      setResponse([]);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getStatusStatistics();
+  }, []);
+
   return (
     <Card>
       <CardHeader>
-        {/* <CardTitle>Bar Chart - Custom Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription> */}
+        <CardTitle>Teacher Registrations by Status</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={response}
             layout="vertical"
             margin={{
               right: 16,
@@ -59,7 +78,7 @@ export function HorizontalBarChartStatus() {
           >
             <CartesianGrid horizontal={false} />
             <YAxis
-              dataKey="month"
+              dataKey="status"
               type="category"
               tickLine={false}
               tickMargin={10}
@@ -67,26 +86,26 @@ export function HorizontalBarChartStatus() {
               tickFormatter={(value) => value.slice(0, 3)}
               hide
             />
-            <XAxis dataKey="desktop" type="number" hide />
+            <XAxis dataKey="total" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
             <Bar
-              dataKey="desktop"
+              dataKey="total"
               layout="vertical"
               fill="var(--color-desktop)"
               radius={4}
             >
               <LabelList
-                dataKey="month"
+                dataKey="status"
                 position="insideLeft"
                 offset={8}
                 className="fill-[--color-label]"
                 fontSize={12}
               />
               <LabelList
-                dataKey="desktop"
+                dataKey="total"
                 position="right"
                 offset={8}
                 className="fill-foreground"
@@ -97,11 +116,8 @@ export function HorizontalBarChartStatus() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing total registrations by status for the last 6 months
         </div>
       </CardFooter>
     </Card>

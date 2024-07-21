@@ -1,4 +1,3 @@
-// RecordDetailsDialog.tsx
 'use client'
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Registration } from '@/app/lib/types';
+import { useState } from "react";
 
 interface RecordDetailsDialogProps {
   isOpen: boolean;
@@ -22,6 +22,8 @@ const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) 
 );
 
 export const RecordDetailsDialog: React.FC<RecordDetailsDialogProps> = ({ isOpen, onClose, record, onOpen }) => {
+  const [redirecting, setIsRedirecting] = useState(false);
+
     const options: Intl.DateTimeFormatOptions = {
         year: "numeric",
         month: "2-digit",
@@ -129,10 +131,10 @@ export const RecordDetailsDialog: React.FC<RecordDetailsDialogProps> = ({ isOpen
         <DialogFooter>
           <Button 
             type="submit" 
-            className="bg-sky-400 hover:bg-sky-600 text-white font-semibold transition-colors"
+            className={`${redirecting ? 'bg-sky-200' : 'bg-sky-400'} hover:bg-sky-600 text-white font-semibold transition-colors`}
             onClick={onOpen}
           >
-            Open
+            {redirecting ? 'Redirecting...' : 'Open'}
           </Button>
         </DialogFooter>
       </DialogContent>

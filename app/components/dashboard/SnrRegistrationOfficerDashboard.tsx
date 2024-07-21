@@ -47,23 +47,23 @@ export const SnrRegistrationOfficerDashboard = () => {
                                 </div>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                                     <Card className="col-span-4">
-                                    <CardHeader>
-                                        <CardTitle>Monthly Teacher Registrations</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="pl-2">
-                                        <MonthlyTeacherRegistrations />
-                                    </CardContent>
+                                        <CardHeader>
+                                            <CardTitle>Monthly Teacher Registrations</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="pl-2">
+                                            <MonthlyTeacherRegistrations />
+                                        </CardContent>
                                     </Card>
                                     <Card className="col-span-3">
-                                    <CardHeader>
-                                        <CardTitle>Team</CardTitle>
-                                        <CardDescription>
-                                        Applications processed this month.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <RecentSales />
-                                    </CardContent>
+                                        <CardHeader>
+                                            <CardTitle>Team</CardTitle>
+                                            <CardDescription>
+                                            Applications processed this month.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <RecentSales />
+                                        </CardContent>
                                     </Card>
                                 </div>
                             </TabsContent>
