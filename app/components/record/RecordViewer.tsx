@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 
 interface TeacherRegistration {
     national_id: string;
@@ -25,6 +26,13 @@ interface TeacherRegistration {
     reg_status: string;
     endorsement_status: string;
     rejection_reason: string | null;
+    payment_ref: string;
+    payment_amount: string;
+    payment_name: string;
+    application_id: string;
+    license_link: string;
+    license_status: string;
+    pending_customer_action: string;
     registration_type: string;
     created_at: string;
     updated_at: string;
@@ -245,14 +253,15 @@ interface TeacherRegistrationViewProps {
             description: "The record has been routed with the status: " + record.status,
             action: <ToastAction altText="Ok">Ok</ToastAction>,
           });
-          router.push('/trls/home');
+          router.push('/trls/work');
         }
       };
-  
+
     const handleEndorsementStatusUpdate = async (id: string, status: string) => {
       if (status) {
         const res = await UpdateEndorsementStatus(id, status);
-        router.prefetch('/trls/home');
+        console.log("status",res)
+        router.prefetch('/trls/work');
         if (res !== 201) {
           toast({
             title: "Failed!!!",
@@ -269,7 +278,7 @@ interface TeacherRegistrationViewProps {
               <ToastAction altText="Ok">Ok</ToastAction>
             ),
           });
-          router.push('/trls/home');
+          router.push('/trls/work');
         }
       } else {
         toast({
@@ -291,15 +300,17 @@ interface TeacherRegistrationViewProps {
   
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Teacher Registration Application</h1>
+        <h1 className="text-3xl font-bold mb-8">Applicants ID: {data.teacher_preliminary_infos.national_id}</h1>
         <div className="bg-white shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
+          {renderSection("Case Details", renderCaseDetails(data))}
+          <Separator/>
           {renderSection("Personal Information", renderPersonalInfo(data))}
           <Separator/>
           {renderSection("Qualifications", renderQualifications(data, setPdfUrl))}
           <Separator/>
           {renderSection("Employment", renderEmployment(data))}
           <Separator/>
-          {renderSection("Documents", renderDocuments(data, setPdfUrl))}
+          {renderSection("Documents/Licenses", renderDocuments(data, setPdfUrl))}
           <Separator/>
           {renderSection("Offences", renderOffences(data, setPdfUrl))}
           <Separator/>
@@ -576,6 +587,104 @@ interface TeacherRegistrationViewProps {
       <InfoItem label="Postal Address" value={data.bio_datas.postal_address} />
     </div>
   );
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone: "UTC"
+};
+
+function ConvertTime(time: string){
+    return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
+}
+
+function getRelativeTime(updateTime: string) {
+    const now = new Date();
+    const updated = new Date(updateTime);
+    const diffSeconds = Math.floor((now.getTime() - updated.getTime()) / 1000);
+    
+    if (diffSeconds < 60) {
+        return "Updated seconds ago";
+    } else if (diffSeconds < 3600) {
+        const minutes = Math.floor(diffSeconds / 60);
+        return `Updated ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffSeconds < 86400) {
+        const hours = Math.floor(diffSeconds / 3600);
+        return `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (diffSeconds < 604800) {
+        const days = Math.floor(diffSeconds / 86400);
+        if (days === 1) {
+            return "Updated a day ago";
+        } else {
+            return `Updated ${days} days ago`;
+        }
+    } else if (diffSeconds < 2592000) {
+        const weeks = Math.floor(diffSeconds / 604800);
+        if (weeks === 1) {
+            return "Updated a week ago";
+        } else {
+            return `Updated ${weeks} weeks ago`;
+        }
+    } else if (diffSeconds < 31536000) {
+        const months = Math.floor(diffSeconds / 2592000);
+        if (months === 1) {
+            return "Updated a month ago";
+        } else {
+            return `Updated ${months} months ago`;
+        }
+    } else {
+        const years = Math.floor(diffSeconds / 31536000);
+        if (years === 1) {
+            return "Updated a year ago";
+        } else {
+            return `Updated ${years} years ago`;
+        }
+    }
+  }
+
+  function getSLAStatus(createdAt: string) {
+    const created = new Date(createdAt);
+    const today = new Date();
+    const diffTime = today.getTime() - created.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const remainingDays = 30 - diffDays;
+
+    let badgeColor = "bg-green-100 text-green-800";
+    let displayText = `${remainingDays} days left`;
+
+    if (remainingDays <= 5 && remainingDays > 0) {
+        badgeColor = "bg-yellow-100 text-yellow-800";
+    } else if (remainingDays <= 0) {
+        badgeColor = "bg-red-100 text-red-800";
+        const overdueDays = Math.abs(remainingDays);
+        displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+    }
+
+    return { badgeColor, displayText };
+}
+  const renderCaseDetails = (data: TeacherRegistrationData) => (
+    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
+      <InfoItem label="Registration Type" value={`${data.teacher_registrations.registration_type}`} />
+      <InfoItem label="Application ID" value={`59c0f722-5c06-46ab-9875-430bd3a236ca`} />
+      <InfoItem label="Registration Status" value={`${data.teacher_registrations.reg_status}`} />
+      <InfoItem label="Endorsement Status" value={`${data.teacher_registrations.endorsement_status}`} />
+      <InfoItem label="Payment Name" value={`${data.teacher_registrations.payment_name}`} />
+      <InfoItem label="Payment Ref" value={`${data.teacher_registrations.payment_ref}`} />
+      <InfoItem label="Payment Amount" value={`${data.teacher_registrations.payment_amount}`} />
+      <div className="flex justify-start space-x-2 items-center">
+          <Label className="font-semibold text-gray-700">SLA Status:</Label>
+          <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
+              {getSLAStatus(data.teacher_registrations.updated_at).displayText}
+          </Badge>
+      </div>
+      <InfoItem label="Created" value={ConvertTime(data.teacher_registrations.created_at)} />
+      <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />
+    </div>
+  );
   
   const renderQualifications = (data: TeacherRegistrationData, onView: (url: string) => void) => (
     <div>
@@ -609,7 +718,8 @@ interface TeacherRegistrationViewProps {
     <div className='bg-gray-100 rounded-lg p-4'>
       <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />
       <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />
-      <DocumentItem label="Proof of Payment" url={data.attachments.proof_of_payment} onView={onView} />
+      {data.teacher_registrations.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data.teacher_registrations.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
+      {data.teacher_registrations.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data.teacher_registrations.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
     </div>
   );
   
