@@ -31,12 +31,35 @@ const notifications = [
   { id: 2, message: "License renewal approved", time: "1 day ago" },
 ];
 
+function InformationBanner() {
+  return (
+    <Card className="mb-6 bg-blue-50 border-blue-200">
+      <CardHeader>
+        <CardTitle className="text-blue-800">Teacher Registration and Licensing in Botswana</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ul className="list-disc pl-5 space-y-2 text-sm">
+          <li>BOTEPCO regulates teaching through registration and licensing based on recognized qualifications.</li>
+          <li>Teachers must be registered and licensed by the Council to practice.</li>
+          <li>Applications require prescribed forms, fees, and documentation.</li>
+          <li>Licenses are valid for 36 months (non-citizens) or up to 60 months (citizens).</li>
+          <li>The Council maintains an official Register of qualified teachers.</li>
+          <li>Continuing Professional Development (CPD) is promoted for ongoing skill development.</li>
+          <li>CPD includes activities to enhance teachers&rsquo; skills, knowledge, and expertise.</li>
+          <li>School leaders must regularly update their management and leadership practices.</li>
+        </ul>
+      </CardContent>
+    </Card>
+  );
+}
+
 export const SnrRegistrationOfficerHome = () => {
   return (
     <div className="overflow-auto h-screen rounded-lg">
       <div className="mb-5">
         <PageTitle Title="Welcome to Teacher Registration and Licensing System" />
       </div>
+      <InformationBanner />
       <div className="grid lg:grid-cols-3 gap-4 mb-4">
         <Card>
           <CardHeader>
