@@ -21,117 +21,117 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 
 interface TeacherRegistration {
-    national_id: string;
-    reg_number: string;
-    reg_status: string;
+    national_id: string | null;
+    reg_number: string | null;
+    reg_status: string | null;
     endorsement_status: string;
     rejection_reason: string | null;
-    payment_ref: string;
-    payment_amount: string;
-    payment_name: string;
-    application_id: string;
-    license_link: string;
-    license_status: string;
-    pending_customer_action: string;
-    registration_type: string;
-    created_at: string;
-    updated_at: string;
+    payment_ref: string | null;
+    payment_amount: string | null;
+    payment_name: string | null;
+    application_id: string | null;
+    license_link: string | null;
+    license_status: string | null;
+    pending_customer_action: string | null;
+    registration_type: string | null;
+    created_at: string | null;
+    updated_at: string | null;
 }
   
 interface TeacherPreliminaryInfo {
-    id: number;
-    national_id: string;
-    citizen_status: string;
+    id: number | null;
+    national_id: string | null;
+    citizen_status: string | null;
     work_status: string | null;
-    practice_category: string;
-    sub_category: string;
-    created_at: string;
-    updated_at: string;
-    minor_subjects: string;
-    major_subjects: string;
+    practice_category: string | null;
+    sub_category: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+    minor_subjects: string | null;
+    major_subjects: string | null;
 }
   
 interface EduProQualification {
-    id: number;
-    national_id: string;
-    level: string;
-    qualification: string;
-    institution: string;
-    attachments: string;
-    qualification_year: string;
-    minor_subjects: string;
-    major_subjects: string;
-    created_at: string;
-    updated_at: string;
+    id: number | null;
+    national_id: string | null;
+    level: string | null;
+    qualification: string | null;
+    institution: string | null;
+    attachments: string | null;
+    qualification_year: string | null;
+    minor_subjects: string | null;
+    major_subjects: string | null;
+    created_at: string | null;
+    updated_at: string | null;
 }
   
 interface BioData {
-    id: number;
-    national_id: string;
-    surname: string;
-    forenames: string;
-    dob: string;
+    id: number | null;
+    national_id: string | null;
+    surname: string | null;
+    forenames: string | null;
+    dob: string | null;
     pob: string | null;
-    gender: string;
-    nationality: string;
-    postal_address: string;
-    physical_address: string;
-    email: string;
+    gender: string | null;
+    nationality: string | null;
+    postal_address: string | null;
+    physical_address: string | null;
+    email: string | null;
     mobile: string;
     marital_status: string | null;
-    next_of_kin_name: string;
-    next_of_kin_relation: string;
-    next_of_kin_contact: string;
-    disability: string;
-    disability_description: string;
-    created_at: string;
-    updated_at: string;
+    next_of_kin_name: string | null;
+    next_of_kin_relation: string | null;
+    next_of_kin_contact: string | null;
+    disability: string | null;
+    disability_description: string | null;
+    created_at: string | null;
+    updated_at: string | null;
 }
   
 interface Declaration {
-    id: number;
-    national_id: string;
-    agreement: string;
+    id: number | null;
+    national_id: string | null;
+    agreement: string | null;
     signature: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
 }
   
 interface OffenceConviction {
-    id: number;
-    national_id: string;
-    student_related_offence: string;
+    id: number | null;
+    national_id: string | null;
+    student_related_offence: string | null;
     student_related_offence_details: string | null;
-    drug_related_offence: string;
+    drug_related_offence: string | null;
     drug_related_offence_details: string | null;
-    license_flag: string;
+    license_flag: string | null;
     license_flag_details: string | null;
-    misconduct_flag: string;
+    misconduct_flag: string | null;
     misconduct_flag_details: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null;
+    updated_at: string | null;
 }
 
 interface EmploymentDetail {
-    id: number;
-    national_id: string;
-    experience_years: number;
-    current_institution: string;
-    institution_type: string;
-    region: string;
-    district: string;
-    city_or_town: string;
-    created_at: string;
-    updated_at: string;
+    id: number | null;
+    national_id: string | null;
+    experience_years: number | null;
+    current_institution: string | null;
+    institution_type: string | null;
+    region: string | null;
+    district: string | null;
+    city_or_town: string | null;
+    created_at: string | null;
+    updated_at: string | null;
 }
 
 interface Attachment {
-    national_id: string;
-    national_id_copy: string;
+    national_id: string | null;
+    national_id_copy: string | null;
     qualification_copy: string | null;
     proof_of_payment: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at: string | null
+    updated_at: string | null;
 }
   
 interface TeacherRegistrationData {
@@ -240,21 +240,24 @@ interface TeacherRegistrationViewProps {
               return;
             }
           }
-        const res = await UpdateStatus(data.teacher_registrations.national_id, record.status);
-        if(!res){
-          toast({
-            title: "Failed!!!",
-            description: "Something went wrong",
-            action: <ToastAction altText="Ok">Ok</ToastAction>,
-          });
-        } else {
-          toast({
-            title: "Routed successfully",
-            description: "The record has been routed with the status: " + record.status,
-            action: <ToastAction altText="Ok">Ok</ToastAction>,
-          });
-          router.push('/trls/work');
-        }
+          if(data.teacher_registrations.national_id){
+            const res = await UpdateStatus(data.teacher_registrations.national_id, record.status);
+        
+            if(!res){
+              toast({
+                title: "Failed!!!",
+                description: "Something went wrong",
+                action: <ToastAction altText="Ok">Ok</ToastAction>,
+              });
+            } else {
+              toast({
+                title: "Routed successfully",
+                description: "The record has been routed with the status: " + record.status,
+                action: <ToastAction altText="Ok">Ok</ToastAction>,
+              });
+              router.push('/trls/work');
+            }
+          }
       };
 
     const handleEndorsementStatusUpdate = async (id: string, status: string) => {
@@ -452,7 +455,7 @@ interface TeacherRegistrationViewProps {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                    onClick={() => handleStatusChange(data.teacher_registrations.national_id, next_status)}
+                    onClick={() => handleStatusChange(data.teacher_registrations.national_id || '', next_status)}
                   >
                     Continue
                   </AlertDialogAction>
@@ -476,7 +479,7 @@ interface TeacherRegistrationViewProps {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                    onClick={() => handleEndorsementStatusUpdate(data.teacher_registrations.national_id, recommend)}
+                    onClick={() => handleEndorsementStatusUpdate(data.teacher_registrations.national_id || '', recommend)}
                   >
                     Continue
                   </AlertDialogAction>
@@ -500,7 +503,7 @@ interface TeacherRegistrationViewProps {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                    onClick={() => handleEndorsementStatusUpdate(data.teacher_registrations.national_id, endorse)}
+                    onClick={() => handleEndorsementStatusUpdate(data.teacher_registrations.national_id || '', endorse)}
                   >
                     Continue
                   </AlertDialogAction>
@@ -578,13 +581,13 @@ interface TeacherRegistrationViewProps {
   const renderPersonalInfo = (data: TeacherRegistrationData) => (
     <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       <InfoItem label="Name" value={`${data.bio_datas.forenames} ${data.bio_datas.surname}`} />
-      <InfoItem label="National ID" value={data.bio_datas.national_id} />
-      <InfoItem label="Date of Birth" value={new Date(data.bio_datas.dob).toLocaleDateString()} />
-      <InfoItem label="Gender" value={data.bio_datas.gender} />
-      <InfoItem label="Nationality" value={data.bio_datas.nationality} />
-      <InfoItem label="Email" value={data.bio_datas.email} />
-      <InfoItem label="Mobile" value={data.bio_datas.mobile} />
-      <InfoItem label="Postal Address" value={data.bio_datas.postal_address} />
+      {data.bio_datas.national_id && <InfoItem label="National ID" value={data.bio_datas.national_id} />}
+      {data.bio_datas.dob && <InfoItem label="Date of Birth" value={new Date(data.bio_datas.dob).toLocaleDateString()} />}
+      {data.bio_datas.gender && <InfoItem label="Gender" value={data.bio_datas.gender} />}
+      {data.bio_datas.nationality && <InfoItem label="Nationality" value={data.bio_datas.nationality} />}
+      {data.bio_datas.email && <InfoItem label="Email" value={data.bio_datas.email} />}
+      {data.bio_datas.mobile && <InfoItem label="Mobile" value={data.bio_datas.mobile} />}
+      {data.bio_datas.postal_address && <InfoItem label="Postal Address" value={data.bio_datas.postal_address} />}
     </div>
   );
   const options: Intl.DateTimeFormatOptions = {
@@ -677,12 +680,12 @@ function getRelativeTime(updateTime: string) {
       <InfoItem label="Payment Amount" value={`${data.teacher_registrations.payment_amount}`} />
       <div className="flex justify-start space-x-2 items-center">
           <Label className="font-semibold text-gray-700">SLA Status:</Label>
-          <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
+          {data.teacher_registrations.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
               {getSLAStatus(data.teacher_registrations.updated_at).displayText}
-          </Badge>
+          </Badge>}
       </div>
-      <InfoItem label="Created" value={ConvertTime(data.teacher_registrations.created_at)} />
-      <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />
+      {data.teacher_registrations.created_at && <InfoItem label="Created" value={ConvertTime(data.teacher_registrations.created_at)} />}
+      {data.teacher_registrations.updated_at && <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />}
     </div>
   );
   
@@ -692,10 +695,10 @@ function getRelativeTime(updateTime: string) {
         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
           <h4 className="text-lg font-medium">{qual.qualification}</h4>
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <InfoItem label="Level" value={qual.level} />
-            <InfoItem label="Institution" value={qual.institution} />
-            <InfoItem label="Year" value={qual.qualification_year} />
-            <InfoItem label="Major Subjects" value={qual.major_subjects} />
+            {qual.level && <InfoItem label="Level" value={qual.level} />}
+            {qual.institution && <InfoItem label="Institution" value={qual.institution} /> && <InfoItem label="Institution" value={qual.institution} />}
+            {qual.qualification_year && <InfoItem label="Year" value={qual.qualification_year} />}
+            {qual.major_subjects && <InfoItem label="Major Subjects" value={qual.major_subjects} />}
             <DocumentItem label="Qualification Attachment" url={qual.attachments} onView={onView} />
           </div>
         </div>
@@ -705,12 +708,12 @@ function getRelativeTime(updateTime: string) {
   
   const renderEmployment = (data: TeacherRegistrationData) => (
     <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
-      <InfoItem label="Current Institution" value={data.employment_details.current_institution} />
-      <InfoItem label="Institution Type" value={data.employment_details.institution_type} />
-      <InfoItem label="Region" value={data.employment_details.region} />
-      <InfoItem label="District" value={data.employment_details.district} />
-      <InfoItem label="City/Town" value={data.employment_details.city_or_town} />
-      <InfoItem label="Years of Experience" value={data.employment_details.experience_years.toString()} />
+      {data.employment_details.current_institution && <InfoItem label="Current Institution" value={data.employment_details.current_institution} />}
+      {data.employment_details.institution_type && <InfoItem label="Institution Type" value={data.employment_details.institution_type} />}
+      {data.employment_details.region && <InfoItem label="Region" value={data.employment_details.region} />}
+      {data.employment_details.district && <InfoItem label="District" value={data.employment_details.district} />}
+      {data.employment_details.city_or_town && <InfoItem label="City/Town" value={data.employment_details.city_or_town} />}
+      {data.employment_details.experience_years && <InfoItem label="Years of Experience" value={data.employment_details.experience_years.toString()} />}
     </div>
   );
   
@@ -718,35 +721,35 @@ function getRelativeTime(updateTime: string) {
     <div className='bg-gray-100 rounded-lg p-4'>
       <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />
       <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />
-      {data.teacher_registrations.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data.teacher_registrations.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
-      {data.teacher_registrations.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data.teacher_registrations.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
+      {data.teacher_registrations.reg_status && data.teacher_registrations.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data.teacher_registrations.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
+      {data.teacher_registrations.reg_status && data.teacher_registrations.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data.teacher_registrations.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
     </div>
   );
   
   const renderOffences = (data: TeacherRegistrationData, onView: (url: string) => void) => (
     <div className='bg-gray-100 rounded-lg p-4'>
-      <OffenceItem 
+      {data.offence_convictions.student_related_offence  &&  <OffenceItem 
         label="Student Related Offence" 
         value={data.offence_convictions.student_related_offence} 
         details={data.offence_convictions.student_related_offence_details}
-      />
-      <OffenceItem 
+      />}
+      {data.offence_convictions.drug_related_offence && <OffenceItem 
         label="Drug Related Offence" 
         value={data.offence_convictions.drug_related_offence} 
         details={data.offence_convictions.drug_related_offence_details}
-      />
-      <OffenceItem 
+      />}
+      {data.offence_convictions.license_flag && <OffenceItem 
         label="License Flag" 
         value={data.offence_convictions.license_flag} 
         details={data.offence_convictions.license_flag_details}
         onView={onView}
-      />
-      <OffenceItem 
+      />}
+      {data.offence_convictions.misconduct_flag && <OffenceItem 
         label="Misconduct Flag" 
         value={data.offence_convictions.misconduct_flag} 
         details={data.offence_convictions.misconduct_flag_details}
         onView={onView}
-      />
+      />}
     </div>
   );
   
