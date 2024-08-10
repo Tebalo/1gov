@@ -169,10 +169,10 @@ export const Search: React.FC = () => {
                             <LoadingSkeleton />
                         ) : response ? (
                             <div className="space-y-4">
-                                <InfoItem label="Registration Number" value={response.national_id} />
-                                <InfoItem label="Registration Status" value={response.reg_status} />
-                                <InfoItem label="Endorsement Status" value={response.endorsement_status} />
-                                <InfoItem label="Registration Type" value={response.registration_type} />
+                                {response.national_id && <InfoItem label="Registration ID" value={response.national_id} />}
+                                {response.reg_status && <InfoItem label="Registration Status" value={response.reg_status} />}
+                                {response.endorsement_status && <InfoItem label="Endorsement Status" value={response.endorsement_status} />}
+                                {response.registration_type && <InfoItem label="Registration Type" value={response.registration_type} />}
                                 <InfoItem label="Created" value={ConvertTime(response.created_at)} />
                                 <InfoItem label="Updated" value={getRelativeTime(response.updated_at)} />
                                 <div className="flex justify-between items-center">

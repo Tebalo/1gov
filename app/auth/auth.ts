@@ -4,7 +4,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
-import { DeTokenizeUrl, authUrl, iamURL, secretKey, validateUrl } from '../lib/store';
+import { DeTokenizeUrl, authUrl, emailauthUrl, iamURL, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
 import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
 
@@ -31,6 +31,74 @@ async function fetchWithErrorHandling(url: string, options: RequestInit, timeout
     return await response.json();
   } catch (error) {
     if (error === 'AbortError') {
+      throw new Error(`Request timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 29 minutes in seconds
+
+async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<any> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    // Check and refresh token if needed
+    const session = await getSession();
+    if (session && session.auth) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const decodedToken = await decryptAccessToken(session.auth);
+      
+      if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+        console.log("Token close to expiry, attempting refresh");
+        const refreshSuccessful = await refreshToken();
+        if (!refreshSuccessful) {
+          throw new Error('Failed to refresh token');
+        }
+      }
+    }
+
+    // Get the latest session after potential refresh
+    const updatedSession = await getSession();
+    if (updatedSession && updatedSession.auth) {
+      const headers = new Headers(options.headers || {});
+      headers.set('Authorization', `Bearer ${updatedSession.auth.access_token}`);
+      options = { ...options, headers };
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Token might have expired right after refresh, try refreshing one more time
+        console.log("Received 401, attempting one more token refresh");
+        const refreshSuccessful = await refreshToken();
+        if (refreshSuccessful) {
+          // Retry the request with the new token
+          const finalSession = await getSession();
+          if (finalSession && finalSession.auth) {
+            const headers = new Headers(options.headers || {});
+            headers.set('Authorization', `Bearer ${finalSession.auth.access_token}`);
+            const retryResponse = await fetch(url, { ...options, headers, signal: controller.signal });
+            if (retryResponse.ok) {
+              return await retryResponse.json();
+            }
+          }
+        }
+      }
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error) {
       throw new Error(`Request timed out after ${timeoutMs}ms`);
     }
     throw error;
@@ -77,6 +145,20 @@ export async function login(formData: FormData): Promise<AuthResponse> {
   };
 
   return fetchWithErrorHandling(`${authUrl}`, {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }, 60000); // 60 seconds timeout because 1gov...
+}
+
+export async function login_email(formData: FormData): Promise<AuthResponse> {
+  const payload: LoginPayload = {
+    username: formData.get('username') as string,
+    password: formData.get('password') as string
+  };
+
+  return fetchWithErrorHandling(`${emailauthUrl}`, {
     method: 'POST',
     cache: 'no-cache',
     headers: { 'Content-Type': 'application/json' },
@@ -157,7 +239,7 @@ export async function refreshToken(): Promise<boolean> {
   return refreshTokenAction(session.auth.refresh_token);
 }
 
-const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 5 minutes in seconds
+// const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 5 minutes in seconds
 
 export async function updateSession(request: NextRequest) {
   const sessionCookie = request.cookies.get("session")?.value;

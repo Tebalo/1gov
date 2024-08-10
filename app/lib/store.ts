@@ -1,15 +1,16 @@
-export const apiUrl1 = 'http://10.0.25.164:8080/api';
-export const apiUrl = 'http://74.208.205.44:8080/api';
+export const apiUrl = 'http://10.0.25.164:8080/api';
+export const apiUrl1 = 'http://74.208.205.44:8080/api';
 export const licUrl = 'http://66.179.253.57:8081/api'
 export const authUrlOLD = 'http://jwtauth.26digitaldev.com/api/';
 export const authUrl = 'https://gateway-cus-acc.gov.bw/auth/login/sms';
+export const emailauthUrl = 'https://gateway-cus-acc.gov.bw/auth/login';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';
 export const otpUrl = 'https://gateway-cus-acc.gov.bw/auth/login/sms';
 export const DeTokenizeUrl = 'https://gateway-cus-acc.gov.bw/auth/validate-token?token=';
 export const validateUrl = 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
-export const version = 'v1.02.01';
+export const version = 'v1.02.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -197,7 +198,7 @@ export const statusTransitions: StatusTransition = {
         bar_status: null,
         rej_status: null,
         recommend: 'Endorsement-Recommendation',
-        endorse: null,
+        endorse: 'Endorsement-Complete',
         next_status: null,
         reject_label: null,
         approve_label: null,

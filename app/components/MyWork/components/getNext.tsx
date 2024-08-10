@@ -174,15 +174,15 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
                             <LoadingSkeleton />
                         ) : response ? (
                             <div className="space-y-4">
-                                <InfoItem label="Registration Number" value={response.national_id} />
-                                <InfoItem label="Registration Status" value={response.reg_status} />
-                                <InfoItem label="Registration Type" value={response.registration_type} />
-                                <InfoItem label="Created" value={ConvertTime(response.created_at)} />
-                                <InfoItem label="Updated" value={getRelativeTime(response.updated_at)} />
+                                <InfoItem label="Registration ID" value={response?.national_id} />
+                                <InfoItem label="Registration Status" value={response?.reg_status} />
+                                <InfoItem label="Registration Type" value={response?.registration_type} />
+                                <InfoItem label="Created" value={ConvertTime(response?.created_at)} />
+                                <InfoItem label="Updated" value={getRelativeTime(response?.updated_at)} />
                                 <div className="flex justify-between items-center">
                                     <Label className="font-semibold text-gray-700">SLA Status:</Label>
-                                    <Badge className={`${getSLAStatus(response.created_at).badgeColor} font-semibold px-3 py-1`}>
-                                        {getSLAStatus(response.created_at).displayText}
+                                    <Badge className={`${getSLAStatus(response?.created_at).badgeColor} font-semibold px-3 py-1`}>
+                                        {getSLAStatus(response?.created_at).displayText}
                                     </Badge>
                                 </div>
                             </div>
