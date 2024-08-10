@@ -3,13 +3,13 @@
 import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, licUrl } from "./store";
-import { Session } from './types';
-import { getSession, refreshToken } from '../auth/auth';
+import { DecodedToken, Session } from './types';
+import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
 
 
-async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
+async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -41,6 +41,78 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
     if (error === 'AbortError') {
       throw new Error(`Request timed out after ${timeoutMs}ms`);
     }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+const TOKEN_REFRESH_THRESHOLD = 5 * 60; // 29 minutes in seconds
+
+async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    let session = await getSession();
+
+    if (session && session.auth) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
+
+      // console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
+
+      if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+        // console.log("Token is close to expiring, attempting to refresh");
+        const refreshSuccessful = await refreshToken();
+        if (refreshSuccessful) {
+          // console.log("Token refresh successful");
+          session = await getSession(); // Get the updated session
+        } else {
+          // console.log("Token refresh failed");
+          throw new Error('Session expired and refresh failed');
+        }
+      }
+    } else {
+      // console.log("No valid session found");
+      throw new Error('No valid session');
+    }
+
+    const headers = new Headers(options.headers);
+    
+    if (session?.auth?.access_token) {
+      headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+      signal: controller.signal
+    });
+
+    // Handle 401 errors (Unauthorized) by attempting one more token refresh
+    if (response.status === 401) {
+      // console.log("Received 401, attempting one more token refresh");
+      const refreshSuccessful = await refreshToken();
+      if (refreshSuccessful) {
+        session = await getSession(); // Get the updated session
+        if (session?.auth?.access_token) {
+          headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+          return fetch(url, {
+            ...options,
+            headers,
+            signal: controller.signal
+          });
+        }
+      }
+    }
+
+    return response;
+  } catch (error) {
+    if (error) {
+      throw new Error(`Request timed out after ${timeoutMs}ms`);
+    }
+    console.error('Error in fetchWithAuth:', error);
     throw error;
   } finally {
     clearTimeout(timeoutId);
