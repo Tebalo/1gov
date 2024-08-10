@@ -8,7 +8,7 @@ import { statusTransitions } from '@/app/lib/store';
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from 'next/navigation';
-import { UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
+import { ReturnToCustomer, UpdateEndorsementStatus, UpdateStatus } from '@/app/lib/actions';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -166,11 +166,14 @@ interface TeacherRegistrationViewProps {
     userRole: string;
   }
   const items = [
-    { id: "national_id_copy", label: "National ID" },
-    { id: "qualification_copy", label: "Qualification copy" },
+    { id: "national_id_copy", label: "National ID copy" },
+    { id: "qualification_copy", label: "BQA Evaluation Report copy" },
+    { id: "qualifications", label: "Other Qualification's" },
+    { id: "student_related_offence_attachments", label: "Student related offence copy" },
+    { id: "drug_related_offence_attachments", label: "Drug related offence copy" },
     { id: "proof_of_payment", label: "Proof of payment" },
-    { id: "attachments", label: "Qualifications attachment" },
-    { id: "attachment", label: "Recommendation attachment" },
+    { id: "attachments", label: "Mandatory qualification's attachment" },
+    { id: "work_permit", label: "Work permit" },
   ] as const;
   
   const FormSchema = z.object({
@@ -230,7 +233,7 @@ interface TeacherRegistrationViewProps {
     const status = form.watch("status"); // watch status changes, for validations and ...
     const evidence = form.watch('evidence')
     const onSubmit = async (record: z.infer<typeof FormSchema>) => {
-        if (record.status === prev_status && prev_status === 'Pending-Customer-Action') {
+          if (record.status === prev_status && prev_status === 'Pending-Customer-Action') {
             // Only validate items if returning to customer
             if (record.items.length === 0) {
               form.setError('items', {
@@ -239,11 +242,28 @@ interface TeacherRegistrationViewProps {
               });
               return;
             }
-          }
-          if(data.teacher_registrations.national_id){
+            if(data.teacher_registrations.national_id && record.items){
+              const res = await ReturnToCustomer(data.teacher_registrations.national_id, record.status, record.items);
+
+              if(res !== 201){
+                toast({
+                  title: "Failed!!!",
+                  description: "Something went wrong",
+                  action: <ToastAction altText="Ok">Ok</ToastAction>,
+                });
+              } else {
+                toast({
+                  title: "Routed successfully",
+                  description: "The record has been routed with the status: " + record.status,
+                  action: <ToastAction altText="Ok">Ok</ToastAction>,
+                });
+                router.push('/trls/work');
+              }
+            }
+          }else if(data.teacher_registrations.national_id){
             const res = await UpdateStatus(data.teacher_registrations.national_id, record.status);
         
-            if(!res){
+            if(res !== 201){
               toast({
                 title: "Failed!!!",
                 description: "Something went wrong",
@@ -303,7 +323,7 @@ interface TeacherRegistrationViewProps {
   
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Applicants ID: {data.teacher_preliminary_infos.national_id}</h1>
+        <h1 className="text-3xl font-bold mb-8">Applicant Information</h1>
         <div className="bg-white shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
           {renderSection("Case Details", renderCaseDetails(data))}
           <Separator/>
@@ -671,13 +691,13 @@ function getRelativeTime(updateTime: string) {
 }
   const renderCaseDetails = (data: TeacherRegistrationData) => (
     <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
-      <InfoItem label="Registration Type" value={`${data.teacher_registrations.registration_type}`} />
+      {data.teacher_registrations.registration_type && <InfoItem label="Registration Type" value={`${data.teacher_registrations.registration_type}`} />}
       <InfoItem label="Application ID" value={`59c0f722-5c06-46ab-9875-430bd3a236ca`} />
-      <InfoItem label="Registration Status" value={`${data.teacher_registrations.reg_status}`} />
-      <InfoItem label="Endorsement Status" value={`${data.teacher_registrations.endorsement_status}`} />
-      <InfoItem label="Payment Name" value={`${data.teacher_registrations.payment_name}`} />
-      <InfoItem label="Payment Ref" value={`${data.teacher_registrations.payment_ref}`} />
-      <InfoItem label="Payment Amount" value={`${data.teacher_registrations.payment_amount}`} />
+      {data.teacher_registrations.reg_status && <InfoItem label="Registration Status" value={`${data.teacher_registrations.reg_status}`} />}
+      {data.teacher_registrations.endorsement_status && <InfoItem label="Endorsement Status" value={`${data.teacher_registrations.endorsement_status}`} />}
+      {data.teacher_registrations.payment_name && <InfoItem label="Payment Name" value={`${data.teacher_registrations.payment_name}`} />}
+      {data.teacher_registrations.payment_ref && <InfoItem label="Payment Ref" value={`${data.teacher_registrations.payment_ref}`} />}
+      {data.teacher_registrations.payment_amount && <InfoItem label="Payment Amount" value={`${data.teacher_registrations.payment_amount}`} />}
       <div className="flex justify-start space-x-2 items-center">
           <Label className="font-semibold text-gray-700">SLA Status:</Label>
           {data.teacher_registrations.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>

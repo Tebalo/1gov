@@ -189,7 +189,7 @@ export const Email: React.FC = () => {
                                     <FormItem>
                                         <FormLabel>1Gov ID</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="123456789" type="text" {...field} />
+                                            <Input placeholder="Enter your 1gov ID" type="text" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -204,7 +204,7 @@ export const Email: React.FC = () => {
                                         <div className="relative">
                                             <FormControl>
                                                 <Input 
-                                                    placeholder="*******" 
+                                                    placeholder="Enter password" 
                                                     type={showPassword ? "text" : "password"} 
                                                     {...field} 
                                                 />

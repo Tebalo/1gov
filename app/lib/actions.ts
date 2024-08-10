@@ -36,7 +36,6 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
       headers,
       signal: controller.signal
     });
-
     return response;
   } catch (error) {
     if (error === 'AbortError') {
@@ -175,7 +174,19 @@ export async function UpdateStatus(id: string, status: string) {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
   });
-  console.log(res.status)
+  return res.status;
+}
+
+export async function ReturnToCustomer(id: string, status: string, items: (string | undefined)[]) {
+
+  const res = await fetchWithAuth(`${apiUrl}/customer-action/${id}?reg_status=${status}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      "reg_status":status,
+      items
+    }),
+  });
   return res.status;
 }
 

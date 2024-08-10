@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Coat from '@/public/Code-of-Arms-colour.png'
+import Coat from '@/public/trsl logo.jpg'
 interface LogoProps{
     width:number,
     height:number

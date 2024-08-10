@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/tabs";
 import { Email } from "./components/email-login";
 import { OneGovID } from "./components/one-gov";
-import Logo from '@/public/Code-of-Arms-colour.png';
+import Logo from '@/public/trsl logo.jpg';
 import MainIcon from '@/public/main-icon.png';
 import { version } from "../lib/store";
 import Link from "next/link";
@@ -31,7 +31,7 @@ export default function Welcome() {
             width={350}
             height={350}
             priority
-            alt="Coat of arms"
+            alt="Botepco logo"
           />
         </div>
       </header>
@@ -85,7 +85,18 @@ function LoginDialog() {
             Complete the form below to access your account.
           </DialogDescription>
         </DialogHeader>
-        <Email />
+        <Tabs defaultValue="email" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="email">1GOV ID</TabsTrigger>
+                <TabsTrigger value="onegov">Email</TabsTrigger>
+            </TabsList>
+            <TabsContent value="email">
+                <Email/>
+            </TabsContent>
+            <TabsContent value="onegov">
+                <OneGovID/>
+            </TabsContent>
+        </Tabs> 
       </DialogContent>
     </Dialog>
   );

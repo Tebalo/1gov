@@ -1,11 +1,23 @@
 'use client'
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Registration } from '@/app/lib/types';
 import { useState } from "react";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+  } from "@/components/ui/tabs"
 
 interface RecordDetailsDialogProps {
   isOpen: boolean;
@@ -115,7 +127,7 @@ export const RecordDetailsDialog: React.FC<RecordDetailsDialogProps> = ({ isOpen
         </DialogHeader>
         <div className="py-4">
           <div className="space-y-4">
-            <InfoItem label="Registration Number" value={record.national_id} />
+            <InfoItem label="Registration ID" value={record.national_id} />
             <InfoItem label="Registration Status" value={record.reg_status} />
             <InfoItem label="Registration Type" value={record.registration_type} />
             <InfoItem label="Created" value={new Date(record.created_at).toLocaleString()} />

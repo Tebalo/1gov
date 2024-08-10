@@ -4,7 +4,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
-import { DeTokenizeUrl, authUrl, iamURL, secretKey, validateUrl } from '../lib/store';
+import { DeTokenizeUrl, authUrl, emailauthUrl, iamURL, secretKey, validateUrl } from '../lib/store';
 import { revalidatePath } from 'next/cache';
 import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
 
@@ -77,6 +77,20 @@ export async function login(formData: FormData): Promise<AuthResponse> {
   };
 
   return fetchWithErrorHandling(`${authUrl}`, {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }, 60000); // 60 seconds timeout because 1gov...
+}
+
+export async function login_email(formData: FormData): Promise<AuthResponse> {
+  const payload: LoginPayload = {
+    username: formData.get('username') as string,
+    password: formData.get('password') as string
+  };
+
+  return fetchWithErrorHandling(`${emailauthUrl}`, {
     method: 'POST',
     cache: 'no-cache',
     headers: { 'Content-Type': 'application/json' },
