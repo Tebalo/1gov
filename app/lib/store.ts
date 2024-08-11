@@ -180,7 +180,7 @@ export const statusTransitions: StatusTransition = {
         endorse_label: null
     },
     'license_manager': {
-        prev_status: 'Pending-Review',
+        prev_status: 'Pending-Customer-Action',
         inv_status: null,
         bar_status: null,
         rej_status: 'Manager-Rejected',

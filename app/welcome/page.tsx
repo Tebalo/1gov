@@ -20,6 +20,8 @@ import Logo from '@/public/trsl logo.jpg';
 import MainIcon from '@/public/main-icon.png';
 import { version } from "../lib/store";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
 
 export default function Welcome() {
   return (
@@ -84,12 +86,17 @@ function LoginDialog() {
           <DialogDescription>
             Complete the form below to access your account.
           </DialogDescription>
+          <Separator/>
+          <Label>
+            Choose Login Option
+          </Label>
         </DialogHeader>
         <Tabs defaultValue="email" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-2 mb-2">
                 <TabsTrigger value="email">1GOV ID</TabsTrigger>
                 <TabsTrigger value="onegov">Email</TabsTrigger>
             </TabsList>
+            <Separator/>
             <TabsContent value="email">
                 <Email/>
             </TabsContent>
