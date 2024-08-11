@@ -60,7 +60,6 @@ export const SnrRegistrationOfficerHome = () => {
       <div className="mb-5">
         <PageTitle Title="Welcome to Teacher Registration and Licensing System" />
       </div>
-      <InformationBanner />
       <div className="grid lg:grid-cols-3 gap-4 mb-4">
         <Card>
           <CardHeader>
