@@ -47,7 +47,7 @@ async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs:
   }
 }
 
-const TOKEN_REFRESH_THRESHOLD = 5 * 60; // 29 minutes in seconds
+const TOKEN_REFRESH_THRESHOLD = 8 * 60; // 8 minutes in seconds
 
 async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
   const controller = new AbortController();

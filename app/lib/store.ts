@@ -10,7 +10,7 @@ export const DeTokenizeUrl = 'https://gateway-cus-acc.gov.bw/auth/validate-token
 export const validateUrl = 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
-export const version = 'v1.02.99';
+export const version = 'v1.03.00';
 
 export interface StatusTransition {
     [key: string]: {
@@ -180,7 +180,7 @@ export const statusTransitions: StatusTransition = {
         endorse_label: null
     },
     'license_manager': {
-        prev_status: 'Pending-Review',
+        prev_status: 'Pending-Customer-Action',
         inv_status: null,
         bar_status: null,
         rej_status: 'Manager-Rejected',
