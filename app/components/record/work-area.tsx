@@ -109,7 +109,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
         if(status){
-            const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status)
+            const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, status,'')
     
             router.prefetch('/trls/home')
             if(res !== 201){
@@ -197,7 +197,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
         }
       })
       async function onSubmit(record: z.infer<typeof FormSchema>) {
-        const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, record.status);
+        const res = await UpdateStatus(data?.data?.teacher_registrations?.national_id, record.status,'');
         if(!res){
             toast({
                 title: "Failed!!!",
