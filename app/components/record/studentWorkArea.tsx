@@ -278,7 +278,7 @@ const StudentWorkArea: React.FC<Props> = (data: Props) => {
     }
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
-        const res = await UpdateStatus(data.preliminary.id, status)
+        const res = await UpdateStatus(data.preliminary.id, status, '')
         if(!res){
             toast({
                 title: "Failed!!!",
