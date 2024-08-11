@@ -27,7 +27,7 @@ export interface StatusTransition {
         endorse_label: string | null;
     };
 }
-
+// to be
 export interface RoleObjects{
     [key: string]:{
         reg_application: boolean | false,
