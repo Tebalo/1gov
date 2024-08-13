@@ -241,8 +241,8 @@ export async function getLicenseById(Id: string) {
   }
 }
 
-export async function UpdateStatus(id: string, status: string) {
-  const res = await fetchWithAuth(`${apiUrl}/teacher_registrations/${id}?reg_status=${status}`, {
+export async function UpdateStatus(id: string, status: string, rejection_reason: string) {
+  const res = await fetchWithAuth(`${apiUrl}/teacher_registrations/${id}?reg_status=${status}&rejection_reason=${rejection_reason}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
   });

@@ -605,7 +605,7 @@ const WorkArea: React.FC<Work> = (data, userRole) => {
     }
     const { toast } = useToast()
     const handleStatusChange=async (id:string, status:string)=>{
-        const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status)
+        const res = await UpdateStatus(data?.data?.teacher_preliminary_infos.national_id, status, '')
         router.prefetch('/trls/home')
         if(!res){
             toast({

@@ -194,9 +194,9 @@ interface TeacherRegistrationViewProps {
   
     const { prev_status, next_status, rej_status, bar_status, inv_status, recommend, endorse, approve_label, reject_label, recommend_label, endorse_label } = getNextStatus(userRole);
   
-    const handleStatusChange = async (id: string, status: string) => {
+    const handleStatusChange = async (id: string, status: string, rejection_reason: string) => {
       if (status) {
-        const res = await UpdateStatus(id, status);
+        const res = await UpdateStatus(id, status, rejection_reason);
   
         router.prefetch('/trls/home');
         if (res !== 201) {
@@ -236,6 +236,8 @@ interface TeacherRegistrationViewProps {
       });
     const status = form.watch("status"); // watch status changes, for validations and ...
     const evidence = form.watch('evidence')
+    const rejection_reason = form.watch('rejection_reason')
+
     const onSubmit = async (record: z.infer<typeof FormSchema>) => {
         if (record.status === prev_status && prev_status === 'Pending-Customer-Action') {
           // Only validate items if returning to customer
@@ -267,19 +269,19 @@ interface TeacherRegistrationViewProps {
             }
           }
         }else if(data?.teacher_registrations?.national_id){
-          if(record.status === prev_status && (prev_status === 'Recommended-For-Rejection') || (prev_status === 'Manager-Rejected')){
+          if(record.status === rej_status && (rej_status === 'Recommended-For-Rejection') || (rej_status === 'Manager-Rejected')){
             // Only validate items if rejecting
-            if (record?.rejection_reason !== undefined && record?.rejection_reason?.length <= 10) {
+            if (record?.rejection_reason === undefined) {
               form.setError('rejection_reason', {
                 type: 'manual',
-                message: 'You have to select at least one item when returning to customer.'
+                message: 'Reason is required.'
               });
               return;
             }
           }
-          const res = await UpdateStatus(data.teacher_registrations.national_id, record.status);
+          const res = await UpdateStatus(data.teacher_registrations.national_id, record.status, record?.rejection_reason || '');
       
-          if(res !== 201){
+          if(res !== 21){
             toast({
               title: "Failed!!!",
               description: "Something went wrong",
@@ -299,7 +301,7 @@ interface TeacherRegistrationViewProps {
     const handleEndorsementStatusUpdate = async (id: string, status: string) => {
       if (status) {
         const res = await UpdateEndorsementStatus(id, status);
-        console.log("status",res)
+        
         router.prefetch('/trls/work');
         if (res !== 201) {
           toast({
@@ -402,7 +404,7 @@ interface TeacherRegistrationViewProps {
                       name="rejection_reason"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Enter reason</FormLabel>
+                          <FormLabel>Reason</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder='Enter rejection reason'
@@ -497,7 +499,7 @@ interface TeacherRegistrationViewProps {
                       name="rejection_reason"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Enter reason</FormLabel>
+                          <FormLabel>Reason</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder='Enter rejection reason'
@@ -538,7 +540,7 @@ interface TeacherRegistrationViewProps {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                    onClick={() => handleStatusChange(data?.teacher_registrations?.national_id || '', next_status)}
+                    onClick={() => handleStatusChange(data?.teacher_registrations?.national_id || '', next_status, rejection_reason || '')}
                   >
                     Continue
                   </AlertDialogAction>
