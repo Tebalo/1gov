@@ -286,7 +286,7 @@ export async function decryptAccessToken(authResponse: AuthResponse){
   }
 }
 
-export async function storeSession(authResponse: AuthResponse){
+export async function storeSessionLegacy(authResponse: AuthResponse){
   try{
     const session: Session = {
       auth: authResponse,
@@ -303,6 +303,17 @@ export async function storeSession(authResponse: AuthResponse){
   }
 }
 
+export async function storeSession(authResponse: AuthResponse) {
+  const session: Session = {
+    auth: authResponse,
+    expires: new Date(Date.now() + 1800 * 1000).toString(),
+  }
+  const profile = await decryptAccessToken(authResponse)
+  await storeAccessGroups(profile)
+  const expires = new Date(Date.now() + session.auth.expires_in * 1000)
+  const encryptedSession = await encrypt(session)
+  cookies().set("session", encryptedSession, { expires, httpOnly: true })
+}
 export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
   return roles.filter(role => ROLES.includes(role as UserRole)) as UserRole[];
 }

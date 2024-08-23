@@ -27,6 +27,7 @@ import { login, validateOTP, DeTokenize, storeSession } from "@/app/auth/auth"
 
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
 import { AuthResponse } from "@/app/lib/types"
+import { authUrl, validateUrl } from "@/app/lib/store"
 
 const FormSchema = z.object({
     email: z.string(),
@@ -40,6 +41,8 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
     const [isRedirecting, setIsRedirecting] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const [isStoringSession, setIsStoringSession] = useState(false)
+    
     const router = useRouter()
 
     const handleOtpSubmit = async () => {
@@ -47,13 +50,22 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
         setErrorMessage(null)
         setSuccessMessage(null)
         try {
-            const authResponse: AuthResponse = await validateOTP(username, value)
-            if (authResponse.access_token) {
+            const response = await fetch(`${validateUrl}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({username, otp: value})
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                setIsStoringSession(true)
+                const authResponse = data as AuthResponse;
+                await storeSession(authResponse);
+                setIsStoringSession(false)
                 setIsRedirecting(true)
-                await storeSession(authResponse)
-                //router.push('/trls/home')
+                router.push('/trls/home')
             } else {
-                setErrorMessage('OTP validation failed. Please try again.')
+                setErrorMessage(data.message || 'OTP validation failed. Please try again')
             }
         } catch (error) {
             console.error('OTP validation error:', error)
@@ -68,12 +80,18 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
         setErrorMessage(null)
         setSuccessMessage(null)
         try {
-            const formData = new FormData()
-            formData.append('username', username)
-            formData.append('password', password)
-            await login(formData)
-            setSuccessMessage('OTP resent successfully.')
-            setValue("") // Clear the OTP input
+            const response = await fetch(`${authUrl}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            if(response.ok){
+                setSuccessMessage('OTP resent successfully.')
+                setValue("")
+            } else{
+                const data = await response.json();
+                setErrorMessage(data.message || 'Failed to resend OTP. Please try again.')
+            }
         } catch (error) {
             console.error('Resend OTP error:', error)
             setErrorMessage('Failed to resend OTP. Please try again.')
@@ -81,7 +99,14 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
             setIsResendLoading(false)
         }
     }
-
+    if (isStoringSession) {
+        return (
+            <div className="flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-center text-sm">Saving session...</p>
+            </div>
+        )
+    }
     if (isRedirecting) {
         return (
             <div className="flex flex-col items-center justify-center space-y-4">
@@ -148,6 +173,7 @@ export const Email: React.FC = () => {
     const [authResponse, setAuthResponse] = useState<AuthResponse | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema)
@@ -155,15 +181,28 @@ export const Email: React.FC = () => {
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
         setIsLoading(true)
+        
+        const payload = {
+            username: data.email,
+            password: password
+        }
         try {
-            const formData = new FormData()
-            formData.append('username', data.email)
-            formData.append('password', data.password)
-            const res = await login(formData)
-            setAuthResponse(res)
+            const response = await fetch(`${authUrl}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+
+            if(response.ok){
+                setAuthResponse(data)
+            } else {
+                setErrorMessage(data.message || 'Log in failed')
+            }
+            
         } catch (error) {
             console.error('Login error:', error)
-            // setAuthResponse({ error: 'Login failed', message: 'An error occurred during login' })
+            setErrorMessage('Server error');
         } finally {
             setIsLoading(false)
         }
@@ -181,7 +220,7 @@ export const Email: React.FC = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="grid gap-4 py-4">
-                            {authResponse?.code == 401 && <p className="text-red-600 text-sm">{authResponse.message || 'Invalid user credentials'}</p>}
+                            {errorMessage && <p className="text-red-600 text-sm">Invalid user credentials</p>}
                             <FormField
                                 control={form.control}
                                 name="email"
