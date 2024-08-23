@@ -1,6 +1,6 @@
 'use server'
 
-import { SignJWT, jwtVerify } from 'jose';
+import { SignJWT, errors, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
@@ -115,11 +115,18 @@ export async function encrypt(payload: any): Promise<string> {
     .sign(key);
 }
 
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-  return payload;
+export async function decrypt(input: string): Promise<any | null> {
+
+  try{
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ["HS256"],
+    });
+    return payload;
+  }catch (error){
+    if(error instanceof errors.JWTExpired){
+      return null;
+    }
+  }
 }
 
 export async function authenticate(_currentState: unknown, formData: FormData) {
@@ -246,7 +253,13 @@ export async function updateSession(request: NextRequest) {
   if (!sessionCookie) return;
 
   try {
-    let parsed: Session = await decrypt(sessionCookie);
+    const decryptPayload = await decrypt(sessionCookie);
+    if(decryptPayload === null){
+      cookies().delete("session");
+      cookies().delete("access");
+      return null;
+    }
+    let parsed = decryptPayload as Session; 
     const currentTime = Math.floor(Date.now() / 1000);
 
     const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
@@ -339,7 +352,13 @@ export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
 export async function getAccessGroups(): Promise<AccessGroup | null>{
   const encryptedAccessGroup = cookies().get("access")?.value;
   if (!encryptedAccessGroup) return null;
-  return decrypt(encryptedAccessGroup);
+  const decryptedPayload = await decrypt(encryptedAccessGroup);
+  if (decryptedPayload === null) {
+    cookies().delete("access");
+    cookies().delete("session");
+    return null;
+  }
+  return decryptedPayload;
 }
 
 export async function updateAccessGroup(newCurrentPersona: string): Promise<void> {
@@ -388,7 +407,13 @@ export async function getSession(): Promise<Session | null> {
   const encryptedSession = cookies().get("session")?.value;
   
   if (!encryptedSession) return null;
-  return decrypt(encryptedSession);
+  const decryptedPayload = await decrypt(encryptedSession);
+  if (decryptedPayload === null) {
+    cookies().delete("session");
+    cookies().delete("access");
+    return null;
+  }
+  return decryptedPayload;
 }
 
 // Main functions
