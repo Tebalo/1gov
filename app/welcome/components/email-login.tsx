@@ -22,12 +22,12 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 
-import { login, validateOTP, DeTokenize, storeSession } from "@/app/auth/auth"
+import { login, validateOTP, DeTokenize, storeSession, decryptAccessToken, storeAccessGroups } from "@/app/auth/auth"
 
 
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
-import { AuthResponse } from "@/app/lib/types"
-import { authUrl, validateUrl } from "@/app/lib/store"
+import { AuthResponse, DecodedToken } from "@/app/lib/types"
+import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
 
 const FormSchema = z.object({
     email: z.string(),
@@ -42,6 +42,7 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const [isStoringSession, setIsStoringSession] = useState(false)
+    const [isDecryptingSession, setIsDecryptingSession] = useState(false)
     
     const router = useRouter()
 
@@ -62,6 +63,25 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
                 const authResponse = data as AuthResponse;
                 await storeSession(authResponse);
                 setIsStoringSession(false)
+                setIsDecryptingSession(true)
+                try{
+                    const response = await fetch(`${DeTokenizeUrl}${authResponse.access_token}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json'},
+                        body: JSON.stringify({username, otp: value})
+                    });
+                    const data = await response.json();
+                    if(response.ok){
+                        const profile = data as DecodedToken;
+                        await storeAccessGroups(profile)
+                    }else{
+                        setErrorMessage(data.message || 'Failed to decrypt access token')
+                    }
+                }catch (error){
+                    console.error('OTP validation error:', error)
+                    setErrorMessage('An error occurred during OTP validation. Please try again.')
+                }
+                setIsDecryptingSession(false)
                 setIsRedirecting(true)
                 router.push('/trls/home')
             } else {
@@ -98,6 +118,14 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
         } finally {
             setIsResendLoading(false)
         }
+    }
+    if (isDecryptingSession) {
+        return (
+            <div className="flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-center text-sm">Decrypting access token...</p>
+            </div>
+        )
     }
     if (isStoringSession) {
         return (
