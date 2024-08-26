@@ -354,8 +354,8 @@ export async function getAccessGroups(): Promise<AccessGroup | null>{
   if (!encryptedAccessGroup) return null;
   const decryptedPayload = await decrypt(encryptedAccessGroup);
   if (decryptedPayload === null) {
-    cookies().delete("access");
-    cookies().delete("session");
+    // cookies().delete("access");
+    // cookies().delete("session");
     return null;
   }
   return decryptedPayload;
@@ -409,8 +409,8 @@ export async function getSession(): Promise<Session | null> {
   if (!encryptedSession) return null;
   const decryptedPayload = await decrypt(encryptedSession);
   if (decryptedPayload === null) {
-    cookies().delete("session");
-    cookies().delete("access");
+    // cookies().delete("session");
+    // cookies().delete("access");
     return null;
   }
   return decryptedPayload;
