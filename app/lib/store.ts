@@ -1,4 +1,4 @@
-export const apiUrl = 'http://10.0.25.164:8080/api';
+export const apiUrl = 'https://10.0.25.164:8080/api';
 export const apiUrl1 = 'http://74.208.205.44:8080/api';
 export const licUrl = 'http://66.179.253.57:8081/api'
 export const authUrlOLD = 'http://jwtauth.26digitaldev.com/api/';
