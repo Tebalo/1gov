@@ -1,6 +1,6 @@
-"use server"
+"use client"
 
-import { cookies } from 'next/headers';
+// import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, licUrl } from "./store";
 import { DecodedToken, Session } from './types';
@@ -9,7 +9,7 @@ import { redirect } from 'next/navigation';
 import { options } from './schema';
 
 
-async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
+async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -49,7 +49,7 @@ async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs:
 
 const TOKEN_REFRESH_THRESHOLD = 8 * 60; // 8 minutes in seconds
 
-async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 30000): Promise<Response> {
+async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -119,11 +119,11 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
   }
 }
 
-export async function logout() {
-  await cookies().set("session", "", { expires: new Date(0) });
-  return redirect('/welcome');
-  // Redirect logic should be handled on the client side
-}
+// export async function logout() {
+//   await cookies().set("session", "", { expires: new Date(0) });
+//   return redirect('/welcome');
+//   // Redirect logic should be handled on the client side
+// }
 
 export async function authenticate(_currentState: unknown, formData: FormData) {
   // Implementation depends on your authentication mechanism
