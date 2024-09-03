@@ -1,4 +1,4 @@
-export const apiUrl = 'https://10.0.25.164:8080/trls-api';
+export const apiUrl = 'http://10.0.25.164:8080/trls-api';
 export const apiUrl1 = 'http://74.208.205.44:8080/api';
 export const licUrl = 'http://66.179.253.57:8081/api'
 export const authUrlOLD = 'http://jwtauth.26digitaldev.com/api/';
@@ -10,7 +10,7 @@ export const DeTokenizeUrl = 'https://gateway-cus-acc.gov.bw/auth/validate-token
 export const validateUrl = 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
-export const version = 'v1.09.99';
+export const version = 'v1.10.99';
 
 export interface StatusTransition {
     [key: string]: {
