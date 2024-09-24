@@ -127,6 +127,16 @@ interface EmploymentDetail {
     updated_at: string | null;
 }
 
+interface BackgroundChecks{
+      id: number | null,
+      national_id: string | null,
+      name: string | null,
+      description: string | null,
+      checked_by: string | null,
+      created_at: string | null,
+      updated_at: string | null
+}
+
 interface Attachment {
     national_id: string | null;
     national_id_copy: string | null;
@@ -142,6 +152,7 @@ interface TeacherRegistrationData {
     edu_pro_qualifications?: EduProQualification;
     other_qualifications?: EduProQualification[];
     bio_datas?: BioData;
+    background_checks: BackgroundChecks[];
     declarations?: Declaration;
     offence_convictions?: OffenceConviction;
     employment_details?: EmploymentDetail;
@@ -349,13 +360,15 @@ interface TeacherRegistrationViewProps {
           <Separator/>
           {renderSection("Mandatory Qualification", renderMandatoryQualifications(data, setPdfUrl))}
           <Separator/>
-          {renderSection("Other Qualifications", renderQualifications(data, setPdfUrl))}
+          {renderSection("Other Qualifications ("+data.other_qualifications?.length+")", renderQualifications(data, setPdfUrl))}
           <Separator/>
           {renderSection("Employment", renderEmployment(data))}
           <Separator/>
           {renderSection("Documents/Licenses", renderDocuments(data, setPdfUrl))}
           <Separator/>
           {renderSection("Offences", renderOffences(data, setPdfUrl))}
+          <Separator/>
+          {renderSection("Background Checks ("+data?.background_checks?.length+")", renderBackgroundChecks(data))}
           <Separator/>
           {renderSection("Declaration", renderDeclaration(data))}
         <div className="mt-8 space-x-4 flex justify-end">
@@ -815,6 +828,22 @@ function getRelativeTime(updateTime: string) {
       {data?.employment_details?.experience_years && <InfoItem label="Years of Experience" value={data.employment_details.experience_years.toString()} />}
     </div>
   );
+  const renderBackgroundChecks = (data: TeacherRegistrationData) => (
+    <div>
+      {data?.background_checks?.map((background, index) => (
+        <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
+          <h4 className="text-lg font-medium">{background.name}</h4>
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {background.description && <InfoItem label="Description" value={background.description} />}
+            {background.checked_by && <InfoItem label="Check By" value={background.checked_by} />}
+            {background.created_at && <InfoItem label="Created" value={background.created_at} />}
+            {background.updated_at && <InfoItem label="Updated" value={getRelativeTime(background.updated_at)} />}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
   
   const renderDocuments = (data: TeacherRegistrationData, onView: (url: string) => void) => (
     <div className='bg-gray-100 rounded-lg p-4'>
