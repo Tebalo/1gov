@@ -264,19 +264,19 @@ interface TeacherRegistrationViewProps {
         if(data?.teacher_registrations?.national_id && record.items){
             const res = await ReturnToCustomer(data.teacher_registrations.national_id, record.status, record.items);
 
-            if(res !== 200){
-              toast({
-                title: "Failed!!!",
-                description: "Something went wrong",
-                action: <ToastAction altText="Ok">Ok</ToastAction>,
-              });
-            } else {
+            if(res == 200 || res == 201){ // (200 || 201) test this next time, backend keeps changing the codes
               toast({
                 title: "Routed successfully",
                 description: "The record has been routed with the status: " + record.status,
                 action: <ToastAction altText="Ok">Ok</ToastAction>,
               });
               router.push('/trls/work');
+            } else {
+              toast({
+                title: "Failed!!!",
+                description: "Something went wrong",
+                action: <ToastAction altText="Ok">Ok</ToastAction>,
+              });
             }
           }
         }else if(data?.teacher_registrations?.national_id){
@@ -292,19 +292,19 @@ interface TeacherRegistrationViewProps {
           }
           const res = await UpdateStatus(data.teacher_registrations.national_id, record.status, record?.rejection_reason || '');
       
-          if(res !== 21){
-            toast({
-              title: "Failed!!!",
-              description: "Something went wrong",
-              action: <ToastAction altText="Ok">Ok</ToastAction>,
-            });
-          } else {
+          if(res == 201 || res == 200){
             toast({
               title: "Routed successfully",
               description: "The record has been routed with the status: " + record.status,
               action: <ToastAction altText="Ok">Ok</ToastAction>,
             });
             router.push('/trls/work');
+          } else {
+            toast({
+              title: "Failed!!!",
+              description: "Something went wrong",
+              action: <ToastAction altText="Ok">Ok</ToastAction>,
+            });
           }
         }
     };

@@ -13,8 +13,9 @@ import { Label } from "@/components/ui/label";
 import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bell, CheckCircle, Clock, List } from "lucide-react";
+import { Bell, CheckCircle, Clock, List, SearchCheck } from "lucide-react";
 import { HorizontalBarChartStatus } from "../dashboard/components/horizontal-bar-chart";
+import { CreateInvestigation } from "../MyWork/components/createInvestigation";
 
 // Mock data for worklist, followed items, and notifications
 const worklistItems = [
@@ -61,7 +62,19 @@ export const SnrRegistrationOfficerHome = () => {
         <PageTitle Title="Welcome to Teacher Registration and Licensing System" />
       </div>
       <div className="grid lg:grid-cols-3 gap-4 mb-4">
-        <Card>
+        <div className="co col-span-3">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+              <SearchCheck className="mr-2" />Investigation&apos;s component
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CreateInvestigation/>
+            </CardContent>
+          </Card>
+        </div>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Applications by status</CardTitle>
           </CardHeader>
@@ -84,25 +97,25 @@ export const SnrRegistrationOfficerHome = () => {
               <HorizontalBarChartStatus />
             </Suspense>
           </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <List className="mr-2" /> Worklist
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {worklistItems.map((item) => (
-              <div key={item.id} className="mb-2 p-2 bg-gray-100 rounded">
-                <p>{item.title}</p>
-                <p className="text-sm text-gray-500">Due: {item.dueDate}</p>
-              </div>
-            ))}
-            <Button className="w-full mt-2">View All Tasks</Button>
-          </CardContent>
-        </Card>
-
+        </Card> */}
+        <div className="col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <List className="mr-2" /> Worklist
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {worklistItems.map((item) => (
+                <div key={item.id} className="mb-2 p-2 bg-gray-100 rounded">
+                  <p>{item.title}</p>
+                  <p className="text-sm text-gray-500">Due: {item.dueDate}</p>
+                </div>
+              ))}
+              <Button className="w-full mt-2">View All Tasks</Button>
+            </CardContent>
+          </Card>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
