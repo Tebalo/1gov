@@ -21,10 +21,10 @@ const sidebarItems: SideBarItem[] = [
     { path: '/trls/home', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home', roles: ['*'] },
     { path: '/trls/work', icon: <FaBriefcase style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Work', roles: ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'] },
     { path: '/trls/dashboard', icon: <GrDashboard style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Dashboard', roles: ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'] },
-    { path: '/trls/my-applications', icon: <FaLayerGroup style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Applications', roles: ['ADMIN'] },
-    { path: '/trls/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces', roles: ['ADMIN'] },
-    { path: '/trls/users', icon: <FaUsers style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Users', roles: ['ADMIN'] },
-    { path: '/trls/settings', icon: <FaCogs style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Settings', roles: ['ADMIN'] },
+    { path: '/trls/my-applications', icon: <FaLayerGroup style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Applications', roles: ['ADMINC'] },
+    { path: '/trls/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces', roles: ['ADMINC'] },
+    { path: '/trls/users', icon: <FaUsers style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Users', roles: ['ADMINC'] },
+    { path: '/trls/settings', icon: <FaCogs style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Settings', roles: ['ADMINC'] },
 ]
 
 const SidebarNav: React.FC<SidebarProps> = ({ currentPersona }) => {

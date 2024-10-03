@@ -62,18 +62,6 @@ export const SnrRegistrationOfficerHome = () => {
         <PageTitle Title="Welcome to Teacher Registration and Licensing System" />
       </div>
       <div className="grid lg:grid-cols-3 gap-4 mb-4">
-        <div className="co col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-              <SearchCheck className="mr-2" />Investigation&apos;s component
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CreateInvestigation/>
-            </CardContent>
-          </Card>
-        </div>
         {/* <Card>
           <CardHeader>
             <CardTitle>Applications by status</CardTitle>
