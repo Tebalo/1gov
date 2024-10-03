@@ -3,7 +3,7 @@
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, licUrl } from "./store";
-import { DecodedToken, Session } from './types';
+import { ComplaintPayload, DecodedToken, Session } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
@@ -116,6 +116,31 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
     throw error;
   } finally {
     clearTimeout(timeoutId);
+  }
+}
+
+export async function createComplaint(payload: ComplaintPayload){
+  try{
+    const response = await fetch(`${apiUrl}/complaint`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    })
+    if(!response.ok){
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+
+    return {success: true, message: result.message, data: result.data};
+  }catch(error){
+    console.error('Error adding complaint:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    }
   }
 }
 

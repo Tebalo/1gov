@@ -27,11 +27,16 @@ interface TeacherRegistration {
     reg_status: string | null;
     endorsement_status: string;
     rejection_reason: string | null;
+    service_code: string | null;
     payment_ref: string | null;
     payment_amount: string | null;
     payment_name: string | null;
     application_id: string | null;
     license_link: string | null;
+    education_bg_checks: string | null;
+    flags_no: string | null;
+    institution_verification: string | null;
+    course_verification: string | null;
     license_status: string | null;
     pending_customer_action: string | null;
     registration_type: string | null;
@@ -775,7 +780,9 @@ function getRelativeTime(updateTime: string) {
       {data?.teacher_registrations?.endorsement_status && <InfoItem label="Endorsement Status" value={`${data.teacher_registrations.endorsement_status}`} />}
       {data.teacher_registrations?.payment_name && <InfoItem label="Payment Name" value={`${data.teacher_registrations.payment_name}`} />}
       {data?.teacher_registrations?.payment_ref && <InfoItem label="Payment Ref" value={`${data.teacher_registrations.payment_ref}`} />}
-      {data?.teacher_registrations?.payment_amount && <InfoItem label="Payment Amount" value={`${data.teacher_registrations.payment_amount}`} />}
+      {data?.teacher_registrations?.flags_no && <InfoItem label="Flags" value={`${data.teacher_registrations.flags_no}`} />}
+      {data?.teacher_registrations?.institution_verification && <InfoItem label="Institution" value={`${data.teacher_registrations.institution_verification}`} />}
+      {data?.teacher_registrations?.course_verification && <InfoItem label="Course" value={`${data.teacher_registrations.course_verification}`} />}
       <div className="flex justify-start space-x-2 items-center">
           <Label className="font-semibold text-gray-700">SLA Status:</Label>
           {data?.teacher_registrations?.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
@@ -834,7 +841,7 @@ function getRelativeTime(updateTime: string) {
         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
           <h4 className="text-lg font-medium">{background.name}</h4>
           <div className="grid grid-cols-2 gap-2 mt-2">
-            {background.description && <InfoItem label="Description" value={background.description} />}
+            <div className='col-span-2'>{background.description && <InfoItem label="Description" value={background.description} />}</div>
             {background.checked_by && <InfoItem label="Check By" value={background.checked_by} />}
             {background.created_at && <InfoItem label="Created" value={background.created_at} />}
             {background.updated_at && <InfoItem label="Updated" value={getRelativeTime(background.updated_at)} />}

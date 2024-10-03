@@ -21,6 +21,10 @@ export interface AuthResponse {
   code: number | null;
 }
 
+export interface ComplaintPayload {
+  
+}
+
 export interface DecodedToken {
   exp: number;
   iat: number;
