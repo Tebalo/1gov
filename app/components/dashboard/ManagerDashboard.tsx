@@ -23,7 +23,7 @@ import { TotalIssuedLicenses } from "./components/TotalIssuedLicenses";
 export const ManagerDashboard = () => {
     return(
         <>
-        <div className="overflow-auto h-screen rounded-lg">
+         <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-2">
                 <div className="flex items-center justify-between space-y-2 mr-10">
                     <PageTitle Title="Dashboard"/>
@@ -38,10 +38,12 @@ export const ManagerDashboard = () => {
                     <div className="flex-1 space-y-4 p-8 pt-6">
                         <Tabs defaultValue="overview" className="space-y-4">
                             <TabsList>
-                                <TabsTrigger value="overview">Overview</TabsTrigger>
-                                <TabsTrigger value="analytics" disabled>
-                                    Analytics
+                                <TabsTrigger value="overview">
+                                    Overview
                                 </TabsTrigger>
+                                {/* <TabsTrigger value="analytics" disabled>
+                                    Analytics
+                                </TabsTrigger> */}
                                 <TabsTrigger value="reports">
                                     Reports
                                 </TabsTrigger>
@@ -55,15 +57,15 @@ export const ManagerDashboard = () => {
                                     <MaleTeacherRegistrations/>
                                 </div>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    <div className="col-span-1">
+                                    {/* <div className="col-span-1">
                                         <MixedBarChartStatuses />
-                                    </div>
+                                    </div> */}
                                     <div className="col-span-1">
                                         <HorizontalBarChartStatus />
                                     </div> 
-                                    <div>
+                                    {/* <div>
                                         <BarChartMonthlyRegistrations />
-                                    </div>
+                                    </div> */}
                                 </div>
                             </TabsContent>
                             <TabsContent value="analytics" className="space-y-4">
@@ -87,20 +89,20 @@ export const ManagerDashboard = () => {
                                 </div>
                             </TabsContent>
                             <TabsContent value="reports" className="space-y-4">
-                                <BarChartDailyRegistrations />
+                                {/* <BarChartDailyRegistrations /> */}
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    <div className="col-span-1">
+                                    {/* <div className="col-span-1">
                                         <MixedBarChartStatuses />
-                                    </div>
+                                    </div> */}
                                     <div className="col-span-1">
                                         <HorizontalBarChartStatus />
                                     </div> 
-                                    <div>
+                                    {/* <div>
                                         <BarChartMonthlyRegistrations />
-                                    </div>
-                                    <div>
+                                    </div> */}
+                                    {/* <div>
                                         <PieChartStatuses />
-                                    </div>
+                                    </div> */}
                                     {/* <div>
                                         <LineChartDailyRegistrations />
                                     </div> */}

@@ -104,6 +104,29 @@ import {
       icon: QuestionMarkCircledIcon,
     },
   ]
+
+  export const invstatuses = [
+    {
+      value: "Pending",
+      label: "Pending",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Under Investigation",
+      label: "Under Investigation",
+      icon: CheckCircledIcon,
+    },
+    {
+      value: "Resolved",
+      label: "Resolved",
+      icon: CrossCircledIcon,
+    },
+    {
+      value: "Resolved",
+      label: "Resolved",
+      icon: CheckCircledIcon,
+    },
+  ]
   
   export const priorities = [
     {

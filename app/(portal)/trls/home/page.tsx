@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { getRole} from "@/app/auth/auth";
 import { AdminHome } from "@/app/components/Home/AdminHome";
 import { DirectorHome } from "@/app/components/Home/DirectorHome";
+import { InvestigationsOfficerHome } from "@/app/components/Home/InvestigationsOfficerHome";
 import { LicenseManagerHome } from "@/app/components/Home/LicenseManagerHome";
 import { LicenseOfficerHome } from "@/app/components/Home/LicenseOfficerHome";
 import { ManagerHome } from "@/app/components/Home/ManagerHome";
@@ -19,6 +20,12 @@ export default async function Home(){
     if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
         return <TeacherHome/>
     } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
+        return <RegistrationOfficerHome/>
+    } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
+        return <InvestigationsOfficerHome/>
+    } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_MANAGER'){
+        return <RegistrationOfficerHome/>
+    } else if(userRole?.toUpperCase() === 'SENIOR_INVESTIGATIONS_OFFICER'){
         return <RegistrationOfficerHome/>
     } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerHome/>

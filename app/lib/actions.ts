@@ -47,7 +47,7 @@ async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs:
   }
 }
 
-const TOKEN_REFRESH_THRESHOLD = 8 * 60; // 8 minutes in seconds
+const TOKEN_REFRESH_THRESHOLD = 18 * 60; // 8 minutes in seconds
 
 async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
@@ -60,7 +60,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
       const currentTime = Math.floor(Date.now() / 1000);
       const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
 
-      // console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
+      console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
 
       if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
         // console.log("Token is close to expiring, attempting to refresh");
@@ -173,6 +173,134 @@ export async function getRegApplications(status: string, count: string) {
     console.error('Error fetching registration applications:', error);
     return [];
   }
+}
+
+// export async function getInvestigations(status: string, count: string) {
+//   try {
+//     const res = await fetchWithAuth(`${apiUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`);
+//     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
+//   } catch (error) {
+//     console.error('Error fetching registration applications:', error);
+//     return [];
+//   }
+// }
+import { format } from 'date-fns';
+
+interface Complaint {
+  crime_location: string;
+  nature_of_crime: string;
+  date: string;
+  time: string;
+  status: string;
+  bif_number: string;
+  case_number: string;
+  fir_number: string;
+  outcome: string;
+}
+
+const locations = ['Gaborone', 'Francistown', 'Maun', 'Serowe', 'Molepolole'];
+const crimes = ['Theft', 'Assault', 'Fraud', 'Burglary', 'Vandalism'];
+const outcomes = ['Pending', 'Resolved', 'Under Investigation', 'Closed', 'Referred'];
+
+interface Complaint {
+  crime_location: string;
+  nature_of_crime: string;
+  date: string;
+  time: string;
+  status: string;
+  bif_number: string;
+  case_number: string;
+  fir_number: string;
+  outcome: string;
+}
+
+interface InvestigationsResponse {
+  status: string;
+  count: number;
+  data: Complaint[];
+}
+
+export async function getInvestigations(status: string, count: string): Promise<string> {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // Expanded mock data with varied statuses
+  const mockComplaints: Complaint[] = [
+    {
+      crime_location: "Gaborone",
+      nature_of_crime: "Theft",
+      date: "2024-10-01",
+      time: "14:00",
+      status: "Registered",
+      bif_number: "BIF123456",
+      case_number: "CASE789",
+      fir_number: "FIR456",
+      outcome: "Pending"
+    },
+    {
+      crime_location: "Francistown",
+      nature_of_crime: "Assault",
+      date: "2024-09-15",
+      time: "22:30",
+      status: "Under Investigation",
+      bif_number: "BIF789012",
+      case_number: "CASE345",
+      fir_number: "FIR789",
+      outcome: "Under Investigation"
+    },
+    {
+      crime_location: "Maun",
+      nature_of_crime: "Fraud",
+      date: "2024-10-05",
+      time: "09:15",
+      status: "Closed",
+      bif_number: "BIF345678",
+      case_number: "CASE012",
+      fir_number: "FIR123",
+      outcome: "Resolved"
+    },
+    {
+      crime_location: "Serowe",
+      nature_of_crime: "Burglary",
+      date: "2024-09-28",
+      time: "03:45",
+      status: "Registered",
+      bif_number: "BIF901234",
+      case_number: "CASE567",
+      fir_number: "FIR234",
+      outcome: "Pending"
+    },
+    {
+      crime_location: "Molepolole",
+      nature_of_crime: "Vandalism",
+      date: "2024-10-10",
+      time: "16:20",
+      status: "Under Investigation",
+      bif_number: "BIF567890",
+      case_number: "CASE901",
+      fir_number: "FIR567",
+      outcome: "Under Investigation"
+    }
+  ];
+
+  // Filter complaints based on status (case-insensitive)
+  const filteredComplaints = mockComplaints.filter(complaint => {
+    if (status.toLowerCase() === 'all') return true;
+    return complaint.status.toLowerCase() === status.toLowerCase();
+  });
+
+  // Limit the number of returned complaints based on count
+  const limitedComplaints = filteredComplaints.slice(0, parseInt(count));
+
+  // Create the response object
+  const response: InvestigationsResponse = {
+    status: status,
+    count: limitedComplaints.length,
+    data: limitedComplaints
+  };
+
+  // Return the response as a JSON string
+  return JSON.stringify(response);
 }
 
 export async function getLicenseApplications(status: string, count: string) {

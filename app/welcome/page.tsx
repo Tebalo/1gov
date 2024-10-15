@@ -22,6 +22,7 @@ import { version } from "../lib/store";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import { CreateInvestigation } from "../components/MyWork/components/createInvestigation";
 
 export default function Welcome() {
   return (

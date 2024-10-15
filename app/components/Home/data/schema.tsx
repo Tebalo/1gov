@@ -11,7 +11,6 @@ export const taskSchema = z.object({
 })
 
 export const regSchema = z.object({
-
   national_id: z.string(),
   reg_number: z.string(),
   reg_status: z.string(),
@@ -19,5 +18,22 @@ export const regSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
 })
+
+export const complaintSchema = z.object({
+  crime_location: z.string(),
+  nature_of_crime: z.string(),
+  date: z.string(),
+  time: z.string(),
+  status: z.string(),
+  bif_number: z.string(),
+  case_number: z.string(),
+  fir_number: z.string(),
+  outcome: z.string(),
+  // created_at: z.string(),
+  // updated_at: z.string(),
+  // updated_by: z.string(),
+  // created_by: z.string(),
+})
+export type Complaint = z.infer<typeof complaintSchema>
 export type Reg = z.infer<typeof regSchema>
 export type Task = z.infer<typeof taskSchema>
