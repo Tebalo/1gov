@@ -2,7 +2,7 @@ export type AuthenticateResult =
   | { status: 'success' }
   | { status: 'failed'; message: string };
 
-export type UserRole = 'MANAGER' | 'REGISTRATION_OFFICER' | 'SNR_REGISTRATION_OFFICER' | 'DIRECTOR' | 'REGISTRAR' | 'LICENSE_OFFICER' | 'SNR_LICENSE_OFFICER' | 'LICENSE_MANAGER' | 'ADMIN';
+export type UserRole = 'MANAGER' | 'REGISTRATION_OFFICER' | 'SNR_REGISTRATION_OFFICER' | 'DIRECTOR' | 'REGISTRAR' | 'LICENSE_OFFICER' | 'SNR_LICENSE_OFFICER' | 'LICENSE_MANAGER'|'INVESTIGATIONS_OFFICER'| 'INVESTIGATIONS_MANAGER'| 'SENIOR_INVESTIGATIONS_OFFICER' | 'ADMIN';
 
 
 export interface AuthResponse {
@@ -87,4 +87,16 @@ export interface Registration {
   registration_type: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface Complaint {
+  crime_location: string;
+  nature_of_crime: string;
+  date: string;
+  time: string;
+  status: string;
+  bif_number: string;
+  case_number: string;
+  fir_number: string;
+  outcome: string;
 }

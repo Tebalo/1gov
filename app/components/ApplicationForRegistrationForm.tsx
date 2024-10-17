@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from "react";
 import {Stepper } from "./Stepper";
 import {motion} from 'framer-motion';
-import { FormDataSchema, formSchema, teacherPreliminaryInfoSchema, studentStudyProgrammes, offenceConvictions,teacherRegistrations,declarations,employmentDetails,attachments, studentPreliminaryInfos, institutionRecommendations, qualificationSchema   } from "../lib/schema";
+import { formSchema } from "../lib/schema";
 import { InformationCard } from "./InformationCard";
 import { DiplomaLevel, CertificationLevel, PostGradDiplomaLevel, DegreeLevel, PostGradCertificateLevel, PhDLevel, MastersLevel} from "./QualificationLevelComponents";
 

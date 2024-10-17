@@ -10,7 +10,7 @@ export const DeTokenizeUrl = 'https://gateway-cus-acc.gov.bw/auth/validate-token
 export const validateUrl = 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
-export const version = 'v1.13.99';
+export const version = 'v2.00.00';
 
 export interface StatusTransition {
     [key: string]: {
@@ -32,7 +32,9 @@ export interface RoleObjects{
     [key: string]:{
         reg_application: boolean | false,
         lic_application: boolean | false,
+        inv_application: boolean | false,
         reg_Next_Status: string | null,
+        inv_Next_Status: string | null,
         lic_Next_Status: string | null,
         defaultWork: string | '',
     }
@@ -42,56 +44,81 @@ export const roleObjects: RoleObjects = {
     'registration_officer': {
         reg_application: true,
         lic_application: false,
+        inv_application: false,
         reg_Next_Status: 'Pending-Screening',
+        inv_Next_Status: null,
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
+    },
+    'investigations_officer': {
+        reg_application: false,
+        lic_application: false,
+        inv_application: true,
+        reg_Next_Status: null,
+        inv_Next_Status: 'Registered',
+        lic_Next_Status: null,
+        defaultWork: 'Investigations'
     },
     'license_officer': {
         reg_application: false,
         lic_application: true,
+        inv_application: false,
         reg_Next_Status: null,
+        inv_Next_Status: null,
         lic_Next_Status: 'Pending-Screening',
         defaultWork: 'licenseApplication'
     },
     'snr_registration_officer': {
         reg_application: true,
         lic_application: false,
+        inv_application: false,
         reg_Next_Status: 'Pending-Assessment',
+        inv_Next_Status: null,
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
     'snr_license_officer': {
         reg_application: false,
         lic_application: true,
+        inv_application: false,
         reg_Next_Status: null,
+        inv_Next_Status: null,
         lic_Next_Status:'Pending-Assessment',
         defaultWork: 'licenseApplication'
     },
     'manager': {
         reg_application: true,
         lic_application: false,
+        inv_application: false,
         reg_Next_Status: 'Pending-Manager-Approval',
+        inv_Next_Status: null,
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
     'license_manager': {
         reg_application: false,
         lic_application: true,
+        inv_application: false,
         reg_Next_Status: null,
+        inv_Next_Status: null,
         lic_Next_Status: 'Pending-Manager-Approval',
         defaultWork: 'licenseApplication'
     },
     'director': {
         reg_application: true,
         lic_application: true,
+        inv_application: false,
         reg_Next_Status: 'Pending-Endorsement',
+        inv_Next_Status: null,
         lic_Next_Status: 'Pending-Endorsement',
         defaultWork: 'RegistrationApplication'
     },
     'registrar': {
         reg_application: true,
         lic_application: true,
+        inv_application: false,
         reg_Next_Status: 'Endorsement-Recommendation',
+        inv_Next_Status: null,
         lic_Next_Status: 'Endorsement-Recommendation',
         defaultWork: 'RegistrationApplication'
     },
@@ -124,6 +151,19 @@ export const statusTransitions: StatusTransition = {
         next_status: 'Pending-Assessment',
         reject_label: 'Return',
         approve_label: 'Pass-Screening',
+        recommend_label: null,
+        endorse_label: null
+    },
+    'investigations_officer': {
+        prev_status: 'Incoming',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        recommend: null,
+        endorse: null,
+        next_status: 'Registered',
+        reject_label: 'Incoming',
+        approve_label: 'Registered',
         recommend_label: null,
         endorse_label: null
     },

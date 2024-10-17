@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { FaExclamationTriangle, FaCheckCircle, FaFilePdf } from 'react-icons/fa';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -708,6 +708,11 @@ function ConvertTime(time: string){
     return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
 }
 
+export function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toISOString(); // or any other consistent format
+}
+
 function getRelativeTime(updateTime: string) {
     const now = new Date();
     const updated = new Date(updateTime);
@@ -772,6 +777,7 @@ function getRelativeTime(updateTime: string) {
 
     return { badgeColor, displayText };
 }
+
   const renderCaseDetails = (data: TeacherRegistrationData) => (
     <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       {data?.teacher_registrations?.registration_type && <InfoItem label="Registration Type" value={`${data.teacher_registrations.registration_type}`} />}
@@ -789,7 +795,7 @@ function getRelativeTime(updateTime: string) {
               {getSLAStatus(data?.teacher_registrations?.updated_at).displayText}
           </Badge>}
       </div>
-      {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={ConvertTime(data.teacher_registrations.created_at)} />}
+      {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={new Date(data.teacher_registrations.created_at).toLocaleString()} />}
       {data?.teacher_registrations?.updated_at && <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />}
     </div>
   );
@@ -843,7 +849,7 @@ function getRelativeTime(updateTime: string) {
           <div className="grid grid-cols-2 gap-2 mt-2">
             <div className='col-span-2'>{background.description && <InfoItem label="Description" value={background.description} />}</div>
             {background.checked_by && <InfoItem label="Check By" value={background.checked_by} />}
-            {background.created_at && <InfoItem label="Created" value={background.created_at} />}
+            {background.created_at && <InfoItem label="Created" value={new Date(background.created_at).toLocaleString()} />}
             {background.updated_at && <InfoItem label="Updated" value={getRelativeTime(background.updated_at)} />}
           </div>
         </div>
@@ -900,3 +906,7 @@ function getRelativeTime(updateTime: string) {
   );
   
   export default TeacherRegistrationView;
+
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error('Function not implemented.');
+}

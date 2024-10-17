@@ -36,6 +36,9 @@ const portalNames: { [key: string]: string } = {
     'REGISTRAR': 'Registrar Portal',
     'LICENSE_OFFICER': 'License Officer Portal',
     'SNR_LICENSE_OFFICER':'Snr. LIC Officer Portal',
+    'INVESTIGATIONS_OFFICER': 'Investigations Officer Portal',
+    'SENIOR_INVESTIGATIONS_OFFICER': 'Senior INV Officer Portal',
+    'INVESTIGATIONS_MANAGER': 'Investigations Manager Portal'
 };
 
 const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {

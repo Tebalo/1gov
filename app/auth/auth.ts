@@ -10,7 +10,7 @@ import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Sess
 
 // Constants
 const key = new TextEncoder().encode(secretKey);
-const ROLES: UserRole[] = ['REGISTRATION_OFFICER', 'MANAGER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'ADMIN'];
+const ROLES: UserRole[] = ['REGISTRATION_OFFICER', 'MANAGER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'INVESTIGATIONS_OFFICER', 'INVESTIGATIONS_MANAGER', 'SENIOR_INVESTIGATIONS_OFFICER', 'ADMIN'];
 
 // Helper functions
 async function fetchWithErrorHandling(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<any> {
@@ -39,7 +39,7 @@ async function fetchWithErrorHandling(url: string, options: RequestInit, timeout
   }
 }
 
-const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 29 minutes in seconds
+const TOKEN_REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
 
 async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<any> {
   const controller = new AbortController();
@@ -330,7 +330,7 @@ export async function storeSession(authResponse: AuthResponse) {
 
 export async function storeAccessGroups(decodedToken: DecodedToken){
   try{
-    const expires = new Date(Date.now() + 36000 * 1000);
+    const expires = new Date(Date.now() + 30 * 60 * 1000);
     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
     const access_group: AccessGroup = {
       persona: personas,
@@ -385,7 +385,7 @@ export async function updateAccessGroup(newCurrentPersona: string): Promise<void
     const encryptedAccessGroup = await encrypt(updatedAccessGroup);
     
     // Set expiration time (30 minutes from now)
-    const expires = new Date(Date.now() + 3600 * 1000);
+    const expires = new Date(Date.now() + 30 * 60 * 1000);
 
     // Update the cookie
     cookies().set('access', encryptedAccessGroup, { expires, httpOnly: true });
