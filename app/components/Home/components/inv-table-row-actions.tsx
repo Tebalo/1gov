@@ -24,11 +24,12 @@ export function InvTableRowActions<TData>({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   function handleOpen() {
-    if (record.case_number === 'Teacher') {
-      router.push(`/trls/work/investigation/${record.case_number}`);
-    } else{
-      router.push(`/trls/work/${record.case_number}`);
-    }
+    router.push(`/trls/work/investigation/${record.case_number}`);
+    // if (record.case_number === 'Com') {
+    //   router.push(`/trls/work/investigation/${record.case_number}`);
+    // } else{
+    //   router.push(`/trls/work`);
+    // }
   }
 
   return (

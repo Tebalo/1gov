@@ -9,6 +9,7 @@ import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { InvTableRowActions } from "./inv-table-row-actions"
 
 export const investigationsColumns: ColumnDef<Complaint>[] = [
   {
@@ -137,8 +138,8 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
   //     return remainingDaysA - remainingDaysB;
   //   },
   // },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  {
+    id: "actions",
+    cell: ({ row }) => <InvTableRowActions row={row} />,
+  },
 ]

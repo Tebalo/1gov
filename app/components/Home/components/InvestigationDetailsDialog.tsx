@@ -9,7 +9,6 @@ import {
   DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 
 import { useState } from "react";
 
@@ -31,21 +30,6 @@ const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) 
 
 export const InvestigationsDetailsDialog: React.FC<InvestigationsDetailsDialogProps> = ({ isOpen, onClose, record, onOpen }) => {
   const [redirecting, setIsRedirecting] = useState(false);
-
-    const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-        timeZone: "UTC"
-    };
-
-    function ConvertTime(time: string){
-        return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
-    }
 
     function getRelativeTime(updateTime: string) {
         const now = new Date();
@@ -90,50 +74,22 @@ export const InvestigationsDetailsDialog: React.FC<InvestigationsDetailsDialogPr
             }
         }
     }
-
-    function getSLAStatus(createdAt: string) {
-        const created = new Date(createdAt);
-        const today = new Date();
-        const diffTime = today.getTime() - created.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        const remainingDays = 30 - diffDays;
-
-        let badgeColor = "bg-green-100 text-green-800";
-        let displayText = `${remainingDays} days left`;
-
-        if (remainingDays <= 5 && remainingDays > 0) {
-            badgeColor = "bg-yellow-100 text-yellow-800";
-        } else if (remainingDays <= 0) {
-            badgeColor = "bg-red-100 text-red-800";
-            const overdueDays = Math.abs(remainingDays);
-            displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
-        }
-
-        return { badgeColor, displayText };
-    }
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-sky-700">Record Details</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-sky-700">Complaint Details</DialogTitle>
           <DialogDescription className="text-gray-600">
             Details of the selected application.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <div className="space-y-4">
-            <InfoItem label="Registration ID" value={record.case_number} />
-            <InfoItem label="Registration Status" value={record.status} />
-            <InfoItem label="Registration Type" value={record.nature_of_crime} />
+            <InfoItem label="Case ID" value={record.case_number} />
+            <InfoItem label="Status" value={record.status} />
+            <InfoItem label="Nature of crime" value={record.nature_of_crime} />
             <InfoItem label="Created" value={new Date(record.date).toLocaleString()} />
             <InfoItem label="Updated" value={getRelativeTime(record.date)} />
-            <div className="flex justify-between items-center">
-              <Label className="font-semibold text-gray-700">SLA Status:</Label>
-              <Badge className={`${getSLAStatus(record.date).badgeColor} font-semibold px-3 py-1`}>
-                {getSLAStatus(record.date).displayText}
-              </Badge>
-            </div>
           </div>
         </div>
         <DialogFooter>

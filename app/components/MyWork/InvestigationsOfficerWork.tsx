@@ -1,6 +1,5 @@
 // components/RegistrationOfficerHome.tsx
 import { InvestigationsWork } from "../Home/components/investigations/investigationswork";
-import { SelectTable } from "../Home/components/select-table";
 import { PageTitle } from "../PageTitle";
 import { Label } from "@/components/ui/label";
 
@@ -16,7 +15,6 @@ export const InvestigationsOfficerWork = () => {
             <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
               <Label>My Work</Label>
                 <InvestigationsWork userRole="investigations_officer"/>
-              {/* <SelectTable userRole="registration_officer" /> */}
             </div>
           </div>
         </div>

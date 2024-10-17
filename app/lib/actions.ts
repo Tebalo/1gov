@@ -185,6 +185,7 @@ export async function getRegApplications(status: string, count: string) {
 //   }
 // }
 import { format } from 'date-fns';
+import { Investigation } from "../components/record/ComplaintViewer";
 
 interface Complaint {
   crime_location: string;
@@ -379,6 +380,58 @@ export async function getRegById(Id: string) {
     return null;
   }
 }
+
+export async function getInvById(Id: string) {
+  // Simulating an async operation
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // Sample data
+  const sampleData = {
+    "reporter": {
+      "name": "John Doe",
+      "contact_number": "123456789",
+      "Omang_id": "ABC123",
+      "passport_no": "P123456",
+      "occupation": "Engineer",
+      "sex": "Male",
+      "nationality": "Botswana",
+      "address": "123 Main Street"
+    },
+    "complaint": {
+      "crime_location": "Gaborone",
+      "nature_of_crime": "Theft",
+      "date": "2024-10-01",
+      "time": "14:00",
+      "bif_number": "BIF123456",
+      "case_number": "CASE789",
+      "fir_number": "FIR456",
+      "outcome": "Pending"
+    },
+    "offender": {
+      "name": "Jane Smith",
+      "sex": "Female",
+      "nationality": "Botswana",
+      "dob": "1990-01-01",
+      "age": 34,
+      "contact_number": "987654321",
+      "id_passport_number": "ID987654",
+      "address": "456 Side Street",
+      "ward": "Ward 1",
+      "occupation": "Teacher",
+      "place_of_work": "XYZ School"
+    },
+    "investigation": {
+      "investigating_officer": "Officer Brown",
+      "police_station": "Gaborone Police Station",
+      "cr_number": "CR123456",
+      "offence": "Theft",
+      "outcome": "Under investigation"
+    }
+  };
+
+  return sampleData;
+}
+
 
 export async function getLicenseById(Id: string) {
   try {
