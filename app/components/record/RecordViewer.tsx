@@ -708,6 +708,11 @@ function ConvertTime(time: string){
     return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
 }
 
+export function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toISOString(); // or any other consistent format
+}
+
 function getRelativeTime(updateTime: string) {
     const now = new Date();
     const updated = new Date(updateTime);
@@ -789,7 +794,7 @@ function getRelativeTime(updateTime: string) {
               {getSLAStatus(data?.teacher_registrations?.updated_at).displayText}
           </Badge>}
       </div>
-      {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={ConvertTime(data.teacher_registrations.created_at)} />}
+      {/* {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={formatDate(data.teacher_registrations.created_at)} />} */}
       {data?.teacher_registrations?.updated_at && <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />}
     </div>
   );
@@ -843,7 +848,7 @@ function getRelativeTime(updateTime: string) {
           <div className="grid grid-cols-2 gap-2 mt-2">
             <div className='col-span-2'>{background.description && <InfoItem label="Description" value={background.description} />}</div>
             {background.checked_by && <InfoItem label="Check By" value={background.checked_by} />}
-            {background.created_at && <InfoItem label="Created" value={background.created_at} />}
+            {/* {background.created_at && <InfoItem label="Created" value={background.created_at} />} */}
             {background.updated_at && <InfoItem label="Updated" value={getRelativeTime(background.updated_at)} />}
           </div>
         </div>
