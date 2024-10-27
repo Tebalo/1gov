@@ -13,7 +13,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ caseCode }) => {
   const { handleUpdate, handleDelete, isDeleting } = useAssetActions(caseCode)
 
   return (
-    <div className="flex justify-end space-x-4 mb-6">
+    <div className="flex justify-end space-x-4">
       <Button onClick={handleUpdate} className="bg-blue-500 hover:bg-blue-600 text-white">
         <Edit className="w-4 h-4 mr-2" /> Update
       </Button>

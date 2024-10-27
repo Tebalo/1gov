@@ -7,17 +7,19 @@ import { mgt, roleObjects } from "@/app/lib/store";
 import { Work } from "@/app/components/MyWork/work";
 import { Search } from "@/app/components/dashboard/search";
 import { InvestigationsTable } from "../investigations-table";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 interface Props {
   userRole: string
 }
 
 export const InvestigationsWork = ({ userRole }: Props) => {
-  const { reg_application, lic_application, inv_application, reg_Next_Status, lic_Next_Status, inv_Next_Status, defaultWork } = roleObjects[userRole] || {};
+  const { reg_application, lic_application, inv_application, reg_Next_Status, lic_Next_Status, tipoff_Next_Status, inv_Next_Status, defaultWork } = roleObjects[userRole] || {};
 
   const [table, setTable] = useState(defaultWork || '');
 
-  const status = table === 'Investigations' ? inv_Next_Status : lic_Next_Status;
+  const status = table === 'Investigations' ? inv_Next_Status : tipoff_Next_Status;
 
   const handleSelectChange = (newValue: string) => {
     setTable(newValue);
@@ -25,12 +27,17 @@ export const InvestigationsWork = ({ userRole }: Props) => {
 
   const renderTable = () => {
     if (!status) return null;
-
+    
     if (mgt.includes(userRole)) {
       return table === 'Investigations' 
         ? <InvestigationsTable status={status} userRole={userRole} />
         : <InvestigationsTable status={status} userRole={userRole} />;
-    } else {
+    }else if(table === 'Tip Offs'){
+        return table === 'Tip Offs' 
+        ? <InvestigationsTable status={status} userRole={userRole} />
+        : <InvestigationsTable status={status} userRole={userRole} />;
+
+    }else {
       return table === 'Investigations'
         ? <InvestigationsTable status={status} userRole={userRole} />
         : <InvestigationsTable status={status} userRole={userRole} />;
@@ -52,18 +59,21 @@ export const InvestigationsWork = ({ userRole }: Props) => {
                   <SelectGroup>
                     <SelectLabel>Application Type</SelectLabel>
                     {reg_application && <SelectItem value="RegistrationApplication">Registration</SelectItem>}
-                    {lic_application && <SelectItem value="licenseApplication">License</SelectItem>}
+                    {tipoff_Next_Status && <SelectItem value="Tip Offs">Tip Offs</SelectItem>}
                     {inv_application && <SelectItem value="Investigations">Investigations</SelectItem>}
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
-            {!mgt.includes(userRole) && (
-              <>
-                {reg_Next_Status && <Work status={reg_Next_Status} service_type="registration" />}
-                {lic_Next_Status && <Work status={lic_Next_Status} service_type="license" />}
-              </>
-            )}
+            <div className="mt-4 w-full flex justify-start px-4">
+              <Link 
+                href="/trls/work/investigation/create" 
+                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                <Plus className="h-4 w-4" />
+                Create New Investigation
+              </Link>
+            </div>
           </div>
         </div>
         <div className="place-self-end">

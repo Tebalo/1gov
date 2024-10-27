@@ -7,7 +7,7 @@ export const SnrRegistrationOfficerWork = () => {
         <>
         <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-5">
-                <PageTitle Title="Teacher Registration"/>
+                <PageTitle Title="My Work"/>
             </div>
             <div className="w-full">
                 <div className="flex space-x-2">

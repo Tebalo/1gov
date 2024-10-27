@@ -2,11 +2,17 @@ import { getRole } from "@/app/auth/auth";
 import { ApplicationForTeacherRegistration } from "@/app/components/record/AppForTeacherRegistration";
 import TeacherRegistrationView from "@/app/components/record/RecordViewer";
 import { getRegById } from "@/app/lib/actions";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 export default async function Page({params}:{params: {slug: string}}){
     const id = await params.slug;
-    const work = await getRegById(id)
+
+    let work;
+    let error = null;
+  
+    try {
+    work = await getRegById(id)
 
     const userRole = await getRole()
     return (
@@ -16,21 +22,24 @@ export default async function Page({params}:{params: {slug: string}}){
                     <>
                         {userRole &&<TeacherRegistrationView data={work} userRole={userRole}/>}
                     </>):(
-                        <div className="w-full md:h-96 items-center flex justify-center">
-                            <div>
-                                <h2 className="text-center text-black text-3xl">Work not found!</h2>
-                                <div className="flex items-center justify-center">
-                                    <Link
-                                    href='/trls/work'
-                                    scroll={false}
-                                    >
-                                        <button
-                                        className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
-                                        >
-                                            Home
-                                        </button>
-                                    </Link>
-                                </div>
+                        <div className="flex h-[80vh] items-center justify-center w-full">
+                            <div className="text-center px-4">
+                            <div className="mb-6 flex justify-center">
+                                <AlertCircle className="h-16 w-16 text-gray-400" />
+                            </div>
+                            <h2 className="mb-4 text-3xl font-semibold text-gray-900">
+                                Record not found
+                            </h2>
+                            <p className="mb-8 text-gray-600">
+                                The record you&lsquo;re looking for doesn&lsquo;t exist or has been removed
+                            </p>
+                            <Link
+                                href="/trls/work"
+                                scroll={false}
+                                className="inline-flex items-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                Back to Home
+                            </Link>
                             </div>
                         </div>
                     )
@@ -38,4 +47,31 @@ export default async function Page({params}:{params: {slug: string}}){
             </div>
        </main>
     );
+} catch (e) {
+    return (
+      <main className="h-full">
+        <div className="flex h-[80vh] items-center justify-center w-full">
+          <div className="text-center px-4">
+            <div className="mb-6 flex justify-center">
+              <RefreshCw className="h-16 w-16 text-gray-400" />
+            </div>
+            <h2 className="mb-4 text-3xl font-semibold text-gray-900">
+              Connection error
+            </h2>
+            <p className="mb-8 text-gray-600">
+              Unable to load the record. Please check your connection and try again
+            </p>
+            <Link
+              href={`/trls/work/object/${id}`}
+              scroll={false}
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Retry
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 };

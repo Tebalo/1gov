@@ -1,4 +1,5 @@
 export const apiUrl = 'http://10.0.25.164:8080/trls-api';
+export const invUrl = 'http://10.0.25.164:8084/trls-api';
 export const apiUrl1 = 'http://74.208.205.44:8080/api';
 export const licUrl = 'http://66.179.253.57:8081/api'
 export const authUrlOLD = 'http://jwtauth.26digitaldev.com/api/';
@@ -10,7 +11,7 @@ export const DeTokenizeUrl = 'https://gateway-cus-acc.gov.bw/auth/validate-token
 export const validateUrl = 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = 'secret';
-export const version = 'v2.00.00';
+export const version = 'v2.02.91';
 
 export interface StatusTransition {
     [key: string]: {
@@ -35,6 +36,7 @@ export interface RoleObjects{
         inv_application: boolean | false,
         reg_Next_Status: string | null,
         inv_Next_Status: string | null,
+        tipoff_Next_Status: string | null,
         lic_Next_Status: string | null,
         defaultWork: string | '',
     }
@@ -47,6 +49,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: 'Pending-Screening',
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
@@ -55,7 +58,28 @@ export const roleObjects: RoleObjects = {
         lic_application: false,
         inv_application: true,
         reg_Next_Status: null,
-        inv_Next_Status: 'Registered',
+        inv_Next_Status: 'Incoming',
+        tipoff_Next_Status: 'Incoming',
+        lic_Next_Status: null,
+        defaultWork: 'Investigations'
+    },
+    'senior_investigations_officer': {
+        reg_application: false,
+        lic_application: false,
+        inv_application: true,
+        reg_Next_Status: null,
+        inv_Next_Status: 'Under-Review',
+        tipoff_Next_Status: 'Under-Review',
+        lic_Next_Status: null,
+        defaultWork: 'Investigations'
+    },
+    'investigations_manager': {
+        reg_application: false,
+        lic_application: false,
+        inv_application: true,
+        reg_Next_Status: null,
+        inv_Next_Status: 'Assessment',
+        tipoff_Next_Status: 'Assessment',
         lic_Next_Status: null,
         defaultWork: 'Investigations'
     },
@@ -65,6 +89,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: null,
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: 'Pending-Screening',
         defaultWork: 'licenseApplication'
     },
@@ -74,6 +99,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: 'Pending-Assessment',
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
@@ -83,6 +109,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: null,
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status:'Pending-Assessment',
         defaultWork: 'licenseApplication'
     },
@@ -92,6 +119,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: 'Pending-Manager-Approval',
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: null,
         defaultWork: 'RegistrationApplication'
     },
@@ -101,6 +129,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: null,
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: 'Pending-Manager-Approval',
         defaultWork: 'licenseApplication'
     },
@@ -110,6 +139,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: 'Pending-Endorsement',
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: 'Pending-Endorsement',
         defaultWork: 'RegistrationApplication'
     },
@@ -119,6 +149,7 @@ export const roleObjects: RoleObjects = {
         inv_application: false,
         reg_Next_Status: 'Endorsement-Recommendation',
         inv_Next_Status: null,
+        tipoff_Next_Status: null,
         lic_Next_Status: 'Endorsement-Recommendation',
         defaultWork: 'RegistrationApplication'
     },

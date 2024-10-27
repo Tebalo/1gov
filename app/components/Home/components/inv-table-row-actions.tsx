@@ -6,8 +6,7 @@ import { Row } from "@tanstack/react-table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { complaintSchema } from "../data/schema"
-import { RecordDetailsDialog } from './RecordDetailsDialog';
+import { complaintSchema, complaintSchemawithNullValues, InvestigationsSchema } from "../data/schema"
 import { InvestigationsDetailsDialog } from './InvestigationDetailsDialog';
 
 interface DataTableRowActionsProps<TData> {
@@ -19,12 +18,12 @@ export function InvTableRowActions<TData>({
   row,
   userRole
 }: DataTableRowActionsProps<TData>) {
-  const record = complaintSchema.parse(row.original)
+  const record = complaintSchemawithNullValues.parse(row.original)
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   function handleOpen() {
-    router.push(`/trls/work/investigation/${record.case_number}`);
+    router.push(`/trls/work/investigation/${record.inquiry_number}`);
     // if (record.case_number === 'Com') {
     //   router.push(`/trls/work/investigation/${record.case_number}`);
     // } else{

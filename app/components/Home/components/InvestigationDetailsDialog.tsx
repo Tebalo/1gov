@@ -12,12 +12,12 @@ import { Label } from "@/components/ui/label";
 
 import { useState } from "react";
 
-import { Complaint } from '@/app/lib/types';
+import { Investigations, complaintwithNullValues } from '../data/schema';
 
 interface InvestigationsDetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  record: Complaint;
+  record: complaintwithNullValues;
   onOpen: () => void;
 }
 
@@ -85,11 +85,11 @@ export const InvestigationsDetailsDialog: React.FC<InvestigationsDetailsDialogPr
         </DialogHeader>
         <div className="py-4">
           <div className="space-y-4">
-            <InfoItem label="Case ID" value={record.case_number} />
-            <InfoItem label="Status" value={record.status} />
-            <InfoItem label="Nature of crime" value={record.nature_of_crime} />
-            <InfoItem label="Created" value={new Date(record.date).toLocaleString()} />
-            <InfoItem label="Updated" value={getRelativeTime(record.date)} />
+            <InfoItem label="Case ID" value={record.case_number ?? ''} />
+            <InfoItem label="Status" value={record.reg_status ?? ''} />
+            <InfoItem label="Inquiry number" value={record.inquiry_number ?? ''} />
+            <InfoItem label="Created" value={new Date(record.date_of_submission ?? '').toLocaleString()} />
+            {/* <InfoItem label="Updated" value={getRelativeTime(record.)} /> */}
           </div>
         </div>
         <DialogFooter>

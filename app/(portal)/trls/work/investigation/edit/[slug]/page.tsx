@@ -5,80 +5,28 @@ import { useRouter } from 'next/navigation'
 // import { getCaseById, updateCaseById } from '@/lib/api'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { getSession } from '@/app/auth/auth'
 import { DatePicker } from '@/components/ui/date-picker'
-import { getInvById } from '@/app/lib/actions'
+import { getInvRecordById, updateCaseById } from '@/app/lib/actions'
+import InfoCard from '@/app/components/InfoCard'
+import { FileCheck, FileText, Info, SaveIcon } from 'lucide-react'
+import { Investigation } from '@/app/lib/types'
+import InfoItem from '@/app/components/InfoItem'
 
-interface reporter {
-    name: string | null;
-    contact_number: string | null;
-    Omang_id: string;
-    passport_no: string | null;
-    occupation: string | null;
-    sex: string | null;
-    nationality: string | null;
-    address: string | null;
-  }
-  
-  interface complaint {
-    crime_location: string | null;
-    nature_of_crime: string | null;
-    date: string | null;
-    time: string | null;
-    bif_number: string | null;
-    case_number: string;
-    fir_number: string | null;
-    outcome: string | null;
-  }
-  
-  interface offender {
-    name: string | null;
-    sex: string | null;
-    nationality: string | null;
-    dob: string | null;
-    age: number | null;
-    contact_number: string | null;
-    id_passport_number: string | null;
-    address: string | null;
-    ward: string | null;
-    occupation: string | null;
-    place_of_work: string | null;
-  }
-  
-  interface investigation {
-    investigating_officer: string | null;
-    police_station: string | null;
-    cr_number: string | null;
-    offence: string | null;
-    outcome: string | null;
-  }
-  
-  export interface Investigation {
-    reporter: reporter;
-    complaint: complaint;
-    offender: offender;
-    investigation: investigation;
-  }
 
-export default function EditCasePage({ params }: { params: { id: string } }) {
+export default function EditCasePage({ params }: { params: { slug: string } }) {
+
   const router = useRouter()
-  const [caseDetails, setCaseDetails] = useState<Investigation>()
+  const [caseDetails, setCaseDetails] = useState<Investigation | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [userRole, setUserRole] = useState<any>(null)
 
   useEffect(() => {
     async function fetchCaseDetails() {
       try {
-        const inv = await getInvById(params.id)
-        // const details = await getCaseById(params.id)
-        // const session = await getSession();
-        setCaseDetails(inv);
-        // console.log(session?.auth?.roles[0])
-        // setUserRole(session?.auth?.roles[0]);
+        const inv = await getInvRecordById(params.slug)
+ 
+        setCaseDetails(inv)
       } catch (error) {
         console.error('Failed to fetch case details:', error)
       } finally {
@@ -87,26 +35,66 @@ export default function EditCasePage({ params }: { params: { id: string } }) {
     }
 
     fetchCaseDetails()
-  }, [params.id])
+  }, [params.slug])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } }) => {
-    const { name, value } = e.target
-    setCaseDetails((prev: any) => ({ ...prev, [name]: value }))
-  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    const [topLevelProperty, nestedProperty] = name.split('.');
+  
+    setCaseDetails((prev) => {
+      if (!prev) return prev;
+  
+      return {
+        ...prev,
+        [topLevelProperty]: {
+          ...prev[topLevelProperty as keyof Investigation],
+          [nestedProperty]: value,
+        },
+      };
+    });
+  };
 
   const handleDateChange = (name: string) => (date: Date | undefined) => {
-    setCaseDetails((prev: any) => ({ 
-      ...prev, 
-      [name]: date ? date.toISOString().split('T')[0] : null 
-    }))
-  }
+    const [topLevelProperty, nestedProperty] = name.split('.');
+  
+    setCaseDetails((prev) => {
+      if (!prev) return prev;
+  
+      return {
+        ...prev,
+        [topLevelProperty]: {
+          ...prev[topLevelProperty as keyof Investigation],
+          [nestedProperty]: date ? date.toISOString().split('T')[0] : null,
+        },
+      };
+    });
+  };
 
+  const handleSelectChange = (name: string) => (value: string) => {
+    const [topLevelProperty, nestedProperty] = name.split('.');
+  
+    setCaseDetails((prev) => {
+      if (!prev) return prev;
+  
+      return {
+        ...prev,
+        [topLevelProperty]: {
+          ...prev[topLevelProperty as keyof Investigation],
+          [nestedProperty]: value,
+        },
+      };
+    });
+  };
+  
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
     try {
-    //   await updateCaseById(params.id, caseDetails)
-      router.push(`/trls/work/investigation/${params.id}`)
+      const res = await updateCaseById(params.slug, caseDetails)
+      if(res.code === 200 || res.code === 201){
+        router.push(`/trls/work/investigation/${params.slug}`)
+      }
     } catch (error) {
       console.error('Failed to update case:', error)
     } finally {
@@ -121,399 +109,388 @@ export default function EditCasePage({ params }: { params: { id: string } }) {
   if (!caseDetails) {
     return <div className="flex justify-center items-center h-screen">Case not found</div>
   }
-
   
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* <h1 className="text-3xl font-bold mb-6">Edit Case: {caseDetails.name}</h1> */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Reporter Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-              <Input
-                type="text"
-                id="name"
-                name="name"
-                value={caseDetails.reporter.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="code" className="block text-sm font-medium text-gray-700">Code</label>
-              <Input
-                type="text"
-                id="code"
-                name="code"
-                value={caseDetails.code}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="owner" className="block text-sm font-medium text-gray-700">Owner</label>
-              <Input
-                type="text"
-                id="owner"
-                name="owner"
-                value={caseDetails.owner}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
-              <Input
-                type="text"
-                id="location"
-                name="location"
-                value={caseDetails.location}
-                onChange={handleInputChange}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-  <CardHeader>
-    <CardTitle>Asset Details</CardTitle>
-  </CardHeader>
-  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label htmlFor="type" className="block text-sm font-medium text-gray-700">Type</label>
-      <Select
-        name="type"
-        value={caseDetails.type}
-        onValueChange={(value) => handleInputChange({ target: { name: 'type', value } } as any)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select asset type" />
-        </SelectTrigger>
-        <SelectContent>
-              <SelectItem value="Real Estate">Real Estate</SelectItem>
-              <SelectItem value="Vehicle, Plant and Equipment">Vehicle, Plant and Equipment</SelectItem>
-              <SelectItem value="Personal Effects">Personal Effects</SelectItem>
-              <SelectItem value="Biological Assets">Biological Assets</SelectItem>
-              <SelectItem value="Office equipment and furniture">Office equipment and furniture</SelectItem>
-              <SelectItem value="Artefacts">Artefacts</SelectItem>
-              <SelectItem value="Money">Money</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-    <div>
-      <label htmlFor="value" className="block text-sm font-medium text-gray-700">Value</label>
-      <Input
-        type="text"
-        id="value"
-        name="value"
-        value={caseDetails.value}
-        onChange={handleInputChange}
-      />
-    </div>
-    <div>
-      <label htmlFor="condition" className="block text-sm font-medium text-gray-700">Condition</label>
-      <Select
-        name="condition"
-        value={caseDetails.condition}
-        onValueChange={(value) => handleInputChange({ target: { name: 'condition', value } } as any)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select condition" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Excellent">Excellent</SelectItem>
-          <SelectItem value="Good">Good</SelectItem>
-          <SelectItem value="Fair">Fair</SelectItem>
-          <SelectItem value="Poor">Poor</SelectItem>
-          <SelectItem value="Damaged">Damaged</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-    <div>
-      <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-      <Select
-        name="status"
-        value={caseDetails.status}
-        onValueChange={(value) => handleInputChange({ target: { name: 'status', value } } as any)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Pre-Confiscated">Pre-Confiscated</SelectItem>
-          <SelectItem value="Confiscated">Confiscated</SelectItem>
-          <SelectItem value="Valuation">Valuation</SelectItem>
-          <SelectItem value="Disposed">Disposed</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  </CardContent>
-</Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Description</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              id="description"
-              name="description"
-              value={caseDetails.description}
-              onChange={handleInputChange}
-              rows={3}
-            />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Confiscation Details</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="confiscation_date" className="block text-sm font-medium text-gray-700">Confiscation Date</label>
-              <DatePicker
-                date={caseDetails.confiscation_date ? new Date(caseDetails.confiscation_date) : undefined}
-                setDate={handleDateChange('confiscation_date')}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="case_number" className="block text-sm font-medium text-gray-700">Case Number</label>
-              <Input
-                type="text"
-                id="case_number"
-                name="case_number"
-                value={caseDetails.case_number}
-                onChange={handleInputChange}
-              />
-            </div>
-
+    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+      <div className="mb-4 flex-shrink-0 shadow-md">
+        <div className='flex justify-between'>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Complaint Information
+          </h1>
+          <div className="flex justify-end space-x-4">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSaving} onClick={handleSubmit}>
+              <SaveIcon className="w-4 h-4 mr-2" />
+              {isSaving ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
+        </div>
+        <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
+      </div>
+        <div className='flex-grow overflow-y-auto'>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
               <div>
-                <label htmlFor="planned_confiscation_date" className="block text-sm font-medium text-gray-700">Planned Confiscation Date</label>
-                <DatePicker
-                  date={caseDetails.planned_confiscation_date ? new Date(caseDetails.planned_confiscation_date) : undefined}
-                  setDate={handleDateChange('planned_confiscation_date')}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="decision" className="block text-sm font-medium text-gray-700">Decision</label>
-                <Select
-                  name="decision"
-                  value={caseDetails.decision}
-                  onValueChange={(value) => handleInputChange({ target: { name: 'decision', value } } as any)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select decision" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Abort-Confiscation">Abort-Confiscation</SelectItem>
-                    <SelectItem value="Confiscate">Confiscate</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label htmlFor="confiscation_reason" className="block text-sm font-medium text-gray-700">Confiscation Reason</label>
-                <Textarea
-                  id="confiscation_reason"
-                  name="confiscation_reason"
-                  value={caseDetails.confiscation_reason}
-                  onChange={handleInputChange}
-                  rows={2}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="decision_reason" className="block text-sm font-medium text-gray-700">Decision Reason</label>
-                <Textarea
-                  id="decision_reason"
-                  name="decision_reason"
-                  value={caseDetails.decision_reason}
-                  onChange={handleInputChange}
-                  rows={2}
-                />
-              </div>
-
-          </CardContent>
-        </Card>
-
-        {userRole !== 'record_officer' && <Card>
-          <CardHeader>
-            <CardTitle>Disposal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="disposal_date" className="block text-sm font-medium text-gray-700">Disposal Date</label>
-              <DatePicker
-                date={caseDetails.disposal_date ? new Date(caseDetails.disposal_date) : undefined}
-                setDate={handleDateChange('disposal_date')}
-              />
-            </div>
-            <div>
-              <label htmlFor="disposal_amount" className="block text-sm font-medium text-gray-700">Disposal Amount</label>
-              <Input
-                type="text"
-                id="disposal_amount"
-                name="disposal_amount"
-                value={caseDetails.disposal_amount}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div>
-                <label htmlFor="disposal_method" className="block text-sm font-medium text-gray-700">Disposal Method</label>
-                <Select
-                  name="decision"
-                  value={caseDetails.disposal_method}
-                  onValueChange={(value) => handleInputChange({ target: { name: 'disposal_method', value } } as any)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select method" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Public Auction">Public Auction</SelectItem>
-                    <SelectItem value="Trust Fund">Trust Fund</SelectItem>
-                    <SelectItem value="Sealed Bid Sale">Sealed Bid Sale</SelectItem>
-                    <SelectItem value="Direct Sale">Direct Sale</SelectItem>
-                    <SelectItem value="Online Sales">Online Sales</SelectItem>
-                    <SelectItem value="Destruction">Destruction</SelectItem>
-                    <SelectItem value="Donation">Donation</SelectItem>
-                    <SelectItem value="Government Use">Government Use</SelectItem>
-                    <SelectItem value="Return to Victim">Return to Victim</SelectItem>
-                    <SelectItem value="Lease or Rent">Lease or Rent</SelectItem>
-                    <SelectItem value="Share Sale">Share Sale</SelectItem>
-                    <SelectItem value="Recycling">Recycling</SelectItem>
-                    <SelectItem value="Interagency Transfer">Interagency Transfer</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label htmlFor="disposal_reason" className="block text-sm font-medium text-gray-700">Disposal Reason</label>
-                <Textarea
-                  id="disposal_reason"
-                  name="disposal_reason"
-                  value={caseDetails.disposal_reason}
-                  onChange={handleInputChange}
-                  rows={2}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="recipient" className="block text-sm font-medium text-gray-700">Recipient</label>
+                <label htmlFor="reporter.name" className="block text-sm font-medium text-gray-700">Name</label>
                 <Input
                   type="text"
-                  id="recipient"
-                  name="recipient"
-                  value={caseDetails.recipient}
+                  id="reporter.name"
+                  name="reporter.name"
+                  value={caseDetails?.reporter.name ?? ''}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="reporter.Omang_id" className="block text-sm font-medium text-gray-700">Omang</label>
+                <Input
+                  type="text"
+                  id="reporter.Omang_id"
+                  name="reporter.Omang_id"
+                  value={caseDetails?.reporter.Omang_id ?? ''}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="passport_no" className="block text-sm font-medium text-gray-700">Passport number</label>
+                <Input
+                  type="text"
+                  id="reporter.passport_no"
+                  name="reporter.passport_no"
+                  value={caseDetails?.reporter.passport_no ?? ''}
                   onChange={handleInputChange}
                 />
-            </div>
-          </CardContent>
-        </Card>}
+              </div>
+              <div>
+                <label htmlFor="occupation" className="block text-sm font-medium text-gray-700">Occupation</label>
+                <Input
+                  type="text"
+                  id="reporter.occupation"
+                  name="reporter.occupation"
+                  value={caseDetails?.reporter.occupation ?? ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="sex" className="block text-sm font-medium text-gray-700">Sex</label>
+                <Input
+                  type="text"
+                  id="reporter.sex"
+                  name="reporter.sex"
+                  value={caseDetails?.reporter.sex ?? ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="nationality" className="block text-sm font-medium text-gray-700">Nationality</label>
+                <Input
+                  type="text"
+                  id="reporter.nationality"
+                  name="reporter.nationality"
+                  value={caseDetails?.reporter.nationality ?? ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="reporter.address" className="block text-sm font-medium text-gray-700">Address</label>
+                <Input
+                  type="text"
+                  id="reporter.address"
+                  name="reporter.address"
+                  value={caseDetails?.reporter.address ?? ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </InfoCard> */}
+            <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+              <InfoItem label="Name" value={caseDetails?.reporter.name}/>
+              <InfoItem label="Contact number" value={caseDetails?.reporter.contact_number}/>
+              <InfoItem label="Omang" value={caseDetails?.reporter.Omang_id}/>
+              <InfoItem label="Passport number" value={caseDetails?.reporter.passport_no}/>
+              <InfoItem label="Occupation" value={caseDetails?.reporter.occupation}/>
+              <InfoItem label="Sex" value={caseDetails?.reporter.sex}/>
+              <InfoItem label="Nationality" value={caseDetails?.reporter.nationality}/>
+              <InfoItem label="Address" value={caseDetails?.reporter.address}/>
+              <InfoItem label="Anonymous" value={caseDetails?.reporter.anonymous}/>
+              <InfoItem label="Status" value={caseDetails?.reporter.reg_status}/>
+              <div>
+                <label htmlFor="reporter.reg_status" className="block text-sm font-medium text-gray-700">Set New Status</label>
+                <Select
+                  name="reporter.reg_status"
+                  value={caseDetails.reporter.reg_status ?? ''}
+                  onValueChange={(value) => handleInputChange({ target: { name: 'reporter.reg_status', value } } as any)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Incoming">Incoming</SelectItem>
+                    <SelectItem value="Registered">Registered</SelectItem>
+                    <SelectItem value="Under-Review">Under-Review</SelectItem>
+                    <SelectItem value="Assessment">Assessment</SelectItem>
+                    <SelectItem value="Ongoing-investigation">Ongoing-investigation</SelectItem>
+                    <SelectItem value="Complete-investigations">Complete-investigations</SelectItem>
+                    <SelectItem value="Recommend for closure">Recommend for closure</SelectItem>
+                    <SelectItem value="Recommend for re-investigation">Recommend for re-investigation</SelectItem>
+                    <SelectItem value="Recommend for Disciplinary">Recommend for Disciplinary</SelectItem>
+                    <SelectItem value="Approve endorsement">Approve endorsement</SelectItem>
+                    <SelectItem value="Reject endorsement">Approve endorsement</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* <InfoItem label="Inquiry number" value={data.reporter.inquiry_number}/> */}
+              {/* <InfoItem label="Case number" value={data.reporter.case_number}/> */}
+              <InfoItem label="Submission type" value={caseDetails?.reporter.submission_type}/>
+              <InfoItem label="Created At" value={caseDetails?.reporter.created_at}/>
+              <InfoItem label="Updated At" value={caseDetails?.reporter.updated_at}/>
+            </InfoCard>
+            <InfoCard title='Complaint Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+                <div>
+                  <label htmlFor="complaint.nature_of_crime" className="block text-sm font-medium text-gray-700">Nature of crime</label>
+                  <Select
+                    name="complaint.nature_of_crime"
+                    value={caseDetails?.complaint?.nature_of_crime ?? ''}
+                    onValueChange={handleSelectChange('complaint.nature_of_crime')}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select crime" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Theft">Theft</SelectItem>
+                      <SelectItem value="Assault">Assault</SelectItem>
+                      <SelectItem value="Rape">Rape</SelectItem>
+                      <SelectItem value="Grand theft">Grand theft</SelectItem>
+                      <SelectItem value="Drug use">Drug use</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label htmlFor="complaint.fir_number" className="block text-sm font-medium text-gray-700">FIR number</label>
+                  <Input
+                    type="text"
+                    id="complaint.fir_number"
+                    name="complaint.fir_number"
+                    value={caseDetails?.complaint.fir_number ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="complaint.crime_location" className="block text-sm font-medium text-gray-700">Crime location</label>
+                  <Input
+                    type="text"
+                    id="complaint.crime_location"
+                    name="complaint.crime_location"
+                    value={caseDetails?.complaint.crime_location ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                    <label htmlFor="complaint.date" className="block text-sm font-medium text-gray-700">Date</label>
+                    <DatePicker
+                      date={caseDetails?.complaint.date ? new Date(caseDetails.complaint.date) : undefined}
+                      setDate={handleDateChange('complaint.date')}
+                    />
+                </div>
+                <div>
+                  <label htmlFor="complaint.case_number" className="block text-sm font-medium text-gray-700">Case number</label>
+                  <Input
+                    type="text"
+                    id="complaint.case_number"
+                    name="complaint.case_number"
+                    value={caseDetails?.complaint.case_number ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="complaint.outcome" className="block text-sm font-medium text-gray-700">Outcome</label>
+                  <Select
+                    name="complaint.outcome"
+                    value={caseDetails?.complaint.outcome ?? ''}
+                    onValueChange={(value) => handleInputChange({ target: { name: 'complaint.outcome', value } } as any)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select outcome" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Under Investigation">Under Investigation</SelectItem>
+                      <SelectItem value="Resolved">Resolved</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+            </InfoCard>
 
-        {userRole !== 'record_officer' && <Card>
-          <CardHeader>
-            <CardTitle>Valuation</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="valuation_date" className="block text-sm font-medium text-gray-700">Valuation Date</label>
-              <DatePicker
-                date={caseDetails.valuation_date ? new Date(caseDetails.valuation_date) : undefined}
-                setDate={handleDateChange('valuation_date')}
-              />
-            </div>
-            <div>
-              <label htmlFor="valuation_amount" className="block text-sm font-medium text-gray-700">Valuation Amount</label>
-              <Input
-                type="text"
-                id="valuation_amount"
-                name="valuation_amount"
-                value={caseDetails.valuation_amount}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="initial_assets_costs" className="block text-sm font-medium text-gray-700">Initial Assets Costs</label>
-              <Input
-                type="text"
-                id="initial_assets_costs"
-                name="initial_assets_costs"
-                value={caseDetails.initial_assets_costs}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="operations_costs" className="block text-sm font-medium text-gray-700">Operations Costs</label>
-              <Input
-                type="text"
-                id="operations_costs"
-                name="operations_costs"
-                value={caseDetails.operations_costs}
-                onChange={handleInputChange}
-              />
-            </div>
+            <InfoCard title='Offender Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+                <div>
+                  <label htmlFor="offender.name" className="block text-sm font-medium text-gray-700">Name</label>
+                  <Input
+                    type="text"
+                    id="offender.name"
+                    name="offender.name"
+                    value={caseDetails.offender.name ?? ''}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="id_passport_number" className="block text-sm font-medium text-gray-700">Omang/Passport</label>
+                  <Input
+                    type="text"
+                    id="offender.id_passport_number"
+                    name="offender.id_passport_number"
+                    value={caseDetails?.offender.id_passport_number ?? ''}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="offender.age" className="block text-sm font-medium text-gray-700">Age</label>
+                  <Input
+                    type="text"
+                    id="offender.age"
+                    name="offender.age"
+                    value={caseDetails?.offender.age ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="offender.contact_number" className="block text-sm font-medium text-gray-700">Contact number</label>
+                  <Input
+                    type="text"
+                    id="offender.contact_number"
+                    name="offender.contact_number"
+                    value={caseDetails?.offender.contact_number ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="offender.sex" className="block text-sm font-medium text-gray-700">Sex</label>
+                  <Input
+                    type="text"
+                    id="offender.sex"
+                    name="offender.sex"
+                    value={caseDetails?.offender.sex ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="occupation" className="block text-sm font-medium text-gray-700">Occupation</label>
+                  <Input
+                    type="offender.occupation"
+                    id="offender.occupation"
+                    name="offender.occupation"
+                    value={caseDetails?.offender.occupation ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="offender.nationality" className="block text-sm font-medium text-gray-700">Nationality</label>
+                  <Input
+                    type="text"
+                    id="offender.nationality"
+                    name="offender.nationality"
+                    value={caseDetails?.reporter.nationality ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+                  <Input
+                    type="text"
+                    id="offender.address"
+                    name="offender.address"
+                    value={caseDetails?.offender.address ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="ward" className="block text-sm font-medium text-gray-700">Ward</label>
+                  <Input
+                    type="text"
+                    id="offender.ward"
+                    name="offender.ward"
+                    value={caseDetails?.offender.ward ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="place_of_work" className="block text-sm font-medium text-gray-700">Place of work</label>
+                  <Input
+                    type="text"
+                    id="offender.place_of_work"
+                    name="offender.place_of_work"
+                    value={caseDetails.offender.place_of_work ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+            </InfoCard>
 
-            <div>
-              <label htmlFor="maintenance_repair_costs" className="block text-sm font-medium text-gray-700">Maintenance Repair Costs</label>
-              <Input
-                type="text"
-                id="maintenance_repair_costs"
-                name="maintenance_repair_costs"
-                value={caseDetails.maintenance_repair_costs}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="replacement_renewal_costs" className="block text-sm font-medium text-gray-700">Replacement/Renewal Costs</label>
-              <Input
-                type="text"
-                id="replacement_renewal_costs"
-                name="replacement_renewal_costs"
-                value={caseDetails.replacement_renewal_costs}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="disposal_costs" className="block text-sm font-medium text-gray-700">Disposal Costs</label>
-              <Input
-                type="text"
-                id="disposal_costs"
-                name="disposal_costs"
-                value={caseDetails.disposal_costs}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="threshhold_amount" className="block text-sm font-medium text-gray-700">Threshold Amount</label>
-              <Input
-                type="text"
-                id="threshhold_amount"
-                name="threshhold_amount"
-                value={caseDetails.threshhold_amount}
-                onChange={handleInputChange}
-              />
-            </div>
-          </CardContent>
-        </Card>}
-
-        <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save Changes'}
-          </Button>
+            <InfoCard title='Investigation Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
+                <div>
+                  <label htmlFor="investigation.investigating_officer" className="block text-sm font-medium text-gray-700">Investigation officer</label>
+                  <Input
+                    type="text"
+                    id="investigation.investigating_officer"
+                    name="investigation.investigating_officer"
+                    value={caseDetails?.investigation.investigating_officer ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="investigation.police_station" className="block text-sm font-medium text-gray-700">Police station</label>
+                  <Input
+                    type="text"
+                    id="investigation.police_station"
+                    name="investigation.police_station"
+                    value={caseDetails.investigation.police_station ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cr_number" className="block text-sm font-medium text-gray-700">CR number</label>
+                  <Input
+                    type="text"
+                    id="investigation.cr_number"
+                    name="investigation.cr_number"
+                    value={caseDetails?.investigation.cr_number ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="investigation.offence" className="block text-sm font-medium text-gray-700">Offence</label>
+                  <Input
+                    type="text"
+                    id="investigation.offence"
+                    name="investigation.offence"
+                    value={caseDetails?.investigation.offence ?? ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="investigation.outcome" className="block text-sm font-medium text-gray-700">Outcome</label>
+                  <Select
+                    name="investigation.outcome"
+                    value={caseDetails.investigation.outcome ?? ''}
+                    onValueChange={(value) => handleInputChange({ target: { name: 'investigation.outcome', value } } as any)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select outcome" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Incoming">Incoming</SelectItem>
+                      <SelectItem value="Registered">Registered</SelectItem>
+                      <SelectItem value="Under-Review">Under-Review</SelectItem>
+                      <SelectItem value="Assessment">Assessment</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+            </InfoCard>
+          </form>
         </div>
-      </form>
     </div>
   )
 }

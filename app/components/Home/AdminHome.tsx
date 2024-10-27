@@ -4,6 +4,7 @@ import MyWork from "../dashboard/(tables)/_myWork";
 import { PageTitle } from "../PageTitle";
 import { SearchCheck } from "lucide-react";
 import { CreateInvestigation } from "../MyWork/components/createInvestigation";
+import RolePermissionsForm from "./components/admin/RolePermissionForm";
 
 export const AdminHome = () => {
     return(
@@ -13,20 +14,7 @@ export const AdminHome = () => {
                 <PageTitle Title="Teacher Registration and Licensing"/>
             </div>
             <div className="w-full">
-                <div className="rounded-lg">
-                    <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mb-4"> 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center">
-                                    <SearchCheck className="mr-2" />Investigation&apos;s component
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <CreateInvestigation/>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                <RolePermissionsForm/>
             </div>
         </div>
         </>

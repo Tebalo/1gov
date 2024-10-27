@@ -107,8 +107,38 @@ import {
 
   export const invstatuses = [
     {
-      value: "Pending",
-      label: "Pending",
+      value: "Incoming",
+      label: "Incoming",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Under-Review",
+      label: "Under-Review",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Assessment",
+      label: "Assessment",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Ongoing-investigation",
+      label: "Ongoing-investigation",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Recommend for closure",
+      label: "Recommend for closure",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Recommend for re-investigation",
+      label: "Recommend for re-investigation",
+      icon: QuestionMarkCircledIcon,
+    },
+    {
+      value: "Recommend for Disciplinary",
+      label: "Recommend for Disciplinary",
       icon: QuestionMarkCircledIcon,
     },
     {
@@ -117,13 +147,23 @@ import {
       icon: CheckCircledIcon,
     },
     {
-      value: "Resolved",
-      label: "Resolved",
+      value: "Reject endorsement",
+      label: "Reject endorsement",
       icon: CrossCircledIcon,
     },
     {
-      value: "Resolved",
-      label: "Resolved",
+      value: "Assessment",
+      label: "Assessment",
+      icon: CheckCircledIcon,
+    },
+    {
+      value: "Approve endorsement",
+      label: "Approve endorsement",
+      icon: CheckCircledIcon,
+    },
+    {
+      value: "Complete-investigations",
+      label: "Complete-investigations",
       icon: CheckCircledIcon,
     },
   ]

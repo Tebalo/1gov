@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import {
@@ -18,9 +18,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { logout, updateAccessGroup } from "@/app/auth/auth";
+import { getSession, logout, refreshToken, updateAccessGroup } from "@/app/auth/auth";
 import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface NavUtilsProps {
   accessProfile: AccessGroup | null;
@@ -41,11 +42,74 @@ const portalNames: { [key: string]: string } = {
     'INVESTIGATIONS_MANAGER': 'Investigations Manager Portal'
 };
 
-const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
+const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPortalOpen, setIsPortalOpen] = useState(false);
   const [isLoggingOut, setIsLogOut] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [isTokenRefreshDialogOpen, setIsTokenRefreshDialogOpen] = useState(false);
+  const [isRefreshingToken, setIsRefreshingToken] = useState(false);
+  const [sessionExpirationTime, setSessionExpirationTime] = useState<number | undefined>(undefined);
+  const [timeRemaining, setTimeRemaining] = useState<number | undefined>(undefined);
+  const [tokenRefreshTimeRemaining, setTokenRefreshTimeRemaining] = useState<number | undefined>(undefined);
+
+  const [isPortalSwitchDialogOpen, setIsPortalSwitchDialogOpen] = useState(false);
+  const [selectedPortal, setSelectedPortal] = useState<string | null>(null);
+
+  const [isSwitchingPortal, setIsSwitchingPortal] = useState(false);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    async function fetchSessionAndRole() {
+      try {
+        const session = await getSession();
+        if (session && session.auth && session.auth.expires_in) {
+          console.log(session.expires);
+          const currentTime = Math.floor(Date.now() / 1000);
+          if(session.expires){
+          const expirationTime = new Date(session.expires).getTime() / 1000; // Use provided expiration time
+          console.log(expirationTime)
+          const remainingTime = expirationTime - currentTime;
+          setSessionExpirationTime(expirationTime);
+          setTimeRemaining(remainingTime);
+        
+          interval = setInterval(() => {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const updatedRemainingTime = expirationTime - currentTime;
+            setTimeRemaining(updatedRemainingTime);
+
+              if (updatedRemainingTime <= 0) {
+                // clearInterval(interval!);
+                // window.location.href = '/welcome';
+                // return;
+              }
+
+              if (updatedRemainingTime < 30) { 
+                // setIsTokenRefreshDialogOpen(true);
+                // setTokenRefreshTimeRemaining(30); 
+              }
+          }, 1000);
+        }
+        } else {
+          setSessionExpirationTime(undefined);
+          setTimeRemaining(undefined);
+        }
+      } catch (error) {
+        console.error('Error fetching session or role:', error);
+        // Handle error appropriately, maybe show an error message or redirect
+      }
+    }
+
+    fetchSessionAndRole();
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []);
+
 
   const handleLogout = async () => {
     try {
@@ -57,26 +121,71 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
     }
   };
 
-  const switchPortal = async (persona: string) => {
-    // Implement portal switching logic here
-    //console.log(`Switching to ${portalNames[persona] || persona} Portal`);
+  const handleTokenRefresh = async () => {
+    try {
+      setIsRefreshingToken(true);
+      await refreshToken();
+      
+      // Fetch new session after token refresh
+      const newSession = await getSession();
+      if (newSession && newSession.expires) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const newExpirationTime = new Date(newSession.expires).getTime() / 1000;
+        setSessionExpirationTime(newExpirationTime);
+        setTimeRemaining(newExpirationTime - currentTime);
+      }
+      
+      setIsRefreshingToken(false);
+      setIsTokenRefreshDialogOpen(false);
+    } catch (error) {
+      setIsRefreshingToken(false);
+      console.error('Error refreshing token:', error);
+    }
+  };
 
-    await updateAccessGroup(persona)
+  const handlePortalSwitch = (persona: string) => {
+    setSelectedPortal(persona);
+    setIsPortalSwitchDialogOpen(true);
     setIsPortalOpen(false);
     setIsOpen(false);
   };
 
+  const switchPortal = async (persona: string) => {
+    try {
+      setIsSwitchingPortal(true);
+      await updateAccessGroup(persona);
+    } catch (error) {
+      console.error('Error switching portal:', error);
+    } finally {
+      setIsSwitchingPortal(false);
+      setIsPortalSwitchDialogOpen(false);
+      setSelectedPortal(null);
+    }
+  };
+
   return (
     <>
+    <TooltipProvider>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
+      <PopoverTrigger asChild>
           <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px-0">
             <div className="flex lg:justify-start justify-center md:w-full items-center">
-              <Avatar className="h-6 w-6">
-                <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                <AvatarFallback>{accessProfile?.username[0]}</AvatarFallback>
-              </Avatar>
-              <div><span className="flex-1 hidden lg:block ms-1 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{accessProfile?.username}</span></div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex lg:justify-start justify-center md:w-full items-center">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                      <AvatarFallback>{accessProfile?.username[0]}</AvatarFallback>
+                    </Avatar>
+                    <div><span className="flex-1 hidden lg:block ms-1 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{accessProfile?.username}</span></div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="bg-gray-900 text-white px-2 py-1 rounded text-sm">
+                  {timeRemaining !== undefined && timeRemaining >= 0
+                    ? `${Math.floor(timeRemaining / 60)}:${String(timeRemaining % 60).padStart(2, '0')} remaining`
+                    : 'Session expired'}
+                </TooltipContent>
+              </Tooltip>
             </div>
           </Button>
         </PopoverTrigger>
@@ -98,18 +207,20 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
                 </PopoverTrigger>
                 <PopoverContent className="w-72" side='right' align="end">
                   <div className="space-y-1">
-                      {accessProfile?.persona.map((persona) => (
-                          <div
-                              key={persona}
-                              className="cursor-pointer bg-gray-50 hover:bg-slate-200 py-2 px-1 rounded flex items-center justify-between"
-                              onClick={() => switchPortal(persona)}
-                          >
-                              <Label className="font-normal cursor-pointer">{portalNames[persona] || persona}</Label>
-                              {persona === accessProfile.current && (
-                              <span className="flex w-3 h-3 ml-2 bg-green-500 rounded-full"></span>
-                              )}
-                          </div>
-                      ))}
+                  {accessProfile?.persona.map((persona) => (
+                      <div
+                        key={persona}
+                        className="cursor-pointer bg-gray-50 hover:bg-slate-200 py-2 px-1 rounded flex items-center justify-between"
+                        onClick={() => handlePortalSwitch(persona)}  // Changed from switchPortal to handlePortalSwitch
+                      >
+                        <Label className="font-normal cursor-pointer">
+                          {portalNames[persona] || persona}
+                        </Label>
+                        {persona === accessProfile.current && (
+                          <span className="flex w-3 h-3 ml-2 bg-green-500 rounded-full"></span>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </PopoverContent>
               </Popover>
@@ -128,48 +239,116 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
 
       <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
         <DialogContent>
-        <DialogHeader>
-            <DialogTitle>{isLoggingOut ? (<>Logging Out...</>):(<>Confirm Logout</>) }</DialogTitle>
-            <DialogDescription>
-                {isLoggingOut ? (
-                    <div className="flex items-center justify-center space-x-2">
-                    <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Removing session...</span>
-                    </div>
-                ) : (
-                    <div className='flex space-x-2'>
-                    <p>Are you sure you want to log out?</p>
-                    <p className="text-sm text-gray-500">This will end your current session.</p>
-                    </div>
+          <DialogHeader>
+              <DialogTitle>{isLoggingOut ? (<>Logging Out...</>):(<>Confirm Logout</>) }</DialogTitle>
+              <DialogDescription>
+                  {isLoggingOut ? (
+                      <div className="flex items-center justify-center space-x-2">
+                      <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Removing session...</span>
+                      </div>
+                  ) : (
+                      <div className='flex space-x-2'>
+                      <p>Are you sure you want to log out?</p>
+                      <p className="text-sm text-gray-500">This will end your current session.</p>
+                      </div>
+                  )}
+              </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsLogoutDialogOpen(false)}>
+                      Cancel
+                  </Button>
+                  <Button 
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                  >
+                      {isLoggingOut ? (
+                      <>
+                          <svg className="animate-spin h-5 w-5 mr-3 inline" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                      </>
+                      ) : (
+                      'Logout'
+                      )}
+                  </Button>
+              </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isTokenRefreshDialogOpen} onOpenChange={setIsTokenRefreshDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Session Expiring Soon</DialogTitle>
+              <DialogDescription>
+                {timeRemaining !== undefined && (
+                  `Your session is about to expire in ${Math.floor(timeRemaining / 60)}:${String(timeRemaining % 60).padStart(2, '0')}. Please refresh your token to continue.`
                 )}
-            </DialogDescription>
+              </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-                <Button variant="outline" onClick={() => setIsLogoutDialogOpen(false)}>
-                    Cancel
-                </Button>
-                <Button 
-                    onClick={handleLogout}
-                    disabled={isLoggingOut}
-                >
-                    {isLoggingOut ? (
-                    <>
-                        <svg className="animate-spin h-5 w-5 mr-3 inline" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                    </>
-                    ) : (
-                    'Logout'
-                    )}
-                </Button>
+              <Button variant="outline" onClick={() => setIsTokenRefreshDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleTokenRefresh} disabled={isRefreshingToken}>
+                {isRefreshingToken ? 'Refreshing...' : 'Refresh Token'}
+              </Button>
             </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isPortalSwitchDialogOpen} onOpenChange={setIsPortalSwitchDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Switch Portal</DialogTitle>
+              <DialogDescription>
+                {isSwitchingPortal ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Switching portal...</span>
+                  </div>
+                ) : (
+                  <>Are you sure you want to switch to {selectedPortal && portalNames[selectedPortal]}?</>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsPortalSwitchDialogOpen(false)}
+                disabled={isSwitchingPortal}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => selectedPortal && switchPortal(selectedPortal)}
+                disabled={isSwitchingPortal}
+              >
+                {isSwitchingPortal ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 mr-3 inline" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  'Confirm'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </TooltipProvider>
     </>
   )
 }

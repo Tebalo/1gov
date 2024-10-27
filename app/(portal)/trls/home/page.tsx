@@ -24,9 +24,9 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerHome/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_MANAGER'){
-        return <RegistrationOfficerHome/>
+        return <InvestigationsOfficerHome/>
     } else if(userRole?.toUpperCase() === 'SENIOR_INVESTIGATIONS_OFFICER'){
-        return <RegistrationOfficerHome/>
+        return <InvestigationsOfficerHome/>
     } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerHome/>
     } else if(userRole === 'MANAGER'){

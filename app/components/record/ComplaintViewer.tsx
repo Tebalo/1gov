@@ -9,63 +9,12 @@ import {
 
 import dynamic from 'next/dynamic'
 import ActionButtons from './components/ActionItems';
+import { Investigation } from '@/app/lib/types';
 
 const InfoCard = dynamic(() => import('../InfoCard'), { ssr: false })
 const InfoItem = dynamic(() => import('../InfoItem'), { ssr: false })
 
 export const dynamicParams = true
-
-
-interface reporter {
-  name: string | null;
-  contact_number: string | null;
-  Omang_id: string;
-  passport_no: string | null;
-  occupation: string | null;
-  sex: string | null;
-  nationality: string | null;
-  address: string | null;
-}
-
-interface complaint {
-  crime_location: string | null;
-  nature_of_crime: string | null;
-  date: string | null;
-  time: string | null;
-  bif_number: string | null;
-  case_number: string;
-  fir_number: string | null;
-  outcome: string | null;
-}
-
-interface offender {
-  name: string | null;
-  sex: string | null;
-  nationality: string | null;
-  dob: string | null;
-  age: number | null;
-  contact_number: string | null;
-  id_passport_number: string | null;
-  address: string | null;
-  ward: string | null;
-  occupation: string | null;
-  place_of_work: string | null;
-}
-
-interface investigation {
-  investigating_officer: string | null;
-  police_station: string | null;
-  cr_number: string | null;
-  offence: string | null;
-  outcome: string | null;
-}
-
-export interface Investigation {
-  reporter: reporter;
-  complaint: complaint;
-  offender: offender;
-  investigation: investigation;
-}
 
 const PDFViewer: React.FC<{ url: string }> = ({ url }) => (
   <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`} width="100%" height="500px" />
@@ -104,7 +53,7 @@ interface InvestigationViewProps {
             <h1 className="text-3xl font-bold text-gray-800">
               Complaint Information
             </h1>
-            <ActionButtons caseCode={data.complaint.case_number} />
+            <ActionButtons caseCode={data.reporter.inquiry_number  ?? ''} />
           </div>
           <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
         </div>
@@ -146,12 +95,20 @@ interface InvestigationViewProps {
       <InfoItem label="Sex" value={data.reporter.sex}/>
       <InfoItem label="Nationality" value={data.reporter.nationality}/>
       <InfoItem label="Address" value={data.reporter.address}/>
+      <InfoItem label="Status" value={data.reporter.reg_status}/>
+      {/* <InfoItem label="Inquiry number" value={data.reporter.inquiry_number}/> */}
+      {/* <InfoItem label="Case number" value={data.reporter.case_number}/> */}
+      <InfoItem label="Anonymous" value={data.reporter.anonymous}/>
+      <InfoItem label="Submission type" value={data.reporter.submission_type}/>
+      <InfoItem label="Created At" value={data.reporter.created_at}/>
+      <InfoItem label="Updated At" value={data.reporter.updated_at}/>
     </InfoCard>
   );
 
   const renderComplaintInfo = (data: Investigation) => (
     <InfoCard title='Complaint Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Case number" value={data.complaint.case_number}/>
+      <InfoItem label="Inquiry number" value={data.reporter.inquiry_number}/>
       <InfoItem label="FIR number" value={data.complaint.fir_number}/>
       <InfoItem label="BIF number" value={data.complaint.bif_number}/>
       <InfoItem label="Crime location" value={data.complaint.crime_location}/>
