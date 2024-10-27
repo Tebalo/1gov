@@ -69,7 +69,7 @@ const DynamicSidebar: React.FC<SidebarProps> = () => {
             >
                 <div className="h-full px-0 bg-sky-400 shadow-lg rounded-r-lg flex flex-col">
                     <div className="my-10 ml-5 flex-1 overflow-y-auto">
-                        <SidebarNav currentPersona={accessProfileRef.current?.current || ''} isCollapsed={isSidebarCollapsed} />
+                        <SidebarNav currentPersona={accessProfileRef.current?.current || ''}  />
                     </div>
                     <Button
                         variant="ghost"
