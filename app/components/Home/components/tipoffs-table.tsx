@@ -48,7 +48,7 @@ const replaceNullWithEmptyString = <T extends object>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj), replacer);
 };
 
-export const InvestigationsTable: React.FC<WorkProps> = ({status, userRole}) => {
+export const TipOffsTable: React.FC<WorkProps> = ({status, userRole}) => {
     const { reg_application, lic_application, reg_Next_Status, lic_Next_Status, inv_Next_Status, defaultWork } = roleObjects[userRole] || {};
     const [response, setResponse] = useState<Complaint[] | null>(null)
     const [isLoading, setIsLoading] = useState(false);

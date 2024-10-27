@@ -3,12 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table"
 
 
-import { labels, priorities, invstatuses } from "../data/data"
+import { labels, invstatuses } from "../data/data"
 import { Complaint } from "../data/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { InvTableRowActions } from "./inv-table-row-actions"
 
 export const investigationsColumns: ColumnDef<Complaint>[] = [
   {
@@ -36,53 +36,63 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "bif_number",
+    accessorKey: "case_number",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="BIF Number" />
+      <DataTableColumnHeader column={column} title="Case number" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("bif_number")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("case_number")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "fir_number",
+    accessorKey: "Omang_id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="FIR Number" />
+      <DataTableColumnHeader column={column} title="Omang" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("fir_number")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("Omang_id")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "nature_of_crime",
+    accessorKey: "inquiry_number",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nature Of Crime" />
+      <DataTableColumnHeader column={column} title="Inquiry Number" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.nature_of_crime)
+      const label = labels.find((label) => label.value === row.original.inquiry_number)
 
       return (
         <div className="flex space-x-2">
           {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("nature_of_crime")}
+            {row.getValue("inquiry_number")}
           </span>
         </div>
       )
     },
   },
+    {
+    accessorKey: "submission_type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Submission type" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("submission_type")}</div>,
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
-    accessorKey: "outcome",
+    accessorKey: "reg_status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
+      const statusValue = row.getValue("reg_status")?.toString().trim();
       const status = invstatuses.find(
-        (status) => status.value === row.getValue("outcome")
-      )
+        (status) => status.value === statusValue
+      );
 
-      if (!status) {
-        return null
+      if (!status || !statusValue) {
+        return null;
       }
 
       return (
@@ -90,55 +100,45 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
           {status.icon && (
             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
-          <span>{status.label}</span>
+          <span>{status.label.trim()}</span>
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      const cellValue = row.getValue(id)?.toString().trim();
+      return value.includes(cellValue);
     },
   },
   // {
-  //   accessorKey: "created_at",
+  //   accessorKey: "outcome",
   //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="SLA Status" />
+  //     <DataTableColumnHeader column={column} title="Status" />
   //   ),
   //   cell: ({ row }) => {
-  //     const createdAt = new Date(row.getValue("created_at"));
-  //     const today = new Date();
-  //     const diffTime = today.getTime() - createdAt.getTime();
-  //     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  //     const remainingDays = 30 - diffDays;
-  
-  //     let badgeColor = "bg-green-100 text-green-800";
-  //     let displayText = `${remainingDays} days left`;
-  
-  //     if (remainingDays <= 5 && remainingDays > 0) {
-  //       badgeColor = "bg-yellow-100 text-yellow-800";
-  //     } else if (remainingDays <= 0) {
-  //       badgeColor = "bg-red-100 text-red-800";
-  //       const overdueDays = Math.abs(remainingDays);
-  //       displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+  //     const statusValue = row.getValue("reg_status")?.toString().trim()
+  //     const status = invstatuses.find(
+  //       (status) => status.value === row.getValue("reg_status")
+  //     )
+
+  //     if (!status || !statusValue) {
+  //       return null
   //     }
-  
+
   //     return (
-  //       <div className="flex items-center">
-  //         <Badge className={`${badgeColor} font-semibold`}>
-  //           {displayText}
-  //         </Badge>
+  //       <div className="flex w-full items-center">
+  //         {status.icon && (
+  //           <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+  //         )}
+  //         <span>{status.label}</span>
   //       </div>
-  //     );
+  //     )
   //   },
-  //   sortingFn: (rowA, rowB, columnId) => {
-  //     const dateA = new Date(rowA.getValue(columnId));
-  //     const dateB = new Date(rowB.getValue(columnId));
-  //     const remainingDaysA = 30 - Math.ceil((new Date().getTime() - dateA.getTime()) / (1000 * 60 * 60 * 24));
-  //     const remainingDaysB = 30 - Math.ceil((new Date().getTime() - dateB.getTime()) / (1000 * 60 * 60 * 24));
-  //     return remainingDaysA - remainingDaysB;
+  //   filterFn: (row, id, value) => {
+  //     return value.includes(row.getValue(id))
   //   },
   // },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  {
+    id: "actions",
+    cell: ({ row }) => <InvTableRowActions row={row} />,
+  },
 ]

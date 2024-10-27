@@ -11,10 +11,12 @@ import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHo
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { DirectorWork } from "@/app/components/MyWork/DirectorWork";
+import { InvestigationsManagerWork } from "@/app/components/MyWork/InvestigationsManagerWork";
 import { InvestigationsOfficerWork } from "@/app/components/MyWork/InvestigationsOfficerWork";
 import { ManagerWork } from "@/app/components/MyWork/ManagerWork";
 import { RegistrarWork } from "@/app/components/MyWork/RegistrarWork";
 import { RegistrationOfficerWork } from "@/app/components/MyWork/RegistrationOfficerWork";
+import { SeniorInvestigationsOfficerWork } from "@/app/components/MyWork/SNRInvestigationsOfficerWork";
 import { SnrRegistrationOfficerWork } from "@/app/components/MyWork/SnrRegistrationOfficerWork";
 import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
@@ -27,7 +29,11 @@ export default async function Work(){
         return <RegistrationOfficerWork/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerWork/>
-    } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
+    } else if(userRole?.toUpperCase() === 'SENIOR_INVESTIGATIONS_OFFICER'){
+        return <SeniorInvestigationsOfficerWork/>
+    }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_MANAGER'){
+        return <InvestigationsManagerWork/>
+    }else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerWork/>
     } else if(userRole === 'MANAGER'){
         return <ManagerWork/>

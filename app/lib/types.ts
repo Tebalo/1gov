@@ -61,7 +61,7 @@ export interface DecodedToken {
 export interface Session {
   auth: AuthResponse;
   user?: DecodedToken;
-  expires?: string
+  expires?: string;
 }
 
 export interface AccessGroup {
@@ -99,4 +99,72 @@ export interface Complaint {
   case_number: string;
   fir_number: string;
   outcome: string;
+}
+
+interface reporter {
+  name: string | null;
+  contact_number: string | null;
+  Omang_id: string | null;
+  passport_no: string | null;
+  occupation: string | null;
+  sex: string | null;
+  nationality: string | null;
+  address: string | null;
+  reg_status: string | null;
+  inquiry_number: string | null;
+  case_number: string | null;
+  anonymous: string | null;
+  submission_type: string | null;
+  id: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+interface complaint {
+  crime_location: string | null;
+  nature_of_crime: string | null;
+  date: string | null;
+  time: string | null;
+  bif_number: string | null;
+  case_number: string | null;
+  fir_number: string | null;
+  outcome: string | null;
+  id: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+interface offender {
+  name: string | null;
+  sex: string | null;
+  nationality: string | null;
+  dob: string | null;
+  age: number | null;
+  contact_number: string | null;
+  id_passport_number: string | null;
+  address: string | null;
+  ward: string | null;
+  occupation: string | null;
+  place_of_work: string | null;
+  id: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+interface investigation {
+  investigating_officer: string | null;
+  police_station: string | null;
+  cr_number: string | null;
+  offence: string | null;
+  outcome: string | null;
+  id: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface Investigation {
+  reporter: reporter;
+  complaint: complaint;
+  offender: offender;
+  investigation: investigation;
 }

@@ -2,18 +2,18 @@ import { InvestigationsWork } from "../Home/components/investigations/investigat
 import { PageTitle } from "../PageTitle";
 import { Label } from "@/components/ui/label";
 
-export const InvestigationsOfficerWork = () => {
+export const InvestigationsManagerWork = () => {
   return (
     <div className="overflow-auto h-screen rounded-lg">
       <div className="mb-5">
-        <PageTitle Title="My Work" />
+        <PageTitle Title="Investigations" />
       </div>
       <div className="w-full">
         <div className="rounded-lg">
           <div className="flex space-x-2">
             <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
               <Label>My Work</Label>
-                <InvestigationsWork userRole="investigations_officer"/>
+                <InvestigationsWork userRole="investigations_manager"/>
             </div>
           </div>
         </div>

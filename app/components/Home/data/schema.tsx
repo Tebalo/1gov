@@ -20,20 +20,45 @@ export const regSchema = z.object({
 })
 
 export const complaintSchema = z.object({
-  crime_location: z.string(),
-  nature_of_crime: z.string(),
-  date: z.string(),
-  time: z.string(),
-  status: z.string(),
-  bif_number: z.string(),
-  case_number: z.string(),
-  fir_number: z.string(),
-  outcome: z.string(),
-  // created_at: z.string(),
-  // updated_at: z.string(),
-  // updated_by: z.string(),
-  // created_by: z.string(),
+  Omang_id: z.string(),
+  submission_type: z.string(),
+  case_number:z.string(),
+  inquiry_number:z.string(),
+  reg_status: z.string(),
+  date_of_submission: z.string(),
+  anonymous: z.string()
 })
+
+export const complaintSchemawithNullValues = z.object({
+  Omang_id: z.string().nullable().optional(),
+  submission_type: z.string().nullable().optional(),
+  case_number: z.string().nullable().optional(),
+  inquiry_number: z.string().nullable().optional(),
+  reg_status: z.string().nullable().optional(),
+  date_of_submission: z.string().nullable().optional(),
+  anonymous: z.string().nullable().optional()
+});
+
+export const InvestigationsSchema = z.object({
+  id: z.number().int(),
+  name:z.string(),
+  contact_number:z.string(),
+  Omang_id:z.string(),
+  passport_no:z.string(),
+  occupation:z.string(),
+  sex:z.string(),
+  nationality:z.string(),
+  address:z.string(),
+  reg_status:z.string(),
+  inquiry_number:z.string(),
+  case_number:z.string(),
+  created_at:z.string(),
+  updated_at:z.string(),
+})
+
+
+export type complaintwithNullValues = z.infer<typeof complaintSchemawithNullValues>
+export type Investigations = z.infer<typeof InvestigationsSchema>
 export type Complaint = z.infer<typeof complaintSchema>
 export type Reg = z.infer<typeof regSchema>
 export type Task = z.infer<typeof taskSchema>
