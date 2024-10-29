@@ -21,7 +21,7 @@ import Link from "next/link";
 import { getSession, logout, refreshToken, updateAccessGroup } from "@/app/auth/auth";
 import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 
 interface NavUtilsProps {
   accessProfile: AccessGroup | null;
@@ -165,13 +165,11 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
 
   return (
     <>
-    <TooltipProvider>
+
       <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
           <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px-0">
             <div className="flex lg:justify-start justify-center md:w-full items-center">
-              <Tooltip>
-                <TooltipTrigger asChild>
                   <div className="flex lg:justify-start justify-center md:w-full items-center">
                     <Avatar className="h-6 w-6">
                       <AvatarImage src="/avatars/01.png" alt="Avatar" />
@@ -179,13 +177,6 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
                     </Avatar>
                     <div><span className="flex-1 hidden lg:block ms-1 text-left rtl:text-right lg:text-base text-white font-medium whitespace-nowrap">{accessProfile?.username}</span></div>
                   </div>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="bg-gray-900 text-white px-2 py-1 rounded text-sm">
-                  {timeRemaining !== undefined && timeRemaining >= 0
-                    ? `${Math.floor(timeRemaining / 60)}:${String(timeRemaining % 60).padStart(2, '0')} remaining`
-                    : 'Session expired'}
-                </TooltipContent>
-              </Tooltip>
             </div>
           </Button>
         </PopoverTrigger>
@@ -348,7 +339,6 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </TooltipProvider>
     </>
   )
 }
