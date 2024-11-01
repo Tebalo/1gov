@@ -170,10 +170,7 @@ export default function CreateCasePage() {
                 const result = res.data as Case;
 
                 if (result.inquiry_number) {
-                    // Optionally show success message
-                    // setSuccessMessage('Case created successfully!');
-                    
-                    // Redirect to the investigation page
+
                     router.push(`/trls/work/investigation/${result.inquiry_number}`);
                 } else {
                     setError('No inquiry number received from server, but the record was created successfully!');

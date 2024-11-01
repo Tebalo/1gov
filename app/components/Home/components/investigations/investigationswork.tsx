@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mgt, roleObjects } from "@/app/lib/store";
-import { Work } from "@/app/components/MyWork/work";
 import { Search } from "@/app/components/dashboard/search";
 import { InvestigationsTable } from "../investigations-table";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { TipOffsTable } from "../tipoffs-table";
 
 interface Props {
   userRole: string
@@ -34,8 +34,8 @@ export const InvestigationsWork = ({ userRole }: Props) => {
         : <InvestigationsTable status={status} userRole={userRole} />;
     }else if(table === 'Tip Offs'){
         return table === 'Tip Offs' 
-        ? <InvestigationsTable status={status} userRole={userRole} />
-        : <InvestigationsTable status={status} userRole={userRole} />;
+        ? <TipOffsTable status={status} userRole={userRole} />
+        : <TipOffsTable status={status} userRole={userRole} />;
 
     }else {
       return table === 'Investigations'
@@ -73,6 +73,16 @@ export const InvestigationsWork = ({ userRole }: Props) => {
                 <Plus className="h-4 w-4" />
                 Create New Investigation
               </Link>
+
+            </div>
+              <div className="mt-4 w-full flex justify-start px-4">
+                <Link 
+                  href="/trls/work/tipoff/create" 
+                  className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Create New TipOff
+                </Link>
             </div>
           </div>
         </div>
