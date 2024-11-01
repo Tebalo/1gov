@@ -56,7 +56,19 @@ export const InvestigationsSchema = z.object({
   updated_at:z.string(),
 })
 
+export const tipoffSchema = z.object({
+  id: z.number(),
+  tipoff_number: z.string(),
+  full_name: z.string(),
+  phone: z.string(),
+  identity_No: z.string(),
+  email: z.string(),
+  nature_of_crime: z.string(),
+  description: z.string(),
+  crime_location: z.string(),
+})
 
+export type Tipoff = z.infer<typeof tipoffSchema>
 export type complaintwithNullValues = z.infer<typeof complaintSchemawithNullValues>
 export type Investigations = z.infer<typeof InvestigationsSchema>
 export type Complaint = z.infer<typeof complaintSchema>

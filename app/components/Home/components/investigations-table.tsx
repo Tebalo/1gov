@@ -58,11 +58,7 @@ export const InvestigationsTable: React.FC<WorkProps> = ({status, userRole}) => 
         try {
             const list: Complaint[] = await getInvRecords(status, '100');
             console.log(list)
-            // Replace null values with empty strings
-            // const processedList = replaceNullWithEmptyString(list);
-            
             setResponse(list);
-            // console.log("Processed data:", processedList);
         } catch (error) {
             setResponse(null);
         } finally {

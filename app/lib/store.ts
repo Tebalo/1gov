@@ -1,17 +1,15 @@
-export const apiUrl = 'http://10.0.25.164:8080/trls-api';
-export const invUrl = 'http://10.0.25.164:8084/trls-api';
-export const apiUrl1 = 'http://74.208.205.44:8080/api';
-export const licUrl = 'http://66.179.253.57:8081/api'
-export const authUrlOLD = 'http://jwtauth.26digitaldev.com/api/';
-export const authUrl = 'https://gateway-cus-acc.gov.bw/auth/login/sms';
-export const emailauthUrl = 'https://gateway-cus-acc.gov.bw/auth/login';
-export const iamURL = 'https://gateway-cus-acc.gov.bw';
-export const otpUrl = 'https://gateway-cus-acc.gov.bw/auth/login/sms';
-export const DeTokenizeUrl = 'https://gateway-cus-acc.gov.bw/auth/validate-token?token=';
-export const validateUrl = 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
-export const cmsUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
-export const secretKey = 'secret';
-export const version = 'v2.04.98';
+export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://10.0.25.164:8080/trls-api';
+export const invUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8084/trls-api';
+export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
+export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login/sms';
+export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
+export const iamURL = process.env.NEXT_PUBLIC_IAM_URL ?? 'https://gateway-cus-acc.gov.bw';
+export const otpUrl = process.env.NEXT_PUBLIC_OTP_URL ?? 'https://dev-gateway.example.com/auth/login/sms';
+export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate-token?token=';
+export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
+export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
+export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v1.02.01';
 
 export interface StatusTransition {
     [key: string]: {

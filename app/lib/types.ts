@@ -168,3 +168,72 @@ export interface Investigation {
   offender: offender;
   investigation: investigation;
 }
+
+export interface TipOffPayload{
+  full_name: string;
+  phone: string;
+  identity_No: string;
+  email: string;
+  nature_of_crime: string;
+  description: string;
+  crime_location: string;
+}
+
+export interface data {
+  full_name: string;
+  phone: string;
+  identity_No: string;
+  email: string;
+  nature_of_crime: string;
+  description: string;
+  crime_location: string;
+  tipoff_number: string;
+  id: number;
+}
+
+export interface TipOffListResponse{
+  code: number;
+  data?: data[];
+}
+
+interface dataactivity {
+  activity_number: string;
+  success: boolean;
+}
+
+export interface ActivityResponse{
+  code: number;
+  message: string;
+  data?: dataactivity;
+}
+
+
+interface response_data_activity {
+    id: 1,
+    activity_numbe: string;
+    activities: string;
+    action_taken: string;
+    record_type: string;
+    record_id: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ActivityListResponse{
+  code: number;
+  data?: response_data_activity;
+}
+
+
+export interface ActivityPayload{
+  activities: string;
+  action_taken: string;
+  record_type: string;
+  record_id: number;
+}
+
+export interface TipOffResponse{
+  message?: string;
+  code: number;
+  data?: data;
+}

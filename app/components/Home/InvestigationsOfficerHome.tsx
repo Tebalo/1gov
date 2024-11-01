@@ -55,7 +55,7 @@ export const InvestigationsOfficerHome = () => {
               
               <div className="mt-4 w-full flex justify-start px-4">
                 <Link 
-                  href="/trls/work/investigation/create" 
+                  href="/trls/work/tipoff/create" 
                   className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <Plus className="h-4 w-4" />
