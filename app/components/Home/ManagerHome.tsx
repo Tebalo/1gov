@@ -1,146 +1,117 @@
-import React, { Suspense } from "react";
+'use client'
+import React, { Suspense, useState } from "react";
 import { PageTitle } from "../PageTitle";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Bell, CheckCircle, Clock, List } from "lucide-react";
-import { HorizontalBarChartStatus } from "../dashboard/components/horizontal-bar-chart";
+import { Input } from "@/components/ui/input";
+import { Plus, Search, Layout, Activity, FileText, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { LoadingSkeleton } from "../LoadingSkeleton";
+import { cn } from "@/lib/utils";
 
-// Mock data for worklist, followed items, and notifications
-const worklistItems = [
-  { id: 1, title: "Review application #1234", dueDate: "2024-07-25" },
-  { id: 2, title: "Approve license renewal #5678", dueDate: "2024-07-26" },
-];
-
-const followedItems = [
-  { id: 1, title: "Registration policy update", status: "In progress" },
-  { id: 2, title: "New teacher onboarding process", status: "Completed" },
-];
-
-const notifications = [
-  { id: 1, message: "New application submitted", time: "2 hours ago" },
-  { id: 2, message: "License renewal approved", time: "1 day ago" },
-];
-
-function InformationBanner() {
-  return (
-    <Card className="mb-6 bg-blue-50 border-blue-200">
-      <CardHeader>
-        <CardTitle className="text-blue-800">Teacher Registration and Licensing in Botswana</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="list-disc pl-5 space-y-2 text-sm">
-          <li>BOTEPCO regulates teaching through registration and licensing based on recognized qualifications.</li>
-          <li>Teachers must be registered and licensed by the Council to practice.</li>
-          <li>Applications require prescribed forms, fees, and documentation.</li>
-          <li>Licenses are valid for 36 months (non-citizens) or up to 60 months (citizens).</li>
-          <li>The Council maintains an official Register of qualified teachers.</li>
-          <li>Continuing Professional Development (CPD) is promoted for ongoing skill development.</li>
-          <li>CPD includes activities to enhance teachers&rsquo; skills, knowledge, and expertise.</li>
-          <li>School leaders must regularly update their management and leadership practices.</li>
-        </ul>
-      </CardContent>
-    </Card>
-  );
+interface ServiceCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  href: string;
+  className?: string;
 }
 
+const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, icon, href, className }) => (
+  <Link href={href}>
+    <Card className={cn(
+      "transition-all hover:shadow-lg hover:border-blue-500/50 cursor-pointer group",
+      className
+    )}>
+      <CardContent className="pt-6">
+        <div className="flex items-start space-x-4">
+          <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+            {icon}
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg group-hover:text-blue-500 transition-colors">
+              {title}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {description}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
+
 export const ManagerHome = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const services = [
+    {
+      title: "Create Activity",
+      description: "Log and track investigation activities",
+      icon: <Activity className="w-6 h-6 text-blue-500" />,
+      href: "/trls/work/activity/create"
+    },
+  ];
+
+  const filteredServices = services.filter(service =>
+    service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    service.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="overflow-auto h-screen rounded-lg">
-      <div className="mb-5">
-        <PageTitle Title="Welcome to Teacher Registration and Licensing System" />
-      </div>
-      <InformationBanner />
-      <div className="grid lg:grid-cols-3 gap-4 mb-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Applications by status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label className="font-light">Show statuses for</Label>
-            <Select>
-              <SelectTrigger className="w-full mb-4">
-                <SelectValue placeholder="Select an application..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Application Type</SelectLabel>
-                  <SelectItem value="Registration">Registration</SelectItem>
-                  <SelectItem value="License renewal">License renewal</SelectItem>
-                  <SelectItem value="License">License</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Suspense fallback="Loading...">
-              <HorizontalBarChartStatus />
-            </Suspense>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <List className="mr-2" /> Worklist
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {worklistItems.map((item) => (
-              <div key={item.id} className="mb-2 p-2 bg-gray-100 rounded">
-                <p>{item.title}</p>
-                <p className="text-sm text-gray-500">Due: {item.dueDate}</p>
-              </div>
-            ))}
-            <Button className="w-full mt-2">View All Tasks</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <CheckCircle className="mr-2" /> Things I Follow
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {followedItems.map((item) => (
-              <div key={item.id} className="mb-2 p-2 bg-gray-100 rounded">
-                <p>{item.title}</p>
-                <p className="text-sm text-gray-500">Status: {item.status}</p>
-              </div>
-            ))}
-            <Button className="w-full mt-2">View All Followed Items</Button>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen">
+      <div className="mb-6">
+        <PageTitle Title="TRLS Services Dashboard" />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Bell className="mr-2" /> Notifications
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {notifications.map((notification) => (
-            <div key={notification.id} className="mb-2 p-2 bg-gray-100 rounded flex items-center">
-              <Clock className="mr-2 h-4 w-4" />
-              <div>
-                <p>{notification.message}</p>
-                <p className="text-sm text-gray-500">{notification.time}</p>
-              </div>
+      {/* Search Section */}
+      <div className="mb-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search all available e-Services by name, category, description..."
+                className="pl-10 bg-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-          ))}
-          <Button className="w-full mt-2">View All Notifications</Button>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Services Section */}
+      <div className="space-y-6">
+        <div className="flex items-center space-x-2">
+          <Layout className="w-6 h-6 text-blue-500" />
+          <h2 className="text-xl font-semibold text-gray-900">
+            Available Services
+          </h2>
+        </div>
+
+        <Suspense fallback={<LoadingSkeleton />}>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredServices.map((service, index) => (
+              <ServiceCard
+                key={index}
+                {...service}
+              />
+            ))}
+          </div>
+
+          {filteredServices.length === 0 && (
+            <Card>
+              <CardContent className="py-8">
+                <div className="text-center text-gray-500">
+                  <p>No services found matching your search.</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </Suspense>
+      </div>
     </div>
   );
 };

@@ -232,6 +232,31 @@ export interface ActivityPayload{
   record_id: number;
 }
 
+export interface ReportPayload {
+  investigation_details: string;
+  investigation_outcome: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface GETReportResponse {
+  message: string;
+  success: boolean;
+  data: {
+      id: number;
+      inquiry_number: string;
+      investigation_details: string | null,
+      investigation_outcome: string | null,
+      created_at: string;
+      updated_at: string;
+  }
+}
+
+export interface ReportResponse {
+  message?: string;
+  code: number;
+}
+
 export interface TipOffResponse{
   message?: string;
   code: number;
