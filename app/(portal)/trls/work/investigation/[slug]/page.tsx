@@ -11,7 +11,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   try {
     inv = await getInvRecordById(id);
-    // console.log("shoe",inv)
     const userRole = await getRole();
     
     return (

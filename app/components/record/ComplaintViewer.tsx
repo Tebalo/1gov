@@ -1,15 +1,13 @@
-import React from 'react';
-import { FaExclamationTriangle, FaCheckCircle, FaFilePdf } from 'react-icons/fa';
-
+import { FaFilePdf } from 'react-icons/fa';
 import { statusTransitions } from '@/app/lib/store';
 import { 
-  Info, MapPin, User, FileText, Calendar, 
-  Truck, FileCheck, BarChart2, Users, Clock
+  Info, FileText,  FileCheck
 } from 'lucide-react'
 
 import dynamic from 'next/dynamic'
 import ActionButtons from './components/ActionItems';
 import { Investigation } from '@/app/lib/types';
+import ReportInfoCard from './ReportInfoCard';
 
 const InfoCard = dynamic(() => import('../InfoCard'), { ssr: false })
 const InfoItem = dynamic(() => import('../InfoItem'), { ssr: false })
@@ -60,9 +58,10 @@ interface InvestigationViewProps {
         <div className='flex-grow overflow-y-auto'>
           {/* max-h-[calc(100vh-200px)] */}
           <div className='space-y-8 pr-4'>
-            {renderSection(renderReportInfo(data))}
+            {renderSection(renderReporterInfo(data))}
             {renderSection(renderComplaintInfo(data))}
             {renderSection(renderOffenderInfo(data))}
+            {/* {renderSection(<ReportInfoCard inquiryNumber={data.reporter.inquiry_number ?? ''} />)}  */}
             {renderSection(renderInvestigationInfo(data))}
           </div>
       </div>
@@ -85,7 +84,7 @@ interface InvestigationViewProps {
     </div>
   );
   
-  const renderReportInfo = (data: Investigation) => (
+  const renderReporterInfo = (data: Investigation) => (
     <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Name" value={data.reporter.name}/>
       <InfoItem label="Contact number" value={data.reporter.contact_number}/>
@@ -144,63 +143,5 @@ interface InvestigationViewProps {
       <InfoItem label="Outcome" value={data.investigation.outcome}/>
     </InfoCard>
   );
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "UTC"
-};
-
-function ConvertTime(time: string){
-    return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
-}
-
-function getRelativeTime(updateTime: string) {
-    const now = new Date();
-    const updated = new Date(updateTime);
-    const diffSeconds = Math.floor((now.getTime() - updated.getTime()) / 1000);
-    
-    if (diffSeconds < 60) {
-        return "Updated seconds ago";
-    } else if (diffSeconds < 3600) {
-        const minutes = Math.floor(diffSeconds / 60);
-        return `Updated ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (diffSeconds < 86400) {
-        const hours = Math.floor(diffSeconds / 3600);
-        return `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (diffSeconds < 604800) {
-        const days = Math.floor(diffSeconds / 86400);
-        if (days === 1) {
-            return "Updated a day ago";
-        } else {
-            return `Updated ${days} days ago`;
-        }
-    } else if (diffSeconds < 2592000) {
-        const weeks = Math.floor(diffSeconds / 604800);
-        if (weeks === 1) {
-            return "Updated a week ago";
-        } else {
-            return `Updated ${weeks} weeks ago`;
-        }
-    } else if (diffSeconds < 31536000) {
-        const months = Math.floor(diffSeconds / 2592000);
-        if (months === 1) {
-            return "Updated a month ago";
-        } else {
-            return `Updated ${months} months ago`;
-        }
-    } else {
-        const years = Math.floor(diffSeconds / 31536000);
-        if (years === 1) {
-            return "Updated a year ago";
-        } else {
-            return `Updated ${years} years ago`;
-        }
-    }
-  }
 
   export default InvestigationView;

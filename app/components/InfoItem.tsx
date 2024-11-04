@@ -25,7 +25,7 @@ const InfoItem: React.FC<InfoItemProps> = ({ label, value }) => {
     label === "Valuation Report" ||
     label.includes("Picture") 
   );
-
+  console.log('value',value)
   return (
     <div>
       <p className="text-sm text-gray-600">{label}</p>

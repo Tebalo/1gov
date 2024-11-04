@@ -1,31 +1,28 @@
-import React from 'react';
-import { Card } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Info, FileCheck } from "lucide-react"
-import { data } from '@/app/lib/types';
 import { getRole } from "@/app/auth/auth";
-import { getTipOffById } from "@/app/lib/actions";
+import { getTipOffById, getTipOffRecordById } from "@/app/lib/actions";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
+import TipOffViewer from '@/app/components/record/TipOffViewer';
 
-interface TipOffViewerProps {
-  data: data;
-}
 export default async function Page({ params }: { params: { slug: string } }) {
   const id = params.slug;
   let tipoff;
   let error = null;
 
   try {
-    const response = await getTipOffById(id);
-    tipoff = response.data;
+    tipoff = await getTipOffRecordById(id);
+    
     const userRole = await getRole();
     
+    if (!tipoff) {
+      throw new Error('No tipoff data found');
+    }
+
     return (
       <main className="h-full">
         <div className="flex flex-row h-full gap-0">
           {tipoff ? (
-            <>{userRole && <TipOffViewer data={tipoff} />}</>
+            <>{userRole && <TipOffViewer data={tipoff} userRole={userRole} />}</>
           ) : (
             <div className="flex h-[80vh] items-center justify-center w-full">
               <div className="text-center px-4">
@@ -53,6 +50,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       </main>
     );
   } catch (e) {
+    console.error('Error loading tipoff:', e);
     return (
       <main className="h-full">
         <div className="flex h-[80vh] items-center justify-center w-full">
@@ -80,73 +78,3 @@ export default async function Page({ params }: { params: { slug: string } }) {
     );
   }
 }
-
-// Make sure to place this file at app/tipoffs/[slug]/page.tsx
-
-const TipOffViewer: React.FC<TipOffViewerProps> = ({ data }) => {
-  return (
-    <ScrollArea className="h-full w-full">
-      <div className="container mx-auto p-6">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Tip-off Details
-          </h1>
-          <p className="text-gray-500 mt-2">
-            Tip-off Number: {data.tipoff_number}
-          </p>
-          <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
-        </div>
-
-        <div className="grid gap-6">
-          {/* Personal Information */}
-          <Card className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Info className="w-6 h-6 text-blue-500"/>
-              <h2 className="text-xl font-semibold">Personal Information</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Full Name</label>
-                <p className="mt-1 text-gray-900">{data.full_name}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Phone Number</label>
-                <p className="mt-1 text-gray-900">{data.phone}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Identity Number</label>
-                <p className="mt-1 text-gray-900">{data.identity_No}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Email</label>
-                <p className="mt-1 text-gray-900">{data.email}</p>
-              </div>
-            </div>
-          </Card>
-
-          {/* Crime Information */}
-          <Card className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <FileCheck className="w-6 h-6 text-blue-500"/>
-              <h2 className="text-xl font-semibold">Crime Information</h2>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Nature of Crime</label>
-                <p className="mt-1 text-gray-900">{data.nature_of_crime}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Crime Location</label>
-                <p className="mt-1 text-gray-900">{data.crime_location}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">Description</label>
-                <p className="mt-1 text-gray-900 whitespace-pre-wrap">{data.description}</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-    </ScrollArea>
-  );
-};

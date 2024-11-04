@@ -1,25 +1,117 @@
+'use client'
+import React, { Suspense, useState } from "react";
 import { PageTitle } from "../PageTitle";
-import { Label } from "@/components/ui/label";
-import { SelectTable } from "./components/select-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Plus, Search, Layout, Activity, FileText, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { LoadingSkeleton } from "../LoadingSkeleton";
+import { cn } from "@/lib/utils";
 
-export const SnrLicenseOfficerHome = async () => {
-    return(
-        <>
-        <div className="overflow-auto h-screen rounded-lg">
-            <div className="mb-5">
-                <PageTitle Title="License Registration"/>
-            </div>
-            <div className="w-full">
-                <div className="rounded-lg">
-                    <div className="flex space-x-2">
-                        <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
-                            <Label>My Work</Label>
-                            <SelectTable userRole={"snr_license_officer"} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </>
-    );
+interface ServiceCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  href: string;
+  className?: string;
 }
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, icon, href, className }) => (
+  <Link href={href}>
+    <Card className={cn(
+      "transition-all hover:shadow-lg hover:border-blue-500/50 cursor-pointer group",
+      className
+    )}>
+      <CardContent className="pt-6">
+        <div className="flex items-start space-x-4">
+          <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+            {icon}
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg group-hover:text-blue-500 transition-colors">
+              {title}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {description}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
+
+export const SnrLicenseOfficerHome = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const services = [
+    {
+      title: "Create Activity",
+      description: "Log and track investigation activities",
+      icon: <Activity className="w-6 h-6 text-blue-500" />,
+      href: "/trls/work/activity/create"
+    },
+  ];
+
+  const filteredServices = services.filter(service =>
+    service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    service.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen">
+      <div className="mb-6">
+        <PageTitle Title="License Services Dashboard" />
+      </div>
+
+      {/* Search Section */}
+      <div className="mb-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search all available e-Services by name, category, description..."
+                className="pl-10 bg-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Services Section */}
+      <div className="space-y-6">
+        <div className="flex items-center space-x-2">
+          <Layout className="w-6 h-6 text-blue-500" />
+          <h2 className="text-xl font-semibold text-gray-900">
+            Available Services
+          </h2>
+        </div>
+
+        <Suspense fallback={<LoadingSkeleton />}>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredServices.map((service, index) => (
+              <ServiceCard
+                key={index}
+                {...service}
+              />
+            ))}
+          </div>
+
+          {filteredServices.length === 0 && (
+            <Card>
+              <CardContent className="py-8">
+                <div className="text-center text-gray-500">
+                  <p>No services found matching your search.</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </Suspense>
+      </div>
+    </div>
+  );
+};

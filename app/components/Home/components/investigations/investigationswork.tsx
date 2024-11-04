@@ -1,4 +1,3 @@
-// components/SelectTable.tsx
 'use client'
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
@@ -32,27 +31,23 @@ export const InvestigationsWork = ({ userRole }: Props) => {
       return table === 'Investigations' 
         ? <InvestigationsTable status={status} userRole={userRole} />
         : <InvestigationsTable status={status} userRole={userRole} />;
-    }else if(table === 'Tip Offs'){
-        return table === 'Tip Offs' 
-        ? <TipOffsTable status={status} userRole={userRole} />
-        : <TipOffsTable status={status} userRole={userRole} />;
-
-    }else {
-      return table === 'Investigations'
-        ? <InvestigationsTable status={status} userRole={userRole} />
-        : <InvestigationsTable status={status} userRole={userRole} />;
+    } else if(table === 'Tip Offs') {
+      return <TipOffsTable status={status} userRole={userRole} />;
+    } else {
+      return <InvestigationsTable status={status} userRole={userRole} />;
     }
   }
     
   return (
     <>
-      <div className="grid grid-cols-2 pb-5">
-        <div className="">
-          <div className="flex space-x-2 items-end">
-            <div className="">
+      <div className="flex flex-col gap-4 pb-5 md:grid md:grid-cols-2">
+        <div className="space-y-4 md:space-y-0">
+          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+            {/* Select dropdown */}
+            <div className="w-full md:w-auto">
               <Label className="font-light">Show work for</Label>
               <Select onValueChange={handleSelectChange} value={table}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Select an application..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -65,31 +60,34 @@ export const InvestigationsWork = ({ userRole }: Props) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="mt-4 w-full flex justify-start px-4">
+
+            {/* Action buttons */}
+            <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 md:items-end">
               <Link 
                 href="/trls/work/investigation/create" 
-                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full md:w-auto"
               >
                 <Plus className="h-4 w-4" />
-                Create New Investigation
+                <span>Investigation</span>
               </Link>
 
-            </div>
-              <div className="mt-4 w-full flex justify-start px-4">
-                <Link 
-                  href="/trls/work/tipoff/create" 
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Create New TipOff
-                </Link>
+              <Link 
+                href="/trls/work/tipoff/create" 
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full md:w-auto"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Tip-off</span>
+              </Link>
             </div>
           </div>
         </div>
-        <div className="place-self-end">
-          <Search/>
+
+
+        <div className="w-full md:place-self-end">
+          <Search />
         </div>
       </div>
+      
       {renderTable()}
     </>
   )

@@ -1,72 +1,129 @@
-import React, { Suspense } from "react";
+'use client'
+import React, { Suspense, useState } from "react";
 import { PageTitle } from "../PageTitle";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import ApplicationStatusPieChart from "../recharts/piechart-padding-angle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Bell, CheckCircle, Clock, List, Plus } from "lucide-react";
-import { HorizontalBarChartStatus } from "../dashboard/components/horizontal-bar-chart";
-import { LoadingSkeleton } from "../LoadingSkeleton";
-import { ServiceListWrapper } from "../ServiceListWrapper";
+import { Input } from "@/components/ui/input";
+import { Plus, Search, Layout, Activity, FileText, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { LoadingSkeleton } from "../LoadingSkeleton";
+import { cn } from "@/lib/utils";
 
+interface ServiceCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  href: string;
+  className?: string;
+}
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, icon, href, className }) => (
+  <Link href={href}>
+    <Card className={cn(
+      "transition-all hover:shadow-lg hover:border-blue-500/50 cursor-pointer group",
+      className
+    )}>
+      <CardContent className="pt-6">
+        <div className="flex items-start space-x-4">
+          <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+            {icon}
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg group-hover:text-blue-500 transition-colors">
+              {title}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {description}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
 
 export const InvestigationsOfficerHome = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const services = [
+    {
+      title: "Create New Investigation",
+      description: "Start a new investigation case and manage its details",
+      icon: <FileText className="w-6 h-6 text-blue-500" />,
+      href: "/trls/work/investigation/create"
+    },
+    {
+      title: "Create New Tip-off",
+      description: "Record and manage new tip-off information",
+      icon: <AlertCircle className="w-6 h-6 text-blue-500" />,
+      href: "/trls/work/tipoff/create"
+    },
+    {
+      title: "Create Activity",
+      description: "Log and track investigation activities",
+      icon: <Activity className="w-6 h-6 text-blue-500" />,
+      href: "/trls/work/activity/create"
+    },
+  ];
+
+  const filteredServices = services.filter(service =>
+    service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    service.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <>
-    <div className="">
-        <div className="mb-5">
-            <PageTitle Title="Home"/>
-        </div>
-        <div className="md:flex md:mb-32 mb-10 justify-between overflow-y-auto h-full">
-            <div className="bg-gray-100 p-2 rounded-lg w-full">
-                <label htmlFor="base-input" className="block mb-2 text-sm font-medium text-gray-900">Search e-Services</label>
-                <input type="text" id="base-input" placeholder="Search all available e-Services by name, category, description etc.." className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"/>
+    <div className="min-h-screen">
+      <div className="mb-6">
+        <PageTitle Title="Investigation Services Dashboard" />
+      </div>
+
+      {/* Search Section */}
+      <div className="mb-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search all available e-Services by name, category, description..."
+                className="pl-10 bg-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Services Section */}
+      <div className="space-y-6">
+        <div className="flex items-center space-x-2">
+          <Layout className="w-6 h-6 text-blue-500" />
+          <h2 className="text-xl font-semibold text-gray-900">
+            Available Services
+          </h2>
         </div>
-        <div className="flex items-center space-x-2 mb-5">
-            <svg className="flex-shrink-0 w-7 h-7 text-sky-300 transition duration-75 group-hover:text-sky-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
-                <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
-            </svg>
-            <span className="md:text-lg text-gray-900 font-semibold">Investigation Service Categories</span>
-        </div>
-        <Suspense fallback={<LoadingSkeleton/>}>
+
+        <Suspense fallback={<LoadingSkeleton />}>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredServices.map((service, index) => (
+              <ServiceCard
+                key={index}
+                {...service}
+              />
+            ))}
+          </div>
+
+          {filteredServices.length === 0 && (
             <Card>
-              <CardTitle></CardTitle>
-              <CardContent>
-              <div className="mt-4 w-full flex justify-start px-4">
-                <Link 
-                  href="/trls/work/investigation/create" 
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Create New Investigation
-                </Link>
-              </div>
-              
-              <div className="mt-4 w-full flex justify-start px-4">
-                <Link 
-                  href="/trls/work/tipoff/create" 
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Create New TipOff
-                </Link>
-              </div>
+              <CardContent className="py-8">
+                <div className="text-center text-gray-500">
+                  <p>No services found matching your search.</p>
+                </div>
               </CardContent>
             </Card>
-            
+          )}
         </Suspense>
+      </div>
     </div>
-    </>
   );
 };
