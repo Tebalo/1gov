@@ -3,7 +3,7 @@
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, invUrl, licUrl } from "./store";
-import { ActivityListResponse, ActivityPayload, ActivityResponse, ComplaintPayload, DecodedToken, Investigation, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
+import { ActivityListResponse, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, DecodedToken, Investigation, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
@@ -178,6 +178,58 @@ export async function createComplaint(payload: ComplaintPayload): Promise<{succe
   }
 }
 
+export async function searchComplaintByInquiry(ID: string): Promise<ComplaintSearchResponse> {
+  try {
+
+
+    const response = await fetch(`${invUrl}/searchRecord?search=${ID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+
+    });
+
+    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      reporter: result
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
 export async function createTipOff(payload: TipOffPayload): Promise<TipOffResponse> {
   try {
 
@@ -237,11 +289,11 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
 
 export async function createReport(payload: ReportPayload, ID: string): Promise<ReportResponse> {
   try {
-
+    console.log(payload)
     const stringifiedPayload = JSON.stringify(payload, null, 2);
 
     const response = await fetch(`${invUrl}/update-preliminary-investigations/${ID}`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -304,11 +356,12 @@ export async function getReportRecordById(Id: string) {
 }
 
 export async function createActivity(payload: ActivityPayload): Promise<ActivityResponse> {
+  console.log(payload)
   try {
 
     const stringifiedPayload = JSON.stringify(payload, null, 2);
 
-    const response = await fetch(`${invUrl}/add-tipoff`, {
+    const response = await fetch(`${invUrl}/activity-diaries`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

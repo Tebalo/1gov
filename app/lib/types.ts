@@ -101,7 +101,7 @@ export interface Complaint {
   outcome: string;
 }
 
-interface reporter {
+export interface reporter {
   name: string | null;
   contact_number: string | null;
   Omang_id: string | null;
@@ -169,6 +169,11 @@ export interface Investigation {
   investigation: investigation;
 }
 
+export interface ComplaintSearchResponse{
+  code: number;
+  reporter?: reporter
+}
+
 export interface TipOffPayload{
   full_name: string;
   phone: string;
@@ -229,7 +234,7 @@ export interface ActivityPayload{
   activities: string;
   action_taken: string;
   record_type: string;
-  record_id: number;
+  record_id: string;
 }
 
 export interface ReportPayload {
