@@ -61,7 +61,7 @@ interface InvestigationViewProps {
             {renderSection(renderReporterInfo(data))}
             {renderSection(renderComplaintInfo(data))}
             {renderSection(renderOffenderInfo(data))}
-            {/* {renderSection(<ReportInfoCard inquiryNumber={data.reporter.inquiry_number ?? ''} />)}  */}
+            {renderSection(renderPreInvestigationInfo(data))} 
             {renderSection(renderInvestigationInfo(data))}
           </div>
       </div>
@@ -115,6 +115,13 @@ interface InvestigationViewProps {
       <InfoItem label="Date" value={data.complaint.date}/>
       <InfoItem label="Time" value={data.complaint.time}/>
       <InfoItem label="Outcome" value={data.complaint.outcome}/>
+    </InfoCard>
+  );
+
+  const renderPreInvestigationInfo = (data: Investigation) => (
+    <InfoCard title='Preliminary Investigation Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+      <InfoItem label="Details" value={data.preliminary_investigation.investigation_details}/>
+      <InfoItem label="Outcome" value={data.preliminary_investigation.investigation_outcome}/>
     </InfoCard>
   );
 

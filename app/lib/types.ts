@@ -162,11 +162,21 @@ interface investigation {
   updated_at: string | null;
 }
 
+interface preliminary_investigation {
+  id: number | null;
+  inquiry_number: string | null;
+  investigation_details: string | null;
+  investigation_outcome: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 export interface Investigation {
   reporter: reporter;
   complaint: complaint;
   offender: offender;
   investigation: investigation;
+  preliminary_investigation: preliminary_investigation;
 }
 
 export interface ComplaintSearchResponse{
