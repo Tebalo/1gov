@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, Trash2, Save } from 'lucide-react'
+import { Edit, Trash2, Save, PlusCircleIcon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useAssetActions } from '@/lib/hooks/useAssetAction'
 import {
@@ -58,7 +58,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ caseCode, currentData }) 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-            <Edit className="w-4 h-4 mr-2" /> Update Report
+            <PlusCircleIcon className="w-4 h-4 mr-2" /> Add Report
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px]">

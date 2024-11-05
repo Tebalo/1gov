@@ -134,7 +134,7 @@ export default function CreateActivityPage() {
                 <SelectContent>
                   <SelectItem value="COMPLAINT">Complaint</SelectItem>
                   <SelectItem value="INVESTIGATION">Investigation</SelectItem>
-                  <SelectItem value="REGISTRATION">REGISTRATION</SelectItem>
+                  <SelectItem value="REGISTRATION">Registration</SelectItem>
                   <SelectItem value="TIPOFF">Tip-off</SelectItem>
                 </SelectContent>
               </Select>
