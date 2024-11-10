@@ -230,8 +230,20 @@ export interface Activity{
 
   action_taken?: string | null;
   userid?: string;
-  created_at?: string;
-  updated_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ActivityList{
+  activities: string;
+  full_name: string;
+  role: string;
+  record_type: string;
+  record_id: string;
+  activity_number: string;
+  submission_type: string;
+  date_of_submission: string;
+  anonymous: string;
 }
 
 export interface ActivityListResponse{

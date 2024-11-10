@@ -4,7 +4,7 @@ import { getTipOffs, getUserActivities } from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
 import TableLoadingSkeleton from "../../TableLoadingSkeleton";
 import { roleObjects } from "@/app/lib/store";
-import { Activity } from "@/app/lib/types";
+import { Activity, ActivityList } from "@/app/lib/types";
 import { ActivityColumns } from "./activities-columns";
 
 interface WorkProps {
@@ -41,7 +41,7 @@ const replaceNullWithEmptyString = (data: any): any => {
 };
 
 // Helper function to safely process the API response
-const processApiResponse = (data: any[]): Activity[] => {
+const processApiResponse = (data: any[]): ActivityList[] => {
     return data.map(item => ({
         activities: item.activities || '',
         full_name: item.full_name || '',
@@ -57,7 +57,7 @@ const processApiResponse = (data: any[]): Activity[] => {
 
 export const ActivitiesTable: React.FC<WorkProps> = ({ userRole, userid}) => {
     const { activity_object } = roleObjects[userRole] || {};
-    const [response, setResponse] = useState<Activity[] | null>(null);
+    const [response, setResponse] = useState<ActivityList[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
