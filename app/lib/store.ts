@@ -36,6 +36,7 @@ export interface RoleObjects{
         inv_Next_Status: string | null,
         tipoff_Next_Status: string | null,
         lic_Next_Status: string | null,
+        activity_object?: boolean,
         defaultWork: string | '',
     }
 }
@@ -59,6 +60,7 @@ export const roleObjects: RoleObjects = {
         inv_Next_Status: 'Incoming',
         tipoff_Next_Status: 'Incoming',
         lic_Next_Status: null,
+        activity_object: true,
         defaultWork: 'Investigations'
     },
     'senior_investigations_officer': {
@@ -68,6 +70,7 @@ export const roleObjects: RoleObjects = {
         reg_Next_Status: null,
         inv_Next_Status: 'Under-Review',
         tipoff_Next_Status: 'Under-Review',
+        activity_object: true,
         lic_Next_Status: null,
         defaultWork: 'Investigations'
     },
@@ -78,6 +81,7 @@ export const roleObjects: RoleObjects = {
         reg_Next_Status: null,
         inv_Next_Status: 'Assessment',
         tipoff_Next_Status: 'Assessment',
+        activity_object: true,
         lic_Next_Status: null,
         defaultWork: 'Investigations'
     },

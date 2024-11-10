@@ -80,7 +80,7 @@ export default function CreateTipOffPage() {
       <div className="mb-4 flex-shrink-0 shadow-md">
         <div className="flex justify-between">
           <h1 className="text-3xl font-bold text-gray-800">
-            Submit Anonymous Tip-off
+            Submit Tip-off
           </h1>
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={() => router.back()}>

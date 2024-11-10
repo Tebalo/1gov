@@ -335,7 +335,8 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
     const access_group: AccessGroup = {
       persona: personas,
       current: personas[0],
-      username: decodedToken.name
+      username: decodedToken.name,
+      userid: decodedToken.preferred_username,
     }
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});

@@ -68,6 +68,7 @@ export interface AccessGroup {
   persona: string[],
   current: string;
   username: string;
+  userid: string;
 }
 
 export interface LoginPayload {
@@ -216,6 +217,35 @@ interface dataactivity {
   success: boolean;
 }
 
+export interface Activity{
+  activities: string;
+  full_name: string;
+  role: string;
+  record_type: string;
+  record_id: string;
+  activity_number: string;
+  submission_type: string;
+  date_of_submission: string;
+  anonymous: string;
+
+  action_taken?: string | null;
+  userid?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ActivityListResponse{
+  code: number;
+  activity?: Activity[];
+}
+interface objectac {
+  data: Activity;
+}
+export interface ActivityObject{
+  code: number;
+  data?: objectac;
+}
+
 export interface ActivityResponse{
   code: number;
   message: string;
@@ -240,11 +270,16 @@ export interface ActivityListResponse{
 }
 
 
-export interface ActivityPayload{
+export interface ActivityPayload {
+  full_name: string;
+  role: string;
   activities: string;
   action_taken: string;
   record_type: string;
-  record_id: string;
+  anonymous: string;
+  submission_type: string;
+  userid: string;
+  record_id: string | number;
 }
 
 export interface ReportPayload {
