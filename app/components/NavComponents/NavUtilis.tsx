@@ -65,32 +65,32 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
       try {
         const session = await getSession();
         if (session && session.auth && session.auth.expires_in) {
-          console.log(session.expires);
+          // console.log(session.expires);
           const currentTime = Math.floor(Date.now() / 1000);
           if(session.expires){
-          const expirationTime = new Date(session.expires).getTime() / 1000; // Use provided expiration time
-          console.log(expirationTime)
-          const remainingTime = expirationTime - currentTime;
-          setSessionExpirationTime(expirationTime);
-          setTimeRemaining(remainingTime);
+            const expirationTime = new Date(session.expires).getTime() / 1000; 
+            // console.log(expirationTime)
+            const remainingTime = expirationTime - currentTime;
+            setSessionExpirationTime(expirationTime);
+            setTimeRemaining(remainingTime);
         
-          interval = setInterval(() => {
-            const currentTime = Math.floor(Date.now() / 1000);
-            const updatedRemainingTime = expirationTime - currentTime;
-            setTimeRemaining(updatedRemainingTime);
+            interval = setInterval(() => {
+              const currentTime = Math.floor(Date.now() / 1000);
+              const updatedRemainingTime = expirationTime - currentTime;
+              setTimeRemaining(updatedRemainingTime);
 
-              if (updatedRemainingTime <= 0) {
-                // clearInterval(interval!);
-                // window.location.href = '/welcome';
-                // return;
-              }
+                if (updatedRemainingTime <= 0) {
+                  // clearInterval(interval!);
+                  // window.location.href = '/welcome';
+                  // return;
+                }
 
-              if (updatedRemainingTime < 30) { 
-                // setIsTokenRefreshDialogOpen(true);
-                // setTokenRefreshTimeRemaining(30); 
-              }
-          }, 1000);
-        }
+                if (updatedRemainingTime < 30) { 
+                  // setIsTokenRefreshDialogOpen(true);
+                  // setTokenRefreshTimeRemaining(30); 
+                }
+            }, 1000);
+          }
         } else {
           setSessionExpirationTime(undefined);
           setTimeRemaining(undefined);

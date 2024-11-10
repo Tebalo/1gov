@@ -3,7 +3,7 @@
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, invUrl, licUrl } from "./store";
-import { ActivityListResponse, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, DecodedToken, Investigation, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
+import { Activity, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, DecodedToken, Investigation, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
@@ -413,7 +413,7 @@ export async function createActivity(payload: ActivityPayload): Promise<Activity
   }
 }
 
-export async function getActivityByNumber(ID: string): Promise<ActivityListResponse> {
+export async function getActivityByNumber(ID: string): Promise<ActivityObject> {
   try {
 
 
@@ -451,7 +451,6 @@ export async function getActivityByNumber(ID: string): Promise<ActivityListRespo
     } else {
       result = { message: 'Success', code: response.status, data: null };
     }
-
     return {
       code: response.status,
       data: result
@@ -562,6 +561,58 @@ export async function getTipOffs(status: string, count: number): Promise<TipOffL
     if (responseText) {
       try {
         result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      data: result
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getUserActivities(userid: string, count: number): Promise<ActivityListResponse> {
+  try {
+
+
+    const response = await fetch(`${invUrl}/user-activities?userid=${userid}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+
+    });
+
+    //console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+        console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);

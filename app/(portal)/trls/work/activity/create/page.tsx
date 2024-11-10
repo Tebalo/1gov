@@ -1,29 +1,54 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import InfoCard from '@/app/components/InfoCard'
-import { FileCheck, Info, SaveIcon } from 'lucide-react'
+import { FileCheck, Info, User, SaveIcon } from 'lucide-react'
 import { createActivity } from '@/app/lib/actions'
 import { ActivityPayload } from '@/app/lib/types'
-
+import { getAccessGroups } from '@/app/auth/auth'
 
 const initialState: ActivityPayload = {
+  full_name: '',
+  role: '',
   activities: '',
   action_taken: '',
   record_type: '',
+  anonymous: 'false',
+  submission_type: 'Walk-In',
+  userid: '',
   record_id: ''
 }
 
-export default function CreateActivityPage() {
+export default function Page() { 
   const router = useRouter()
   const [activityDetails, setActivityDetails] = useState<ActivityPayload>(initialState)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const profile = await getAccessGroups();
+        if (profile && profile.current) {  // Add null check
+          setActivityDetails(prev => ({
+            ...prev,
+            full_name: profile.username || '',
+            role: profile.current.toLowerCase(),
+            userid: profile.userid || '',
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    initializeUser();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -33,10 +58,10 @@ export default function CreateActivityPage() {
     }))
   }
 
-  const handleSelectChange = (value: string) => {
+  const handleSelectChange = (field: string) => (value: string) => {
     setActivityDetails(prev => ({
       ...prev,
-      record_type: value
+      [field]: value
     }))
   }
 
@@ -92,6 +117,71 @@ export default function CreateActivityPage() {
             </div>
           )}
 
+          {/* User Information */}
+          <InfoCard title="User Information" icon={<User className="w-6 h-6 text-blue-500"/>}>
+            <div>
+                <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">Full Name</label>
+                <Input
+                  type="text"
+                  id="full_name"
+                  name="full_name"
+                  value={activityDetails.full_name}
+                  readOnly
+                  disabled
+                  className="bg-gray-50"
+                />
+              </div>
+              <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+                <Input
+                  type="text"
+                  id="role"
+                  name="role"
+                  value={activityDetails.role}
+                  readOnly
+                  disabled
+                  className="bg-gray-50"
+                />
+              </div>
+              <div>
+                <label htmlFor="userid" className="block text-sm font-medium text-gray-700">User ID</label>
+                <Input
+                  type="text"
+                  id="userid"
+                  name="userid"
+                  value={activityDetails.userid}
+                  readOnly
+                  disabled
+                  className="bg-gray-50"
+                />
+              </div>
+
+            <div>
+              <label htmlFor="submission_type" className="block text-sm font-medium text-gray-700">Submission Type</label>
+              <Select value={activityDetails.submission_type} onValueChange={handleSelectChange('submission_type')}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select submission type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Walk-In">Walk-In</SelectItem>
+                  <SelectItem value="Online">Online</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label htmlFor="anonymous" className="block text-sm font-medium text-gray-700">Anonymous</label>
+              <Select value={activityDetails.anonymous} onValueChange={handleSelectChange('anonymous')}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select anonymous status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </InfoCard>
+
           {/* Activity Details */}
           <InfoCard title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
             <div>
@@ -124,10 +214,7 @@ export default function CreateActivityPage() {
           <InfoCard title="Record Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="record_type" className="block text-sm font-medium text-gray-700">Record Type</label>
-              <Select
-                value={activityDetails.record_type}
-                onValueChange={handleSelectChange}
-              >
+              <Select value={activityDetails.record_type} onValueChange={handleSelectChange('record_type')}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select record type" />
                 </SelectTrigger>
@@ -145,7 +232,7 @@ export default function CreateActivityPage() {
                 type="text"
                 id="record_id"
                 name="record_id"
-                value={activityDetails.record_id || ''}
+                value={activityDetails.record_id}
                 onChange={handleInputChange}
                 required
               />

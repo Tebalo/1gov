@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaBriefcase, FaCogs, FaComments, FaHome, FaLayerGroup, FaUsers } from 'react-icons/fa';
+import { FaBriefcase, FaClipboardList, FaCogs, FaHome, FaUsers } from 'react-icons/fa';
 import { GrDashboard } from "react-icons/gr";
 
 interface SideBarItem { 
@@ -21,9 +21,7 @@ const sidebarItems: SideBarItem[] = [
     { path: '/trls/home', icon: <FaHome style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Home', roles: ['*'] },
     { path: '/trls/work', icon: <FaBriefcase style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Work', roles: ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'INVESTIGATIONS_OFFICER', 'SENIOR_INVESTIGATIONS_OFFICER', 'INVESTIGATIONS_MANAGER', 'ADMIN'] },
     { path: '/trls/dashboard', icon: <GrDashboard style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Dashboard', roles: ['MANAGER', 'REGISTRATION_OFFICER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'INVESTIGATIONS_OFFICER', 'SENIOR_INVESTIGATIONS_OFFICER', 'INVESTIGATIONS_MANAGER', 'ADMIN'] },
-    { path: '/trls/my-applications', icon: <FaLayerGroup style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'My Applications', roles: [] },
-    { path: '/trls/spaces', icon: <FaComments style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Spaces', roles: [] },
-    { path: '/trls/users', icon: <FaUsers style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Users', roles: [] },
+    { path: '/trls/activity', icon: <FaClipboardList style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Activities', roles: ['INVESTIGATIONS_OFFICER', 'SENIOR_INVESTIGATIONS_OFFICER', 'INVESTIGATIONS_MANAGER'] },
     { path: '/trls/settings', icon: <FaCogs style={{ fontSize: '1.5rem', color: '#FFFFFF' }} />, title: 'Settings', roles: [] },
 ]
 
