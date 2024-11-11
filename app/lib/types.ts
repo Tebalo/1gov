@@ -180,6 +180,12 @@ export interface Investigation {
   preliminary_investigation: preliminary_investigation;
 }
 
+export interface InvestigationResponse{
+  code: number;
+  data?: Investigation;
+  message?: string;
+}
+
 export interface ComplaintSearchResponse{
   code: number;
   reporter?: reporter
