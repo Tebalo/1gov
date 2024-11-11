@@ -1,8 +1,8 @@
 import { getRole } from "@/app/auth/auth";
 import InvestigationView from "@/app/components/record/ComplaintViewer";
-import { getInvById, getInvRecordById } from "@/app/lib/actions";
+import { getComplaintsById } from "@/app/lib/actions";
 import Link from "next/link";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const id = params.slug;
@@ -10,14 +10,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
   let error = null;
 
   try {
-    inv = await getInvRecordById(id);
+    inv = await getComplaintsById(id);
     const userRole = await getRole();
     
     return (
       <main className="h-full">
         <div className="flex flex-row h-full gap-0">
-          {inv ? (
-            <>{userRole && <InvestigationView data={inv} userRole={userRole} />}</>
+          {inv.data ? (
+            <>{userRole && <InvestigationView data={inv.data} userRole={userRole} />}</>
           ) : (
             <div className="flex h-[80vh] items-center justify-center w-full">
               <div className="text-center px-4">

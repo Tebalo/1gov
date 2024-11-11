@@ -51,7 +51,7 @@ interface InvestigationViewProps {
             <h1 className="text-3xl font-bold text-gray-800">
               Complaint Information
             </h1>
-            <ActionButtons caseCode={data.reporter.inquiry_number  ?? ''} />
+            <ActionButtons recordId={data.reporter.inquiry_number  ?? ''} />
           </div>
           <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
         </div>
