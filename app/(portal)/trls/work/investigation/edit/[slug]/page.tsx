@@ -215,7 +215,7 @@ export default function EditCasePage({ params }: { params: { slug: string } }) {
               <InfoItem label="Sex" value={caseDetails?.reporter.sex}/>
               <InfoItem label="Nationality" value={caseDetails?.reporter.nationality}/>
               <InfoItem label="Address" value={caseDetails?.reporter.address}/>
-              <InfoItem label="Anonymous" value={caseDetails?.reporter.anonymous}/>
+              {/* <InfoItem label="Anonymous" value={caseDetails?.reporter.anonymous}/> */}
               <InfoItem label="Status" value={caseDetails?.reporter.reg_status}/>
               <div>
                 <label htmlFor="reporter.reg_status" className="block text-sm font-medium text-gray-700">Set New Status</label>

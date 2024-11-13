@@ -7,6 +7,7 @@ import { Activity, ActivityListResponse, ActivityObject, ActivityPayload, Activi
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
+import { error } from "console";
 
 
 async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
@@ -51,8 +52,11 @@ const TOKEN_REFRESH_THRESHOLD = 18 * 60; // 8 minutes in seconds
 
 async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-  console.log('URL',url)
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+    console.log(`Request aborted due to timeout after ${timeoutMs}ms`);
+  }, timeoutMs);
+
   try {
     let session = await getSession();
 
@@ -63,18 +67,14 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
       console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
 
       if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
-        // console.log("Token is close to expiring, attempting to refresh");
         const refreshSuccessful = await refreshToken();
         if (refreshSuccessful) {
-          // console.log("Token refresh successful");
-          session = await getSession(); // Get the updated session
+          session = await getSession();
         } else {
-          // console.log("Token refresh failed");
           throw new Error('Session expired and refresh failed');
         }
       }
     } else {
-      // console.log("No valid session found");
       throw new Error('No valid session');
     }
 
@@ -90,12 +90,10 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
       signal: controller.signal
     });
 
-    // Handle 401 errors (Unauthorized) by attempting one more token refresh
     if (response.status === 401) {
-      // console.log("Received 401, attempting one more token refresh");
       const refreshSuccessful = await refreshToken();
       if (refreshSuccessful) {
-        session = await getSession(); // Get the updated session
+        session = await getSession();
         if (session?.auth?.access_token) {
           headers.set('Authorization', `Bearer ${session.auth.access_token}`);
           return fetch(url, {
@@ -109,7 +107,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
 
     return response;
   } catch (error) {
-    if (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
       throw new Error(`Request timed out after ${timeoutMs}ms`);
     }
     console.error('Error in fetchWithAuth:', error);
@@ -119,7 +117,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
   }
 }
 
-export async function createComplaint(payload: ComplaintPayload): Promise<{success: boolean, code: number; message: string, data?: any }> {
+export async function createComplaint(payload: ComplaintPayload): Promise<{success: boolean, code: number; message: string,error?: string, data?: any }> {
   try {
 
     const stringifiedPayload = JSON.stringify(payload, null, 2);
@@ -165,15 +163,15 @@ export async function createComplaint(payload: ComplaintPayload): Promise<{succe
       success: true,
       code: response.status,
       message: result.message || 'Success',
+      error: result.error,
       data: result
     };
 
   } catch (error) {
-    console.error('Error adding complaint:', error);
     return {
       success: false,
       code: error instanceof Error && 'status' in error ? (error as any).status : 500,
-      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again',
     };
   }
 }
@@ -342,7 +340,6 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
 
 export async function createReport(payload: ReportPayload, ID: string): Promise<ReportResponse> {
   try {
-    console.log(payload)
     const stringifiedPayload = JSON.stringify(payload, null, 2);
 
     const response = await fetch(`${invUrl}/update-preliminary-investigations/${ID}`, {
@@ -409,7 +406,6 @@ export async function getReportRecordById(Id: string) {
 }
 
 export async function createActivity(payload: ActivityPayload): Promise<ActivityResponse> {
-  console.log(payload)
   try {
 
     const stringifiedPayload = JSON.stringify(payload, null, 2);
@@ -665,7 +661,6 @@ export async function getUserActivities(userid: string, count: number): Promise<
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);
@@ -936,7 +931,6 @@ export async function getRegById(Id: string) {
 export async function getInvRecordById(Id: string) {
   try {
     const res = await fetchWithAuth(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' } );
-    console.log('status',res.status)
     if (!res.ok) {
       if (res.status === 200) return null;
       throw new Error('Failed to fetch data');

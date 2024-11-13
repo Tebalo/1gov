@@ -168,7 +168,7 @@ export default function Page() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="anonymous" className="block text-sm font-medium text-gray-700">Anonymous</label>
               <Select value={activityDetails.anonymous} onValueChange={handleSelectChange('anonymous')}>
                 <SelectTrigger className="w-full">
@@ -179,7 +179,7 @@ export default function Page() {
                   <SelectItem value="false">No</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </InfoCard>
 
           {/* Activity Details */}

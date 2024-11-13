@@ -110,16 +110,16 @@ export const Search: React.FC = () => {
                                     <InfoItem label="Case Number" value={response.case_number || 'N/A'} />
                                     <InfoItem label="Status" value={response.reg_status || 'N/A'} />
                                     <InfoItem label="Submission Type" value={response.submission_type || 'N/A'} />
-                                    <InfoItem label="Reporter Name" value={response.anonymous === 'Yes' ? 'Anonymous' : (response.name || 'N/A')} />
+                                    {/* <InfoItem label="Reporter Name" value={response.anonymous === 'Yes' ? 'Anonymous' : (response.name || 'N/A')} /> */}
                                     <InfoItem label="Created" value={ConvertTime(response.created_at)} />
                                     <InfoItem label="Last Updated" value={getRelativeTime(response.updated_at)} />
-                                    {response.anonymous !== 'Yes' && (
+                                    {/* {response.anonymous !== 'Yes' && (
                                         <>
                                             <InfoItem label="Contact" value={response.contact_number || 'N/A'} />
                                             <InfoItem label="ID Number" value={response.Omang_id || response.passport_no || 'N/A'} />
                                             <InfoItem label="Nationality" value={response.nationality || 'N/A'} />
                                         </>
-                                    )}
+                                    )} */}
                                 </div>
                             ) : (
                                 <div className="text-center text-gray-600 font-semibold">

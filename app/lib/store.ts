@@ -9,7 +9,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.08.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.09.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -194,9 +194,35 @@ export const statusTransitions: StatusTransition = {
         rej_status: null,
         recommend: null,
         endorse: null,
-        next_status: 'Registered',
+        next_status: 'Under-review',
         reject_label: 'Incoming',
-        approve_label: 'Registered',
+        approve_label: 'Review',
+        recommend_label: null,
+        endorse_label: null
+    },
+    'senior_investigations_officer': {
+        prev_status: 'Incoming',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        recommend: null,
+        endorse: null,
+        next_status: 'Assessment',
+        reject_label: 'Incoming',
+        approve_label: 'Assessment',
+        recommend_label: null,
+        endorse_label: null
+    },
+    'investigations_manager': {
+        prev_status: 'Incoming',
+        inv_status: null,
+        bar_status: null,
+        rej_status: null,
+        recommend: null,
+        endorse: null,
+        next_status: 'Picklist',
+        reject_label: 'Incoming',
+        approve_label: 'Allocate to',
         recommend_label: null,
         endorse_label: null
     },
