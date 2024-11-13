@@ -124,7 +124,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
         <DialogContent className="sm:max-w-[350px] p-0 overflow-hidden">
             <DialogHeader className="px-6 py-4 border-b bg-gray-50">
               <DialogTitle className="text-lg font-semibold text-gray-900">
-                Actions
+                Actions 
               </DialogTitle>
             </DialogHeader>
             <div className="px-2 py-3">
@@ -161,7 +161,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
                 <Button 
                   variant="ghost" 
                   className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
-                  onClick={handleStatusDialog}
+                  // onClick={}
                 >
                   <div className="flex items-center">
                     <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
