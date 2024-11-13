@@ -114,7 +114,7 @@ export interface reporter {
   reg_status: string | null;
   inquiry_number: string | null;
   case_number: string | null;
-  anonymous: string | null;
+  anonymous: boolean | null;
   submission_type: string | null;
   id: number | null;
   created_at: string | null;

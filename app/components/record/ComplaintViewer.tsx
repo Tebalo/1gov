@@ -1,13 +1,15 @@
 import { FaFilePdf } from 'react-icons/fa';
 import { statusTransitions } from '@/app/lib/store';
 import { 
-  Info, FileText,  FileCheck
+  Info, FileText,  FileCheck,
+  ClipboardCheck
 } from 'lucide-react'
 
 import dynamic from 'next/dynamic'
 import ActionButtons from './components/ActionItems';
 import { Investigation } from '@/app/lib/types';
 import ReportInfoCard from './ReportInfoCard';
+import InfoCardTwo from '../InfoCardTwoColumn';
 
 const InfoCard = dynamic(() => import('../InfoCard'), { ssr: false })
 const InfoItem = dynamic(() => import('../InfoItem'), { ssr: false })
@@ -58,6 +60,7 @@ interface InvestigationViewProps {
         <div className='flex-grow overflow-y-auto'>
           {/* max-h-[calc(100vh-200px)] */}
           <div className='space-y-8 pr-4'>
+            {renderSection(renderPreliminaryDetails(data))} 
             {renderSection(renderReporterInfo(data))}
             {renderSection(renderComplaintInfo(data))}
             {renderSection(renderOffenderInfo(data))}
@@ -86,23 +89,29 @@ interface InvestigationViewProps {
   
   const renderReporterInfo = (data: Investigation) => (
     <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Name" value={data.reporter.name}/>
-      <InfoItem label="Contact number" value={data.reporter.contact_number}/>
-      <InfoItem label="Omang" value={data.reporter.Omang_id}/>
-      <InfoItem label="Passport number" value={data.reporter.passport_no}/>
-      <InfoItem label="Occupation" value={data.reporter.occupation}/>
-      <InfoItem label="Sex" value={data.reporter.sex}/>
-      <InfoItem label="Nationality" value={data.reporter.nationality}/>
-      <InfoItem label="Address" value={data.reporter.address}/>
-      <InfoItem label="Status" value={data.reporter.reg_status}/>
+      <InfoItem label="Name" value={data.reporter.name} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Contact number" value={data.reporter.contact_number} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Omang" value={data.reporter.Omang_id} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Passport number" value={data.reporter.passport_no} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Occupation" value={data.reporter.occupation} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Sex" value={data.reporter.sex} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Nationality" value={data.reporter.nationality} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Address" value={data.reporter.address} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
       {/* <InfoItem label="Inquiry number" value={data.reporter.inquiry_number}/> */}
       {/* <InfoItem label="Case number" value={data.reporter.case_number}/> */}
-      <InfoItem label="Anonymous" value={data.reporter.anonymous}/>
-      <InfoItem label="Submission type" value={data.reporter.submission_type}/>
-      <InfoItem label="Created At" value={data.reporter.created_at}/>
-      <InfoItem label="Updated At" value={data.reporter.updated_at}/>
+      {/* <InfoItem label="Anonymous" value={data.reporter.anonymous}/> */}
+      
+      <InfoItem label="Created At" value={data.reporter.created_at} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Updated At" value={data.reporter.updated_at} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
     </InfoCard>
   );
+
+  const renderPreliminaryDetails = (data: Investigation) => (
+    <InfoCardTwo title='Pre-App Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>}>
+        <InfoItem label="Status" value={data.reporter.reg_status}/>
+        <InfoItem label="Submission type" value={data.reporter.submission_type}/>
+    </InfoCardTwo>
+  )
 
   const renderComplaintInfo = (data: Investigation) => (
     <InfoCard title='Complaint Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>

@@ -18,7 +18,7 @@ interface Complaint {
     submission_type: string;
     reg_status: string;
     date_of_submission: string;
-    anonymous: string;
+    anonymous: boolean;
     case_number: string;
     inquiry_number: string;
 }
@@ -81,4 +81,4 @@ export const InvestigationsTable: React.FC<WorkProps> = ({status, userRole}) => 
             )}
         </div>
     )
-}
+} 

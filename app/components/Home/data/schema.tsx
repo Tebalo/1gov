@@ -26,7 +26,7 @@ export const complaintSchema = z.object({
   inquiry_number:z.string(),
   reg_status: z.string(),
   date_of_submission: z.string(),
-  anonymous: z.string()
+  anonymous: z.boolean()
 })
 
 export const complaintSchemawithNullValues = z.object({
@@ -36,7 +36,7 @@ export const complaintSchemawithNullValues = z.object({
   inquiry_number: z.string().nullable().optional(),
   reg_status: z.string().nullable().optional(),
   date_of_submission: z.string().nullable().optional(),
-  anonymous: z.string().nullable().optional()
+  anonymous: z.boolean().nullable().optional()
 });
 
 export const InvestigationsSchema = z.object({

@@ -7,8 +7,22 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DatePicker } from '@/components/ui/date-picker'
 import InfoCard from '@/app/components/InfoCard'
-import { FileCheck, FileText, Info, SaveIcon } from 'lucide-react'
+import { ClipboardCheck, FileCheck, FileText, Info, SaveIcon } from 'lucide-react'
 import { createComplaint } from '@/app/lib/actions'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import InfoCardTwo from '@/app/components/InfoCardTwoColumn'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface Reporter {
   name: string;
@@ -17,6 +31,8 @@ interface Reporter {
   passport_no: string;
   occupation: string;
   sex: string;
+  anonymous: boolean;
+  submission_type: string;
   nationality: string;
   address: string;
 }
@@ -69,6 +85,8 @@ const initialState: InvestigationRecord = {
     passport_no: 'P123456',
     occupation: 'Engineer',
     sex: 'Male',
+    submission_type: '',
+    anonymous: false,
     nationality: 'Botswana',
     address: '123 Main Street'
   },
@@ -116,6 +134,7 @@ export default function CreateCasePage() {
   const [caseDetails, setCaseDetails] = useState<InvestigationRecord>(initialState)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('');
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -163,7 +182,6 @@ export default function CreateCasePage() {
         console.log('Submitting case details:', caseDetails);
         
         const res = await createComplaint(caseDetails);
-        console.log('API Response:', res);
 
         if (res.success && (res.code === 200 || res.code === 201)) {
             if (res.data) {
@@ -174,14 +192,17 @@ export default function CreateCasePage() {
                     router.push(`/trls/work/investigation/${result.inquiry_number}`);
                 } else {
                     setError('No inquiry number received from server, but the record was created successfully!');
+                    setShowErrorDialog(true);
                     router.push(`/trls/work`);
                 }
             } else {
                 setError('No data received from server, but the record was created successfully!');
+                setShowErrorDialog(true);
                 router.push(`/trls/work`);
             }
         } else {
             setError(res.message || 'Failed to create case');
+            setShowErrorDialog(true);
         }
     } catch (error) {
         const errorMessage = error instanceof Error 
@@ -189,13 +210,45 @@ export default function CreateCasePage() {
             : 'An unexpected error occurred while creating the case';
         console.error('Failed to create case:', error);
         setError(errorMessage);
+        setShowErrorDialog(true);
     } finally {
         setIsSubmitting(false);
     }
-};
+  };
+
+  const clearReporterDetails = (): Reporter => {
+    return {
+      name: '',
+      contact_number: '',
+      Omang_id: '',      // This was missing
+      passport_no: '',
+      occupation: '',
+      sex: '',
+      submission_type: caseDetails.reporter.submission_type,
+      anonymous: true,
+      nationality: '',
+      address: ''
+    }
+  }
+
 
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+        <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Error</AlertDialogTitle>
+              <AlertDialogDescription>
+                {error}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => setShowErrorDialog(false)}>
+                Close
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       <div className="mb-4 flex-shrink-0 shadow-md">
         <div className='flex justify-between'>
           <h1 className="text-3xl font-bold text-gray-800">
@@ -215,12 +268,72 @@ export default function CreateCasePage() {
       </div>
       <div className='flex-grow overflow-y-auto'>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
+          {/* {error && (
               <div className="text-red-500 mb-4">
                   {error}
               </div>
-          )}
+          )} */}
+          {/* Preliminary Details */}
+          <InfoCardTwo title='Preliminary Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>}>
+          <div className="space-y-6">
+            <div className="items-top flex space-x-3 p-4 rounded-lg border border-gray-200 bg-white shadow-sm">
+              <Checkbox 
+                id="anonymous"
+                checked={caseDetails.reporter.anonymous === true}
+                onCheckedChange={(checked) => {
+                  setCaseDetails(prev => ({
+                    ...prev,
+                    reporter: checked ? clearReporterDetails() : initialState.reporter
+                  }))
+                }}
+                className='mt-1'
+              />
+              <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor="reporter.anonymous"
+                    className="tblock text-sm font-medium text-gray-700"
+                  >
+                    Anonymous Submission
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Choose this if you wish to submit anonymously
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className=''>
+                <label 
+                  htmlFor="reporter.submission_type" 
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                  Submission Type
+                </label>
+                  <RadioGroup 
+                    defaultValue={caseDetails.reporter.submission_type}
+                    onValueChange={(value) => {
+                      handleInputChange({
+                        target: {
+                          name: 'reporter.submission_type',
+                          value: value
+                        }
+                      } as any)
+                    }}
+                    className="space-y-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Walk-In" id="walk-in" />
+                      <Label htmlFor="walk-in">Walk-In</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Online" id="online" />
+                      <Label htmlFor="online">Online</Label>
+                    </div>
+                  </RadioGroup>
+            </div>
+          </InfoCardTwo>
           {/* Reporter Information */}
+          {caseDetails.reporter.anonymous === false  && 
           <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="reporter.name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -294,9 +407,10 @@ export default function CreateCasePage() {
                 onChange={handleInputChange}
               />
             </div>
-          </InfoCard>
+          </InfoCard>}
 
           {/* Complaint Details */}
+          
           <InfoCard title='Complaint Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="complaint.nature_of_crime" className="block text-sm font-medium text-gray-700">Nature of crime</label>
