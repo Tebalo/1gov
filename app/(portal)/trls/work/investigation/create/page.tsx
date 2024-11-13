@@ -193,12 +193,12 @@ export default function CreateCasePage() {
                 } else {
                     setError('No inquiry number received from server, but the record was created successfully!');
                     setShowErrorDialog(true);
-                    router.push(`/trls/work`);
+                    // router.push(`/trls/work`);
                 }
             } else {
                 setError('No data received from server, but the record was created successfully!');
                 setShowErrorDialog(true);
-                router.push(`/trls/work`);
+                //router.push(`/trls/work`);
             }
         } else {
             setError(res.message || 'Failed to create case');

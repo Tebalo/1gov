@@ -8,7 +8,6 @@ import {
 import dynamic from 'next/dynamic'
 import ActionButtons from './components/ActionItems';
 import { Investigation } from '@/app/lib/types';
-import ReportInfoCard from './ReportInfoCard';
 import InfoCardTwo from '../InfoCardTwoColumn';
 
 const InfoCard = dynamic(() => import('../InfoCard'), { ssr: false })
@@ -20,7 +19,15 @@ const PDFViewer: React.FC<{ url: string }> = ({ url }) => (
   <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`} width="100%" height="500px" />
 );
   
-export const getNextStatus = (userRole: string): { prev_status: string | null; inv_status: string | null; bar_status: string | null; rej_status: string | null; next_status: string | null; recommend: string | null; endorse: string | null;        reject_label: string | null;
+export const getNextStatus = (userRole: string): { 
+  prev_status: string | null; inv_status: string | null; 
+  bar_status: string | null; 
+  rej_status: string | null; 
+  next_status: string | null; 
+  recommend: string | null; 
+  endorse: string | null; 
+  next_statuses?: string[] | [],
+  reject_label: string | null;
   approve_label: string | null;
   recommend_label: string | null;
   endorse_label: string | null; } => {
@@ -35,7 +42,7 @@ interface InvestigationViewProps {
 
   const InvestigationView: React.FC<InvestigationViewProps> = ({ data, userRole }) => {
 
-    const { prev_status, next_status, rej_status, bar_status, inv_status, recommend, endorse, approve_label, reject_label, recommend_label, endorse_label } = getNextStatus(userRole);
+    const { prev_status, next_status, rej_status, bar_status, inv_status, recommend,next_statuses, endorse, approve_label, reject_label, recommend_label, endorse_label } = getNextStatus(userRole);
   
     const handleStatusChange = async (id: string, status: string, rejection_reason: string) => {
       
@@ -53,7 +60,7 @@ interface InvestigationViewProps {
             <h1 className="text-3xl font-bold text-gray-800">
               Complaint Information
             </h1>
-            <ActionButtons recordId={data.reporter.inquiry_number  ?? ''} />
+            <ActionButtons recordId={data.reporter.inquiry_number  ?? ''} access={userRole} next_status={next_status}/>
           </div>
           <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
         </div>

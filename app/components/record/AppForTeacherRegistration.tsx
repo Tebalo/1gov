@@ -75,6 +75,7 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
     const { toast } = useToast()
 
     const next = async () => {
+        
         const fields = teacherSteps[currentStep].fields
 
         if (currentStep < teacherSteps.length - 1){
@@ -557,51 +558,51 @@ export const ApplicationForTeacherRegistration: React.FC<Work> = (data, userRole
                                             </AlertDialogContent>
                                         </AlertDialog>
                                         }
-                            {next_status && (currentStep === teacherSteps.length - 1) &&
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button variant="default" className=''>{approve_label}</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>                                
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action will change the status to <span className='italic font-medium'>{next_status}</span>, and this will route the application to the next level.
-                                        </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction
-                                                className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                                                onClick={async () => await handleStatusChange(data?.data?.teacher_registrations?.national_id, next_status!)}
-                                                >Continue</AlertDialogAction>
-                                            </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                            }
-                            {recommend && (currentStep === teacherSteps.length - 1) &&
-                                <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                            <Button variant="outline" className=''>{recommend_label}</Button>
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>                                
-                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                This action will change the status to <span className='italic font-medium'>{recommend}</span>, and this will route the application to the next level.
-                                            </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                <AlertDialogAction
-                                                    className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
-                                                    onClick={async () => await handleEndorsementStatusUpdate(data?.data?.teacher_registrations?.national_id, recommend!)}
-                                                    >Continue</AlertDialogAction>
-                                                </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            }
-                            {endorse && (currentStep === teacherSteps.length - 1) &&
+                                        {next_status && (currentStep === teacherSteps.length - 1) &&
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="default" className=''>{approve_label}</Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>                                
+                                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        This action will change the status to <span className='italic font-medium'>{next_status}</span>, and this will route the application to the next level.
+                                                    </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                                                            onClick={async () => await handleStatusChange(data?.data?.teacher_registrations?.national_id, next_status!)}
+                                                            >Continue</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                        }
+                                        {recommend && (currentStep === teacherSteps.length - 1) &&
+                                            <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="outline" className=''>{recommend_label}</Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>                                
+                                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action will change the status to <span className='italic font-medium'>{recommend}</span>, and this will route the application to the next level.
+                                                        </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction
+                                                                className='bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300'
+                                                                onClick={async () => await handleEndorsementStatusUpdate(data?.data?.teacher_registrations?.national_id, recommend!)}
+                                                                >Continue</AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        }
+                                        {endorse && (currentStep === teacherSteps.length - 1) &&
                                 <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="default" className=''>{endorse_label}</Button>

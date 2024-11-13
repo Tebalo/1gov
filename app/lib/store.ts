@@ -20,6 +20,7 @@ export interface StatusTransition {
         endorse: string | null,
         rej_status: string | null;
         next_status: string | null;
+        next_statuses?: string[] | []
         reject_label: string | null;
         approve_label: string | null;
         recommend_label: string | null;
@@ -160,6 +161,23 @@ export const mgt = [
     'director', 
     'registrar'
 ]
+
+interface InvestigationStatuses {
+    label: string;
+    value: string;
+    access: string[];
+}
+
+const sidebarItems: InvestigationStatuses[] = [
+    {label: 'Review', value: 'Under-Review', access:["investigations_officer"]},
+    {label: 'Incoming', value: 'Incoming', access:[]},
+    {label: 'Registered', value: 'Registered', access:[]},
+    {label: 'Assessment', value: 'Assessment', access:["senior_investigations_officer"]},
+    {label: 'Criminal investigation', value: 'Recommend-for-external-investigation', access:["investigations_manager"]},
+    {label: 'Administrative', value: 'Ongoing-investigation', access:["investigations_manager"]},
+    {label: 'Recommend for closure', value: 'Recommend-for-closure', access:["investigations_manager"]}
+]
+
 export const statusTransitions: StatusTransition = {
     'Default': {
         prev_status: 'Default',
@@ -222,6 +240,7 @@ export const statusTransitions: StatusTransition = {
         endorse: null,
         next_status: 'Picklist',
         reject_label: 'Incoming',
+        next_statuses: ['Recommend-for-external-investigation'],
         approve_label: 'Allocate to',
         recommend_label: null,
         endorse_label: null
