@@ -340,7 +340,6 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
 
 export async function createReport(payload: ReportPayload, ID: string): Promise<ReportResponse> {
   try {
-    console.log(payload)
     const stringifiedPayload = JSON.stringify(payload, null, 2);
 
     const response = await fetch(`${invUrl}/update-preliminary-investigations/${ID}`, {
@@ -407,7 +406,6 @@ export async function getReportRecordById(Id: string) {
 }
 
 export async function createActivity(payload: ActivityPayload): Promise<ActivityResponse> {
-  console.log(payload)
   try {
 
     const stringifiedPayload = JSON.stringify(payload, null, 2);
@@ -663,7 +661,6 @@ export async function getUserActivities(userid: string, count: number): Promise<
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);
@@ -934,7 +931,6 @@ export async function getRegById(Id: string) {
 export async function getInvRecordById(Id: string) {
   try {
     const res = await fetchWithAuth(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' } );
-    console.log('status',res.status)
     if (!res.ok) {
       if (res.status === 200) return null;
       throw new Error('Failed to fetch data');
@@ -1062,7 +1058,6 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);

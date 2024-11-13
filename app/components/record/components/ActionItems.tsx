@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, FileText, RefreshCw, Save, PlusCircleIcon, ChevronDown, ChevronDownIcon } from 'lucide-react'
+import { Edit, FileText, RefreshCw, Save, PlusCircleIcon, ChevronDown, ChevronDownIcon, UserPlus2, SendIcon, PlusCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -108,7 +108,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
   }
 
   const handleUpdate = () => {
-    console.log('clicked')
     window.open(`/trls/work/investigation/edit/${recordId}`, '_self')
   }
 
@@ -122,41 +121,86 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
           <span>Actions</span>
           <ChevronDownIcon  className="h-4 w-4" />
         </Button>
-        <DialogContent className="sm:max-w-[300px]">
-          <DialogHeader>
-            <DialogTitle>Actions</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col space-y-3">
+        <DialogContent className="sm:max-w-[350px] p-0 overflow-hidden">
+            <DialogHeader className="px-6 py-4 border-b bg-gray-50">
+              <DialogTitle className="text-lg font-semibold text-gray-900">
+                Actions
+              </DialogTitle>
+            </DialogHeader>
+            <div className="px-2 py-3">
+              <div className="space-y-1">
+                {/* Allocate */}
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
+                  onClick={handleStatusDialog}
+                >
+                  <div className="flex items-center">
+                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                      <UserPlus2 className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <span className="font-medium">Allocate</span>
+                  </div>
+                </Button>
 
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={handleStatusDialog}
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Update Status
-            </Button>
+                {/* Submit for Review */}
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
+                  onClick={handleStatusDialog}
+                >
+                  <div className="flex items-center">
+                    <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                      <SendIcon className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <span className="font-medium">Submit for Review</span>
+                  </div>
+                </Button>
 
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={handleAddReport}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Add Report
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => {handleUpdate}}
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Update Record
-            </Button>
-          
-          </div>
-        </DialogContent>
+                {/* Add Activity */}
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
+                  onClick={handleStatusDialog}
+                >
+                  <div className="flex items-center">
+                    <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                      <PlusCircle className="w-4 h-4 text-green-600" />
+                    </div>
+                    <span className="font-medium">Add Activity</span>
+                  </div>
+                </Button>
+
+                {/* Add Report */}
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
+                  onClick={handleAddReport}
+                >
+                  <div className="flex items-center">
+                    <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center mr-3">
+                      <FileText className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <span className="font-medium">Add Report</span>
+                  </div>
+                </Button>
+
+                {/* Update Record */}
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
+                  onClick={handleUpdate}
+                >
+                  <div className="flex items-center">
+                    <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                      <Edit className="w-4 h-4 text-red-600" />
+                    </div>
+                    <span className="font-medium">Update Record</span>
+                  </div>
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
       </Dialog>
 
       {/* Report Dialog */}
@@ -210,11 +254,15 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
                 Cancel
               </Button>
               <Button 
-              type="submit"
-              disabled={isSubmittingReport || !status}
+                type="submit"
+                disabled={
+                  isSubmittingReport || 
+                  !formData.investigation_details || 
+                  !formData.investigation_outcome
+                }
               >
                 <Save className="w-4 h-4 mr-2" /> 
-                {isSubmitting ? 'Saving...': 'Save Changes' }
+                {isSubmittingReport ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
           </form>
