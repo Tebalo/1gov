@@ -1,3 +1,5 @@
+import { InvestigationStatuses } from "./types";
+
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://10.0.25.164:8080/trls-api';
 export const invUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8084/trls-api';
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
@@ -20,11 +22,12 @@ export interface StatusTransition {
         endorse: string | null,
         rej_status: string | null;
         next_status: string | null;
-        next_statuses?: string[] | []
         reject_label: string | null;
         approve_label: string | null;
         recommend_label: string | null;
         endorse_label: string | null;
+        allocate?: boolean | false,
+        submit?: boolean | false,
     };
 }
 // to be
@@ -162,13 +165,19 @@ export const mgt = [
     'registrar'
 ]
 
-interface InvestigationStatuses {
-    label: string;
-    value: string;
-    access: string[];
-}
+{/* <SelectItem value="Incoming">Incoming</SelectItem>
+<SelectItem value="Registered">Registered</SelectItem>
+<SelectItem value="Under-Review">Under-Review</SelectItem>
+<SelectItem value="Assessment">Assessment</SelectItem> */}
+{/* <SelectItem value="Ongoing-investigation">Ongoing-investigation</SelectItem>
+<SelectItem value="Complete-investigations">Complete-investigations</SelectItem>
+<SelectItem value="Recommend for closure">Recommend for closure</SelectItem>
+<SelectItem value="Recommend for re-investigation">Recommend for re-investigation</SelectItem>
+<SelectItem value="Recommend for Disciplinary">Recommend for Disciplinary</SelectItem> */}
+{/* <SelectItem value="Approve endorsement">Approve endorsement</SelectItem>
+<SelectItem value="Reject endorsement">Approve endorsement</SelectItem> */}
 
-const sidebarItems: InvestigationStatuses[] = [
+export const investigationStatuses: InvestigationStatuses[] = [
     {label: 'Review', value: 'Under-Review', access:["investigations_officer"]},
     {label: 'Incoming', value: 'Incoming', access:[]},
     {label: 'Registered', value: 'Registered', access:[]},
@@ -215,6 +224,8 @@ export const statusTransitions: StatusTransition = {
         next_status: 'Under-review',
         reject_label: 'Incoming',
         approve_label: 'Review',
+        submit: true,
+        allocate: false,
         recommend_label: null,
         endorse_label: null
     },
@@ -225,6 +236,8 @@ export const statusTransitions: StatusTransition = {
         rej_status: null,
         recommend: null,
         endorse: null,
+        submit: true,
+        allocate: false,
         next_status: 'Assessment',
         reject_label: 'Incoming',
         approve_label: 'Assessment',
@@ -238,9 +251,10 @@ export const statusTransitions: StatusTransition = {
         rej_status: null,
         recommend: null,
         endorse: null,
-        next_status: 'Picklist',
+        submit: false,
+        allocate: true,
+        next_status: null,
         reject_label: 'Incoming',
-        next_statuses: ['Recommend-for-external-investigation'],
         approve_label: 'Allocate to',
         recommend_label: null,
         endorse_label: null

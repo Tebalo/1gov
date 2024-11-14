@@ -8,7 +8,7 @@ export default function Page() {
                 <PageTitle Title="Components Studio" />
             </div>
             <div className="mb-8">
-                <ActionButtons recordId="INQ2024-11-00001" access="investigations_officer" next_status={"Under-Review"}/>
+                <ActionButtons recordId="INQ2024-11-00001" access="investigations_manager" next_status={null} label={'Assessment'} allocate={true} submit={false}/>
             </div>
         </div>
     )

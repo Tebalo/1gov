@@ -20,16 +20,18 @@ const PDFViewer: React.FC<{ url: string }> = ({ url }) => (
 );
   
 export const getNextStatus = (userRole: string): { 
-  prev_status: string | null; inv_status: string | null; 
+  prev_status: string | null; 
+  inv_status: string | null; 
   bar_status: string | null; 
   rej_status: string | null; 
   next_status: string | null; 
   recommend: string | null; 
   endorse: string | null; 
-  next_statuses?: string[] | [],
   reject_label: string | null;
   approve_label: string | null;
   recommend_label: string | null;
+  allocate?: boolean | false,
+  submit?: boolean | false,
   endorse_label: string | null; } => {
   const statusTransition = statusTransitions[userRole.toLowerCase()] || statusTransitions['Default'];
   return statusTransition;
@@ -42,7 +44,7 @@ interface InvestigationViewProps {
 
   const InvestigationView: React.FC<InvestigationViewProps> = ({ data, userRole }) => {
 
-    const { prev_status, next_status, rej_status, bar_status, inv_status, recommend,next_statuses, endorse, approve_label, reject_label, recommend_label, endorse_label } = getNextStatus(userRole);
+    const { next_status, approve_label, allocate, submit } = getNextStatus(userRole);
   
     const handleStatusChange = async (id: string, status: string, rejection_reason: string) => {
       
@@ -60,7 +62,14 @@ interface InvestigationViewProps {
             <h1 className="text-3xl font-bold text-gray-800">
               Complaint Information
             </h1>
-            <ActionButtons recordId={data.reporter.inquiry_number  ?? ''} access={userRole} next_status={next_status}/>
+            <ActionButtons 
+              recordId={data.reporter.inquiry_number  ?? ''} 
+              access={userRole} 
+              next_status={next_status} 
+              label={approve_label}
+              allocate={allocate}
+              submit={submit}
+            />
           </div>
           <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
         </div>
