@@ -1,34 +1,37 @@
-'use client'
+"use client"
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import InfoCard from '@/app/components/InfoCard';
+import { FileCheck, Info, User, SaveIcon } from 'lucide-react';
+import { createActivity } from '@/app/lib/actions';
+import { ActivityPayload } from '@/app/lib/types';
+import { getAccessGroups } from '@/app/auth/auth';
+import InfoCardTwo from '../InfoCardTwoColumn';
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import InfoCard from '@/app/components/InfoCard'
-import { FileCheck, Info, User, SaveIcon } from 'lucide-react'
-import { createActivity } from '@/app/lib/actions'
-import { ActivityPayload } from '@/app/lib/types'
-import { getAccessGroups } from '@/app/auth/auth'
-
-const initialState: ActivityPayload = {
-  full_name: '',
-  role: '',
-  activities: '',
-  action_taken: '',
-  record_type: '',
-  anonymous: 'false',
-  submission_type: 'Walk-In',
-  userid: '',
-  record_id: ''
+interface ActivityModalProps {
+    onClose: () => void;
+    recordId: string;
 }
 
-export default function Page() { 
-  const router = useRouter()
-  const [activityDetails, setActivityDetails] = useState<ActivityPayload>(initialState)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
+const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
+  const router = useRouter();
+  const [activityDetails, setActivityDetails] = useState<ActivityPayload>({
+    full_name: '',
+    role: '',
+    activities: '',
+    action_taken: '',
+    record_type: '',
+    anonymous: 'false',
+    submission_type: 'Walk-In',
+    userid: '',
+    record_id: recordId,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -90,26 +93,22 @@ export default function Page() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
-      <div className="mb-4 flex-shrink-0 shadow-md">
-        <div className="flex justify-between">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Submit Activity
-          </h1>
-          <div className="flex justify-end space-x-4">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting} onClick={handleSubmit}>
-              <SaveIcon className="w-4 h-4 mr-2" />
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </Button>
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl h-[72vh] overflow-y-auto">
+      <div className="mb-4 flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Submit Activity</h1>
+            <div>      
+                <Button type="button" variant="ghost" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting} onClick={handleSubmit}>
+                <SaveIcon className="w-4 h-4 mr-2" />
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+                </Button>
+            </div>
         </div>
-        <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
-      </div>
-
-      <div className="flex-grow overflow-y-auto">
+        {/* Render the 'Submit Activity' form here */}
+        <div className="flex-grow">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="text-red-500 mb-4">
@@ -156,7 +155,7 @@ export default function Page() {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label htmlFor="submission_type" className="block text-sm font-medium text-gray-700">Submission Type</label>
                 <Select value={activityDetails.submission_type} onValueChange={handleSelectChange('submission_type')}>
                   <SelectTrigger className="w-full">
@@ -167,11 +166,11 @@ export default function Page() {
                     <SelectItem value="Online">Online</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
           </InfoCard>
 
           {/* Activity Details */}
-          <InfoCard title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
+          <InfoCardTwo title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="activities" className="block text-sm font-medium text-gray-700">Activities</label>
               <Textarea
@@ -196,10 +195,10 @@ export default function Page() {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
-          </InfoCard>
+          </InfoCardTwo>
 
           {/* Record Information */}
-          <InfoCard title="Record Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+          <InfoCardTwo title="Record Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="record_type" className="block text-sm font-medium text-gray-700">Record Type</label>
               <Select value={activityDetails.record_type} onValueChange={handleSelectChange('record_type')}>
@@ -207,10 +206,10 @@ export default function Page() {
                   <SelectValue placeholder="Select record type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="COMPLAINT">Complaint</SelectItem>
-                  <SelectItem value="INVESTIGATION">Investigation</SelectItem>
-                  <SelectItem value="REGISTRATION">Registration</SelectItem>
-                  <SelectItem value="TIPOFF">Tip-off</SelectItem>
+                  <SelectItem value="complaint">Complaint</SelectItem>
+                  <SelectItem value="investigation">Investigation</SelectItem>
+                  <SelectItem value="registration">Registration</SelectItem>
+                  <SelectItem value="tip-off">Tip-off</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -222,12 +221,16 @@ export default function Page() {
                 name="record_id"
                 value={activityDetails.record_id}
                 onChange={handleInputChange}
-                required
+                readOnly
+                disabled
               />
             </div>
-          </InfoCard>
+          </InfoCardTwo>
         </form>
       </div>
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default ActivityModal;

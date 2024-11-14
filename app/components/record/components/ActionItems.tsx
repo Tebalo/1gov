@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, FileText, RefreshCw, Save, PlusCircleIcon, ChevronDown, ChevronDownIcon, UserPlus2, SendIcon, PlusCircle } from 'lucide-react'
+import { Edit, FileText, RefreshCw, Save, Send, PlusCircleIcon, ChevronDown, ChevronDownIcon, UserPlus2, SendIcon, PlusCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,23 +11,46 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { createReport, updateComplaintStatus } from '@/app/lib/actions'
 import { useRouter } from 'next/navigation'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Loader2 } from 'lucide-react'
+import { ToastAction } from '@/components/ui/toast';
+import { useToast } from '@/components/ui/use-toast'
+import { investigationStatuses } from '@/app/lib/store'
+import ActivityModal from '../ActivityModal'
 
 interface ActionButtonsProps {
   recordId: string;
+  access: string;
+  next_status: string | null;
+  label?: string | null;
+  allocate?: boolean | false;
+  submit?: boolean | false;
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_status, label, allocate, submit }) => {
   const [isActionsOpen, setIsActionsOpen] = useState(false)
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [isStatusOpen, setIsStatusOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmittingReport, setIsSubmittingReport] = useState(false)
+  const [isSubmitOpen, setIsSubmitOpen] = useState(false)
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+
   const [error, setError] = useState('')
   const router = useRouter()
+  const {toast} = useToast()
   
   const [formData, setFormData] = useState({
     investigation_details: '',
@@ -65,7 +88,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create report'
-      console.error('Failed to create report:', error)
+      // console.error('Failed to create report:', error)
       setError(errorMessage)
     } finally {
       setIsSubmittingReport(false)
@@ -73,11 +96,19 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
   }
 
   const handleAddReport = () => {
+    setError('')
     setIsActionsOpen(false)
     setIsReportOpen(true)
   }
 
+  const handleAddSubmission = () => {
+    setError('')
+    setIsActionsOpen(false)
+    setIsSubmitOpen(true)
+  }
+
   const handleStatusChange = (value: string) => {
+    setError('')
     setStatus(value)
   }
 
@@ -96,6 +127,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
         setError(result.message)
       }
     } catch (error) {
+      //setIsSubmitOpen(false)
       setError('Failed to update status')
     } finally {
       setIsSubmitting(false)
@@ -103,23 +135,74 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
   }
 
   const handleStatusDialog = () => {
+    setError('')
     setIsActionsOpen(false)
     setIsStatusOpen(true)
   }
 
+  const handleAddActivity = () => {
+    setIsActionsOpen(false);
+    setIsActivityModalOpen(true);
+  };
+
+  const handleCloseActivityModal = () => {
+    setIsActivityModalOpen(false);
+  };
+
+  const handleSingleStatusChange = async (ID: string, status: string) => {
+    setIsSubmitting(true)
+    setError('')
+    
+    try {
+      const result = await updateComplaintStatus(ID, status)
+      if (result.code === 200 || result.code === 201) {
+        setIsSubmitOpen(false)
+        toast({
+          title: "Routed successfully",
+          description: "The record has been routed with the status: "+status,
+          action: (
+          <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        })
+        router.refresh()
+      } else {
+        toast({
+          title: "Failed!!!",
+          description: "Something went wrong",
+          action: (
+          <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        })
+        setError((result.message || 'Failed to update status')+'Try again.')
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update status, Try again.'
+      //console.error('Failed to update status:', error)
+      setError(errorMessage)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const handleUpdate = () => {
+    setError('')
+    setIsActionsOpen(false)  // Close actions dialog first
     window.open(`/trls/work/investigation/edit/${recordId}`, '_self')
+  }
+
+  const hasAccess = (itemRoles: string[]) => {
+    return itemRoles.includes("*") || itemRoles.includes(access.toLowerCase())
   }
 
   return (
     <>
       <Dialog open={isActionsOpen} onOpenChange={setIsActionsOpen}>
-      <Button 
-          onClick={() => setIsActionsOpen(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white flex items-center space-x-2"
-        >
-          <span>Actions</span>
-          <ChevronDownIcon  className="h-4 w-4" />
+        <Button 
+            onClick={() => setIsActionsOpen(true)}
+            className="bg-blue-500 hover:bg-blue-600 text-white flex items-center space-x-2"
+          >
+            <span>Actions</span>
+            <ChevronDownIcon  className="h-4 w-4" />
         </Button>
         <DialogContent className="sm:max-w-[350px] p-0 overflow-hidden">
             <DialogHeader className="px-6 py-4 border-b bg-gray-50">
@@ -130,7 +213,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
             <div className="px-2 py-3">
               <div className="space-y-1">
                 {/* Allocate */}
-                <Button 
+                {allocate && <Button 
                   variant="ghost" 
                   className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
                   onClick={handleStatusDialog}
@@ -141,27 +224,27 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
                     </div>
                     <span className="font-medium">Allocate</span>
                   </div>
-                </Button>
+                </Button>}
 
-                {/* Submit for Review */}
-                <Button 
+                {/* Submit for \\status// */}
+                {submit && <Button 
                   variant="ghost" 
                   className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
-                  onClick={handleStatusDialog}
+                  onClick={handleAddSubmission}
                 >
                   <div className="flex items-center">
                     <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
                       <SendIcon className="w-4 h-4 text-purple-600" />
                     </div>
-                    <span className="font-medium">Submit for Review</span>
+                    <span className="font-medium">Submit for {label}</span>
                   </div>
-                </Button>
+                </Button>}
 
                 {/* Add Activity */}
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
-                  // onClick={}
+                  onClick={handleAddActivity}
                 >
                   <div className="flex items-center">
                     <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
@@ -200,7 +283,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
                 </Button>
               </div>
             </div>
-          </DialogContent>
+        </DialogContent>
       </Dialog>
 
       {/* Report Dialog */}
@@ -261,8 +344,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
                   !formData.investigation_outcome
                 }
               >
-                <Save className="w-4 h-4 mr-2" /> 
-                {isSubmittingReport ? 'Saving...' : 'Save Changes'}
+                <Send className="w-4 h-4 mr-2" /> 
+                {isSubmittingReport ? 'Submitting...' : 'Submit report'}
               </Button>
             </div>
           </form>
@@ -273,9 +356,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
       <Dialog open={isStatusOpen} onOpenChange={setIsStatusOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>Update Status</DialogTitle>
+            <DialogTitle>Allocate</DialogTitle>
             <DialogDescription>
-              Select the new status for this record.
+              Select allocation for this record.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateStatus} className="space-y-4">
@@ -286,26 +369,28 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">Allocate to</Label>
               <Select
                 value={status}
                 onValueChange={handleStatusChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select new status" />
+                  <SelectValue placeholder="Allocate to" />
                 </SelectTrigger>
                 <SelectContent>
-                <SelectItem value="Incoming">Incoming</SelectItem>
-                    <SelectItem value="Registered">Registered</SelectItem>
-                    <SelectItem value="Under-Review">Under-Review</SelectItem>
-                    <SelectItem value="Assessment">Assessment</SelectItem>
-                    <SelectItem value="Ongoing-investigation">Ongoing-investigation</SelectItem>
-                    <SelectItem value="Complete-investigations">Complete-investigations</SelectItem>
-                    <SelectItem value="Recommend for closure">Recommend for closure</SelectItem>
-                    <SelectItem value="Recommend for re-investigation">Recommend for re-investigation</SelectItem>
-                    <SelectItem value="Recommend for Disciplinary">Recommend for Disciplinary</SelectItem>
-                    <SelectItem value="Approve endorsement">Approve endorsement</SelectItem>
-                    <SelectItem value="Reject endorsement">Approve endorsement</SelectItem>
+                  <SelectGroup>
+                    {investigationStatuses
+                      .filter(item => hasAccess(item.access))
+                      .map((item) => (
+                        <SelectItem 
+                          key={item.value} 
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))
+                    }
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
@@ -323,12 +408,55 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId }) => {
                 disabled={isSubmitting || !status}
               >
                 <Save className="w-4 h-4 mr-2" />
-                {isSubmitting ? 'Updating...' : 'Update Status'}
+                {isSubmitting ? 'Allocating...' : 'Allocate'}
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
+      {/* Submit Dialog */}
+      <AlertDialog open={isSubmitOpen} onOpenChange={setIsSubmitOpen}>
+          <AlertDialogContent className="sm:max-w-[500px]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Submit for {next_status}</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action will change the status to <span className='italic font-medium'>{next_status}</span>, and this will route the application to the next level.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            {error && (
+              <div className="text-red-500 text-sm mt-4">
+                {error}
+              </div>
+            )}
+            <AlertDialogFooter>
+              <AlertDialogCancel 
+                onClick={() => setIsSubmitOpen(false)}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <Button
+                className="bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                onClick={() => handleSingleStatusChange(recordId, next_status!)}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit
+                  </>
+                )}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+      </AlertDialog>
+      {/* Activity Dialog */}
+      {isActivityModalOpen && (
+        <ActivityModal onClose={handleCloseActivityModal} recordId={recordId}/>)}
     </>
   )
 }

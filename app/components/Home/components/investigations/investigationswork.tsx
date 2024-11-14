@@ -8,6 +8,7 @@ import { InvestigationsTable } from "../investigations-table";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { TipOffsTable } from "../tipoffs-table";
+import ActionButtons from "@/app/components/record/components/ActionItems";
 
 interface Props {
   userRole: string
@@ -40,50 +41,64 @@ export const InvestigationsWork = ({ userRole }: Props) => {
     
   return (
     <>
-      <div className="flex flex-col gap-4 pb-5 md:grid md:grid-cols-2">
-        <div className="space-y-4 md:space-y-0">
-          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
-            {/* Select dropdown */}
-            <div className="w-full md:w-auto">
-              <Label className="font-light">Show work for</Label>
-              <Select onValueChange={handleSelectChange} value={table}>
-                <SelectTrigger className="w-full md:w-[180px]">
+      <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          {/* Left Section - Select and Filters */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Show work for</Label>
+            <div className="flex items-center gap-3">
+              <Select 
+                onValueChange={handleSelectChange} 
+                value={table}
+              >
+                <SelectTrigger className="w-[200px] bg-white">
                   <SelectValue placeholder="Select an application..." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Application Type</SelectLabel>
-                    {reg_application && <SelectItem value="RegistrationApplication">Registration</SelectItem>}
-                    {tipoff_Next_Status && <SelectItem value="Tip Offs">Tip Offs</SelectItem>}
-                    {inv_application && <SelectItem value="Investigations">Investigations</SelectItem>}
+                    {reg_application && 
+                      <SelectItem value="RegistrationApplication">
+                        Registration
+                      </SelectItem>
+                    }
+                    {tipoff_Next_Status && 
+                      <SelectItem value="Tip Offs">
+                        Tip Offs
+                      </SelectItem>
+                    }
+                    {inv_application && 
+                      <SelectItem value="Investigations">
+                        Investigations
+                      </SelectItem>
+                    }
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
+          </div>
 
-            {/* Action buttons */}
-            <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 md:items-end">
+          {/* Right Section - Action Buttons */}
+          <div className="flex flex-wrap items-center gap-3">
               <Link 
                 href="/trls/work/investigation/create" 
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full md:w-auto"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>Investigation</span>
+                Investigation
               </Link>
-
-              <Link 
-                href="/trls/work/tipoff/create" 
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full md:w-auto"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Tip-off</span>
-              </Link>
-            </div>
+            <Link 
+              href="/trls/work/tipoff/create" 
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            >
+              <Plus className="h-4 w-4" />
+              Tip-off
+            </Link>
           </div>
         </div>
 
-
-        <div className="w-full md:place-self-end">
+        {/* Optional Search Bar */}
+        <div className="mt-4 md:mt-6">
           <Search />
         </div>
       </div>

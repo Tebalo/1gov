@@ -5,6 +5,12 @@ export type AuthenticateResult =
 export type UserRole = 'MANAGER' | 'REGISTRATION_OFFICER' | 'SNR_REGISTRATION_OFFICER' | 'DIRECTOR' | 'REGISTRAR' | 'LICENSE_OFFICER' | 'SNR_LICENSE_OFFICER' | 'LICENSE_MANAGER'|'INVESTIGATIONS_OFFICER'| 'INVESTIGATIONS_MANAGER'| 'SENIOR_INVESTIGATIONS_OFFICER' | 'ADMIN';
 
 
+export interface InvestigationStatuses {
+  label: string;
+  value: string;
+  access: string[];
+}
+
 export interface AuthResponse {
   message: string;
   access_token: string;
