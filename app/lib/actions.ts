@@ -179,7 +179,7 @@ export async function createComplaint(payload: ComplaintPayload): Promise<{succe
 export async function updateComplaintStatus(ID: string, status: string): Promise<{code: number; message: string}> {
   try {
 
-
+    console.log(ID,status)
     const response = await fetch(`${invUrl}/update-status/${ID}?reg_status=${status}`, {
       method: 'PUT',
       headers: {

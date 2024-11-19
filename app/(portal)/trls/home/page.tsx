@@ -3,6 +3,8 @@ export const dynamic = 'force-dynamic';
 import { getRole} from "@/app/auth/auth";
 import { AdminHome } from "@/app/components/Home/AdminHome";
 import { DirectorHome } from "@/app/components/Home/DirectorHome";
+import { DisciplinaryCommitteHome } from "@/app/components/Home/DisciplinaryCommitteHome";
+import { InvestigationsDirectorHome } from "@/app/components/Home/InvestigationsDirectorHome";
 import { InvestigationsOfficerHome } from "@/app/components/Home/InvestigationsOfficerHome";
 import { LicenseManagerHome } from "@/app/components/Home/LicenseManagerHome";
 import { LicenseOfficerHome } from "@/app/components/Home/LicenseOfficerHome";
@@ -29,11 +31,15 @@ export default async function Home(){
         return <InvestigationsOfficerHome/>
     } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerHome/>
-    } else if(userRole === 'MANAGER'){
+    } else if(userRole?.toUpperCase() === 'MANAGER'){
         return <ManagerHome/>
     } else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <DirectorHome/>
-    } else if(userRole?.toUpperCase() === 'REGISTRAR'){
+    }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
+        return <InvestigationsDirectorHome/>
+    } else if(userRole?.toUpperCase() === 'DISCIPLINARY_COMMITTEE'){
+        return <DisciplinaryCommitteHome/>
+    }else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarHome/>
     }else if(userRole?.toUpperCase() === 'LICENSE_OFFICER'){
         return <LicenseOfficerHome/>

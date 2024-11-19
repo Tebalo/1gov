@@ -21,26 +21,12 @@ import Link from "next/link";
 import { getSession, logout, refreshToken, updateAccessGroup } from "@/app/auth/auth";
 import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight } from 'lucide-react';
+import { portalNames } from '@/app/lib/store';
 
 
 interface NavUtilsProps {
   accessProfile: AccessGroup | null;
 }
-
-const portalNames: { [key: string]: string } = {
-    'REGISTRATION_OFFICER': 'Registration Officer Portal',
-    'ADMIN': 'Admin Portal',
-    'MANAGER': 'Registration Manager Portal',
-    'LICENSE_MANAGER': 'License Manager Portal',
-    'SNR_REGISTRATION_OFFICER':'Snr. REG Officer Portal',
-    'DIRECTOR': 'Director Portal',
-    'REGISTRAR': 'Registrar Portal',
-    'LICENSE_OFFICER': 'License Officer Portal',
-    'SNR_LICENSE_OFFICER':'Snr. LIC Officer Portal',
-    'INVESTIGATIONS_OFFICER': 'Investigations Officer Portal',
-    'SENIOR_INVESTIGATIONS_OFFICER': 'Senior INV Officer Portal',
-    'INVESTIGATIONS_MANAGER': 'Investigations Manager Portal'
-};
 
 const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
   const [isOpen, setIsOpen] = useState(false);
