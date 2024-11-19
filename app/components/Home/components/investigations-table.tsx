@@ -1,9 +1,7 @@
 "use client"
-import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { getInvestigations, getInvRecords, getRegApplications } from "@/app/lib/actions"
+import {  getInvRecords } from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
-import { LoadingSkeleton } from "../../LoadingSkeleton";
 import TableLoadingSkeleton from "../../TableLoadingSkeleton";
 import { investigationsColumns } from "./investigations-columns";
 import { roleObjects } from "@/app/lib/store";
@@ -49,15 +47,14 @@ const replaceNullWithEmptyString = <T extends object>(obj: T): T => {
 };
 
 export const InvestigationsTable: React.FC<WorkProps> = ({status, userRole}) => {
-    const { reg_application, lic_application, reg_Next_Status, lic_Next_Status, inv_Next_Status, defaultWork } = roleObjects[userRole] || {};
+    // const { inv_Next_Status} = roleObjects[userRole.toUpperCase()] || {};
     const [response, setResponse] = useState<Complaint[] | null>(null)
     const [isLoading, setIsLoading] = useState(false);
-
+  
     async function getApplications(status: string) {
         setIsLoading(true);
         try {
             const list: Complaint[] = await getInvRecords(status, '100');
-            console.log(list)
             setResponse(list);
         } catch (error) {
             setResponse(null);
@@ -67,8 +64,8 @@ export const InvestigationsTable: React.FC<WorkProps> = ({status, userRole}) => 
     }
 
     useEffect(() => {
-        getApplications(inv_Next_Status || '');
-    }, [inv_Next_Status]);
+        getApplications(status || '');
+    }, [status]);
 
     return (
         <div className="h-full">

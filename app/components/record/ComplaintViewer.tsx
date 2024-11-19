@@ -1,5 +1,5 @@
 import { FaFilePdf } from 'react-icons/fa';
-import { statusTransitions } from '@/app/lib/store';
+import { Role, statusTransitions } from '@/app/lib/store';
 import { 
   Info, FileText,  FileCheck,
   ClipboardCheck
@@ -39,16 +39,11 @@ export const getNextStatus = (userRole: string): {
 
 interface InvestigationViewProps {
   data: Investigation;
-  userRole: string;
+  userRole: Role;
 }
 
   const InvestigationView: React.FC<InvestigationViewProps> = ({ data, userRole }) => {
 
-    const { next_status, approve_label, allocate, submit } = getNextStatus(userRole);
-  
-    const handleStatusChange = async (id: string, status: string, rejection_reason: string) => {
-      
-    };
     const renderSection = (content: React.ReactNode) => (
       <div className="mb-8">
         {content}
@@ -64,11 +59,8 @@ interface InvestigationViewProps {
             </h1>
             <ActionButtons 
               recordId={data.reporter.inquiry_number  ?? ''} 
-              access={userRole} 
-              next_status={next_status} 
-              label={approve_label}
-              allocate={allocate}
-              submit={submit}
+              userRole={userRole} 
+              current_status={data.reporter.reg_status ?? ''}
             />
           </div>
           <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>

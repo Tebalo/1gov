@@ -10,7 +10,7 @@ import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Sess
 
 // Constants
 const key = new TextEncoder().encode(secretKey);
-const ROLES: UserRole[] = ['REGISTRATION_OFFICER', 'MANAGER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'INVESTIGATIONS_OFFICER', 'INVESTIGATIONS_MANAGER', 'SENIOR_INVESTIGATIONS_OFFICER', 'ADMIN'];
+const ROLES: UserRole[] = ['REGISTRATION_OFFICER', 'MANAGER', 'SNR_REGISTRATION_OFFICER', 'DIRECTOR', 'REGISTRAR', 'LICENSE_OFFICER', 'SNR_LICENSE_OFFICER', 'LICENSE_MANAGER', 'INVESTIGATIONS_OFFICER', 'INVESTIGATIONS_MANAGER','INVESTIGATIONS_DIRECTOR','DISCIPLINARY_COMMITTEE', 'SENIOR_INVESTIGATIONS_OFFICER', 'ADMIN'];
 
 // Helper functions
 async function fetchWithErrorHandling(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<any> {
@@ -328,13 +328,26 @@ export async function storeSession(authResponse: AuthResponse) {
   cookies().set("session", encryptedSession, { expires, httpOnly: true })
 }
 
+function findFirstValidPersona(personas: string[], userRoles: string[]): string {
+  for (const persona of personas){
+    if(userRoles.includes(persona)){
+      return persona;
+    }
+  }
+  // Return default or throw error if no valid persona found
+  throw new Error('No valid persona found in user roles');
+}
+
 export async function storeAccessGroups(decodedToken: DecodedToken){
   try{
     const expires = new Date(Date.now() + 30 * 60 * 1000);
     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+
+    const currentPersona = findFirstValidPersona(personas, ROLES);
+
     const access_group: AccessGroup = {
       persona: personas,
-      current: personas[0],
+      current: currentPersona,
       username: decodedToken.name,
       userid: decodedToken.preferred_username,
     }

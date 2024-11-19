@@ -26,7 +26,7 @@ export const complaintSchema = z.object({
   inquiry_number:z.string(),
   reg_status: z.string(),
   date_of_submission: z.string(),
-  anonymous: z.boolean()
+  anonymous: z.boolean() 
 })
 
 export const complaintSchemawithNullValues = z.object({

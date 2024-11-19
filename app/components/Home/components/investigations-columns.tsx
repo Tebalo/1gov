@@ -45,15 +45,6 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "Omang_id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Omang" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("Omang_id")}</div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "inquiry_number",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Inquiry Number" />
@@ -71,7 +62,7 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
       )
     },
   },
-    {
+  {
     accessorKey: "submission_type",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Submission type" />
@@ -109,34 +100,54 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
       return value.includes(cellValue);
     },
   },
-  // {
-  //   accessorKey: "outcome",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Status" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const statusValue = row.getValue("reg_status")?.toString().trim()
-  //     const status = invstatuses.find(
-  //       (status) => status.value === row.getValue("reg_status")
-  //     )
-
-  //     if (!status || !statusValue) {
-  //       return null
-  //     }
-
-  //     return (
-  //       <div className="flex w-full items-center">
-  //         {status.icon && (
-  //           <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-  //         )}
-  //         <span>{status.label}</span>
-  //       </div>
-  //     )
-  //   },
-  //   filterFn: (row, id, value) => {
-  //     return value.includes(row.getValue(id))
-  //   },
-  // },
+  {
+    accessorKey: "date_of_submission",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Date of submission" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("date_of_submission")}</div>,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "date_of_submission",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="SLA Status" />
+    ),
+    cell: ({ row }) => {
+      const createdAt = new Date(row.getValue("date_of_submission"));
+      const today = new Date();
+      const diffTime = today.getTime() - createdAt.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const remainingDays = 30 - diffDays;
+  
+      let badgeColor = "bg-green-100 text-green-800";
+      let displayText = `${remainingDays} days left`;
+  
+      if (remainingDays <= 5 && remainingDays > 0) {
+        badgeColor = "bg-yellow-100 text-yellow-800";
+      } else if (remainingDays <= 0) {
+        badgeColor = "bg-red-100 text-red-800";
+        const overdueDays = Math.abs(remainingDays);
+        displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+      }
+  
+      return (
+        <div className="flex items-center">
+          <Badge className={`${badgeColor} font-semibold`}>
+            {displayText}
+          </Badge>
+        </div>
+      );
+    },
+    sortingFn: (rowA, rowB, columnId) => {
+      const dateA = new Date(rowA.getValue(columnId));
+      const dateB = new Date(rowB.getValue(columnId));
+      const remainingDaysA = 30 - Math.ceil((new Date().getTime() - dateA.getTime()) / (1000 * 60 * 60 * 24));
+      const remainingDaysB = 30 - Math.ceil((new Date().getTime() - dateB.getTime()) / (1000 * 60 * 60 * 24));
+      return remainingDaysA - remainingDaysB;
+    },
+  },
   {
     id: "actions",
     cell: ({ row }) => <InvTableRowActions row={row} />,

@@ -11,6 +11,8 @@ import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHo
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
 import { DirectorWork } from "@/app/components/MyWork/DirectorWork";
+import { DisciplinaryCommitteWork } from "@/app/components/MyWork/DisciplinaryCommitteWork";
+import { InvestigationsDirectorWork } from "@/app/components/MyWork/InvestigationsDirectorWork";
 import { InvestigationsManagerWork } from "@/app/components/MyWork/InvestigationsManagerWork";
 import { InvestigationsOfficerWork } from "@/app/components/MyWork/InvestigationsOfficerWork";
 import { ManagerWork } from "@/app/components/MyWork/ManagerWork";
@@ -37,7 +39,11 @@ export default async function Work(){
         return <SnrRegistrationOfficerWork/>
     } else if(userRole === 'MANAGER'){
         return <ManagerWork/>
-    } else if(userRole?.toUpperCase() === 'DIRECTOR'){
+    } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
+        return <InvestigationsDirectorWork/>
+    }else if(userRole?.toUpperCase() === 'DISCIPLINARY_COMMITTEE'){
+        return <InvestigationsOfficerWork/>
+    }else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <DirectorWork/>
     } else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarWork/>

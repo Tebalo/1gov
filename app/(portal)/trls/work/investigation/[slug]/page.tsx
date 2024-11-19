@@ -3,6 +3,7 @@ import InvestigationView from "@/app/components/record/ComplaintViewer";
 import { getComplaintsById } from "@/app/lib/actions";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
+import { Role } from "@/app/lib/store";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const id = params.slug;
@@ -11,8 +12,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   try {
     inv = await getComplaintsById(id);
-    const userRole = await getRole();
-    
+    const rawRole = await getRole() ?? 'default'; // type assertion
+    const userRole = rawRole.toLowerCase() as Lowercase<Role>;
+
     return (
       <main className="h-full">
         <div className="flex flex-row h-full gap-0">

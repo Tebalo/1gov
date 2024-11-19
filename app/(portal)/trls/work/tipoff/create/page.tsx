@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import InfoCard from '@/app/components/InfoCard'
 import { FileCheck, Info, SaveIcon } from 'lucide-react'
 import { createTipOff } from '@/app/lib/actions'
+import InfoCardTwo from '@/app/components/InfoCardTwoColumn'
 
 interface TipOffData {
   full_name: string;
@@ -104,7 +105,7 @@ export default function CreateTipOffPage() {
           )}
 
           {/* Personal Information */}
-          <InfoCard title="Personal Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
+          <InfoCardTwo title="Personal Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">Full Name</label>
               <Input
@@ -149,10 +150,10 @@ export default function CreateTipOffPage() {
                 required
               />
             </div>
-          </InfoCard>
+          </InfoCardTwo>
 
           {/* Crime Information */}
-          <InfoCard title="Crime Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+          <InfoCardTwo title="Crime Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="nature_of_crime" className="block text-sm font-medium text-gray-700">Nature of Crime</label>
               <Select
@@ -194,7 +195,7 @@ export default function CreateTipOffPage() {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
-          </InfoCard>
+          </InfoCardTwo>
         </form>
       </div>
     </div>

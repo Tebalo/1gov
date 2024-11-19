@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, FileText, RefreshCw, Save, Send, PlusCircleIcon, ChevronDown, ChevronDownIcon, UserPlus2, SendIcon, PlusCircle } from 'lucide-react'
+import { Edit, FileText, RefreshCw, Save, Send, PlusCircleIcon, ChevronDown, ChevronDownIcon, UserPlus2, SendIcon, PlusCircle, FileCheck2, CheckCircle, InfoIcon, AlertCircle, XCircle, AlertTriangle, X } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -27,19 +27,20 @@ import {
 import { Loader2 } from 'lucide-react'
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast'
-import { investigationStatuses } from '@/app/lib/store'
+import { investigationStatuses, ComplaintStatus, Role, canUserAccessStatusFull } from '@/app/lib/store'
 import ActivityModal from '../ActivityModal'
+import { InvestigationStatuses } from '@/app/lib/types'
+import { fa } from '@faker-js/faker'
 
 interface ActionButtonsProps {
   recordId: string;
-  access: string;
-  next_status: string | null;
-  label?: string | null;
-  allocate?: boolean | false;
-  submit?: boolean | false;
+  userRole: Role;
+  current_status: string;
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_status, label, allocate, submit }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
+  //const {next_statuses, persona, isLast, status_label} = getActionStatus(current_status ?? 'default');
+
   const [isActionsOpen, setIsActionsOpen] = useState(false)
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [isStatusOpen, setIsStatusOpen] = useState(false)
@@ -48,10 +49,21 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
   const [isSubmitOpen, setIsSubmitOpen] = useState(false)
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
 
+  //const firstStatus = next_statuses && next_statuses.length > 0 ? next_statuses[0].value : "default";
+
   const [error, setError] = useState('')
   const router = useRouter()
   const {toast} = useToast()
-  
+  // check access
+  const access = canUserAccessStatusFull(userRole, current_status);
+
+  const {hasPermission, nextStatus, status_label, isAllowedRole} = access || {
+    hasPermission: false,
+    nextStatus: '',
+    status_label: '',
+    isAllowedRole: false
+  }
+
   const [formData, setFormData] = useState({
     investigation_details: '',
     investigation_outcome: ''
@@ -107,6 +119,12 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
     setIsSubmitOpen(true)
   }
 
+  const handleSubmitForReview = () => {
+    setError('')
+    setIsActionsOpen(false)
+    setIsSubmitOpen(true)
+  }
+
   const handleStatusChange = (value: string) => {
     setError('')
     setStatus(value)
@@ -118,6 +136,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
     setError('')
 
     try {
+      
       const result = await updateComplaintStatus(recordId.toString(), status)
       if (result.code === 200 || result.code === 201) {
         setIsStatusOpen(false)
@@ -152,7 +171,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
   const handleSingleStatusChange = async (ID: string, status: string) => {
     setIsSubmitting(true)
     setError('')
-    
+    console.log(ID,status)
     try {
       const result = await updateComplaintStatus(ID, status)
       if (result.code === 200 || result.code === 201) {
@@ -191,7 +210,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
   }
 
   const hasAccess = (itemRoles: string[]) => {
-    return itemRoles.includes("*") || itemRoles.includes(access.toLowerCase())
+    return itemRoles.includes("*") || itemRoles.includes(userRole.toLowerCase())
   }
 
   return (
@@ -213,7 +232,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
             <div className="px-2 py-3">
               <div className="space-y-1">
                 {/* Allocate */}
-                {allocate && <Button 
+                {hasPermission && nextStatus === "Ongoing-Investigation" && <Button 
                   variant="ghost" 
                   className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
                   onClick={handleStatusDialog}
@@ -225,20 +244,32 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
                     <span className="font-medium">Allocate</span>
                   </div>
                 </Button>}
-
-                {/* Submit for \\status// */}
-                {submit && <Button 
-                  variant="ghost" 
-                  className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
-                  onClick={handleAddSubmission}
-                >
-                  <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                      <SendIcon className="w-4 h-4 text-purple-600" />
+                {/* (current_status === 'Under-Review' || 
+                  current_status === 'Assessment' || 
+                  current_status === 'Ongoing-Investigation') && submit && */}
+                {/* Submit for status or Complete Investigation */}
+                {hasPermission && ((nextStatus === "Complete-Investigation") || (nextStatus === "Under-Review") || (nextStatus === "Assessment")) &&(
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start hover:bg-gray-100 rounded-lg px-4 py-2.5 transition-colors"
+                    onClick={handleAddSubmission}
+                  >
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                        {current_status === 'Ongoing-Investigation' ? (
+                          <FileCheck2 className="w-4 h-4 text-purple-600" />
+                        ) : (
+                          <SendIcon className="w-4 h-4 text-purple-600" />
+                        )}
+                      </div>
+                      <span className="font-medium">
+                        {current_status === 'Ongoing-Investigation' 
+                          ? 'Complete Investigation'
+                          : status_label}
+                      </span>
                     </div>
-                    <span className="font-medium">Submit for {label}</span>
-                  </div>
-                </Button>}
+                  </Button> 
+                )}
 
                 {/* Add Activity */}
                 <Button
@@ -352,8 +383,154 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
         </DialogContent>
       </Dialog>
 
-      {/* Status Update Dialog */}
+      {/* Allocate Dialog */}
       <Dialog open={isStatusOpen} onOpenChange={setIsStatusOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Allocate</DialogTitle>
+            <DialogDescription>
+              Select allocation for this record.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateStatus} className="space-y-4">
+            {error && (
+              <div className="p-4 rounded-md bg-red-50">
+                <div className="flex justify-between">
+                  <div className="flex">
+                    <AlertTriangle className="h-5 w-5 text-red-400" />
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-red-800">{error}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setError('')}
+                    className="inline-flex text-red-400 hover:text-red-500"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {status && !error && (
+              <div className="p-4 rounded-md bg-blue-50 border border-blue-200">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <InfoIcon className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">
+                      Status will be updated to:
+                    </h3>
+                    <div className="mt-2 text-sm text-blue-700">
+                      {investigationStatuses.find(item => item.value === status)?.value || status}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="status">Allocate to</Label>
+              <Select
+                value={status}
+                onValueChange={handleStatusChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Allocate to" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {investigationStatuses
+                      .filter(item => hasAccess(item.access))
+                      .map((item) => (
+                        <SelectItem 
+                          key={item.value} 
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))
+                    }
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setIsStatusOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                disabled={isSubmitting || !status}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSubmitting ? 'Allocating...' : 'Allocate'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {/* Submit Dialog */}
+      <AlertDialog open={isSubmitOpen} onOpenChange={setIsSubmitOpen}>
+          <AlertDialogContent className="sm:max-w-[500px]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>{status_label}</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action will change the status to <span className='italic font-medium text-green-600'>{nextStatus}</span>, and this will route the application to the next level.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            {error && (
+              <div className="p-4 rounded-md bg-red-50">
+                <div className="flex justify-between">
+                  <div className="flex">
+                    <AlertTriangle className="h-5 w-5 text-red-400" />
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-red-800">{error}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setError('')}
+                    className="inline-flex text-red-400 hover:text-red-500"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            )}
+            <AlertDialogFooter>
+              <AlertDialogCancel 
+                onClick={() => setIsSubmitOpen(false)}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <Button
+                className="bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                onClick={() => handleSingleStatusChange(recordId, nextStatus ?? '')}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit
+                  </>
+                )}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Allocate Dialog */}
+      {/* <Dialog open={isStatusOpen} onOpenChange={setIsStatusOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
             <DialogTitle>Allocate</DialogTitle>
@@ -413,12 +590,12 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
             </div>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
       {/* Submit Dialog */}
-      <AlertDialog open={isSubmitOpen} onOpenChange={setIsSubmitOpen}>
+      {/* <AlertDialog open={isSubmitOpen} onOpenChange={setIsSubmitOpen}>
           <AlertDialogContent className="sm:max-w-[500px]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Submit for {next_status}</AlertDialogTitle>
+              <AlertDialogTitle>Complete Investigation</AlertDialogTitle>
               <AlertDialogDescription>
                 This action will change the status to <span className='italic font-medium'>{next_status}</span>, and this will route the application to the next level.
               </AlertDialogDescription>
@@ -453,7 +630,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, access, next_st
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
+
       {/* Activity Dialog */}
       {isActivityModalOpen && (
         <ActivityModal onClose={handleCloseActivityModal} recordId={recordId}/>)}
