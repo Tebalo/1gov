@@ -10,11 +10,11 @@ export default function Page() {
                 <PageTitle Title="Components Factory" />
             </div>
             <div className="mb-8">
-                <ActionButtons recordId="INQ2024-11-00001" userRole="investigations_manager" current_status={"Ongoing-Investigation"}/>
+                <ActionButtons recordId="INQ2024-11-00001" userRole="investigations_manager" current_status={"assessment"}/>
             </div>
             <Separator/>
             <div className="my-8">
-                <InvestigationsWork userRole="disciplinary_committee"/>
+                <InvestigationsWork userRole="default"/>
             </div>
         </div>
     )
