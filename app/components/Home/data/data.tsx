@@ -112,60 +112,50 @@ import {
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Under-Review",
+      value: "UNDER-REVIEW",
       label: "Under-Review",
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Assessment",
+      value: "ASSESSMENT",
       label: "Assessment",
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Ongoing-investigation",
+      value: "ONGOING-INVESTIGATION",
       label: "Ongoing-investigation",
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Recommend for closure",
+      value: "RECOMMEND-FOR-CLOSURE",
       label: "Recommend for closure",
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Recommend for re-investigation",
-      label: "Recommend for re-investigation",
+      value: "RECOMMEND-FOR-INVESTIGATION",
+      label: "Recommend for RE-Investigation",
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Recommend for Disciplinary",
+      value: "RECOMMEND-FOR-DISCIPLINARY",
       label: "Recommend for Disciplinary",
       icon: QuestionMarkCircledIcon,
     },
     {
-      value: "Under Investigation",
-      label: "Under Investigation",
+      value: "CASE-CLOSED",
+      label: "Case Closed",
       icon: CheckCircledIcon,
     },
     {
-      value: "Reject endorsement",
-      label: "Reject endorsement",
+      value: "EXTERNAL-INVESTIGATION",
+      label: "External Investigation",
       icon: CrossCircledIcon,
     },
     {
-      value: "Assessment",
-      label: "Assessment",
+      value: "RECOMMEND-FOR-EXTERNAL-INVESTIGATION",
+      label: "Recommend for External Investigation",
       icon: CheckCircledIcon,
-    },
-    {
-      value: "Approve endorsement",
-      label: "Approve endorsement",
-      icon: CheckCircledIcon,
-    },
-    {
-      value: "Complete-investigations",
-      label: "Complete-investigations",
-      icon: CheckCircledIcon,
-    },
+    }
   ]
   
   export const priorities = [

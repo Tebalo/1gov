@@ -14,7 +14,7 @@ export default function Page() {
             </div>
             <Separator/>
             <div className="my-8">
-                <InvestigationsWork userRole="default"/>
+                <InvestigationsWork userRole="investigations_manager"/>
             </div>
         </div>
     )
