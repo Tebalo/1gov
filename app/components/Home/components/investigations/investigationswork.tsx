@@ -15,30 +15,71 @@ interface Props {
 
 // Define available tables and their required permissions
 const AVAILABLE_TABLES = {
-  'Incoming Cases': {
+  'Incoming Cases': { // investigation officer
     requiredPermission: 'view:complaints-incoming' as const,
-    status: 'Incoming'
+    status: 'INCOMING',
+    component: InvestigationsTable
   },
-  'Under-Review Cases': {
+  'Cases Under Review': { // senior investigation officer
     requiredPermission: 'view:complaints-review' as const,
-    status: 'Under-Review'
+    status: 'UNDER-REVIEW',
+    component: InvestigationsTable
   },
-  'Assessment Cases': {
+  'Assessment Cases': { // investigation manager
     requiredPermission: 'view:complaints-assessment' as const,
-    status: 'Under-Review'
+    status: 'ASSESSMENT',
+    component: InvestigationsTable
   },
-  'Tip Offs': {
+  'Tip Offs': { // *
     requiredPermission: 'view:tipoffs' as const,
-    status: 'Incoming'
+    status: 'INCOMING',
+    component: TipOffsTable
   },
-  'Investigation Cases': {
+  'Ongoing Investigations': { // investigation team
     requiredPermission: 'view:complaints-ongoing-investigation' as const,
-    status: 'Ongoing-Investigation'
+    status: 'ONGOING-INVESTIGATION',
+    component: InvestigationsTable
   },
-  'External INV Cases': {
-    requiredPermission: 'view:recommend-for-external-investigation' as const,
-    status: 'Recommend-for-External-Investigation'
-  }
+  'Ongoing Disciplinary Cases': { // disciplinary committee
+    requiredPermission: 'view:complaints-ongoing-disciplinary' as const,
+    status: 'ONGOING-DISCIPLINARY',
+    component: InvestigationsTable
+  },
+  'Completed Investigations': { // manager
+    requiredPermission: 'view:complaints-investigation-complete' as const,
+    status: 'INVESTIGATION-COMPLETE',
+    component: InvestigationsTable
+  },
+  'Recommended for External Investigations': { // director
+    requiredPermission: 'view:complaints-recommend-for-external-investigation' as const,
+    status: 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION',
+    component: InvestigationsTable
+  },
+  'Recommended for Disciplinary': { // director
+    requiredPermission: 'view:complaints-recommend-for-disciplinary' as const,
+    status: 'RECOMMEND-FOR-DISCIPLINARY',
+    component: InvestigationsTable
+  },
+  'Recommended for Closure': { // director
+    requiredPermission: 'view:complaints-recommend-for-closure' as const,
+    status: 'RECOMMEND-FOR-CLOSURE',
+    component: InvestigationsTable
+  },
+  'Recommended for RE-Investigation': { // director
+    requiredPermission: 'view:complaints-recommend-for-investigation' as const,
+    status: 'RECOMMEND-FOR-INVESTIGATION',
+    component: InvestigationsTable
+  },
+  'External Investigations': { // *
+    requiredPermission: 'view:complaints-external-investigation' as const,
+    status: 'EXTERNAL-INVESTIGATION',
+    component: InvestigationsTable
+  },
+  'Closed Cases': { // *
+    requiredPermission: 'view:complaints-closed' as const,
+    status: 'CASE-CLOSED',
+    component: InvestigationsTable
+  },
 } as const;
 
 export const InvestigationsWork = ({ userRole }: Props) => {
@@ -51,12 +92,10 @@ export const InvestigationsWork = ({ userRole }: Props) => {
   // Set default table to first available table or empty string if none available
   const defaultTable = availableTables.length > 0 ? availableTables[0][0] : '';
   const [selectedTable, setSelectedTable] = useState(defaultTable);
-
+  const [refreshKey, setRefreshKey] = useState(0); // Add a key state to force table refresh
   // Get current table configuration
-  const currentTableConfig = selectedTable ? AVAILABLE_TABLES[selectedTable as keyof typeof AVAILABLE_TABLES] : null;
+  // const currentTableConfig = selectedTable ? AVAILABLE_TABLES[selectedTable as keyof typeof AVAILABLE_TABLES] : null;
 
-  // Add a key state to force table refresh
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSelectChange = (newValue: string) => {
     setSelectedTable(newValue);
@@ -66,24 +105,18 @@ export const InvestigationsWork = ({ userRole }: Props) => {
   };
 
   const renderTable = () => {
-    // if (!currentStatus) return null;
+    if(!selectedTable) return null;
 
-    switch (selectedTable) {
-      case 'Tip Offs':
-        return <TipOffsTable status={"Incoming"} userRole={userRole} />;
-      case 'Incoming Cases':
-        return <InvestigationsTable key={refreshKey} status={'Incoming'} userRole={userRole} />;
-      case 'Under-Review Cases':
-        return <InvestigationsTable key={refreshKey} status={"Under-Review"} userRole={userRole} />;
-      case 'Assessment Cases':
-        return <InvestigationsTable key={refreshKey} status={"Assessment"} userRole={userRole} />;
-      case 'Investigation Cases':
-        return <InvestigationsTable key={refreshKey} status={"Ongoing-Investigation"} userRole={userRole} />;
-      case 'External INV Cases':
-        return <InvestigationsTable key={refreshKey} status={"Recommend-for-External-Investigation"} userRole={userRole} />;
-      default:
-        return null;
-    }
+    const config = AVAILABLE_TABLES[selectedTable as keyof typeof AVAILABLE_TABLES];
+    const TableComponent = config.component;
+
+    return (
+      <TableComponent
+        key={refreshKey}
+        status={config.status}
+        userRole={userRole}
+      />
+    )
   };
 
   return (
@@ -103,7 +136,7 @@ export const InvestigationsWork = ({ userRole }: Props) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Work basket</SelectLabel>
+                    <SelectLabel>Work queues</SelectLabel>
                     {availableTables.map(([tableName]) => (
                       <SelectItem key={tableName} value={tableName}>
                         {tableName}

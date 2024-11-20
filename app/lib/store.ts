@@ -11,7 +11,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.10.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.15.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -94,7 +94,7 @@ export const ComplaintStatus: CaseLifeCycleStatus = {
 
 interface StatusConfig {
     requiredPermission: Permission;
-    nextStatus?: string;
+    nextStatus?: string[];
     status_label: string;
     allowedRoles: Role[];
 }
@@ -102,29 +102,58 @@ interface StatusConfig {
 const STATUS_CONFIG: Record<string, StatusConfig> = {
     'incoming': {
         requiredPermission: 'update:complaints-incoming',
-        nextStatus: 'Under-Review',
-        status_label: 'Submit for review',
+        nextStatus: ['UNDER-REVIEW'],
+        status_label: 'Submit for Review',
         allowedRoles: ['investigations_officer']
     },
     'under-review': {
         requiredPermission: 'update:complaints-review',
-        nextStatus: 'Assessment',
-        status_label: 'Submit for assessment',
+        nextStatus: ['ASSESSMENT'],
+        status_label: 'Submit for Assessment',
         allowedRoles: ['senior_investigations_officer']
     },
     'assessment': {
         requiredPermission: 'allocate:complaints-assessment',
-        nextStatus: 'Ongoing-Investigation',
+        nextStatus: ['ONGOING-INVESTIGATION','RECOMMEND-FOR-CLOSURE','RECOMMEND-FOR-EXTERNAL-INVESTIGATION'],
         status_label: 'Allocate',
         allowedRoles: ['investigations_manager']
     },
     'ongoing-investigation': {
         requiredPermission: 'update:complaints-ongoing-investigation',
-        nextStatus: 'Complete-Investigation',
-        status_label: 'Complete investigation',
+        nextStatus: ['INVESTIGATION-COMPLETE'],
+        status_label: 'Complete Investigation',
         allowedRoles: ['investigations_manager','senior_investigations_officer','investigations_officer']
     },
-    // ... add other statuses
+    'investigation-complete': {
+        requiredPermission: 'update:complaints-investigation-complete',
+        nextStatus: ['RECOMMEND-FOR-DISCIPLINARY','RECOMMEND-FOR-INVESTIGATION','RECOMMEND-FOR-CLOSURE'],
+        status_label: 'Recommend',
+        allowedRoles: ['investigations_manager']
+    },
+    'ongoing-disciplinary': {
+        requiredPermission: 'update:complaints-ongoing-disciplinary',
+        nextStatus: ['CASE-CLOSED'],
+        status_label: 'Complete Disciplinary',
+        allowedRoles: ['disciplinary_committee']
+    },
+    'recommend-for-closure': {
+        requiredPermission: 'update:complaints-ongoing-disciplinary',
+        nextStatus: ['CASE-CLOSED'],
+        status_label: 'Close Case',
+        allowedRoles: ['investigations_director']
+    },
+    'recommend-for-external-investigation': {
+        requiredPermission: 'update:complaints-ongoing-disciplinary',
+        nextStatus: ['EXTERNAL-INVESTIGATION'],
+        status_label: 'Submit for External Investigation',
+        allowedRoles: ['investigations_director']
+    },
+    'recommend-for-investigation': {
+        requiredPermission: 'update:complaints-ongoing-disciplinary',
+        nextStatus: ['ONGOING-INVESTIGATION'],
+        status_label: 'Submit for RE-Investigation',
+        allowedRoles: ['investigations_director']
+    },
 } as const;
 
 export function getStatusConfig(status: string): StatusConfig | undefined {
@@ -145,40 +174,92 @@ export function canUserAccessStatusFull(user: Role, status: string) {
 export type Role = keyof typeof ROLES
 type Permission = (typeof ROLES)[Role][number]
 const ROLES = {
-    default:[],
+    default:[
+        "create:complaints",
+        "create:tipoffs",
+
+        "view:tipoffs",
+
+        "view:complaints-ongoing-investigation",
+        "view:complaints-incoming",
+        "view:complaints-review",
+        "view:complaints-assessment",
+        'view:complaints-recommend-for-closure',
+        'view:complaints-closed',
+        "view:complaints-ongoing-investigation",
+        'view:complaints-recommend-for-investigation',
+        "view:complaints-investigation-complete",
+        'view:complaints-recommend-for-disciplinary',
+        "view:complaints-ongoing-disciplinary",
+        'view:complaints-recommend-for-external-investigation',
+        'view:complaints-external-investigation',
+        
+
+        "allocate:complaints-assessment",
+
+        "update:complaints-ongoing-investigation",
+        "update:complaints-incoming",
+        "update:complaints-review",
+        "update:complaints-assessment",
+        'update:complaints-recommend-for-closure',
+        'update:complaints-closed',
+        "update:complaints-ongoing-investigation",
+        'update:complaints-recommend-for-investigation',
+        "update:complaints-investigation-complete",
+        'update:complaints-recommend-for-disciplinary',
+        "update:complaints-ongoing-disciplinary",
+        'update:complaints-recommend-for-external-investigation',
+        'update:complaints-external-investigation',
+    ],
     investigations_officer: [
         "create:complaints",
         "create:tipoffs",
+
         "view:tipoffs",
-        "view:recommend-for-external-investigation",
-        "view:complaints-ongoing-investigation",
-        "update:complaints-incoming",
         "view:complaints-incoming",
+        "view:complaints-ongoing-investigation",
+
+        "update:complaints-incoming",
         "update:complaints-ongoing-investigation",
     ],
     senior_investigations_officer: [
         "create:complaints",
         "create:tipoffs",
+
         "view:tipoffs",
         "view:complaints-review",
+        "view:complaints-ongoing-investigation",
+
         "update:complaints-review",
         "update:complaints-ongoing-investigation",
-        "view:complaints-ongoing-investigation",
     ],
     investigations_manager: [
         "create:complaints",
+
         "view:complaints-assessment",
-        "allocate:complaints-assessment",
-        "update:complaints-ongoing-investigation",
         "view:complaints-ongoing-investigation",
+        "view:complaints-investigation-complete",
+
+        "allocate:complaints-assessment",
+
+        "update:complaints-ongoing-investigation",
+        "update:complaints-ongoing-investigation",
+
+        "update:complaints-investigation-complete",
     ],
     investigations_director: [
-        "create:complaints",
-        "update:complaints",
+        'view:complaints-recommend-for-investigation',
+        'view:complaints-recommend-for-disciplinary',
+        "view:complaints-investigation-complete",
+        'view:complaints-recommend-for-closure',
+        
+        "update:complaints-investigation-complete",
+        'update:complaints-recommend-for-investigation',
+        "update:complaints-ongoing-disciplinary",
+        'update:complaints-recommend-for-closure',
     ],
     disciplinary_committee: [
-        "view:complaints",
-        "update:complaints",
+        "view:complaints-ongoing-disciplinary",
     ]
 } as const
 
@@ -189,7 +270,9 @@ export function hasPermission(
     return (ROLES[user] as readonly Permission[]).includes(permission)
 }
 
-// to be
+
+
+// legacy code
 export interface RoleObjects{
     [key: string]:{
         reg_application: boolean | false,
@@ -220,6 +303,10 @@ export const portalNames: { [key: string]: string } = {
     'DISCIPLINARY_COMMITTEE':'Disciplinary Committe Portal',
     'INVESTIGATIONS_DIRECTOR': 'Investigations Director Portal'
 };
+
+export const statusNames: {[key: string]: string} = {
+    '':''
+}
 
 export const roleObjects: RoleObjects = {
     'registration_officer': {
@@ -341,17 +428,6 @@ export const mgt = [
     'registrar'
 ]
 
-{/* <SelectItem value="Incoming">Incoming</SelectItem>
-<SelectItem value="Registered">Registered</SelectItem>
-<SelectItem value="Under-Review">Under-Review</SelectItem>
-<SelectItem value="Assessment">Assessment</SelectItem> */}
-{/* <SelectItem value="Ongoing-investigation">Ongoing-investigation</SelectItem>
-<SelectItem value="Complete-investigations">Complete-investigations</SelectItem>
-<SelectItem value="Recommend for closure">Recommend for closure</SelectItem>
-<SelectItem value="Recommend for re-investigation">Recommend for re-investigation</SelectItem>
-<SelectItem value="Recommend for Disciplinary">Recommend for Disciplinary</SelectItem> */}
-{/* <SelectItem value="Approve endorsement">Approve endorsement</SelectItem>
-<SelectItem value="Reject endorsement">Approve endorsement</SelectItem> */}
 
 export const statusTransitions: StatusTransition = {
     'Default': {
