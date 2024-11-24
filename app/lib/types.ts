@@ -332,6 +332,7 @@ interface cpd_activity {
   id: number;
   user_id: string;
   cumulative_points: string;
+  cpd_number: string;
   reg_status: string;
   sla: string;
   cpd_activity: string;

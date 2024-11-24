@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { CPDResponseGet } from '@/app/lib/types';
 import InfoCard from '../InfoCard';
 import InfoItem from '../InfoItem';
+import CPDActionButtons from './components/CPDActionItems';
+import { Role } from '@/app/lib/store';
 
 interface CPDViewerProps {
   data: CPDResponseGet;
-  userRole?: string;
+  userRole: Role;
 }
 
 const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
@@ -102,14 +104,11 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
           <h1 className="text-3xl font-bold text-gray-800">
             CPD Activity Details
           </h1>
-          <Link
-            href={`/trls/work/`}
-            scroll={false}
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            My Work
-          </Link>
+          <CPDActionButtons 
+              recordId={data.data.profile.cpd_number  ?? ''} 
+              userRole={userRole} 
+              current_status={data.data.cpd_activity.reg_status ?? ''}
+            />
         </div>
         <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
       </div>

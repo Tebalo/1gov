@@ -43,7 +43,7 @@ interface FlowActionConfig {
 
 type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | null;
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
+const CPDActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -300,4 +300,4 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
   );
 };
 
-export default ActionButtons;
+export default CPDActionButtons;
