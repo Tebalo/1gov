@@ -1,7 +1,6 @@
-import { InvestigationsWork } from "../Home/components/work/work";
 import { PageTitle } from "../PageTitle";
 import { Label } from "@/components/ui/label";
-
+import { Work } from "../Home/components/work/work";
 export const InvestigationsManagerWork = () => {
   return (
     <div className="overflow-auto h-screen rounded-lg">
@@ -13,7 +12,7 @@ export const InvestigationsManagerWork = () => {
           <div className="flex space-x-2">
             <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
               <Label>My Work</Label>
-                <InvestigationsWork userRole="investigations_manager"/>
+                <Work userRole="investigations_manager"/>
             </div>
           </div>
         </div>
