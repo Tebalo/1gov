@@ -2,8 +2,8 @@
 
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
-import { apiUrl, invUrl, licUrl } from "./store";
-import { Activity, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
+import { apiUrl, cpdUrl, invUrl, licUrl } from "./store";
+import { Activity, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
@@ -181,6 +181,59 @@ export async function updateComplaintStatus(ID: string, status: string): Promise
 
     console.log(ID,status)
     const response = await fetch(`${invUrl}/update-status/${ID}?reg_status=${status}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    });
+
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: result.message || 'Success',
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    };
+  }
+}
+
+export async function updateCPDStatus(ID: string, status: string): Promise<{code: number; message: string}> {
+  try {
+
+    console.log(ID,status)
+    const response = await fetch(`${cpdUrl}/update_status/${ID}?reg_status=${status}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -515,7 +568,7 @@ export async function getActivityByNumber(ID: string): Promise<ActivityObject> {
 
 export async function getTipOffRecordById(Id: string) {
   try {
-    const res = await fetchWithAuth(`${invUrl}/get-tipoff/${Id}`, { cache: 'no-cache' } );
+    const res = await fetchWithAuth(`${invUrl}/get-tipoff/${Id}`, { cache: 'force-cache' } );
 
     if (!res.ok) {
       if (res.status === 200) return null;
@@ -631,6 +684,105 @@ export async function getTipOffs(status: string, count: number): Promise<TipOffL
   }
 }
 
+export async function getCPDs(status: string, count: number): Promise<CPDListResponse> {
+  try {
+
+    const response = await fetch(`${cpdUrl}/get_list?reg_status=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      data: result
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getCPDByNumber(ID: string): Promise<CPDResponseGet> {
+  try {
+
+
+    const response = await fetch(`${cpdUrl}/cpd-applications/${ID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+
+    });
+
+    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+    return {
+      code: response.status,
+      data: result
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
 export async function getUserActivities(userid: string, count: number): Promise<ActivityListResponse> {
   try {
 
@@ -682,12 +834,6 @@ export async function getUserActivities(userid: string, count: number): Promise<
   }
 }
 
-// export async function logout() {
-//   await cookies().set("session", "", { expires: new Date(0) });
-//   return redirect('/welcome');
-//   // Redirect logic should be handled on the client side
-// }
-
 export async function authenticate(_currentState: unknown, formData: FormData) {
   // Implementation depends on your authentication mechanism
   // This should be handled by your auth provider (e.g., NextAuth.js)
@@ -713,15 +859,6 @@ export async function getRegApplications(status: string, count: string) {
   }
 }
 
-// export async function getInvestigations(status: string, count: string) {
-//   try {
-//     const res = await fetchWithAuth(`${apiUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`);
-//     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
-//   } catch (error) {
-//     console.error('Error fetching registration applications:', error);
-//     return [];
-//   }
-// }
 
 
 interface Complaint {

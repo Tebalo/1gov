@@ -10,6 +10,7 @@ import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOffic
 import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHome";
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
+import { CPDWorkPage } from "@/app/components/MyWork/CPDWork";
 import { DirectorWork } from "@/app/components/MyWork/DirectorWork";
 import { DisciplinaryCommitteWork } from "@/app/components/MyWork/DisciplinaryCommitteWork";
 import { InvestigationsDirectorWork } from "@/app/components/MyWork/InvestigationsDirectorWork";
@@ -20,10 +21,11 @@ import { RegistrarWork } from "@/app/components/MyWork/RegistrarWork";
 import { RegistrationOfficerWork } from "@/app/components/MyWork/RegistrationOfficerWork";
 import { SeniorInvestigationsOfficerWork } from "@/app/components/MyWork/SNRInvestigationsOfficerWork";
 import { SnrRegistrationOfficerWork } from "@/app/components/MyWork/SnrRegistrationOfficerWork";
+import { CPDROLES, Role } from "@/app/lib/store";
 import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
 export default async function Work(){
-    const userRole = await getRole()
+    const userRole = await getRole() as Role;
 
     if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
         return <TeacherHome/>
@@ -37,7 +39,7 @@ export default async function Work(){
         return <InvestigationsManagerWork/>
     }else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerWork/>
-    } else if(userRole === 'MANAGER'){
+    } else if(userRole.toUpperCase() === 'MANAGER'){
         return <ManagerWork/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
         return <InvestigationsDirectorWork/>
@@ -45,7 +47,13 @@ export default async function Work(){
         return <InvestigationsOfficerWork/>
     }else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <DirectorWork/>
-    } else if(userRole?.toUpperCase() === 'REGISTRAR'){
+    } else if(userRole.toUpperCase() === 'TEACHER_DEVELOPMENT_MANAGER'){
+        return <CPDWorkPage userRole={"teacher_development_manager"}/>
+    }else if(userRole.toUpperCase() === 'TEACHER_DEVELOPMENT_OFFICER'){
+        return <CPDWorkPage userRole={"teacher_development_officer"}/>
+    }else if(userRole.toUpperCase() === 'SENIOR_DEVELOPMENT_OFFICER'){
+        return <CPDWorkPage userRole={"senior_development_officer"}/>
+    }else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarWork/>
     }else if(userRole?.toUpperCase() === 'LICENSE_OFFICER'){
         return <LicenseOfficerHome/>

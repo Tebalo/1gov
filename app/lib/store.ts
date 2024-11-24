@@ -2,6 +2,7 @@ import { InvestigationStatuses } from "./types";
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://10.0.25.164:8080/trls-80';
 export const invUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8084/trls-84';
+export const cpdUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8086/trls-86';
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
 export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login/sms';
 export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
@@ -11,7 +12,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.16.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.17.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -96,6 +97,15 @@ interface StatusConfig {
     requiredPermission: Permission;
     nextStatus?: string[];
     status_label: string;
+    message?: string;
+    allowedRoles: Role[];
+}
+
+interface FlowAction {
+    requiredPermission: Permission;
+    nextStatus?: string[];
+    status_label: string;
+    message?: string;
     allowedRoles: Role[];
 }
 
@@ -156,9 +166,41 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
     },
 } as const;
 
+const CPD_FLOW: Record<string, FlowAction> = {
+    'incoming': {
+        requiredPermission: 'update:cpd-incoming',
+        nextStatus: ['PENDING-SCREENING'],
+        message: 'This action will...',
+        status_label: 'Submit for Screening',
+        allowedRoles: ['teacher_development_officer']
+    },
+    'pending-screening': {
+        requiredPermission: 'update:cpd-pending-screening',
+        nextStatus: ['PENDING-VERIFICATION'],
+        status_label: 'Submit for Verification',
+        allowedRoles: ['senior_development_officer']
+    },
+    'pending-verification': {
+        requiredPermission: 'update:cpd-pending-verification',
+        nextStatus: ['RECOMMEND-FOR-APPROVAL'],
+        status_label: 'Submit for Approval',
+        allowedRoles: ['senior_development_officer']
+    },
+    'recommend-for-approval': {
+        requiredPermission: 'update:cpd-recommed-for-approval',
+        nextStatus: ['APPROVAL'],
+        status_label: 'Approve',
+        allowedRoles: ['teacher_development_manager']
+    }
+} as const;
+
 export function getStatusConfig(status: string): StatusConfig | undefined {
     return STATUS_CONFIG[status];
 }
+
+export function getCPDFlowAction(status: string): FlowAction | undefined {
+    return CPD_FLOW[status];
+} 
 
 export function canUserAccessStatusFull(user: Role, status: string) {
     const config = getStatusConfig(status.toLowerCase());
@@ -168,6 +210,30 @@ export function canUserAccessStatusFull(user: Role, status: string) {
         nextStatus: config.nextStatus,
         status_label: config.status_label,
         isAllowedRole: config.allowedRoles.includes(user)
+    };
+}
+
+export function getFlowActionUserDetails(user: Role, status: string, flow: string) {
+    let flowaction;
+    if(flow==='investigation'){
+        flowaction = getStatusConfig(status.toLowerCase());
+    }else if(flow==='cpd'){
+        flowaction = getCPDFlowAction(status.toLowerCase());
+    }else if(flow==='registration'){
+
+    }else if(flow==='appeals'){
+
+    }else if(flow==='license'){
+
+    }
+    
+    if (!flowaction) return false;
+    return {
+        hasPermission: hasPermission(user, flowaction.requiredPermission),
+        nextStatus: flowaction.nextStatus,
+        message: flowaction.message,
+        status_label: flowaction.status_label,
+        isAllowedRole: flowaction.allowedRoles.includes(user)
     };
 }
 
@@ -193,6 +259,10 @@ const ROLES = {
         "view:complaints-ongoing-disciplinary",
         'view:complaints-recommend-for-external-investigation',
         'view:complaints-external-investigation',
+        "view:cpd-pending-screening",
+        "view:cpd-incoming",
+        "view:cpd-pending-verification",
+        "view:recommed-for-approval",
         
 
         "allocate:complaints-assessment",
@@ -210,6 +280,10 @@ const ROLES = {
         "update:complaints-ongoing-disciplinary",
         'update:complaints-recommend-for-external-investigation',
         'update:complaints-external-investigation',
+        "update:cpd-pending-screening",
+        "update:cpd-incoming",
+        "update:cpd-pending-verification",
+        "update:recommed-for-approval"
     ],
     investigations_officer: [
         "create:complaints",
@@ -239,7 +313,7 @@ const ROLES = {
         "view:complaints-assessment",
         "view:complaints-ongoing-investigation",
         "view:complaints-investigation-complete",
-
+        "view:cpd-incoming",
         "allocate:complaints-assessment",
 
         "update:complaints-ongoing-investigation",
@@ -260,31 +334,33 @@ const ROLES = {
     ],
     disciplinary_committee: [
         "view:complaints-ongoing-disciplinary",
-    ]
+    ],
+    manager: [
+
+    ],
+    teacher_development_officer:[
+        "view:cpd-incoming",
+        "update:cpd-pending-screening",
+        "update:cpd-incoming"
+    ],
+    senior_development_officer:[
+        "view:cpd-pending-verification",
+        "view:cpd-pending-screening",
+        "update:cpd-pending-verification",
+        "update:cpd-pending-screening"
+    ],
+    teacher_development_manager: [
+        "view:cpd-recommed-for-approval",
+        "update:cpd-recommed-for-approval"
+    ],
 } as const
 
-export function hasPermission(
-    user: Role,
-    permission: Permission
-){
+export const CPDROLES = [
+    "TEACHER_DEVELOPMENT_OFFICER","TEACHER_DEVELOPMENT_MANAGER","SENIOR_DEVELOPMENT_OFFICER"
+]
+
+export function hasPermission(user: Role, permission: Permission){
     return (ROLES[user] as readonly Permission[]).includes(permission)
-}
-
-
-
-// legacy code
-export interface RoleObjects{
-    [key: string]:{
-        reg_application: boolean | false,
-        lic_application: boolean | false,
-        inv_application: boolean | false,
-        reg_Next_Status: string | null,
-        inv_Next_Status: string | null,
-        tipoff_Next_Status: string | null,
-        lic_Next_Status: string | null,
-        activity_object?: boolean,
-        defaultWork: string | ''
-    }
 }
 
 export const portalNames: { [key: string]: string } = {
@@ -301,13 +377,28 @@ export const portalNames: { [key: string]: string } = {
     'SENIOR_INVESTIGATIONS_OFFICER': 'Senior INV Officer Portal',
     'INVESTIGATIONS_MANAGER': 'Investigations Manager Portal',
     'DISCIPLINARY_COMMITTEE':'Disciplinary Committe Portal',
-    'INVESTIGATIONS_DIRECTOR': 'Investigations Director Portal'
+    'INVESTIGATIONS_DIRECTOR': 'Investigations Director Portal',
+    'TEACHER_DEVELOPMENT_OFFICER':'Teacher DEV Officer Portal',
+    'TEACHER_DEVELOPMENT_MANAGER':'Teacher DEV Manager Portal',
+    'SENIOR_DEVELOPMENT_OFFICER':'Senior DEV Officer Portal'
 };
 
-export const statusNames: {[key: string]: string} = {
-    '':''
+// legacy code
+export interface RoleObjects{
+    [key: string]:{
+        reg_application: boolean | false,
+        lic_application: boolean | false,
+        inv_application: boolean | false,
+        reg_Next_Status: string | null,
+        inv_Next_Status: string | null,
+        tipoff_Next_Status: string | null,
+        lic_Next_Status: string | null,
+        activity_object?: boolean,
+        defaultWork: string | ''
+    }
 }
 
+// legacy code
 export const roleObjects: RoleObjects = {
     'registration_officer': {
         reg_application: true,
@@ -423,12 +514,13 @@ export const roleObjects: RoleObjects = {
         defaultWork: 'RegistrationApplication'
     },
 }
+// legacy code
 export const mgt = [
     'director', 
     'registrar'
 ]
 
-
+// legacy code
 export const statusTransitions: StatusTransition = {
     'Default': {
         prev_status: 'Default',

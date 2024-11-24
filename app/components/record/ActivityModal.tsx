@@ -154,19 +154,6 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
                   className="bg-gray-50"
                 />
               </div>
-
-              {/* <div>
-                <label htmlFor="submission_type" className="block text-sm font-medium text-gray-700">Submission Type</label>
-                <Select value={activityDetails.submission_type} onValueChange={handleSelectChange('submission_type')}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select submission type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Walk-In">Walk-In</SelectItem>
-                    <SelectItem value="Online">Online</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div> */}
           </InfoCard>
 
           {/* Activity Details */}
@@ -207,6 +194,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="complaint">Complaint</SelectItem>
+                  <SelectItem value="continuous professional development">Continuous Professional Development</SelectItem>
                   <SelectItem value="investigation">Investigation</SelectItem>
                   <SelectItem value="registration">Registration</SelectItem>
                   <SelectItem value="tip-off">Tip-off</SelectItem>

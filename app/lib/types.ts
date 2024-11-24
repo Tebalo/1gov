@@ -2,7 +2,23 @@ export type AuthenticateResult =
   | { status: 'success' }
   | { status: 'failed'; message: string };
 
-export type UserRole = 'MANAGER' | 'REGISTRATION_OFFICER' | 'SNR_REGISTRATION_OFFICER' | 'DIRECTOR' | 'REGISTRAR' | 'LICENSE_OFFICER' | 'SNR_LICENSE_OFFICER' | 'LICENSE_MANAGER'|'INVESTIGATIONS_OFFICER'| 'INVESTIGATIONS_MANAGER'| 'SENIOR_INVESTIGATIONS_OFFICER' | 'ADMIN' | 'DISCIPLINARY_COMMITTEE' | 'INVESTIGATIONS_DIRECTOR';
+export type UserRole = 'MANAGER' | 
+'REGISTRATION_OFFICER' | 
+'SNR_REGISTRATION_OFFICER' | 
+'DIRECTOR' | 
+'REGISTRAR' | 
+'LICENSE_OFFICER' | 
+'SNR_LICENSE_OFFICER' |
+'LICENSE_MANAGER'|
+'INVESTIGATIONS_OFFICER'| 
+'INVESTIGATIONS_MANAGER'| 
+'SENIOR_INVESTIGATIONS_OFFICER' | 
+'ADMIN' | 
+'DISCIPLINARY_COMMITTEE' | 
+'INVESTIGATIONS_DIRECTOR' |
+'TEACHER_DEVELOPMENT_OFFICER' |
+'TEACHER_DEVELOPMENT_MANAGER' |
+'SENIOR_DEVELOPMENT_OFFICER';
 
 
 export interface InvestigationStatuses {
@@ -208,20 +224,61 @@ export interface TipOffPayload{
 }
 
 export interface data {
-  full_name: string;
-  phone: string;
-  identity_No: string;
-  email: string;
-  nature_of_crime: string;
-  description: string;
-  crime_location: string;
   tipoff_number: string;
   id: number;
+  application_id: string,
+  user_id: string,
+  first_name: string,
+  middle_name: string,
+  surname: string,
+  primary_email: string,
+  primary_phone: string,
+  primary_postal: string,
+  gender: string,
+  nationality: string,
+  breach_nature: string,
+  breach_description: string,
+  breach_location: string,
+  breach_date: string,
+  reg_status: string,
+  profile_data_consent: boolean,
+  service_id: string,
+  service_name: string,
+  service_version: string,
+  created_at: string,
+  updated_at: string
+}
+
+export interface cpd {
+  application_id: string
+  user_id: string
+  reg_status: string
+  first_name: string
+  middle_name: string
+  surname: string
+  primary_email: string
+  primary_phone: string
+  primary_postal: string
+  gender: string
+  nationality: string
+  breach_nature: string
+  breach_description: string
+  breach_location: string
+  breach_date: string
+  profile_data_consent: true
+  service_id: string
+  service_name: string
+  service_version: string
 }
 
 export interface TipOffListResponse{
   code: number;
   data?: data[];
+}
+
+export interface CPDListResponse{
+  code: number;
+  data?: cpd[];
 }
 
 interface dataactivity {
@@ -265,9 +322,68 @@ export interface ActivityListResponse{
 interface objectac {
   data: Activity;
 }
+
 export interface ActivityObject{
   code: number;
   data?: objectac;
+}
+
+interface cpd_activity {
+  id: number;
+  user_id: string;
+  cumulative_points: string;
+  reg_status: string;
+  sla: string;
+  cpd_activity: string;
+  cpd_points: string;
+  cpd_activity_description: string;
+  service_provider: string;
+  duration: string;
+  declaration: string;
+  profile_data_consent: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface profile {
+  id: number;
+  cpd_number: string;
+  first_name: string;
+  middle_name: string;
+  surname: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface service {
+  id: number;
+  cpd_number: string;
+  service_id: string;
+  service_name: string;
+  service_version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface attachment {
+  id: 2,
+  cpd_number: string;
+  cpd_evidence_key: string | null;
+  other_attachments_key: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CPD {
+  cpd_activity: cpd_activity;
+  profile: profile;
+  service: service;
+  attachment: attachment;
+}
+
+export interface CPDResponseGet{
+  code: number;
+  data?: CPD;
 }
 
 export interface ActivityResponse{
