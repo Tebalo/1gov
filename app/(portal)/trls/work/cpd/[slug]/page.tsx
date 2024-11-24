@@ -3,6 +3,7 @@ import {  getCPDByNumber, } from "@/app/lib/actions";
 import Link from "next/link";
 import { RefreshCw, AlertCircle } from "lucide-react";
 import CPDViewer from "@/app/components/record/CPDViewer";
+import { Role } from "@/app/lib/store";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const id = params.slug;
@@ -11,13 +12,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   try {
     response = await getCPDByNumber(id);
-    const userRole = await getRole();
+    const rawRole = await getRole() ?? 'default'; // type assertion
+    const userRole = rawRole.toLowerCase() as Lowercase<Role>;
     
     return (
       <main className="h-full">
         <div className="flex flex-row h-full gap-0">
           {response.data ? (
-            <>{userRole && <CPDViewer data={response} />}</>
+            <>{userRole && <CPDViewer data={response} userRole={userRole}/>}</>
           ) : (
             <div className="flex h-[80vh] items-center justify-center w-full">
               <div className="text-center px-4">
