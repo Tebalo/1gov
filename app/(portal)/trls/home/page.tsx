@@ -14,6 +14,7 @@ import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOffic
 import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHome";
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
+import { CPDROLES } from "@/app/lib/store";
 import { redirect } from "next/navigation";
 
 export default async function Home(){
@@ -35,6 +36,8 @@ export default async function Home(){
         return <ManagerHome/>
     } else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <DirectorHome/>
+    }else if(CPDROLES.includes(userRole ?? '')){
+        return <InvestigationsOfficerHome/>
     }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
         return <InvestigationsDirectorHome/>
     } else if(userRole?.toUpperCase() === 'DISCIPLINARY_COMMITTEE'){

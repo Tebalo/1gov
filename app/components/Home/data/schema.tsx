@@ -1,7 +1,5 @@
 import { z } from "zod"
 
-// We're keeping a simple non-relational schema here.
-// IRL, you will have a schema for your data models.
 export const taskSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -57,15 +55,44 @@ export const InvestigationsSchema = z.object({
 })
 
 export const tipoffSchema = z.object({
-  id: z.number(),
+  application_id: z.string(),
+  user_id: z.string(),
+  reg_status: z.string(),
   tipoff_number: z.string(),
-  full_name: z.string(),
-  phone: z.string(),
-  identity_No: z.string(),
-  email: z.string(),
-  nature_of_crime: z.string(),
-  description: z.string(),
-  crime_location: z.string(),
+  first_name: z.string(),
+  middle_name: z.string(),
+  surname: z.string(),
+  primary_email: z.string(),
+  primary_phone: z.string(),
+  primary_postal: z.string(),
+  gender: z.string(),
+  nationality: z.string(),
+  breach_nature: z.string(),
+  breach_description: z.string(),
+  breach_location: z.string(),
+  breach_date: z.string(),
+  profile_data_consent: z.boolean(),
+  service_id: z.string(),
+  service_name: z.string(),
+  service_version: z.string()
+})
+
+export const CPDSchema = z.object({
+  id: z.number(),
+  user_id: z.string(),
+  cpd_number: z.string(),
+  cumulative_points: z.string(),
+  reg_status: z.string(),
+  sla: z.string(),
+  cpd_activity: z.string(),
+  cpd_points: z.string(),
+  cpd_activity_description: z.string(),
+  service_provider: z.string(),
+  duration: z.string(),
+  declaration: z.string(),
+  profile_data_consent: z.number(),
+  created_at: z.string(),
+  updated_at: z.string()
 })
 
 export const activitySchema = z.object({
@@ -82,6 +109,7 @@ export const activitySchema = z.object({
 
 export type Activity = z.infer<typeof activitySchema>
 export type Tipoff = z.infer<typeof tipoffSchema>
+export type CPD = z.infer<typeof CPDSchema>
 export type complaintwithNullValues = z.infer<typeof complaintSchemawithNullValues>
 export type Investigations = z.infer<typeof InvestigationsSchema>
 export type Complaint = z.infer<typeof complaintSchema>

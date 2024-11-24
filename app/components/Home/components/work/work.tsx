@@ -8,6 +8,7 @@ import { TipOffsTable } from "../tipoffs-table";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Role, hasPermission, roleObjects } from "@/app/lib/store";
+import CPDTable from "../cpd-table";
 
 interface Props {
   userRole: Role;
@@ -50,7 +51,7 @@ const AVAILABLE_TABLES = {
     status: 'INVESTIGATION-COMPLETE',
     component: InvestigationsTable
   },
-  'Recommended for External Investigations': { // director
+  'Recommended for EX-Investigations': { // director
     requiredPermission: 'view:complaints-recommend-for-external-investigation' as const,
     status: 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
@@ -80,21 +81,37 @@ const AVAILABLE_TABLES = {
     status: 'CASE-CLOSED',
     component: InvestigationsTable
   },
+  'Incoming CPD Cases': { // *
+    requiredPermission: 'view:cpd-incoming' as const,
+    status: 'INCOMING',
+    component: CPDTable
+  },
+  'CPD Cases Pending-Screening': { // *
+    requiredPermission: 'view:cpd-pending-screening' as const,
+    status: 'PENDING-SCREENING',
+    component: CPDTable
+  },
+  'CPD Cases Pending-Verification': { // *
+    requiredPermission: 'view:cpd-pending-screening' as const,
+    status: 'PENDING-VERIFICATION',
+    component: CPDTable
+  },
+  'CPDs Cases Recommeded for Approval': { // *
+    requiredPermission: 'view:cpd-recommed-for-approval' as const,
+    status: 'APPROVAL',
+    component: CPDTable
+  },
 } as const;
 
-export const InvestigationsWork = ({ userRole }: Props) => {
-  const { inv_Next_Status } = roleObjects[userRole] || {};
-  // Get available tables based on user permissions
+export const Work = ({ userRole }: Props) => {
+
   const availableTables = Object.entries(AVAILABLE_TABLES).filter(([_, config]) => 
     hasPermission(userRole, config.requiredPermission)
   );
 
-  // Set default table to first available table or empty string if none available
   const defaultTable = availableTables.length > 0 ? availableTables[0][0] : '';
   const [selectedTable, setSelectedTable] = useState(defaultTable);
   const [refreshKey, setRefreshKey] = useState(0); // Add a key state to force table refresh
-  // Get current table configuration
-  // const currentTableConfig = selectedTable ? AVAILABLE_TABLES[selectedTable as keyof typeof AVAILABLE_TABLES] : null;
 
 
   const handleSelectChange = (newValue: string) => {
@@ -131,7 +148,7 @@ export const InvestigationsWork = ({ userRole }: Props) => {
                 onValueChange={handleSelectChange} 
                 value={selectedTable}
               >
-                <SelectTrigger className="w-[200px] bg-white">
+                <SelectTrigger className="w-[300px] bg-white">
                   <SelectValue placeholder="Select work basket" />
                 </SelectTrigger>
                 <SelectContent>

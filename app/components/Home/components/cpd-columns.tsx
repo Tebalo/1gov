@@ -5,12 +5,12 @@ import React from "react"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Tipoff } from "../data/schema"
-import { TipOffTableRowActions } from "./tipoff-table-row-actions"
+import { CPD} from "../data/schema"
+import { CPDTableRowActions } from "./cpd-table-row-actions"
 
 
 // Column definitions
-export const tipoffsColumns: ColumnDef<Tipoff>[] = [
+export const CPDColumns: ColumnDef<CPD>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,24 +36,24 @@ export const tipoffsColumns: ColumnDef<Tipoff>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "tipoff_number",
+    accessorKey: "cpd_number",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tip-off Number" />
+      <DataTableColumnHeader column={column} title="CPD Number" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("tipoff_number")}</Badge>
+          <Badge variant="outline">{row.getValue("cpd_number")}</Badge>
         </div>
       )
     },
   },
   {
-    accessorKey: "first_name",
+    accessorKey: "cpd_activity",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Reporter Name" />
+      <DataTableColumnHeader column={column} title="Activity" />
     ),
-    cell: ({ row }) => <div className="w-[180px]">{row.getValue("first_name")}</div>,
+    cell: ({ row }) => <div className="w-[180px]">{row.getValue("cpd_activity")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
@@ -67,26 +67,17 @@ export const tipoffsColumns: ColumnDef<Tipoff>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "breach_nature",
+    accessorKey: "sla",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Breach Nature" />
+      <DataTableColumnHeader column={column} title="SLA" />
     ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("breach_nature")}</div>,
-    enableSorting: true,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "breach_location",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Breach Location" />
-    ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("breach_location")}</div>,
+    cell: ({ row }) => <div className="w-[150px]">{row.getValue("sla")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
   {
     id: "actions",
-    cell: ({ row }) => <TipOffTableRowActions row={row} />,
+    cell: ({ row }) => <CPDTableRowActions row={row} />,
   },
 ]
 
