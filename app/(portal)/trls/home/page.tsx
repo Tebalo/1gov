@@ -53,6 +53,7 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminHome/>
     } else {
-        return redirect('/welcome')
+        return <InvestigationsOfficerHome/>
+        //return redirect('/welcome')
     }
 }

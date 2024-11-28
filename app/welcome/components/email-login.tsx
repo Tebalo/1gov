@@ -83,7 +83,7 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
                 }
                 setIsDecryptingSession(false)
                 setIsRedirecting(true)
-                router.push('/trls/home')
+                router.push('/trls/work')
             } else {
                 setErrorMessage(data.message || 'OTP validation failed. Please try again')
             }
