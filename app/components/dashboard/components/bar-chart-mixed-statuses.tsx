@@ -35,7 +35,7 @@ export function MixedBarChartStatuses() {
     <Card>
       <CardHeader>
         <CardTitle>Teacher Registrations by Status</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription></CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -57,7 +57,7 @@ export function MixedBarChartStatuses() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="leading-none text-muted-foreground">
-          Showing total teacher registrations by status for the last 6 months
+          Showing total teacher registrations by status
         </div>
       </CardFooter>
     </Card>

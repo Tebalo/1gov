@@ -66,7 +66,7 @@ export function HorizontalBarChartStatus() {
     <Card>
       <CardHeader>
         <CardTitle>Teacher Registrations by Status</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription></CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -119,7 +119,8 @@ export function HorizontalBarChartStatus() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="leading-none text-muted-foreground">
-          Showing total registrations by status for the last 6 months
+          Showing total registrations by Status
+          {/* anuary - June 2024 */}
         </div>
       </CardFooter>
     </Card>
