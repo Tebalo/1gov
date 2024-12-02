@@ -38,7 +38,7 @@ export function BarChartMonthlyRegistrations() {
     <Card>
       <CardHeader>
         <CardTitle>Monthly Teacher registrations</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription></CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -77,7 +77,7 @@ export function BarChartMonthlyRegistrations() {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div> */}
         <div className="leading-none text-muted-foreground">
-          Showing monthly teacher registration for the last 6 months
+          Showing monthly teacher registration
         </div>
       </CardFooter>
     </Card>
