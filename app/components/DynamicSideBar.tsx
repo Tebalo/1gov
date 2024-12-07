@@ -1,6 +1,6 @@
 import React from 'react';
 import { Logo } from "./Logo";
-import { getAccessGroups, getRole, getSession, logout } from "../auth/auth";
+import { getAccessGroups, getRole} from "../auth/auth";
 import SidebarNav from "./SidebarNav";
 import NavUtils from "./NavComponents/NavUtilis";
 import { AccessGroup, Session } from '../lib/types';

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateCPDStatus } from '@/app/lib/actions'
+import { updateAppealsStatus, updateCPDStatus } from '@/app/lib/actions'
 import { useRouter } from 'next/navigation'
 import {
   AlertDialog,
@@ -43,7 +43,7 @@ interface FlowActionConfig {
 
 type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | null;
 
-const CPDActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
+const AppealsActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -57,7 +57,7 @@ const CPDActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, cu
   const { toast } = useToast();
   
   // Get flow-action configuration
-  const accessConfig: FlowActionConfig = getFlowActionUserDetails(userRole, current_status,'cpd') || {
+  const accessConfig: FlowActionConfig = getFlowActionUserDetails(userRole, current_status,'appeals') || {
     hasPermission: false,
     nextStatus: [],
     message: '',
@@ -91,7 +91,7 @@ const CPDActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, cu
   const handleStatusUpdate = async (status: string) => {
     setIsSubmitting(true);
     try {
-      const result = await updateCPDStatus(recordId, status);
+      const result = await updateAppealsStatus(recordId, status);
       if (result.code === 200 || result.code === 201) {
         closeDialog();
         toast({
@@ -265,7 +265,8 @@ const CPDActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, cu
                   'blue'
                 )
               )}
-              {/* {renderActionButton(
+              
+              {/* { renderActionButton(
                 PlusCircle,
                 'Add Activity',
                 () => setActiveDialog('activity'),
@@ -300,4 +301,4 @@ const CPDActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, cu
   );
 };
 
-export default CPDActionButtons;
+export default AppealsActionButtons;

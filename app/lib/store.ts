@@ -2,7 +2,8 @@ import { InvestigationStatuses } from "./types";
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://10.0.25.164:8080/trls-80';
 export const invUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8084/trls-84';
-export const cpdUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8086/trls-86';
+export const cpdUrl = 'http://10.0.25.164:8086/trls-86';
+export const appealUrl = 'http://10.0.25.164:8087/trls-87';
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
 export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login/sms';
 export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
@@ -12,7 +13,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.19.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.20.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -194,12 +195,62 @@ const CPD_FLOW: Record<string, FlowAction> = {
     }
 } as const;
 
+const APPEAL_FLOW: Record<string, FlowAction> = {
+    'incoming-appeal': {
+        requiredPermission: 'update:appeal-incoming',
+        nextStatus: ['PENDING-SCREENING'],
+        message: 'This action will...',
+        status_label: 'Submit for Screening',
+        allowedRoles: ['appeals_officer']
+    },
+    'pending-screening': {
+        requiredPermission: 'update:appeal-pending-screening',
+        nextStatus: ['PENDING-ASSESSMENT'],
+        status_label: 'Submit for Verification',
+        allowedRoles: ['appeals_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:appeal-pending-assessment',
+        nextStatus: ['PENDING-APPROVAL'],
+        status_label: 'Submit for Approval',
+        allowedRoles: ['senior_appeals_officer']
+    },
+    'pending-approval': {
+        requiredPermission: 'update:appeal-pending-approval',
+        nextStatus: ['RECOMMEND-FOR-APPROVAL','RECOMMEND-FOR-REJECTION','RECOMMEND-FOR-INVESTIGATION'],
+        status_label: 'Recommend',
+        allowedRoles: ['appeals_director']
+    },
+    'recommend-for-approval': {
+        requiredPermission: 'update:appeal-recommed-for-approval',
+        nextStatus: ['APPROVAL'],
+        status_label: 'Approve',
+        allowedRoles: ['appeals_director']
+    },
+    'recommend-for-rejection': {
+        requiredPermission: 'update:appeal-recommed-for-rejection',
+        nextStatus: ['REJECTION'],
+        status_label: 'Rejection',
+        allowedRoles: ['appeals_director']
+    },
+    'recommend-for-investigation': {
+        requiredPermission: 'update:appeal-recommed-for-investigation',
+        nextStatus: ['INVESTIGATION'],
+        status_label: 'Investigation',
+        allowedRoles: ['appeals_director']
+    }
+} as const;
+
 export function getStatusConfig(status: string): StatusConfig | undefined {
     return STATUS_CONFIG[status];
 }
 
 export function getCPDFlowAction(status: string): FlowAction | undefined {
     return CPD_FLOW[status];
+} 
+
+export function getApealFlowAction(status: string): FlowAction | undefined {
+    return APPEAL_FLOW[status];
 } 
 
 export function canUserAccessStatusFull(user: Role, status: string) {
@@ -222,7 +273,7 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
     }else if(flow==='registration'){
 
     }else if(flow==='appeals'){
-
+        flowaction = getApealFlowAction(status.toLowerCase());
     }else if(flow==='license'){
 
     }
@@ -263,7 +314,7 @@ const ROLES = {
         "view:cpd-incoming",
         "view:cpd-pending-verification",
         "view:recommed-for-approval",
-        
+        "view:search-registration",
 
         "allocate:complaints-assessment",
 
@@ -283,7 +334,25 @@ const ROLES = {
         "update:cpd-pending-screening",
         "update:cpd-incoming",
         "update:cpd-pending-verification",
-        "update:recommed-for-approval"
+        "update:recommed-for-approval",
+
+        // Appeals view permissions
+        "view:appeal-incoming",
+        "view:appeal-pending-screening",
+        "view:appeal-pending-assessment",
+        "view:appeal-pending-approval",
+        "view:appeal-recommed-for-approval",
+        "view:appeal-recommed-for-rejection",
+        "view:appeal-recommed-for-investigation",
+
+        // Appeals update permissions
+        "update:appeal-incoming",
+        "update:appeal-pending-screening",
+        "update:appeal-pending-assessment",
+        "update:appeal-pending-approval",
+        "update:appeal-recommed-for-approval",
+        "update:appeal-recommed-for-rejection",
+        "update:appeal-recommed-for-investigation",
     ],
     investigations_officer: [
         "create:complaints",
@@ -353,6 +422,28 @@ const ROLES = {
         "view:cpd-recommed-for-approval",
         "update:cpd-recommed-for-approval"
     ],
+    appeals_officer: [
+        "view:appeal-incoming",
+        "view:appeal-pending-screening",
+        "update:appeal-incoming",
+        "update:appeal-pending-screening",
+    ],
+    senior_appeals_officer: [
+        "view:appeal-pending-assessment",
+        "update:appeal-pending-assessment",
+    ],
+    appeals_manager: [
+        "view:appeal-pending-approval",
+        "update:appeal-pending-approval",
+    ],
+    appeals_director: [
+        "view:appeal-recommed-for-approval",
+        "view:appeal-recommed-for-rejection",
+        "view:appeal-recommed-for-investigation",
+        "update:appeal-recommed-for-approval",
+        "update:appeal-recommed-for-rejection",
+        "update:appeal-recommed-for-investigation",
+    ]
 } as const
 
 export const CPDROLES = [
@@ -380,7 +471,11 @@ export const portalNames: { [key: string]: string } = {
     'INVESTIGATIONS_DIRECTOR': 'Investigations Director Portal',
     'TEACHER_DEVELOPMENT_OFFICER':'Teacher DEV Officer Portal',
     'TEACHER_DEVELOPMENT_MANAGER':'Teacher DEV Manager Portal',
-    'SENIOR_DEVELOPMENT_OFFICER':'Senior DEV Officer Portal'
+    'SENIOR_DEVELOPMENT_OFFICER':'Senior DEV Officer Portal',
+    'APPEALS_OFFICER':'Appeals Officer Portal',
+    'SENIOR_APPEALS_OFFICER':'Senior Appeals Officer Portal',
+    'APPEALS_MANAGER':'Appeals Manager Officer Portal',
+    'APPEALS_DIRECTOR':'Appeals Director Officer Portal'
 };
 
 // legacy code
