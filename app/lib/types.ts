@@ -18,7 +18,11 @@ export type UserRole = 'MANAGER' |
 'INVESTIGATIONS_DIRECTOR' |
 'TEACHER_DEVELOPMENT_OFFICER' |
 'TEACHER_DEVELOPMENT_MANAGER' |
-'SENIOR_DEVELOPMENT_OFFICER';
+'SENIOR_DEVELOPMENT_OFFICER' |
+'APPEALS_OFFICER' |
+'SENIOR_APPEALS_OFFICER' |
+'APPEALS_MANAGER' |
+'APPEALS_DIRECTOR';
 
 
 export interface InvestigationStatuses {
@@ -346,7 +350,7 @@ interface cpd_activity {
   updated_at: string;
 }
 
-interface profile {
+interface cpd_profile {
   id: number;
   cpd_number: string;
   first_name: string;
@@ -377,7 +381,7 @@ interface attachment {
 
 interface CPD {
   cpd_activity: cpd_activity;
-  profile: profile;
+  profile: cpd_profile;
   service: service;
   attachment: attachment;
 }
@@ -453,3 +457,44 @@ export interface TipOffResponse{
   code: number;
   data?: data;
 }
+
+export interface Appeals_list{
+  message?: string;
+  code: number;
+  data?: appeals_application[]
+}
+
+export interface appeal {
+  message?: string;
+  code: number;
+  profile?: profile;
+  appeals_application?: appeals_application
+}
+
+interface profile {
+  user_id: string;
+  appeals_number: string;
+  first_name: string;
+  middle_name: string;
+  surname: string;
+  primary_email: string;
+  primary_postal: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface appeals_application {
+      id: number;
+      user_id: string;
+      application: string;
+      appeals_number: string;
+      reg_status: string;
+      sla: string;
+      appeal_decision: string;
+      appeal_reason: string;
+      supporting_document_key: string;
+      declaration: string;
+      profile_data_consent: number;
+      created_at: string;
+      updated_at: string;
+  }

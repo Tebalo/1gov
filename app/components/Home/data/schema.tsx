@@ -107,6 +107,23 @@ export const activitySchema = z.object({
   anonymous: z.string()
 })
 
+export const AppealsSchema = z.object({
+  id: z.number(),
+  user_id: z.string(),
+  application: z.string(),
+  appeals_number: z.string(),
+  reg_status: z.string(),
+  sla: z.string(),
+  appeal_decision: z.string(),
+  appeal_reason: z.string(),
+  supporting_document_key: z.string(),
+  declaration: z.string(),
+  profile_data_consent: z.number(),
+  created_at: z.string(),
+  updated_at: z.string()
+})
+
+export type Appeal = z.infer<typeof AppealsSchema>
 export type Activity = z.infer<typeof activitySchema>
 export type Tipoff = z.infer<typeof tipoffSchema>
 export type CPD = z.infer<typeof CPDSchema>

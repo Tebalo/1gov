@@ -28,17 +28,18 @@ export default async function Page({params}:{params: {slug: string}}){
                                 <AlertCircle className="h-16 w-16 text-gray-400" />
                             </div>
                             <h2 className="mb-4 text-3xl font-semibold text-gray-900">
-                                Record not found
+                              Connection error
                             </h2>
                             <p className="mb-8 text-gray-600">
-                                The record you&lsquo;re looking for doesn&lsquo;t exist or has been removed
+                                Unable to load the record. Please check your connection and try again
                             </p>
                             <Link
-                                href="/trls/work"
-                                scroll={false}
-                                className="inline-flex items-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                              href={`/trls/work/object/${id}`}
+                              scroll={false}
+                              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                             >
-                                Back to Home
+                              <RefreshCw className="h-4 w-4" />
+                              Retry
                             </Link>
                             </div>
                         </div>

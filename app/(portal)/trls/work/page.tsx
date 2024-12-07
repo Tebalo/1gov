@@ -10,6 +10,7 @@ import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOffic
 import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHome";
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
+import { AppealsWorkPage } from "@/app/components/MyWork/APPEALSWork";
 import { CPDWorkPage } from "@/app/components/MyWork/CPDWork";
 import { DirectorWork } from "@/app/components/MyWork/DirectorWork";
 import { DisciplinaryCommitteWork } from "@/app/components/MyWork/DisciplinaryCommitteWork";
@@ -21,7 +22,7 @@ import { RegistrarWork } from "@/app/components/MyWork/RegistrarWork";
 import { RegistrationOfficerWork } from "@/app/components/MyWork/RegistrationOfficerWork";
 import { SeniorInvestigationsOfficerWork } from "@/app/components/MyWork/SNRInvestigationsOfficerWork";
 import { SnrRegistrationOfficerWork } from "@/app/components/MyWork/SnrRegistrationOfficerWork";
-import { CPDROLES, Role } from "@/app/lib/store";
+import {  Role } from "@/app/lib/store";
 import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
 export default async function Work(){
@@ -53,6 +54,14 @@ export default async function Work(){
         return <CPDWorkPage userRole={"teacher_development_officer"}/>
     }else if(userRole.toUpperCase() === 'SENIOR_DEVELOPMENT_OFFICER'){
         return <CPDWorkPage userRole={"senior_development_officer"}/>
+    }else if(userRole.toUpperCase() === 'APPEALS_OFFICER'){
+        return <AppealsWorkPage userRole={"appeals_officer"}/>
+    }else if(userRole.toUpperCase() === 'SENIOR_APPEALS_OFFICER'){
+        return <AppealsWorkPage userRole={"senior_appeals_officer"}/>
+    }else if(userRole.toUpperCase() === 'APPEALS_MANAGER'){
+        return <AppealsWorkPage userRole={"appeals_manager"}/>
+    }else if(userRole.toUpperCase() === 'APPEALS_DIRECTOR'){
+        return <AppealsWorkPage userRole={"appeals_director"}/>
     }else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarWork/>
     }else if(userRole?.toUpperCase() === 'LICENSE_OFFICER'){

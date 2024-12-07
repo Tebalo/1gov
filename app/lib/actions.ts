@@ -2,8 +2,8 @@
 
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
-import { apiUrl, cpdUrl, invUrl, licUrl } from "./store";
-import { Activity, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse } from './types';
+import { apiUrl, appealUrl, cpdUrl, invUrl, licUrl } from "./store";
+import { Activity, Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse, appeal } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { redirect } from 'next/navigation';
 import { options } from './schema';
@@ -50,14 +50,14 @@ async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs:
 
 const TOKEN_REFRESH_THRESHOLD = 18 * 60; // 8 minutes in seconds
 
-async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
+async function fetchWithAuth2(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
     controller.abort();
     console.log(`Request aborted due to timeout after ${timeoutMs}ms`);
   }, timeoutMs);
 
-  try {
+  try {0
     let session = await getSession();
 
     if (session && session.auth) {
@@ -116,7 +116,100 @@ async function fetchWithAuth(url: string, options: RequestInit = {}, timeoutMs: 
     clearTimeout(timeoutId);
   }
 }
+async function fetchWithAuth(
+  url: string, 
+  options: RequestInit = {}, 
+  timeoutMs: number = 120000,
+  maxRetries: number = 3
+): Promise<Response> {
+  let retryCount = 0;
+  
+  async function attemptFetch(): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      console.log(`Request aborted due to timeout after ${timeoutMs}ms`);
+    }, timeoutMs);
 
+    try {
+      let session = await getSession();
+
+      if (session && session.auth) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
+
+        console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
+
+        if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+          const refreshSuccessful = await refreshToken();
+          if (refreshSuccessful) {
+            session = await getSession();
+          } else {
+            throw new Error('Session expired and refresh failed');
+          }
+        }
+      } else {
+        throw new Error('No valid session');
+      }
+
+      const headers = new Headers(options.headers);
+      
+      if (session?.auth?.access_token) {
+        headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal
+      });
+
+      if (response.status === 401) {
+        const refreshSuccessful = await refreshToken();
+        if (refreshSuccessful) {
+          session = await getSession();
+          if (session?.auth?.access_token) {
+            headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+            return fetch(url, {
+              ...options,
+              headers,
+              signal: controller.signal
+            });
+          }
+        }
+      }
+
+      return response;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 10000); // Max 10 seconds
+          console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+          return attemptFetch();
+        }
+        throw new Error(`Request failed after ${maxRetries} retries due to timeout`);
+      }
+      console.error('Error in fetchWithAuth:', error);
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  return attemptFetch();
+}
+
+// Example usage:
+// try {
+//   const response = await fetchWithAuth('https://api.example.com/data', {
+//     method: 'GET'
+//   }, 5000, 3); // 5 second timeout, max 3 retries
+//   const data = await response.json();
+// } catch (error) {
+//   console.error('Request failed:', error);
+// }
 export async function createComplaint(payload: ComplaintPayload): Promise<{success: boolean, code: number; message: string,error?: string, data?: any }> {
   try {
 
@@ -235,6 +328,59 @@ export async function updateCPDStatus(ID: string, status: string): Promise<{code
     console.log(ID,status)
     const response = await fetch(`${cpdUrl}/update_status/${ID}?reg_status=${status}`, {
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    });
+
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: result.message || 'Success',
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    };
+  }
+}
+
+export async function updateAppealsStatus(ID: string, status: string): Promise<{code: number; message: string}> {
+  try {
+
+    console.log(ID,status)
+    const response = await fetch(`${appealUrl}/update_status/${ID}?reg_status=${status}`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -731,6 +877,53 @@ export async function getCPDs(status: string, count: number): Promise<CPDListRes
     };
   }
 }
+export async function getAppeals(status: string, count: number): Promise<Appeals_list> {
+  try {
+
+    const response = await fetch(`${appealUrl}/get-appeals-list?reg_status=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      data: result.data
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
 
 export async function getCPDByNumber(ID: string): Promise<CPDResponseGet> {
   try {
@@ -773,6 +966,59 @@ export async function getCPDByNumber(ID: string): Promise<CPDResponseGet> {
     return {
       code: response.status,
       data: result
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getAppealByNumber(ID: string): Promise<appeal> {
+  try {
+
+
+    const response = await fetch(`${appealUrl}/get-appeal/${ID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache:'no-cache'
+    });
+
+    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+    return {
+      code: response.status,
+      message: result?.message,
+      profile: result?.profile,
+      appeals_application: result?.appeals_application
     };
 
   } catch (error) {
@@ -873,9 +1119,6 @@ interface Complaint {
   outcome: string;
 }
 
-const locations = ['Gaborone', 'Francistown', 'Maun', 'Serowe', 'Molepolole'];
-const crimes = ['Theft', 'Assault', 'Fraud', 'Burglary', 'Vandalism'];
-const outcomes = ['Pending', 'Resolved', 'Under Investigation', 'Closed', 'Referred'];
 
 interface Complaint {
   crime_location: string;

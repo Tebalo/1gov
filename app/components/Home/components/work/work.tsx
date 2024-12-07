@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Role, hasPermission, roleObjects } from "@/app/lib/store";
 import CPDTable from "../cpd-table";
+import AppealsTable from "../appeals-table";
 
 interface Props {
   userRole: Role;
@@ -101,6 +102,41 @@ const AVAILABLE_TABLES = {
     status: 'APPROVAL',
     component: CPDTable
   },
+  'Incoming-Appeal': { // *
+    requiredPermission: 'view:appeal-incoming' as const,
+    status: 'INCOMING-APPEAL',
+    component: AppealsTable
+  },
+  'Pending-Screening': { // *
+    requiredPermission: 'view:appeal-pending-screening' as const,
+    status: 'PENDING-SCREENING',
+    component: AppealsTable
+  },
+  'Pending-Assessment': { // *
+    requiredPermission: 'view:appeal-pending-assessment' as const,
+    status: 'PENDING-ASSESSMENT',
+    component: AppealsTable
+  },
+  'Pending-Approval': { // *
+    requiredPermission: 'view:appeal-pending-approval' as const,
+    status: 'PENDING-APPROVAL',
+    component: AppealsTable
+  },
+  'Recommended-for-Approval': { // *
+    requiredPermission: 'view:appeal-recommed-for-approval' as const,
+    status: 'RECOMMEND-FOR-APPROVAL',
+    component: AppealsTable
+  },
+  'Recommended-for-Rejection': { // *
+    requiredPermission: 'view:appeal-recommed-for-rejection' as const,
+    status: 'RECOMMEND-FOR-REJECTION',
+    component: AppealsTable
+  },
+  'Recommended-for-Investigation': { // *
+    requiredPermission: 'view:appeal-recommed-for-investigation' as const,
+    status: 'RECOMMEND-FOR-INVESTIGATION',
+    component: AppealsTable
+  },
 } as const;
 
 export const Work = ({ userRole }: Props) => {
@@ -189,9 +225,11 @@ export const Work = ({ userRole }: Props) => {
         </div>
 
         {/* Search Bar */}
+        {hasPermission(userRole, 'view:search-registration') && (
         <div className="mt-4 md:mt-6">
           <Search />
         </div>
+        )}
       </div>
       
       {renderTable()}
