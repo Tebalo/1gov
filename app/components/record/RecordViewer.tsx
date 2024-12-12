@@ -157,7 +157,7 @@ interface TeacherRegistrationData {
     edu_pro_qualifications?: EduProQualification;
     other_qualifications?: EduProQualification[];
     bio_datas?: BioData;
-    background_checks: BackgroundChecks[];
+    background_checks?: BackgroundChecks[];
     declarations?: Declaration;
     offence_convictions?: OffenceConviction;
     employment_details?: EmploymentDetail;

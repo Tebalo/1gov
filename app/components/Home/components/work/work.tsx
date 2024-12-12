@@ -17,122 +17,122 @@ interface Props {
 
 // Define available tables and their required permissions
 const AVAILABLE_TABLES = {
-  'Incoming Cases': { // investigation officer
+  'Incoming Cases': { // Investigation
     requiredPermission: 'view:complaints-incoming' as const,
     status: 'INCOMING',
     component: InvestigationsTable
   },
-  'Cases Under Review': { // senior investigation officer
+  'Cases Under Review': { // Investigation
     requiredPermission: 'view:complaints-review' as const,
     status: 'UNDER-REVIEW',
     component: InvestigationsTable
   },
-  'Assessment Cases': { // investigation manager
+  'Assessment Cases': { // Investigation
     requiredPermission: 'view:complaints-assessment' as const,
     status: 'ASSESSMENT',
     component: InvestigationsTable
   },
-  'Tip Offs': { // *
+  'Tip Offs': { // Tipoffs
     requiredPermission: 'view:tipoffs' as const,
     status: 'INCOMING',
     component: TipOffsTable
   },
-  'Ongoing Investigations': { // investigation team
+  'Ongoing Investigations': { // Investigation
     requiredPermission: 'view:complaints-ongoing-investigation' as const,
     status: 'ONGOING-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Ongoing Disciplinary Cases': { // disciplinary committee
+  'Ongoing Disciplinary Cases': { // Investigation
     requiredPermission: 'view:complaints-ongoing-disciplinary' as const,
     status: 'ONGOING-DISCIPLINARY',
     component: InvestigationsTable
   },
-  'Completed Investigations': { // manager
+  'Completed Investigations': { // Investigation
     requiredPermission: 'view:complaints-investigation-complete' as const,
     status: 'INVESTIGATION-COMPLETE',
     component: InvestigationsTable
   },
-  'Recommended for EX-Investigations': { // director
+  'Recommended for EX-Investigations': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-external-investigation' as const,
     status: 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Recommended for Disciplinary': { // director
+  'Recommended for Disciplinary': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-disciplinary' as const,
     status: 'RECOMMEND-FOR-DISCIPLINARY',
     component: InvestigationsTable
   },
-  'Recommended for Closure': { // director
+  'Recommended for Closure': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-closure' as const,
     status: 'RECOMMEND-FOR-CLOSURE',
     component: InvestigationsTable
   },
-  'Recommended for RE-Investigation': { // director
+  'Recommended for RE-Investigation': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: InvestigationsTable
   },
-  'External Investigations': { // *
+  'External Investigations': { // Investigation
     requiredPermission: 'view:complaints-external-investigation' as const,
     status: 'EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Closed Cases': { // *
+  'Closed Cases': { // Investigation
     requiredPermission: 'view:complaints-closed' as const,
     status: 'CASE-CLOSED',
     component: InvestigationsTable
   },
-  'Incoming CPD Cases': { // *
+  'Incoming CPD Cases': { // CPD
     requiredPermission: 'view:cpd-incoming' as const,
     status: 'INCOMING',
     component: CPDTable
   },
-  'CPD Cases Pending-Screening': { // *
+  'CPD Cases Pending-Screening': { // CPD
     requiredPermission: 'view:cpd-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: CPDTable
   },
-  'CPD Cases Pending-Verification': { // *
+  'CPD Cases Pending-Verification': { // CPD
     requiredPermission: 'view:cpd-pending-screening' as const,
     status: 'PENDING-VERIFICATION',
     component: CPDTable
   },
-  'CPDs Cases Recommeded for Approval': { // *
+  'CPDs Cases Recommeded for Approval': { // CPD
     requiredPermission: 'view:cpd-recommed-for-approval' as const,
     status: 'APPROVAL',
     component: CPDTable
   },
-  'Incoming-Appeal': { // *
+  'Incoming-Appeal': { // Appeals
     requiredPermission: 'view:appeal-incoming' as const,
     status: 'INCOMING-APPEAL',
     component: AppealsTable
   },
-  'Pending-Screening': { // *
+  'Pending-Screening': { // Appeals
     requiredPermission: 'view:appeal-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: AppealsTable
   },
-  'Pending-Assessment': { // *
+  'Pending-Assessment': { // Appeals
     requiredPermission: 'view:appeal-pending-assessment' as const,
     status: 'PENDING-ASSESSMENT',
     component: AppealsTable
   },
-  'Pending-Approval': { // *
+  'Pending-Approval': { // Appeals
     requiredPermission: 'view:appeal-pending-approval' as const,
     status: 'PENDING-APPROVAL',
     component: AppealsTable
   },
-  'Recommended-for-Approval': { // *
+  'Recommended-for-Approval': { // Appeals
     requiredPermission: 'view:appeal-recommed-for-approval' as const,
     status: 'RECOMMEND-FOR-APPROVAL',
     component: AppealsTable
   },
-  'Recommended-for-Rejection': { // *
+  'Recommended-for-Rejection': { // Appeals
     requiredPermission: 'view:appeal-recommed-for-rejection' as const,
     status: 'RECOMMEND-FOR-REJECTION',
     component: AppealsTable
   },
-  'Recommended-for-Investigation': { // *
+  'Recommended-for-Investigation': { // Appeals
     requiredPermission: 'view:appeal-recommed-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: AppealsTable

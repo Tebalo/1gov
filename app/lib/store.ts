@@ -4,6 +4,7 @@ export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://10.0.25.164:808
 export const invUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8084/trls-84';
 export const cpdUrl = 'http://10.0.25.164:8086/trls-86';
 export const appealUrl = 'http://10.0.25.164:8087/trls-87';
+export const renewalUrl = 'http://10.0.25.164:8088/trls-88';
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
 export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login/sms';
 export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
@@ -13,7 +14,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.20.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.21.00';
 
 export interface StatusTransition {
     [key: string]: {
@@ -241,6 +242,50 @@ const APPEAL_FLOW: Record<string, FlowAction> = {
     }
 } as const;
 
+const REVOCATION_FLOW: Record<string, FlowAction> = {
+    'pending-screening': {
+        requiredPermission: 'update:appeal-incoming',
+        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        message: 'This action will...',
+        status_label: 'Send to',
+        allowedRoles: ['license_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:appeal-pending-screening',
+        nextStatus: ['RECOMMENDED-FOR-APPROVAL'],
+        status_label: 'RECOMMEND',
+        allowedRoles: ['senior_investigations_officer']
+    },
+    'pending-manager-approval': {
+        requiredPermission: 'update:appeal-pending-assessment',
+        nextStatus: ['MANAGER-APPROVED'],
+        status_label: 'Submit for Approval',
+        allowedRoles: ['investigations_manager']
+    },
+} as const;
+
+const RENEWAL_FLOW: Record<string, FlowAction> = {
+    'pending-screening': {
+        requiredPermission: 'update:appeal-incoming',
+        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        message: 'This action will...',
+        status_label: 'Send to',
+        allowedRoles: ['license_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:appeal-pending-screening',
+        nextStatus: ['RECOMMENDED-FOR-APPROVAL'],
+        status_label: 'RECOMMEND',
+        allowedRoles: ['senior_investigations_officer']
+    },
+    'pending-manager-approval': {
+        requiredPermission: 'update:appeal-pending-assessment',
+        nextStatus: ['MANAGER-APPROVED'],
+        status_label: 'Submit for Approval',
+        allowedRoles: ['investigations_manager']
+    },
+} as const;
+
 export function getStatusConfig(status: string): StatusConfig | undefined {
     return STATUS_CONFIG[status];
 }
@@ -251,6 +296,10 @@ export function getCPDFlowAction(status: string): FlowAction | undefined {
 
 export function getApealFlowAction(status: string): FlowAction | undefined {
     return APPEAL_FLOW[status];
+} 
+
+export function getRenewalFlowAction(status: string): FlowAction | undefined {
+    return RENEWAL_FLOW[status];
 } 
 
 export function canUserAccessStatusFull(user: Role, status: string) {
@@ -274,8 +323,8 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
 
     }else if(flow==='appeals'){
         flowaction = getApealFlowAction(status.toLowerCase());
-    }else if(flow==='license'){
-
+    }else if(flow==='renewal'){
+        flowaction = getRenewalFlowAction(status.toLowerCase());
     }
     
     if (!flowaction) return false;
@@ -443,7 +492,17 @@ const ROLES = {
         "update:appeal-recommed-for-approval",
         "update:appeal-recommed-for-rejection",
         "update:appeal-recommed-for-investigation",
-    ]
+    ],
+    license_officer:[
+
+    ],
+    snr_license_officer:[
+
+    ],
+    license_manager: [
+
+    ],
+
 } as const
 
 export const CPDROLES = [
@@ -455,23 +514,32 @@ export function hasPermission(user: Role, permission: Permission){
 }
 
 export const portalNames: { [key: string]: string } = {
-    'REGISTRATION_OFFICER': 'Registration Officer Portal',
+    // Registration team portal items
     'ADMIN': 'Admin Portal',
-    'MANAGER': 'Registration Manager Portal',
-    'LICENSE_MANAGER': 'License Manager Portal',
+    'REGISTRATION_OFFICER': 'Registration Officer Portal',
     'SNR_REGISTRATION_OFFICER':'Snr. REG Officer Portal',
+    'MANAGER': 'Registration Manager Portal',
     'DIRECTOR': 'Director Portal',
     'REGISTRAR': 'Registrar Portal',
+
+    // License team portal items
     'LICENSE_OFFICER': 'License Officer Portal',
     'SNR_LICENSE_OFFICER':'Snr. LIC Officer Portal',
+    'LICENSE_MANAGER': 'License Manager Portal',
+
+    // Investigation team portal items
     'INVESTIGATIONS_OFFICER': 'Investigations Officer Portal',
     'SENIOR_INVESTIGATIONS_OFFICER': 'Senior INV Officer Portal',
     'INVESTIGATIONS_MANAGER': 'Investigations Manager Portal',
-    'DISCIPLINARY_COMMITTEE':'Disciplinary Committe Portal',
     'INVESTIGATIONS_DIRECTOR': 'Investigations Director Portal',
+    'DISCIPLINARY_COMMITTEE':'Disciplinary Committe Portal',
+    
+    // CPD team portal items
     'TEACHER_DEVELOPMENT_OFFICER':'Teacher DEV Officer Portal',
     'TEACHER_DEVELOPMENT_MANAGER':'Teacher DEV Manager Portal',
     'SENIOR_DEVELOPMENT_OFFICER':'Senior DEV Officer Portal',
+
+    // Appeals team portal items
     'APPEALS_OFFICER':'Appeals Officer Portal',
     'SENIOR_APPEALS_OFFICER':'Senior Appeals Officer Portal',
     'APPEALS_MANAGER':'Appeals Manager Officer Portal',

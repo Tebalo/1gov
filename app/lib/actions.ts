@@ -3,12 +3,9 @@
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, appealUrl, cpdUrl, invUrl, licUrl } from "./store";
-import { Activity, Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, Session, TipOffListResponse, TipOffPayload, TipOffResponse, appeal } from './types';
+import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
-import { redirect } from 'next/navigation';
 import { options } from './schema';
-import { error } from "console";
-
 
 async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
@@ -1105,8 +1102,6 @@ export async function getRegApplications(status: string, count: string) {
   }
 }
 
-
-
 interface Complaint {
   crime_location: string;
   nature_of_crime: string;
@@ -1449,6 +1444,62 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
     return {
       code: response.status,
       data: result.data || result,
+    };
+
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+    };
+  }
+}
+
+
+
+export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
+  try {
+    const response = await fetchWithAuth(`${apiUrl}/teacher_registrations/${Id}`, { cache: 'no-cache' });
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: 'success',
+      teacher_registrations: result?.teacher_registrations,
+      teacher_preliminary_infos: result?.teacher_preliminary_infos,
+      edu_pro_qualifications: result?.edu_pro_qualifications,
+      other_qualifications: result?.edu_pro_qualifications,
+      bio_datas: result?.bio_datas,
+      background_checks: result?.background_checks,
+      declarations: result?.declarations,
+      offence_convictions: result?.offence_convictions,
+      employment_details: result?.employment_details,
+      attachments: result?.attachments,
     };
 
   } catch (error) {
