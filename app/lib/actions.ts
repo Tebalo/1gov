@@ -268,14 +268,13 @@ export async function createComplaint(payload: ComplaintPayload): Promise<{succe
 
 export async function updateComplaintStatus(ID: string, status: string): Promise<{code: number; message: string}> {
   try {
-
-    console.log(ID,status)
     const response = await fetch(`${invUrl}/update-status/${ID}?reg_status=${status}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
+      cache:'no-cache'
     });
 
 
@@ -329,6 +328,7 @@ export async function updateCPDStatus(ID: string, status: string): Promise<{code
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
+      cache:'no-cache'
     });
 
 
@@ -382,6 +382,7 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
+      cache:'no-cache'
     });
 
 
@@ -660,8 +661,6 @@ export async function createActivity(payload: ActivityPayload): Promise<Activity
 
 export async function getActivityByNumber(ID: string): Promise<ActivityObject> {
   try {
-
-
     const response = await fetch(`${invUrl}/activity-diaries/${ID}`, {
       method: 'GET',
       headers: {
@@ -726,8 +725,6 @@ export async function getTipOffRecordById(Id: string) {
 
 export async function getTipOffById(ID: string): Promise<TipOffResponse> {
   try {
-
-
     const response = await fetch(`${invUrl}/get-tipoff/${ID}`, {
       method: 'GET',
       headers: {
@@ -836,7 +833,7 @@ export async function getCPDs(status: string, count: number): Promise<CPDListRes
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-
+      cache:'no-cache'
     });
     const responseText = await response.text();
     if (!response.ok) {
@@ -883,7 +880,7 @@ export async function getAppeals(status: string, count: number): Promise<Appeals
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-
+    cache:'no-cache'
     });
     const responseText = await response.text();
     if (!response.ok) {
@@ -932,7 +929,7 @@ export async function getCPDByNumber(ID: string): Promise<CPDResponseGet> {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-
+    cache:'no-cache'
     });
 
     // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
