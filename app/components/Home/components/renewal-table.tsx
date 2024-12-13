@@ -106,9 +106,11 @@ export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
             {isLoading ? (
                 <TableLoadingSkeleton rows={6} columns={6} className="mt-4" />
             ) : response ? (
-                <DataTable data={response} columns={RenewalColumns} userRole={userRole} />
+                <div></div>
+                // <DataTable data={response} columns={RenewalColumns} userRole={userRole} />
             ) : (
-                <DataTable data={[]} columns={RenewalColumns} userRole={userRole} />
+                <div></div>
+                // <DataTable data={[]} columns={RenewalColumns} userRole={userRole} />
             )}
         </div>
     )
