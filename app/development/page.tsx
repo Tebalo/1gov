@@ -56,6 +56,12 @@ const DevelopmentStudio = () => {
       description: "Build and test components",
       icon: <AlertCircle className="w-6 h-6 text-blue-500" />,
       href: "/development/components"
+    },
+    {
+      title: "Viewers Factory",
+      description: "Build and test components",
+      icon: <AlertCircle className="w-6 h-6 text-blue-500" />,
+      href: "/development/viewers"
     }
   ];
 

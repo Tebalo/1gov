@@ -4,7 +4,7 @@ import { getAppeals} from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
 import TableLoadingSkeleton from "../../TableLoadingSkeleton";
 import { Appeal } from "../data/schema";
-import { AppealsColumns } from "./appeals-columns";
+import { RenewalColumns } from "./renewal-columns";
 
 interface WorkProps {
     status: string;
@@ -60,7 +60,7 @@ const processApiResponse = (data: any[]): Appeal[] => {
     }));
 };
 
-export const AppealsTable: React.FC<WorkProps> = ({status, userRole}) => {
+export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
     const [response, setResponse] = useState<Appeal[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -106,12 +106,14 @@ export const AppealsTable: React.FC<WorkProps> = ({status, userRole}) => {
             {isLoading ? (
                 <TableLoadingSkeleton rows={6} columns={6} className="mt-4" />
             ) : response ? (
-                <DataTable data={response} columns={AppealsColumns} userRole={userRole} />
+                <div></div>
+                // <DataTable data={response} columns={RenewalColumns} userRole={userRole} />
             ) : (
-                <DataTable data={[]} columns={AppealsColumns} userRole={userRole} />
+                <div></div>
+                // <DataTable data={[]} columns={RenewalColumns} userRole={userRole} />
             )}
         </div>
     )
 }
 
-export default AppealsTable;
+export default RenewalTable;
