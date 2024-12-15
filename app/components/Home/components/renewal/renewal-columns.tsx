@@ -2,10 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import React from "react"
-import { DataTableColumnHeader } from "./data-table-column-header"
+import { DataTableColumnHeader } from "../data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Renewal } from "../data/schema"
+import { Renewal } from "../../data/schema"
 import { RenewalTableRowActions } from "./renewal-table-row-actions"
 
 export const RenewalColumns: ColumnDef<Renewal>[] = [

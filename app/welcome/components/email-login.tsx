@@ -139,7 +139,7 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
         return (
             <div className="flex flex-col items-center justify-center space-y-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-center text-sm">Redirecting to home page...</p>
+                <p className="text-center text-sm">Redirecting to the home page...</p>
             </div>
         )
     }

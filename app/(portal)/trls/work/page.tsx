@@ -20,6 +20,7 @@ import { InvestigationsOfficerWork } from "@/app/components/MyWork/Investigation
 import { ManagerWork } from "@/app/components/MyWork/ManagerWork";
 import { RegistrarWork } from "@/app/components/MyWork/RegistrarWork";
 import { RegistrationOfficerWork } from "@/app/components/MyWork/RegistrationOfficerWork";
+import { RegistrationWorkPage } from "@/app/components/MyWork/RegistrationWork";
 import { SeniorInvestigationsOfficerWork } from "@/app/components/MyWork/SNRInvestigationsOfficerWork";
 import { SnrRegistrationOfficerWork } from "@/app/components/MyWork/SnrRegistrationOfficerWork";
 import {  Role } from "@/app/lib/store";
@@ -31,7 +32,7 @@ export default async function Work(){
     if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
         return <TeacherHome/>
     } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
-        return <RegistrationOfficerWork/>
+        return <RegistrationWorkPage userRole={"registration_officer"}/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerWork/>
     } else if(userRole?.toUpperCase() === 'SENIOR_INVESTIGATIONS_OFFICER'){
@@ -39,15 +40,15 @@ export default async function Work(){
     }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_MANAGER'){
         return <InvestigationsManagerWork/>
     }else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
-        return <SnrRegistrationOfficerWork/>
+        return <RegistrationWorkPage userRole={"snr_registration_officer"}/>
     } else if(userRole.toUpperCase() === 'MANAGER'){
-        return <ManagerWork/>
+        return <RegistrationWorkPage userRole={"manager"}/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
         return <InvestigationsDirectorWork/>
     }else if(userRole?.toUpperCase() === 'DISCIPLINARY_COMMITTEE'){
         return <InvestigationsOfficerWork/>
     }else if(userRole?.toUpperCase() === 'DIRECTOR'){
-        return <DirectorWork/>
+        return <RegistrationWorkPage userRole={"director"}/>
     } else if(userRole.toUpperCase() === 'TEACHER_DEVELOPMENT_MANAGER'){
         return <CPDWorkPage userRole={"teacher_development_manager"}/>
     }else if(userRole.toUpperCase() === 'TEACHER_DEVELOPMENT_OFFICER'){

@@ -1,3 +1,4 @@
+import { RevocationResponse } from "@/app/(portal)/trls/work/revocation/types/revocation-type";
 import { TeacherRegistrationResponse } from "@/app/lib/types";
 
 export const dummyRenewalData: TeacherRegistrationResponse = {
@@ -163,5 +164,41 @@ export const dummyRenewalData: TeacherRegistrationResponse = {
         "proof_of_payment": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/payment",
         "created_at": "2024-12-04 08:21:39",
         "updated_at": "2024-12-04 08:21:39"
+    }
+};
+
+export const dummyRevocationData: RevocationResponse = {
+    code: 200,
+    message: "success",
+    "revocation": {
+        "id": 1,
+        "revocation_number": "RVC2024-11-00001",
+        "sla": "25",
+        "reg_status": "Pending-Screening",
+        "userid": "436415528",
+        "application_id": "0446c9cc-3ab2-4ebf-8166-876b8938eb41",
+        "registration_number": "Q54532",
+        "current_employer": "Gaborone Secondary School",
+        "employer_contact": "+26771625455",
+        "reason": "retirement",
+        "declaration": "I declare that the information provided...",
+        "profile_data_consent": true,
+        "created_at": "2024-11-26T15:23:20",
+        "updated_at": "2024-11-26T15:23:20"
+    },
+    "profile": {
+        "id": 1,
+        "userid": "436415528",
+        "first_name": "olorato",
+        "middle_name": "",
+        "surname": "charles",
+        "primary_email": "bopaki@26digitalbw.com",
+        "primary_phone": "+26771625455",
+        "primary_physical": "20287,20288,Phase 2,Botswana",
+        "primary_postal": "P.O Box 30559,46190,Serowe,Botswana",
+        "gender": "Female",
+        "nationality": "Botswana",
+        "created_at": "2024-11-26T15:23:20",
+        "updated_at": "2024-11-26T15:23:20"
     }
 };

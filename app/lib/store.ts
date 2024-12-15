@@ -1,11 +1,15 @@
 import { InvestigationStatuses } from "./types";
 
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://10.0.25.164:8080/trls-80';
-export const invUrl = process.env.NEXT_PUBLIC_INV_URL ?? 'http://10.0.25.164:8084/trls-84';
+export const apiUrl = 'http://10.0.25.164:8080/trls-80';
+export const invUrl = 'http://10.0.25.164:8084/trls-84';
 export const cpdUrl = 'http://10.0.25.164:8086/trls-86';
 export const appealUrl = 'http://10.0.25.164:8087/trls-87';
 export const renewalUrl = 'http://10.0.25.164:8088/trls-88';
+export const revocationUrl = 'http://10.0.25.164:8097/trls-97';
+export const restorationUrl = 'http://10.0.25.164:8088/trls-94';
+
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
+
 export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login/sms';
 export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
 export const iamURL = process.env.NEXT_PUBLIC_IAM_URL ?? 'https://gateway-cus-acc.gov.bw';
@@ -244,45 +248,107 @@ const APPEAL_FLOW: Record<string, FlowAction> = {
 
 const REVOCATION_FLOW: Record<string, FlowAction> = {
     'pending-screening': {
-        requiredPermission: 'update:appeal-incoming',
+        requiredPermission: 'update:revocation-pending-screening',
         nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
         message: 'This action will...',
-        status_label: 'Send to',
-        allowedRoles: ['license_officer']
+        status_label: 'Allocate to',
+        allowedRoles: ['registration_officer']
     },
     'pending-assessment': {
-        requiredPermission: 'update:appeal-pending-screening',
-        nextStatus: ['RECOMMENDED-FOR-APPROVAL'],
-        status_label: 'RECOMMEND',
-        allowedRoles: ['senior_investigations_officer']
+        requiredPermission: 'update:revocation-pending-assessment',
+        nextStatus: ['PENDING-APPROVAL'],
+        status_label: 'Submit for approval',
+        allowedRoles: ['snr_registration_officer']
     },
-    'pending-manager-approval': {
-        requiredPermission: 'update:appeal-pending-assessment',
-        nextStatus: ['MANAGER-APPROVED'],
-        status_label: 'Submit for Approval',
-        allowedRoles: ['investigations_manager']
+    'pending-approval': {
+        requiredPermission: 'update:revocation-pending-approval',
+        nextStatus: ['PENDING-ENDORSEMENT'],
+        status_label: 'Submit for endorsement',
+        allowedRoles: ['manager']
+    },
+    'pending-endorsement': {
+        requiredPermission: 'update:revocation-pending-endorsement',
+        nextStatus: ['ENDORSED'],
+        status_label: 'Endorse',
+        allowedRoles: ['director']
     },
 } as const;
 
 const RENEWAL_FLOW: Record<string, FlowAction> = {
     'pending-screening': {
-        requiredPermission: 'update:appeal-incoming',
+        requiredPermission: 'update:renewal-pending-screening',
         nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
         message: 'This action will...',
-        status_label: 'Send to',
+        status_label: 'Allocate to',
         allowedRoles: ['license_officer']
     },
     'pending-assessment': {
-        requiredPermission: 'update:appeal-pending-screening',
-        nextStatus: ['RECOMMENDED-FOR-APPROVAL'],
-        status_label: 'RECOMMEND',
-        allowedRoles: ['senior_investigations_officer']
+        requiredPermission: 'update:renewal-pending-assessment',
+        nextStatus: ['PENDING-APPROVAL'],
+        status_label: 'Submit for approval',
+        allowedRoles: ['snr_license_officer']
     },
-    'pending-manager-approval': {
-        requiredPermission: 'update:appeal-pending-assessment',
+    'pending-approval': {
+        requiredPermission: 'update:renewal-pending-approval',
         nextStatus: ['MANAGER-APPROVED'],
-        status_label: 'Submit for Approval',
-        allowedRoles: ['investigations_manager']
+        status_label: 'Approve',
+        allowedRoles: ['license_manager']
+    },
+} as const;
+
+const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = {
+    'pending-screening': {
+        requiredPermission: 'update:changeofcategory-pending-screening',
+        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        message: 'This action will...',
+        status_label: 'Send to',
+        allowedRoles: ['registration_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:changeofcategory-pending-assessment',
+        nextStatus: ['PENDING-APPROVAL'],
+        status_label: 'Submit for approval',
+        allowedRoles: ['snr_registration_officer']
+    },
+    'pending-approval': {
+        requiredPermission: 'update:changeofcategory-pending-approval',
+        nextStatus: ['PENDING-ENDORSEMENT'],
+        status_label: 'Submit for endorsement',
+        allowedRoles: ['manager']
+    },
+    'pending-endorsement': {
+        requiredPermission: 'update:changeofcategory-pending-endorsement',
+        nextStatus: ['MANAGER-APPROVED'],
+        status_label: 'Approve endorsement',
+        allowedRoles: ['director']
+    },
+} as const;
+
+const RESTORATION_FLOW: Record<string, FlowAction> = {
+    'pending-screening': {
+        requiredPermission: 'update:restoration-pending-screening',
+        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        message: 'This action will...',
+        status_label: 'Submit for screening',
+        allowedRoles: ['registration_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:restoration-pending-assessment',
+        nextStatus: ['PENDING-APPROVAL'],
+        status_label: 'Submit for assessment',
+        allowedRoles: ['snr_registration_officer']
+    },
+    'pending-approval': {
+        requiredPermission: 'update:restoration-pending-approval',
+        nextStatus: ['PENDING-ENDORSEMENT'],
+        status_label: 'Approve',
+        allowedRoles: ['manager']
+    },
+    'pending-endorsement': {
+        requiredPermission: 'update:restoration-pending-endorsement',
+        nextStatus: ['MANAGER-APPROVED'],
+        status_label: 'Approve endorsement',
+        allowedRoles: ['director']
     },
 } as const;
 
@@ -301,6 +367,18 @@ export function getApealFlowAction(status: string): FlowAction | undefined {
 export function getRenewalFlowAction(status: string): FlowAction | undefined {
     return RENEWAL_FLOW[status];
 } 
+
+export function getRevocationFlowAction(status: string): FlowAction | undefined {
+    return REVOCATION_FLOW[status];
+} 
+
+export function getRestorationFlowAction(status: string): FlowAction | undefined {
+    return RESTORATION_FLOW[status];
+} 
+
+export function getChangeOfCategoryFlowAction(status: string): FlowAction | undefined {
+    return CHANGEOFCATEGORY_FLOW[status];
+}
 
 export function canUserAccessStatusFull(user: Role, status: string) {
     const config = getStatusConfig(status.toLowerCase());
@@ -325,6 +403,12 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
         flowaction = getApealFlowAction(status.toLowerCase());
     }else if(flow==='renewal'){
         flowaction = getRenewalFlowAction(status.toLowerCase());
+    } else if(flow === 'revocation'){
+        flowaction = getRevocationFlowAction(status.toLowerCase());
+    } else if(flow == 'changeofcategory'){
+        flowaction = getChangeOfCategoryFlowAction(status.toLowerCase());
+    } else if(flow === 'restoration'){
+        flowaction = getRestorationFlowAction(status.toLowerCase());
     }
     
     if (!flowaction) return false;
@@ -339,13 +423,14 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
 
 export type Role = keyof typeof ROLES
 type Permission = (typeof ROLES)[Role][number]
-const ROLES = {
+export const ROLES = {
     default:[
         "create:complaints",
         "create:tipoffs",
 
         "view:tipoffs",
 
+        // Complaints view permissions
         "view:complaints-ongoing-investigation",
         "view:complaints-incoming",
         "view:complaints-review",
@@ -359,6 +444,8 @@ const ROLES = {
         "view:complaints-ongoing-disciplinary",
         'view:complaints-recommend-for-external-investigation',
         'view:complaints-external-investigation',
+
+        // CPD permissions
         "view:cpd-pending-screening",
         "view:cpd-incoming",
         "view:cpd-pending-verification",
@@ -367,6 +454,7 @@ const ROLES = {
 
         "allocate:complaints-assessment",
 
+        // Complaints permissions
         "update:complaints-ongoing-investigation",
         "update:complaints-incoming",
         "update:complaints-review",
@@ -380,6 +468,8 @@ const ROLES = {
         "update:complaints-ongoing-disciplinary",
         'update:complaints-recommend-for-external-investigation',
         'update:complaints-external-investigation',
+
+        // CPD view permissions
         "update:cpd-pending-screening",
         "update:cpd-incoming",
         "update:cpd-pending-verification",
@@ -402,6 +492,31 @@ const ROLES = {
         "update:appeal-recommed-for-approval",
         "update:appeal-recommed-for-rejection",
         "update:appeal-recommed-for-investigation",
+
+        // Revocation update permissions
+        "update:revocation-pending-screening",
+        "update:revocation-pending-assessment",
+        "update:revocation-pending-approval",
+        "update:revocation-pending-endorsement",
+
+        // Revocation view permissions
+        "view:revocation-pending-screening",
+        "view:revocation-pending-assessment",
+        "view:revocation-pending-approval",
+        "view:revocation-pending-endorsement",
+
+        // Change of category view permissions
+        "update:changeofcategory-pending-screening",
+        "update:changeofcategory-pending-assessment",
+        "update:changeofcategory-pending-approval",
+        "update:changeofcategory-pending-endorsement",
+        
+        // Change of category update permissions
+        "view:changeofcategory-pending-screening",
+        "view:changeofcategory-pending-assessment",
+        "view:changeofcategory-pending-approval",
+        "view:changeofcategory-pending-endorsement",
+        
     ],
     investigations_officer: [
         "create:complaints",
@@ -453,9 +568,6 @@ const ROLES = {
     disciplinary_committee: [
         "view:complaints-ongoing-disciplinary",
     ],
-    manager: [
-
-    ],
     teacher_development_officer:[
         "view:cpd-incoming",
         "update:cpd-pending-screening",
@@ -494,15 +606,73 @@ const ROLES = {
         "update:appeal-recommed-for-investigation",
     ],
     license_officer:[
-
+        // Renewal
+        "update:renewal-pending-screening",
+        "view:renewal-pending-screening"
     ],
     snr_license_officer:[
-
+        // Renewal
+        "update:renewal-pending-assessment",
+        "view:renewal-pending-assessment"
     ],
     license_manager: [
-
+        // Renewal
+        'view:renewal-pending-approval',
+        'update:renewal-pending-approval',
     ],
+    registration_officer:[
+        // Recocation
+        "view:revocation-pending-screening",
+        "update:revocation-pending-screening",
 
+        // Chanage of category
+        "update:changeofcategory-pending-screening",
+        "view:changeofcategory-pending-screening",
+
+        // Restoration
+        "view:restoration-pending-screening",
+        "update:restoration-pending-screening"
+    ],
+    snr_registration_officer:[
+        // Recocation
+        "update:revocation-pending-assessment",
+        "view:revocation-pending-assessment",
+
+        // Change of category
+        "update:changeofcategory-pending-assessment",
+        "view:changeofcategory-pending-assessment",
+
+        // Restoration
+        "view:restoration-pending-assessment",
+        "update:restoration-pending-assessment",
+    ],
+    manager: [
+        // Recocation
+        "update:revocation-pending-approval",
+        "view:revocation-pending-approval",
+
+        // Change of category
+        "update:changeofcategory-pending-approval",
+        "view:changeofcategory-pending-approval",
+
+        // Restoration
+        "view:restoration-pending-approval",
+        "update:restoration-pending-approval",
+ 
+    ],
+    director: [
+        // Revocation
+        "update:revocation-pending-endorsement",
+        "view:revocation-pending-endorsement",
+
+        // Change of category
+        "update:changeofcategory-pending-endorsement",
+        "view:changeofcategory-pending-endorsement",
+
+        // Restoration
+        "view:restoration-pending-endorsement",
+        "update:restoration-pending-endorsement",
+    ]
 } as const
 
 export const CPDROLES = [

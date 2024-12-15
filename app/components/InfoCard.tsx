@@ -31,14 +31,22 @@ const InfoCard: React.FC<InfoCardProps> = ({
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6">
-      <div className="flex items-center mb-2 bg-zinc-100 p-2 rounded-md">
-        <span className="mr-2">{icon}</span>
-        <h2 className="text-lg sm:text-xl font-semibold">{title}</h2>
+    <div className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="border-b">
+        <div className="flex items-center gap-3 p-4">
+          <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
+            {icon}
+          </div>
+          <h2 className="font-semibold text-lg text-gray-900">
+            {title}
+          </h2>
+        </div>
       </div>
-      {/* <div className="h-0.5 w-full bg-blue-400 rounded-full mb-4"></div> */}
-      <div className={`grid ${getGridCols()} gap-4`}>
-        {children}
+      
+      <div className="p-4">
+        <div className={`grid ${getGridCols()} gap-6`}>
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -1,55 +1,50 @@
 "use client"
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { roleObjects } from '@/app/lib/store';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { ROLES } from '@/app/lib/store';
 
-interface RolePermissions {
-    reg_application: boolean;
-    lic_application: boolean;
-    inv_application: boolean;
-    reg_Next_Status: string | null;
-    inv_Next_Status: string | null;
-    tipoff_Next_Status: string | null;
-    lic_Next_Status: string | null;
-    defaultWork: string;
-}
-
-interface RoleObjects {
-    [key: string]: RolePermissions;
+type RoleType = keyof typeof ROLES;
+type GroupedPermissions = {
+  [key: string]: string[]
 }
 
 const RolePermissionsForm = () => {
-  const [selectedRole, setSelectedRole] = useState<string>('');
-  const [formData, setFormData] = useState<RolePermissions>({
-    reg_application: false,
-    lic_application: false,
-    inv_application: false,
-    reg_Next_Status: null,
-    inv_Next_Status: null,
-    tipoff_Next_Status: null,
-    lic_Next_Status: null,
-    defaultWork: ''
-  });
+  const [selectedRole, setSelectedRole] = useState<RoleType | null>(null);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 
-  const statusOptions = [
-    'Pending-Screening',
-    'Pending-Assessment',
-    'Under-Review',
-    'Assessment',
-    'Pending-Manager-Approval',
-    'Pending-Endorsement',
-    'Endorsement-Recommendation',
-    'Registered',
-    'Incoming'
-  ];
+  const handleRoleChange = (role: RoleType) => {
+    setSelectedRole(role);
+    setSelectedPermissions([...ROLES[role]]);
+  };
 
-  const workOptions = [
-    'RegistrationApplication',
-    'Investigations',
-    'licenseApplication'
-  ];
+  const groupPermissions = (permissions: readonly string[]): GroupedPermissions => {
+    return [...permissions].reduce((acc, permission) => {
+      const [action, category] = permission.split(':');
+      const rawCategory = category?.split('-')[0] || 'other';
+      
+      // Create key based on action type and category
+      const key = `${rawCategory}_${action}`;
+      
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(permission);
+      
+      return acc;
+    }, {} as GroupedPermissions);
+  };
+
+  const formatPermissionName = (permission: string): string => {
+    return permission
+      .split(':')[1]
+      ?.split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ') || permission;
+  };
 
   const formatRoleName = (role: string): string => {
     return role
@@ -58,262 +53,113 @@ const RolePermissionsForm = () => {
       .join(' ');
   };
 
-  const handleRoleChange = (role: string) => {
-    setSelectedRole(role);
-    setFormData(roleObjects[role]);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Updated role permissions:', { [selectedRole]: formData });
+    if (selectedRole) {
+      console.log('Updated role permissions:', { 
+        role: selectedRole, 
+        permissions: selectedPermissions 
+      });
+    }
   };
 
   return (
     <div className="flex gap-6 w-full max-w-7xl mx-auto h-[calc(100vh-2rem)]">
-      {/* Left Side - Role Selection */}
       <Card className="w-1/4 min-w-[250px]">
         <CardHeader>
-          <CardTitle>Select Persona</CardTitle>
+          <CardTitle>Select Role</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-md h-[calc(100vh-12rem)] overflow-y-auto bg-white">
-            <div className="divide-y">
-              {Object.keys(roleObjects).map((role) => (
+          <ScrollArea className="h-[calc(100vh-12rem)]">
+            <div className="space-y-1">
+              {(Object.keys(ROLES) as RoleType[]).map((role) => (
                 <div 
                   key={role}
-                  className={`p-3 cursor-pointer transition-colors hover:bg-gray-50 ${
-                    selectedRole === role ? 'bg-blue-50' : ''
+                  className={`p-3 cursor-pointer rounded-md transition-colors hover:bg-gray-50 ${
+                    selectedRole === role ? 'bg-blue-50 text-blue-700' : ''
                   }`}
                   onClick={() => handleRoleChange(role)}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">{formatRoleName(role)}</span>
-                    {selectedRole === role && (
-                      <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                    )}
-                  </div>
+                  {formatRoleName(role)}
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollArea>
         </CardContent>
       </Card>
 
-      {/* Right Side - Settings Form */}
       <Card className="flex-1">
         <CardHeader>
           <CardTitle>
-            {selectedRole ? `${formatRoleName(selectedRole)} Settings` : 'Role Settings'}
+            {selectedRole ? `${formatRoleName(selectedRole)} Permissions` : 'Select a role to view permissions'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {selectedRole ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Permissions Section */}
-                <div className="space-y-4">
-                  <h3 className="font-medium">Permissions</h3>
-                  <div className="bg-white rounded-md border p-4 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <label className="text-sm">Registration Application</label>
-                      <Switch 
-                        checked={formData.reg_application}
-                        onCheckedChange={(checked) => 
-                          setFormData(prev => ({ ...prev, reg_application: checked }))}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <label className="text-sm">License Application</label>
-                      <Switch 
-                        checked={formData.lic_application}
-                        onCheckedChange={(checked) => 
-                          setFormData(prev => ({ ...prev, lic_application: checked }))}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <label className="text-sm">Investigation Application</label>
-                      <Switch 
-                        checked={formData.inv_application}
-                        onCheckedChange={(checked) => 
-                          setFormData(prev => ({ ...prev, inv_application: checked }))}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Default Work Section */}
-                <div className="space-y-4">
-                  <h3 className="font-medium">Default Work</h3>
-                  <div className="border rounded-md h-40 overflow-y-auto bg-white">
-                    <div className="divide-y">
-                      {workOptions.map((work) => (
-                        <div 
-                          key={work}
-                          className={`p-3 cursor-pointer transition-colors hover:bg-gray-50 ${
-                            formData.defaultWork === work ? 'bg-blue-50' : ''
-                          }`}
-                          onClick={() => setFormData(prev => ({ ...prev, defaultWork: work }))}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">{formatRoleName(work)}</span>
-                            {formData.defaultWork === work && (
-                              <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                            )}
-                          </div>
+            <form onSubmit={handleSubmit}>
+              <ScrollArea className="h-[calc(100vh-16rem)]">
+                <div className="space-y-6 pr-4">
+                  {Object.entries(groupPermissions(ROLES[selectedRole])).map(([category, permissions]) => {
+                    const [area, action] = category.split('_');
+                    
+                    return (
+                      <div key={category} className="space-y-4">
+                        <h3 className="font-semibold capitalize">
+                          {area} - {action === 'view' ? 'View Permissions' : 'Update Permissions'}
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          {permissions.map((permission) => (
+                            <div
+                              key={permission}
+                              className={`flex items-start space-x-3 p-3 rounded-md border bg-white
+                                ${action === 'view' ? 'border-blue-100' : 'border-green-100'}`}
+                            >
+                              <Checkbox
+                                id={permission}
+                                checked={selectedPermissions.includes(permission)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setSelectedPermissions(prev => [...prev, permission]);
+                                  } else {
+                                    setSelectedPermissions(prev => prev.filter(p => p !== permission));
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor={permission}
+                                className={`text-sm leading-none 
+                                  ${action === 'view' ? 'text-blue-700' : 'text-green-700'}`}
+                              >
+                                {formatPermissionName(permission)}
+                              </label>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
+              </ScrollArea>
 
-              {/* Next Status Settings */}
-              <div className="space-y-4">
-                <h3 className="font-medium">Next Status Settings</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Registration Status */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Registration Next Status</label>
-                    <div className="border rounded-md h-40 overflow-y-auto bg-white">
-                      <div className="divide-y">
-                        {statusOptions.map((status) => (
-                          <div 
-                            key={status}
-                            className={`p-3 cursor-pointer transition-colors hover:bg-gray-50 ${
-                              formData.reg_Next_Status === status ? 'bg-blue-50' : ''
-                            }`}
-                            onClick={() => setFormData(prev => ({ 
-                              ...prev, 
-                              reg_Next_Status: status 
-                            }))}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">{status}</span>
-                              {formData.reg_Next_Status === status && (
-                                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* License Status */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">License Next Status</label>
-                    <div className="border rounded-md h-40 overflow-y-auto bg-white">
-                      <div className="divide-y">
-                        {statusOptions.map((status) => (
-                          <div 
-                            key={status}
-                            className={`p-3 cursor-pointer transition-colors hover:bg-gray-50 ${
-                              formData.lic_Next_Status === status ? 'bg-blue-50' : ''
-                            }`}
-                            onClick={() => setFormData(prev => ({ 
-                              ...prev, 
-                              lic_Next_Status: status 
-                            }))}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">{status}</span>
-                              {formData.lic_Next_Status === status && (
-                                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Investigation Status */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Investigation Next Status</label>
-                    <div className="border rounded-md h-40 overflow-y-auto bg-white">
-                      <div className="divide-y">
-                        {statusOptions.map((status) => (
-                          <div 
-                            key={status}
-                            className={`p-3 cursor-pointer transition-colors hover:bg-gray-50 ${
-                              formData.inv_Next_Status === status ? 'bg-blue-50' : ''
-                            }`}
-                            onClick={() => setFormData(prev => ({ 
-                              ...prev, 
-                              inv_Next_Status: status 
-                            }))}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">{status}</span>
-                              {formData.inv_Next_Status === status && (
-                                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tipoff Status */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Tipoff Next Status</label>
-                    <div className="border rounded-md h-40 overflow-y-auto bg-white">
-                      <div className="divide-y">
-                        {statusOptions.map((status) => (
-                          <div 
-                            key={status}
-                            className={`p-3 cursor-pointer transition-colors hover:bg-gray-50 ${
-                              formData.tipoff_Next_Status === status ? 'bg-blue-50' : ''
-                            }`}
-                            onClick={() => setFormData(prev => ({ 
-                              ...prev, 
-                              tipoff_Next_Status: status 
-                            }))}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">{status}</span>
-                              {formData.tipoff_Next_Status === status && (
-                                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4">
+              <div className="flex justify-end space-x-4 mt-6">
                 <Button 
                   type="button" 
                   variant="outline"
                   onClick={() => {
-                    setSelectedRole('');
-                    setFormData({
-                      reg_application: false,
-                      lic_application: false,
-                      inv_application: false,
-                      reg_Next_Status: null,
-                      inv_Next_Status: null,
-                      tipoff_Next_Status: null,
-                      lic_Next_Status: null,
-                      defaultWork: ''
-                    });
+                    setSelectedRole(null);
+                    setSelectedPermissions([]);
                   }}
                 >
                   Cancel
                 </Button>
                 <Button type="submit">
-                  Update Role
+                  Update Permissions
                 </Button>
               </div>
             </form>
           ) : (
             <div className="text-center text-gray-500 py-8">
-              Select a role to view and edit settings
+              Select a role to view and edit permissions
             </div>
           )}
         </CardContent>
