@@ -63,6 +63,7 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
           <TableRow>
             <TableHead>Level</TableHead>
             <TableHead>Qualification</TableHead>
+            <TableHead>Attachment</TableHead>
             <TableHead>Institution</TableHead>
             <TableHead>Year</TableHead>
           </TableRow>
@@ -72,6 +73,7 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
             <TableRow key={index}>
               <TableCell>{qual.level}</TableCell>
               <TableCell>{qual.qualification}</TableCell>
+              <TableCell><InfoItem label="" value={qual.attachments}/></TableCell>
               <TableCell>{qual.institution}</TableCell>
               <TableCell>{qual.qualification_year}</TableCell>
             </TableRow>
@@ -107,36 +109,10 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
   );
 
   const renderDocuments = () => (
-    <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
-      <div className="space-y-4">
-        {data.attachments?.national_id_copy && (
-          <button onClick={() => handleOpenDocument(data.attachments?.national_id_copy ?? '')} 
-                  className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50">
-            <div className="flex items-center space-x-2">
-              <File className="h-4 w-4"/>
-              <span>National ID Copy</span>
-            </div>
-          </button>
-        )}
-        {data.attachments?.qualification_copy && (
-          <button onClick={() => handleOpenDocument(data.attachments?.qualification_copy ?? '')}
-                  className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50">
-            <div className="flex items-center space-x-2">
-              <File className="h-4 w-4"/>
-              <span>Qualification Documents</span>
-            </div>
-          </button>
-        )}
-        {data.attachments?.proof_of_payment && (
-          <button onClick={() => handleOpenDocument(data.attachments?.proof_of_payment ?? '')}
-                  className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50">
-            <div className="flex items-center space-x-2">
-              <File className="h-4 w-4"/>
-              <span>Proof of Payment</span>
-            </div>
-          </button>
-        )}
-      </div>
+    <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={3}>
+      <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy}/>
+      <InfoItem label="Qualification Documents" value={data.attachments?.qualification_copy}/>
+      <InfoItem label="Proof of Payment" value={data.attachments?.proof_of_payment}/>
     </InfoCard>
   );
 

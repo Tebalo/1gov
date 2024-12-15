@@ -7,9 +7,10 @@ import { InvestigationsTable } from "../investigations-table";
 import { TipOffsTable } from "../tipoffs-table";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { Role, hasPermission, roleObjects } from "@/app/lib/store";
+import { Role, hasPermission } from "@/app/lib/store";
 import CPDTable from "../cpd-table";
 import AppealsTable from "../appeals-table";
+import RevocationTable from "../revocation/revocation-table";
 
 interface Props {
   userRole: Role;
@@ -136,6 +137,31 @@ const AVAILABLE_TABLES = {
     requiredPermission: 'view:appeal-recommed-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: AppealsTable
+  },
+  'Revocation Cases Incoming': { // Revocation
+    requiredPermission: 'view:revocation-pending-screening' as const,
+    status: 'INCOMING',
+    component: RevocationTable
+  },
+  'Revocation Cases Pending-Screening': { // Revocation
+    requiredPermission: 'view:revocation-pending-screening' as const,
+    status: 'PENDING-SCREENING',
+    component: RevocationTable
+  },
+  'Revocation Cases Pending-Assessment': { // Revocation
+    requiredPermission: 'view:revocation-pending-assessment' as const,
+    status: 'PENDING-ASSESSMENT',
+    component: RevocationTable
+  },
+  'Revocation Cases Pending-Approval': { // Revocation
+    requiredPermission: 'view:revocation-pending-approval' as const,
+    status: 'PENDING-APPROVAL',
+    component: RevocationTable
+  },
+  'Revocation Cases Pending-Endorsement': { // Revocation
+    requiredPermission: 'view:revocation-pending-endorsement' as const,
+    status: 'PENDING-ENDORSEMENT',
+    component: RevocationTable
   },
 } as const;
 

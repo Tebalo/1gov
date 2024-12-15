@@ -1,8 +1,8 @@
 'use client'
 import React, { Suspense, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Layout, Activity, FileText, AlertCircle } from "lucide-react";
+import { Search, Layout, FileText, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { PageTitle } from "../components/PageTitle";

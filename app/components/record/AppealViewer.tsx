@@ -61,18 +61,7 @@ const AppealViewer: React.FC<AppealViewerProps> = ({ data, userRole }) => {
 
   const renderDocuments = () => (
     <InfoCard title='Supporting Documents' icon={<File className="w-6 h-6 text-blue-500"/>}>
-      <div className="space-y-4">
-        <button
-          onClick={() => handleOpenDocument(data.appeals_application?.supporting_document_key ?? null)}
-          disabled={!data.appeals_application?.supporting_document_key}
-          className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <div className="flex items-center space-x-2">
-            <File className="h-4 w-4"/>
-            <span>Supporting Document</span>
-          </div>
-        </button>
-      </div>
+      <InfoItem label="" value={data.appeals_application?.supporting_document_key}/>
     </InfoCard>
   );
 

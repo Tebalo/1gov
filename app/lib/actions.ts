@@ -2,10 +2,13 @@
 
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
-import { apiUrl, appealUrl, cpdUrl, invUrl, licUrl } from "./store";
+import { apiUrl, appealUrl, cpdUrl, invUrl, licUrl, renewalUrl, restorationUrl, revocationUrl } from "./store";
 import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { options } from './schema';
+import { RevocationListResponse } from "../components/Home/components/revocation/types/revocation";
+import { RevocationResponse } from "../(portal)/trls/work/revocation/types/revocation-type";
+import { RestorationListResponse } from "../components/Home/components/restoration/types/restoration";
 
 async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
@@ -377,6 +380,166 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
 
     console.log(ID,status)
     const response = await fetch(`${appealUrl}/update_status/${ID}?reg_status=${status}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache:'no-cache'
+    });
+
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: result.message || 'Success',
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    };
+  }
+}
+
+export async function updateRevocationStatus(ID: string, status: string): Promise<{code: number; message: string}> {
+  try {
+    const response = await fetch(`${revocationUrl}/update_status/${ID}?reg_status=${status}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache:'no-cache'
+    });
+
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: result.message || 'Success',
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    };
+  }
+}
+
+export async function updateRenewalStatus(ID: string, status: string): Promise<{code: number; message: string}> {
+  try {
+
+    console.log(ID,status)
+    const response = await fetch(`${renewalUrl}/license-renewal/${ID}?reg_status=${status}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache:'no-cache'
+    });
+
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: result.message || 'Success',
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    };
+  }
+}
+
+export async function updateRestorationStatus(ID: string, status: string): Promise<{code: number; message: string}> {
+  try {
+
+    console.log(ID,status)
+    const response = await fetch(`${restorationUrl}/update_status/${ID}?reg_status=${status}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -871,6 +1034,7 @@ export async function getCPDs(status: string, count: number): Promise<CPDListRes
     };
   }
 }
+
 export async function getAppeals(status: string, count: number): Promise<Appeals_list> {
   try {
 
@@ -909,6 +1073,104 @@ export async function getAppeals(status: string, count: number): Promise<Appeals
     return {
       code: response.status,
       data: result.data
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getRevocations(status: string, count: number): Promise<RevocationListResponse> {
+  try {
+
+    const response = await fetch(`${revocationUrl}/get_list?reg_status=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    cache:'no-cache'
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: "success",
+      applications: result.applications
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getRestorations(status: string, count: number): Promise<RestorationListResponse> {
+  try {
+
+    const response = await fetch(`${restorationUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    cache:'no-cache'
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: "success",
+      applications: result.data
     };
 
   } catch (error) {
@@ -1013,6 +1275,56 @@ export async function getAppealByNumber(ID: string): Promise<appeal> {
       message: result?.message,
       profile: result?.profile,
       appeals_application: result?.appeals_application
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getRevocationByNumber(ID: string): Promise<RevocationResponse> {
+  try {
+    const response = await fetch(`${revocationUrl}/get-revocations/${ID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache:'no-cache'
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+    return {
+      code: response.status,
+      message: result?.message,
+      profile: result?.profile,
+      revocation: result?.revocation
     };
 
   } catch (error) {
@@ -1452,11 +1764,9 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
   }
 }
 
-
-
 export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
   try {
-    const response = await fetchWithAuth(`${apiUrl}/teacher_registrations/${Id}`, { cache: 'no-cache' });
+    const response = await fetchWithAuth(`${renewalUrl}/license-renewal/${Id}`, { cache: 'no-cache' });
 
     // Get the raw response text first
     const responseText = await response.text();

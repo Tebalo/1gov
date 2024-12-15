@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateRenewalStatus } from '@/app/lib/actions'
+import { updateRevocationStatus } from '@/app/lib/actions'
 import { useRouter } from 'next/navigation'
 import {
   AlertDialog,
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
-import ActivityModal from '../ActivityModal'
+import ActivityModal from '@/app/components/record/ActivityModal'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -43,7 +43,7 @@ interface FlowActionConfig {
 
 type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | null;
 
-const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
+const RevocationActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -57,7 +57,7 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
   const { toast } = useToast();
   
   // Get flow-action configuration
-  const accessConfig: FlowActionConfig = getFlowActionUserDetails(userRole, current_status,'renewal') || {
+  const accessConfig: FlowActionConfig = getFlowActionUserDetails(userRole, current_status,'revocation') || {
     hasPermission: false,
     nextStatus: [],
     message: '',
@@ -91,7 +91,7 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
   const handleStatusUpdate = async (status: string) => {
     setIsSubmitting(true);
     try {
-      const result = await updateRenewalStatus(recordId, status);
+      const result = await updateRevocationStatus(recordId, status);
       if (result.code === 200 || result.code === 201) {
         closeDialog();
         toast({
@@ -301,4 +301,4 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
   );
 };
 
-export default  RenewalActionButtons;
+export default  RevocationActionButtons;

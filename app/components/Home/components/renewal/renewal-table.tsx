@@ -1,9 +1,9 @@
 "use client"
-import { DataTable } from "./data-table";
+import { DataTable } from "../data-table";
 import { getAppeals} from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
-import TableLoadingSkeleton from "../../TableLoadingSkeleton";
-import { Appeal } from "../data/schema";
+import TableLoadingSkeleton from "../../../TableLoadingSkeleton";
+import { Appeal } from "../../data/schema";
 import { RenewalColumns } from "./renewal-columns";
 
 interface WorkProps {
