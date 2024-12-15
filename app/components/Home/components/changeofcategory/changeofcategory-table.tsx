@@ -101,7 +101,7 @@ export const ChangeOfCategoryTable: React.FC<WorkProps> = ({status, userRole}) =
             {isLoading ? (
                 <TableLoadingSkeleton rows={6} columns={6} className="mt-4" />
             ) : response ? (
-                <DataTable data={response} columns={ChangeOfCategoryColumns} userRole={userRole} />
+                <DataTable data={[]} columns={ChangeOfCategoryColumns} userRole={userRole} />
             ) : (
                 <DataTable data={[]} columns={ChangeOfCategoryColumns} userRole={userRole} />
             )}
