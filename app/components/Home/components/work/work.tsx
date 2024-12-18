@@ -138,11 +138,11 @@ const AVAILABLE_TABLES = {
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: AppealsTable
   },
-  'Revocation Cases Incoming': { // Revocation
-    requiredPermission: 'view:revocation-pending-screening' as const,
-    status: 'INCOMING',
-    component: RevocationTable
-  },
+  // 'Revocation Cases Incoming': { // Revocation
+  //   requiredPermission: 'view:revocation-pending-screening' as const,
+  //   status: 'INCOMING',
+  //   component: RevocationTable
+  // },
   'Revocation Cases Pending-Screening': { // Revocation
     requiredPermission: 'view:revocation-pending-screening' as const,
     status: 'PENDING-SCREENING',
