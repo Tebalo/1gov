@@ -18,7 +18,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.23.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.24.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -173,18 +173,18 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
 } as const;
 
 const CPD_FLOW: Record<string, FlowAction> = {
-    'incoming': {
-        requiredPermission: 'update:cpd-incoming',
-        nextStatus: ['PENDING-SCREENING'],
-        message: 'This action will...',
-        status_label: 'Submit for Screening',
-        allowedRoles: ['teacher_development_officer']
-    },
+    // 'incoming': {
+    //     requiredPermission: 'update:cpd-incoming',
+    //     nextStatus: ['PENDING-SCREENING'],
+    //     message: 'This action will...',
+    //     status_label: 'Submit for Screening',
+    //     allowedRoles: ['teacher_development_officer']
+    // },
     'pending-screening': {
         requiredPermission: 'update:cpd-pending-screening',
         nextStatus: ['PENDING-VERIFICATION'],
         status_label: 'Submit for Verification',
-        allowedRoles: ['senior_development_officer']
+        allowedRoles: ['teacher_development_officer']
     },
     'pending-verification': {
         requiredPermission: 'update:cpd-pending-verification',
@@ -201,13 +201,13 @@ const CPD_FLOW: Record<string, FlowAction> = {
 } as const;
 
 const APPEAL_FLOW: Record<string, FlowAction> = {
-    'incoming-appeal': {
-        requiredPermission: 'update:appeal-incoming',
-        nextStatus: ['PENDING-SCREENING'],
-        message: 'This action will...',
-        status_label: 'Submit for Screening',
-        allowedRoles: ['appeals_officer']
-    },
+    // 'incoming-appeal': {
+    //     requiredPermission: 'update:appeal-incoming',
+    //     nextStatus: ['PENDING-SCREENING'],
+    //     message: 'This action will...',
+    //     status_label: 'Submit for Screening',
+    //     allowedRoles: ['appeals_officer']
+    // },
     'pending-screening': {
         requiredPermission: 'update:appeal-pending-screening',
         nextStatus: ['PENDING-ASSESSMENT'],
@@ -569,15 +569,12 @@ export const ROLES = {
         "view:complaints-ongoing-disciplinary",
     ],
     teacher_development_officer:[
-        "view:cpd-incoming",
+        "view:cpd-pending-screening",
         "update:cpd-pending-screening",
-        "update:cpd-incoming"
     ],
     senior_development_officer:[
         "view:cpd-pending-verification",
-        "view:cpd-pending-screening",
-        "update:cpd-pending-verification",
-        "update:cpd-pending-screening"
+        "update:cpd-pending-verification"
     ],
     teacher_development_manager: [
         "view:cpd-recommed-for-approval",
