@@ -83,11 +83,11 @@ const AVAILABLE_TABLES = {
     status: 'CASE-CLOSED',
     component: InvestigationsTable
   },
-  'Incoming CPD Cases': { // CPD
-    requiredPermission: 'view:cpd-incoming' as const,
-    status: 'INCOMING',
-    component: CPDTable
-  },
+  // 'Incoming CPD Cases': { // CPD
+  //   requiredPermission: 'view:cpd-incoming' as const,
+  //   status: 'INCOMING',
+  //   component: CPDTable
+  // },
   'CPD Cases Pending-Screening': { // CPD
     requiredPermission: 'view:cpd-pending-screening' as const,
     status: 'PENDING-SCREENING',
@@ -100,7 +100,7 @@ const AVAILABLE_TABLES = {
   },
   'CPDs Cases Recommeded for Approval': { // CPD
     requiredPermission: 'view:cpd-recommed-for-approval' as const,
-    status: 'APPROVAL',
+    status: 'RECOMMEND-FOR-APPROVAL',
     component: CPDTable
   },
   'Incoming-Appeal': { // Appeals
