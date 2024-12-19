@@ -4,6 +4,7 @@ import { getRole} from "@/app/auth/auth";
 import { AdminHome } from "@/app/components/Home/AdminHome";
 import { DirectorHome } from "@/app/components/Home/DirectorHome";
 import { DisciplinaryCommitteHome } from "@/app/components/Home/DisciplinaryCommitteHome";
+import { UserHome } from "@/app/components/Home/Home";
 import { InvestigationsDirectorHome } from "@/app/components/Home/InvestigationsDirectorHome";
 import { InvestigationsOfficerHome } from "@/app/components/Home/InvestigationsOfficerHome";
 import { LicenseManagerHome } from "@/app/components/Home/LicenseManagerHome";
@@ -53,7 +54,7 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminHome/>
     } else {
-        return <InvestigationsOfficerHome/>
+        return <UserHome />
         //return redirect('/welcome')
     }
 }

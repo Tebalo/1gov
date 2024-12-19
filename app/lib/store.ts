@@ -4,7 +4,7 @@ export const apiUrl = 'http://10.0.25.164:8080/trls-80';
 export const invUrl = 'http://10.0.25.164:8084/trls-84';
 export const cpdUrl = 'http://10.0.25.164:8086/trls-86';
 export const appealUrl = 'http://10.0.25.164:8087/trls-87';
-export const renewalUrl = 'http://10.0.25.164:8088/trls-88';
+export const renewalUrl = 'http://10.0.25.164:8090/trls-90';
 export const revocationUrl = 'http://10.0.25.164:8097/trls-97';
 export const restorationUrl = 'http://10.0.25.164:8088/trls-94';
 

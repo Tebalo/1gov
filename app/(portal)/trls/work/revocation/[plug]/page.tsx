@@ -14,7 +14,7 @@ export default async function Page({ params }: { params: { plug: string } }) {
     response = await getRevocationByNumber(id);
     const rawRole = await getRole() ?? 'default'; // type assertion
     const userRole = rawRole.toLowerCase() as Lowercase<Role>;
-    
+    console.log(response)
     return (
       <main className="h-full">
         <div className="flex flex-row h-full gap-0">
