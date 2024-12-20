@@ -10,6 +10,7 @@ import { TeacherRegistrations } from "./components/TeacherRegistrations";
 import { StudentRegistrations } from "./components/StudentRegistrations";
 import { MaleTeacherRegistrations } from "./components/MaleTeacherRegistrations";
 import { MonthlyTeacherRegistrations } from "./components/MonthlyTeacherRegistrations-SimpleBarGraph";
+import { RegistrationStats } from "./components/RegistrationStats ";
 
 export const AdminDashboard = () => {
     return(
@@ -41,12 +42,7 @@ export const AdminDashboard = () => {
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent value="overview" className="space-y-4">
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                    <AllTeacherRegistrations/>
-                                    <TeacherRegistrations/>
-                                    <StudentRegistrations/>
-                                    <MaleTeacherRegistrations/>
-                                </div>
+<RegistrationStats />
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                                     <Card className="col-span-4">
                                     <CardHeader>

@@ -11,6 +11,7 @@ import { Role, hasPermission } from "@/app/lib/store";
 import CPDTable from "../cpd-table";
 import AppealsTable from "../appeals-table";
 import RevocationTable from "../revocation/revocation-table";
+import RenewalTable from "../renewal/renewal-table";
 
 interface Props {
   userRole: Role;
@@ -162,6 +163,22 @@ const AVAILABLE_TABLES = {
     requiredPermission: 'view:revocation-pending-endorsement' as const,
     status: 'PENDING-ENDORSEMENT',
     component: RevocationTable
+  },
+
+  'Renewal Cases Pending-Screening': { // Renewal
+    requiredPermission: 'view:renewal-pending-screening' as const,
+    status: 'PENDING-SCREENING',
+    component: RenewalTable
+  },
+  'Renewal Cases Pending-Assessment': { // Renewal
+    requiredPermission: 'view:renewal-pending-assessment' as const,
+    status: 'PENDING-ASSESSMENT',
+    component: RenewalTable
+  },
+  'Renewal Cases Pending-Approval': { // Renewal
+    requiredPermission: 'view:renewal-pending-approval' as const,
+    status: 'PENDING-APPROVAL',
+    component: RenewalTable
   },
 } as const;
 

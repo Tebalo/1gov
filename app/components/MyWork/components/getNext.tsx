@@ -8,6 +8,7 @@ import React, { Suspense, useState } from "react"
 import { LoadingSkeleton } from "../../LoadingSkeleton";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
 
 interface WorkProps{
     status: string;
@@ -171,7 +172,13 @@ export const GetNext: React.FC<WorkProps> = ({status, service_type}) => {
                     <div className="py-4">
                         <Suspense fallback={<LoadingSkeleton />}>
                         {isLoading ? (
-                            <LoadingSkeleton />
+                            <div className="flex flex-col items-center gap-4 p-6 rounded-">
+                                <Loader2 className="h-12 w-12 animate-spin text-primary"/>
+                                <div className="text-center space-y-1">
+                                    <h3 className="font-medium">Loading your content</h3>
+                                    <p className="text-sm text-muted-foreground">This may take a few moments</p>
+                                </div>
+                            </div>
                         ) : response ? (
                             <div className="space-y-4">
                                 <InfoItem label="Registration ID" value={response?.national_id} />

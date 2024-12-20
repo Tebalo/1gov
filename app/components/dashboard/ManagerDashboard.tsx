@@ -19,6 +19,7 @@ import { PieChartStatuses } from "./components/pie-chart-statuses";
 import { LineChartDailyRegistrations } from "./components/line-chart-daily-registrations";
 import { FemaleTeacherRegistrations } from "./components/FemaleTeacherRegistrations";
 import { TotalIssuedLicenses } from "./components/TotalIssuedLicenses";
+import { RegistrationStats } from "./components/RegistrationStats ";
 
 export const ManagerDashboard = () => {
     return(
@@ -50,22 +51,17 @@ export const ManagerDashboard = () => {
 
                             </TabsList>
                             <TabsContent value="overview" className="space-y-4">
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                    <AllTeacherRegistrations/>
-                                    <TotalIssuedLicenses/>
-                                    <FemaleTeacherRegistrations/>
-                                    <MaleTeacherRegistrations/>
-                                </div>
+                                <RegistrationStats />
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    {/* <div className="col-span-1">
+                                    <div className="col-span-1">
                                         <MixedBarChartStatuses />
-                                    </div> */}
+                                    </div>
                                     <div className="col-span-1">
                                         <HorizontalBarChartStatus />
                                     </div> 
-                                    {/* <div>
+                                    <div>
                                         <BarChartMonthlyRegistrations />
-                                    </div> */}
+                                    </div>
                                 </div>
                             </TabsContent>
                             <TabsContent value="analytics" className="space-y-4">

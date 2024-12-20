@@ -1,6 +1,7 @@
 import { getRole } from "@/app/auth/auth";
 import { ApplicationForTeacherRegistration } from "@/app/components/record/AppForTeacherRegistration";
 import TeacherRegistrationView from "@/app/components/record/RecordViewer";
+import TeacherRegistrationViewer from "@/app/components/record/RecordViewer2.0";
 import { getRegById } from "@/app/lib/actions";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
@@ -20,7 +21,7 @@ export default async function Page({params}:{params: {slug: string}}){
             <div className="flex flex-row h-full gap-0">
                 {work ? (
                     <>
-                        {userRole &&<TeacherRegistrationView data={work} userRole={userRole}/>}
+                        {userRole &&<TeacherRegistrationViewer data={work} userRole={userRole}/>}
                     </>):(
                         <div className="flex h-[80vh] items-center justify-center w-full">
                             <div className="text-center px-4">

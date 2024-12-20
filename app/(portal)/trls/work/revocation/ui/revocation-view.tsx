@@ -6,7 +6,9 @@ import InfoCard from '@/app/components/InfoCard';
 import InfoItem from '@/app/components/InfoItem';
 import RevocationActionButtons from '../actions/revocation-action-items';
 import { RevocationResponse } from '../types/revocation-type';
-
+import { RefreshCcw, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface RevocationViewerProps {
   data: RevocationResponse;
@@ -63,8 +65,34 @@ const RevocationViewer: React.FC<RevocationViewerProps> = ({ data, userRole }) =
   );
 
   if (!data || !data?.revocation || !data?.profile) {
-    return <div>No data available</div>;
-  }
+    return (
+        <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+            <div className="max-w-md w-full space-y-4">
+                <Alert variant="default" className="border-2">
+                    <AlertCircle className="h-5 w-5" />
+                    <AlertTitle>No Data Found</AlertTitle>
+                    <AlertDescription>
+                        We couldn&#39;t find the requested information. This might be because:
+                        <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                            <li>The data has been removed</li>
+                            <li>You don&#39;t have access to this information</li>
+                            <li>There might be a temporary system issue</li>
+                        </ul>
+                    </AlertDescription>
+                </Alert>
+                <div className="flex justify-center">
+                    <Button 
+                        onClick={() => window.location.reload()}
+                        className="gap-2"
+                    >
+                        <RefreshCcw className="h-4 w-4" />
+                        Refresh
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+}
 
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">

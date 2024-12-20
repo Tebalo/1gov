@@ -34,115 +34,151 @@ const FormSchema = z.object({
     password: z.string().min(1, { message: 'Password is required' })
 })
 
+// Pre-create the AbortController
+const controller = new AbortController()
+
+// Create a reusable loading component
+const LoadingState = ({ message }: { message: string }) => (
+    <div className="flex flex-col items-center justify-center space-y-4">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <p className="text-center text-sm">{message}</p>
+    </div>
+  )
+  
+
 const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ username, password }) => {
     const [value, setValue] = useState("")
     const [isOtpLoading, setIsOtpLoading] = useState(false)
     const [isResendLoading, setIsResendLoading] = useState(false)
-    const [isRedirecting, setIsRedirecting] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
-    const [isStoringSession, setIsStoringSession] = useState(false)
-    const [isDecryptingSession, setIsDecryptingSession] = useState(false)
-    
     const router = useRouter()
 
+    // Optimize by combining state updates
+    const [authState, setAuthState] = useState({
+        isStoringSession: false,
+        isDecryptingSession: false,
+        isRedirecting: false
+    })
+    
     const handleOtpSubmit = async () => {
         setIsOtpLoading(true)
         setErrorMessage(null)
         setSuccessMessage(null)
+    
         try {
-            const response = await fetch(`${validateUrl}`, {
+            const validateResponse = await fetch(`${validateUrl}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({username, otp: value})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, otp: value }),
+                signal: controller.signal
             });
-            const data = await response.json();
+            const data = await validateResponse.json();
             
-            if (response.ok) {
-                setIsStoringSession(true)
+            if (validateResponse.ok) {
+                setAuthState({
+                    isStoringSession: true,
+                    isDecryptingSession: false,
+                    isRedirecting: false
+                });
+    
                 const authResponse = data as AuthResponse;
                 await storeSession(authResponse);
-                setIsStoringSession(false)
-                setIsDecryptingSession(true)
-                try{
-                    const response = await fetch(`${DeTokenizeUrl}${authResponse.access_token}`, {
+                
+                setAuthState({
+                    isStoringSession: false,
+                    isDecryptingSession: true,
+                    isRedirecting: false
+                });
+    
+                try {
+                    const deTokenizeResponse = await fetch(`${DeTokenizeUrl}${authResponse.access_token}`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json'},
-                        body: JSON.stringify({username, otp: value})
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, otp: value }),
+                        signal: controller.signal
                     });
-                    const data = await response.json();
-                    if(response.ok){
-                        const profile = data as DecodedToken;
-                        await storeAccessGroups(profile)
-                    }else{
-                        setErrorMessage(data.message || 'Failed to decrypt access token')
+                    const tokenData = await deTokenizeResponse.json();
+    
+                    if (deTokenizeResponse.ok) {
+                        const profile = tokenData as DecodedToken;
+                        await storeAccessGroups(profile);
+                        
+                        setAuthState({
+                            isStoringSession: false,
+                            isDecryptingSession: false,
+                            isRedirecting: true
+                        });
+                        
+                        router.push('/trls/work');
+                    } else {
+                        setErrorMessage(tokenData.message || 'Failed to decrypt access token');
                     }
-                }catch (error){
-                    console.error('OTP validation error:', error)
-                    setErrorMessage('An error occurred during OTP validation. Please try again.')
+                } catch (error: unknown) {
+                    if (error instanceof Error) {
+                        if (error.name === 'AbortError') return;
+                        console.error('Token decryption error:', error);
+                    }
+                    setErrorMessage('An error occurred during token decryption.');
                 }
-                setIsDecryptingSession(false)
-                setIsRedirecting(true)
-                router.push('/trls/work')
             } else {
-                setErrorMessage(data.message || 'OTP validation failed. Please try again')
+                setErrorMessage(data.message || 'OTP validation failed. Please try again');
             }
-        } catch (error) {
-            console.error('OTP validation error:', error)
-            setErrorMessage('An error occurred during OTP validation. Please try again.')
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                if (error.name === 'AbortError') return;
+                console.error('OTP validation error:', error);
+            }
+            setErrorMessage('An error occurred during OTP validation. Please try again.');
         } finally {
-            setIsOtpLoading(false)
+            setIsOtpLoading(false);
         }
     }
 
+    // Optimize resend OTP with timeout
     const handleResendOTP = async () => {
         setIsResendLoading(true)
-        setErrorMessage(null)
-        setSuccessMessage(null)
+        const timeout = setTimeout(() => controller.abort(), 10000) // 10s timeout
+
         try {
             const response = await fetch(`${authUrl}`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username, password})
-            });
-            if(response.ok){
-                setSuccessMessage('OTP resent successfully.')
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+                signal: controller.signal
+            })
+
+            clearTimeout(timeout)
+
+            if (response.ok) {
                 setValue("")
-            } else{
-                const data = await response.json();
-                setErrorMessage(data.message || 'Failed to resend OTP. Please try again.')
+                setSuccessMessage('OTP resent successfully.')
+            } else {
+                const data = await response.json()
+                setErrorMessage(data.message || 'Failed to resend OTP.')
             }
-        } catch (error) {
-            console.error('Resend OTP error:', error)
-            setErrorMessage('Failed to resend OTP. Please try again.')
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                if (error.name === 'AbortError') return
+            }
+            setErrorMessage('Failed to resend OTP.')
         } finally {
             setIsResendLoading(false)
+            clearTimeout(timeout) // Make sure to clear timeout in finally block
         }
     }
-    if (isDecryptingSession) {
-        return (
-            <div className="flex flex-col items-center justify-center space-y-4">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-center text-sm">Decrypting access token...</p>
-            </div>
-        )
-    }
-    if (isStoringSession) {
-        return (
-            <div className="flex flex-col items-center justify-center space-y-4">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-center text-sm">Saving session...</p>
-            </div>
-        )
-    }
-    if (isRedirecting) {
-        return (
-            <div className="flex flex-col items-center justify-center space-y-4">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-center text-sm">Redirecting to the home page...</p>
-            </div>
-        )
-    }
+// In your main component, replace the multiple conditions with:
+const { isStoringSession, isDecryptingSession, isRedirecting } = authState
+
+if (isStoringSession || isDecryptingSession || isRedirecting) {
+  const message = isStoringSession 
+    ? "Saving session..." 
+    : isDecryptingSession 
+    ? "Decrypting access token..." 
+    : "Redirecting to the home page..."
+    
+  return <LoadingState message={message} />
+}
 
     return (
         <div className="space-y-4">

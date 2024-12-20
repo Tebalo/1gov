@@ -19,11 +19,12 @@ import { PieChartStatuses } from "./components/pie-chart-statuses";
 import { LineChartDailyRegistrations } from "./components/line-chart-daily-registrations";
 import { FemaleTeacherRegistrations } from "./components/FemaleTeacherRegistrations";
 import { TotalIssuedLicenses } from "./components/TotalIssuedLicenses";
+import { RegistrationStats } from "./components/RegistrationStats ";
 
 export const DirectorDashboard = () => {
     return(
         <>
-                   <div className="overflow-auto h-screen rounded-lg">
+        <div className="overflow-auto h-screen rounded-lg">
             <div className="mb-2">
                 <div className="flex items-center justify-between space-y-2 mr-10">
                     <PageTitle Title="Dashboard"/>
@@ -48,12 +49,7 @@ export const DirectorDashboard = () => {
 
                             </TabsList>
                             <TabsContent value="overview" className="space-y-4">
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                    <AllTeacherRegistrations/>
-                                    <TotalIssuedLicenses/>
-                                    <FemaleTeacherRegistrations/>
-                                    <MaleTeacherRegistrations/>
-                                </div>
+                                <RegistrationStats />
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     <div className="col-span-1">
                                         <MixedBarChartStatuses />

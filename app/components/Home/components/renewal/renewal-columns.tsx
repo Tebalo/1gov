@@ -5,8 +5,8 @@ import React from "react"
 import { DataTableColumnHeader } from "../data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Renewal } from "../../data/schema"
 import { RenewalTableRowActions } from "./renewal-table-row-actions"
+import { Renewal } from "./schema/renewal"
 
 export const RenewalColumns: ColumnDef<Renewal>[] = [
   {
@@ -70,7 +70,7 @@ export const RenewalColumns: ColumnDef<Renewal>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[150px]">
+      <div className="w-[120px]">
         <Badge variant={
           row.getValue("reg_status") === "Approved" ? "default" :
           row.getValue("reg_status") === "Rejected" ? "destructive" :
@@ -89,7 +89,7 @@ export const RenewalColumns: ColumnDef<Renewal>[] = [
       <DataTableColumnHeader column={column} title="Endorsement" />
     ),
     cell: ({ row }) => (
-      <div className="w-[150px]">
+      <div className="w-[120px]">
         <Badge variant={
           row.getValue("endorsement_status") === "Endorsed" ? "default" :
           row.getValue("endorsement_status") === "Rejected" ? "destructive" :
@@ -103,15 +103,14 @@ export const RenewalColumns: ColumnDef<Renewal>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "license_status",
+    accessorKey: "created_at",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="License" />
+      <DataTableColumnHeader column={column} title="Date" />
     ),
-    cell: ({ row }) => (
-      <div className="w-[100px]">
-        <Badge>{row.getValue("license_status")}</Badge>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("created_at"))
+      return <div className="w-[120px]">{date.toLocaleDateString()}</div>
+    },
     enableSorting: true,
     enableHiding: false,
   },
