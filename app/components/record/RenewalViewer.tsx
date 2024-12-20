@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle } from 'lucide-react'
+import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle, GraduationCap } from 'lucide-react'
 import { TeacherRegistrationResponse } from '@/app/lib/types';
 import InfoCard from '../InfoCard';
 import InfoItem from '../InfoItem';
@@ -53,6 +53,45 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
       <InfoItem label="Region" value={data.employment_details?.region}/>
       <InfoItem label="District" value={data.employment_details?.district}/>
       <InfoItem label="Experience" value={`${data.employment_details?.experience_years} years`}/>
+    </InfoCard>
+  );
+
+  const renderMandatoryQualifications = () => (
+    <InfoCard 
+      title='Mandatory Qualification' 
+      icon={<GraduationCap className="w-6 h-6 text-blue-500"/>}
+      columns={1}
+    >
+      {data?.edu_pro_qualifications ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Level</TableHead>
+              <TableHead>Qualification</TableHead>
+              <TableHead>Institution</TableHead>
+              <TableHead>Year</TableHead>
+              <TableHead>Major Subjects</TableHead>
+              <TableHead>Attachment</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>{data.edu_pro_qualifications.level ?? '-'}</TableCell>
+              <TableCell>{data.edu_pro_qualifications.qualification ?? '-'}</TableCell>
+              <TableCell>{data.edu_pro_qualifications.institution ?? '-'}</TableCell>
+              <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
+              <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
+              <TableCell>
+                <TableCell><InfoItem label="" value={data.edu_pro_qualifications.attachments ?? ''}/></TableCell>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="flex items-center justify-center p-4 text-muted-foreground">
+          No mandatory qualification data available
+        </div>
+      )}
     </InfoCard>
   );
 
@@ -128,7 +167,7 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
             License Renewal Request
           </h1>
           <RenewalActionButtons 
-            recordId={data.teacher_registrations.reg_number ?? ''} 
+            recordId={data.teacher_registrations.national_id ?? ''} 
             userRole={userRole} 
             current_status={data.teacher_registrations.reg_status ?? ''}
           />
@@ -141,6 +180,7 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
           {renderSection(renderPersonalInfo())}
           {renderSection(renderRegistrationInfo())}
           {renderSection(renderEmploymentInfo())}
+          {renderSection(renderMandatoryQualifications())}
           {renderSection(renderQualifications())}
           {renderSection(renderBackgroundChecks())}
           {renderSection(renderDocuments())}

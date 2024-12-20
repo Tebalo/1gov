@@ -19,6 +19,7 @@ import { PieChartStatuses } from "./components/pie-chart-statuses";
 import { LineChartDailyRegistrations } from "./components/line-chart-daily-registrations";
 import { FemaleTeacherRegistrations } from "./components/FemaleTeacherRegistrations";
 import { TotalIssuedLicenses } from "./components/TotalIssuedLicenses";
+import { RegistrationStats } from "./components/RegistrationStats ";
 
 export const RegistrarDashboard = () => {
     return(
@@ -48,24 +49,19 @@ export const RegistrarDashboard = () => {
 
                             </TabsList>
                             <TabsContent value="overview" className="space-y-4">
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                    <AllTeacherRegistrations/>
-                                    <TotalIssuedLicenses/>
-                                    <FemaleTeacherRegistrations/>
-                                    <MaleTeacherRegistrations/>
-                                </div>
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    <div className="col-span-1">
-                                        <MixedBarChartStatuses />
-                                    </div>
-                                    <div className="col-span-1">
-                                        <HorizontalBarChartStatus />
-                                    </div> 
-                                    <div>
-                                        <BarChartMonthlyRegistrations />
-                                    </div>
-                                </div>
-                            </TabsContent>
+    <RegistrationStats />
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="col-span-1">
+            <MixedBarChartStatuses />
+        </div>
+        <div className="col-span-1">
+            <HorizontalBarChartStatus />
+        </div> 
+        <div>
+            <BarChartMonthlyRegistrations />
+        </div>
+    </div>
+</TabsContent>
                             <TabsContent value="analytics" className="space-y-4">
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                                     {/* <AllTeacherRegistrations/>

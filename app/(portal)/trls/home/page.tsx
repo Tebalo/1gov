@@ -36,7 +36,7 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === 'MANAGER'){
         return <ManagerHome/>
     } else if(userRole?.toUpperCase() === 'DIRECTOR'){
-        return <DirectorHome/>
+        return <UserHome/>
     }else if(CPDROLES.includes(userRole ?? '')){
         return <InvestigationsOfficerHome/>
     }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
@@ -44,13 +44,13 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === 'DISCIPLINARY_COMMITTEE'){
         return <DisciplinaryCommitteHome/>
     }else if(userRole?.toUpperCase() === 'REGISTRAR'){
-        return <RegistrarHome/>
+        return <UserHome/>
     }else if(userRole?.toUpperCase() === 'LICENSE_OFFICER'){
-        return <LicenseOfficerHome/>
+        return <UserHome/>
     } else if(userRole?.toUpperCase() === 'SNR_LICENSE_OFFICER'){
-        return <SnrLicenseOfficerHome/>
+        return <UserHome/>
     } else if(userRole?.toUpperCase() === 'LICENSE_MANAGER'){
-        return <LicenseManagerHome/>
+        return <UserHome/>
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminHome/>
     } else {

@@ -1,35 +1,27 @@
 "use client"
 import { DataTable } from "../data-table";
-import { getAppeals} from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
 import TableLoadingSkeleton from "../../../TableLoadingSkeleton";
-import { Appeal } from "../../data/schema";
 import { RenewalColumns } from "./renewal-columns";
+import { Renewal } from "./schema/renewal";
+import { getRenewals } from "@/app/lib/actions";
 
 interface WorkProps {
     status: string;
     userRole: string;
 }
 
-
 // Updated utility function to safely handle null values and prevent recursion
 const replaceNullWithEmptyString = (data: any): any => {
-    // If data is null or undefined, return empty string
     if (data === null || data === undefined) {
         return '';
     }
-
-    // If data is not an object (including arrays), return as is
     if (typeof data !== 'object') {
         return data;
     }
-
-    // Handle arrays
     if (Array.isArray(data)) {
         return data.map(item => replaceNullWithEmptyString(item));
     }
-
-    // Handle objects
     const result: { [key: string]: any } = {};
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -41,27 +33,35 @@ const replaceNullWithEmptyString = (data: any): any => {
 };
 
 // Helper function to safely process the API response
-const processApiResponse = (data: any[]): Appeal[] => {
+const processApiResponse = (data: any[]): Renewal[] => {
     return data.map(item => ({
-        id: item.id || 0,
-        user_id: item.user_id || '',
-        application: item.application || '',
-        appeals_number: item.appeals_number || '',
+        national_id: item.national_id || '',
+        reg_number: item.reg_number || '',
         reg_status: item.reg_status || '',
-        sla: item.sla || '',
-        appeal_decision: item.appeal_decision || '',
-        appeal_reason: item.appeal_reason || '',
-        cpd_activity_description: item.cpd_activity_description || '',
-        supporting_document_key: item.supporting_document_key || '',
-        declaration: item.declaration || '',
-        profile_data_consent: item.profile_data_consent || '',
+        registration_number: item.registration_number || null,
+        work_status: item.work_status || null,
+        endorsement_status: item.endorsement_status || '',
+        rejection_reason: item.rejection_reason || null,
+        service_code: item.service_code || '',
+        payment_ref: item.payment_ref || null,
+        payment_amount: item.payment_amount || null,
+        payment_name: item.payment_name || null,
+        application_id: item.application_id || '',
+        license_link: item.license_link || null,
+        education_bg_checks: item.education_bg_checks || null,
+        flags_no: item.flags_no || '0',
+        institution_verification: item.institution_verification || '',
+        course_verification: item.course_verification || '',
+        license_status: item.license_status || '',
+        pending_customer_action: item.pending_customer_action || 'false',
+        registration_type: item.registration_type || '',
         created_at: item.created_at || '',
         updated_at: item.updated_at || ''
     }));
 };
 
 export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
-    const [response, setResponse] = useState<Appeal[] | null>(null);
+    const [response, setResponse] = useState<Renewal[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -70,7 +70,7 @@ export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
         setError(null);
         
         try {
-            const result = await getAppeals(status, 100);
+            const result = await getRenewals(status, 100);
             
             if (result.data && Array.isArray(result.data)) {
                 const processedData = processApiResponse(result.data);
@@ -81,7 +81,7 @@ export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-            console.error('Error fetching tipoffs:', errorMessage);
+            console.error('Error fetching renewals:', errorMessage);
             setError(errorMessage);
             setResponse(null);
         } finally {
@@ -96,7 +96,7 @@ export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
     if (error) {
         return (
             <div className="p-4 text-red-500">
-                Error loading CPDs: {error}
+                Error loading data: {error}
             </div>
         );
     }
@@ -106,11 +106,9 @@ export const RenewalTable: React.FC<WorkProps> = ({status, userRole}) => {
             {isLoading ? (
                 <TableLoadingSkeleton rows={6} columns={6} className="mt-4" />
             ) : response ? (
-                <div></div>
-                // <DataTable data={response} columns={RenewalColumns} userRole={userRole} />
+                 <DataTable data={response} columns={RenewalColumns} userRole={userRole} />
             ) : (
-                <div></div>
-                // <DataTable data={[]} columns={RenewalColumns} userRole={userRole} />
+                <DataTable data={[]} columns={RenewalColumns} userRole={userRole} />
             )}
         </div>
     )

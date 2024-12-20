@@ -9,6 +9,7 @@ import { options } from './schema';
 import { RevocationListResponse } from "../components/Home/components/revocation/types/revocation";
 import { RevocationResponse } from "../(portal)/trls/work/revocation/types/revocation-type";
 import { RestorationListResponse } from "../components/Home/components/restoration/types/restoration";
+import { RenewalListResponse } from "../components/Home/components/renewal/types/renewal";
 
 async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
@@ -116,7 +117,7 @@ async function fetchWithAuth2(url: string, options: RequestInit = {}, timeoutMs:
     clearTimeout(timeoutId);
   }
 }
-async function fetchWithAuth(
+async function fetchWithAuth3(
   url: string, 
   options: RequestInit = {}, 
   timeoutMs: number = 120000,
@@ -195,6 +196,114 @@ async function fetchWithAuth(
       throw error;
     } finally {
       clearTimeout(timeoutId);
+    }
+  }
+
+  return attemptFetch();
+}
+
+async function fetchWithAuth(
+  url: string, 
+  options: RequestInit = {}, 
+  timeoutMs: number = 120000,
+  maxRetries: number = 3
+): Promise<Response> {
+  let retryCount = 0;
+  
+  async function attemptFetch(): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        controller.abort();
+        reject(new Error(`Request timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+    });
+
+    try {
+      let session = await getSession();
+
+      // Early validation of session
+      if (!session?.auth?.access_token) {
+        throw new Error('No valid session or access token');
+      }
+
+      const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      // Check if token needs refresh
+      if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+        try {
+          const refreshed = await refreshToken();
+          if (!refreshed) {
+            throw new Error('Token refresh failed');
+          }
+          session = await getSession();
+          // Validate session after refresh
+          if (!session?.auth?.access_token) {
+            throw new Error('Invalid session after refresh');
+          }
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+          throw new Error('Session expired and refresh failed');
+        }
+      }
+
+      // Prepare headers with type safety
+      const headers = new Headers(options.headers);
+      // We can safely use session.auth.access_token here because we've validated it above
+      headers.set('Authorization', `Bearer ${session.auth.access_token}`);
+
+      const fetchPromise = fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal
+      });
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+      if (response.status === 401) {
+        try {
+          const refreshed = await refreshToken();
+          if (!refreshed) {
+            throw new Error('Token refresh failed on 401');
+          }
+          
+          const newSession = await getSession();
+          if (!newSession?.auth?.access_token) {
+            throw new Error('Invalid session after 401 refresh');
+          }
+          
+          headers.set('Authorization', `Bearer ${newSession.auth.access_token}`);
+          return fetch(url, {
+            ...options,
+            headers,
+            signal: controller.signal
+          });
+        } catch (refreshError) {
+          console.error('Error handling 401:', refreshError);
+          throw new Error('Authentication failed after refresh attempt');
+        }
+      }
+
+      return response;
+
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 10000);
+          console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+          return attemptFetch();
+        }
+      }
+      
+      console.error('FetchWithAuth error:', {
+        url,
+        retryCount,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
     }
   }
 
@@ -1171,6 +1280,57 @@ export async function getRestorations(status: string, count: number): Promise<Re
       code: response.status,
       message: "success",
       applications: result.data
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getRenewals(status: string, count: number): Promise<RenewalListResponse> {
+
+  try {
+
+    const response = await fetch(`${renewalUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    cache:'no-cache'
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+        console.log(result)
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: "success",
+      data: result
     };
 
   } catch (error) {

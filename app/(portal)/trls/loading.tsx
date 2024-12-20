@@ -1,43 +1,18 @@
-
+import { Loader2 } from "lucide-react"
 const LoadingSkeleton=()=>{
     return(
-        <div role="status" className="space-y-2.5 animate-pulse max-w-lg">
-            <div className="flex items-center w-full">
-                <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-32"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+    <div className="w-full h-[calc(100vh-4rem)] bg-background/50 backdrop-blur-sm flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 p-6 rounded-lg bg-background shadow-lg">
+            <Loader2 className="h-12 w-12 animate-spin text-primary"/>
+            <div className="text-center space-y-1">
+                <h3 className="font-medium">Loading your content</h3>
+                <p className="text-sm text-muted-foreground">This may take a few moments</p>
             </div>
-            <div className="flex items-center w-full max-w-[480px]">
-                <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full"></div>
-                        <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
-            </div>
-            <div className="flex items-center w-full max-w-[400px]">
-                <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
-                <div className="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-80"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
-            </div>
-            <div className="flex items-center w-full max-w-[480px]">
-                <div className="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-full"></div>
-                        <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
-            </div>
-            <div className="flex items-center w-full max-w-[440px]">
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-32"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
-                <div className="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-full"></div>
-            </div>
-            <div className="flex items-center w-full max-w-[360px]">
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
-                <div className="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-80"></div>
-                <div className="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
-            </div>
-            <span className="sr-only">Loading...</span>
         </div>
+    </div>
     );
 }
 
 export default function Loading() {
-    // You can add any UI inside Loading, including a Skeleton.
     return <LoadingSkeleton />
   }

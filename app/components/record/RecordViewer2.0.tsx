@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { FaExclamationTriangle, FaCheckCircle, FaFilePdf } from 'react-icons/fa';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -20,9 +20,11 @@ import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+
+import { Info, FileCheck, FileText, File, Briefcase, School, AlertTriangle, UserCircle, GraduationCap } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '../InfoCard';
-import { FileCheck, Info } from 'lucide-react';
-import InfoItem from '../InfoItem';
+
 
 interface TeacherRegistration {
     national_id: string | null;
@@ -160,7 +162,7 @@ interface TeacherRegistrationData {
     edu_pro_qualifications?: EduProQualification;
     other_qualifications?: EduProQualification[];
     bio_datas?: BioData;
-    background_checks: BackgroundChecks[];
+    background_checks?: BackgroundChecks[];
     declarations?: Declaration;
     offence_convictions?: OffenceConviction;
     employment_details?: EmploymentDetail;
@@ -206,7 +208,7 @@ interface TeacherRegistrationViewProps {
     items: z.array(z.string().optional()),
     rejection_reason: z.string().optional()
   });
-  const TeacherRegistrationView: React.FC<TeacherRegistrationViewProps> = ({ data, userRole }) => {
+  const TeacherRegistrationViewer: React.FC<TeacherRegistrationViewProps> = ({ data, userRole }) => {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const { toast } = useToast();
     const router = useRouter();
@@ -217,7 +219,7 @@ interface TeacherRegistrationViewProps {
       if (status) {
         const res = await UpdateStatus(id, status, rejection_reason);
   
-        router.prefetch('/trls/home');
+        router.prefetch('/trls/registration');
         if (res !== 201) {
           toast({
             title: "Failed!!!",
@@ -234,7 +236,7 @@ interface TeacherRegistrationViewProps {
               <ToastAction altText="Ok">Ok</ToastAction>
             ),
           });
-          router.push('/trls/home');
+          router.push('/trls/registration');
         }
       } else {
         toast({
@@ -351,34 +353,174 @@ interface TeacherRegistrationViewProps {
       }
     };
   
-    const renderSection = (content: React.ReactNode) => (
+    const renderSection = (title: string, content: React.ReactNode) => (
       <div className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">{title}</h2>
         {content}
       </div>
+    );
+
+    const renderPersonalInfo = () => (
+      <InfoCard title='Personal Information' icon={<UserCircle className="w-6 h-6 text-blue-500"/>}>
+        <InfoItem label="Name" value={`${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`} />
+        <InfoItem label="National ID" value={data?.bio_datas?.national_id ?? ''} />
+        <InfoItem label="Date of Birth" value={data?.bio_datas?.dob ? new Date(data.bio_datas.dob).toLocaleDateString() : ''} />
+        <InfoItem label="Gender" value={data?.bio_datas?.gender ?? ''} />
+        <InfoItem label="Nationality" value={data?.bio_datas?.nationality ?? ''} />
+        <InfoItem label="Email" value={data?.bio_datas?.email ?? ''} />
+        <InfoItem label="Mobile" value={data?.bio_datas?.mobile ?? ''} />
+      </InfoCard>
+    );
+  
+    const renderCaseDetails = () => (
+      <InfoCard title='Case Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+        <InfoItem label="Registration Type" value={data?.teacher_registrations?.registration_type ?? ''} />
+        <InfoItem label="Application ID" value={data?.teacher_registrations?.application_id ?? ''} />
+        <InfoItem label="Registration Status" value={data?.teacher_registrations?.reg_status ?? ''} />
+        <InfoItem label="Endorsement Status" value={data?.teacher_registrations?.endorsement_status ?? ''} />
+        <div className="flex justify-start space-x-2 items-center">
+            <Label className="font-semibold text-gray-700">SLA Status:</Label>
+            {data?.teacher_registrations?.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
+                {getSLAStatus(data?.teacher_registrations?.updated_at).displayText}
+            </Badge>}
+        </div>
+        <InfoItem label="Institution Verification" value={data?.teacher_registrations?.institution_verification ?? ''} />
+        <InfoItem label="Course Verification" value={data?.teacher_registrations?.course_verification ?? ''} />
+      </InfoCard>
+    );
+  
+    const renderQualifications = () => (
+      <InfoCard title='Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Level</TableHead>
+              <TableHead>Qualification</TableHead>
+              <TableHead>Attachment</TableHead>
+              <TableHead>Institution</TableHead>
+              <TableHead>Year</TableHead>
+              <TableHead>Subjects</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data?.other_qualifications?.map((qual, index) => (
+              <TableRow key={index}>
+                <TableCell>{qual.level}</TableCell>
+                <TableCell>{qual.qualification}</TableCell>
+                <TableCell><InfoItem label="" value={qual.attachments ?? ''}/></TableCell>
+                <TableCell>{qual.institution}</TableCell>
+                <TableCell>{qual.qualification_year}</TableCell>
+                <TableCell>{qual.major_subjects}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </InfoCard>
+    );
+
+    const renderMandatoryQualifications = () => (
+      <InfoCard 
+        title='Mandatory Qualification' 
+        icon={<GraduationCap className="w-6 h-6 text-blue-500"/>}
+        columns={1}
+      >
+        {data?.edu_pro_qualifications ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Level</TableHead>
+                <TableHead>Qualification</TableHead>
+                <TableHead>Institution</TableHead>
+                <TableHead>Year</TableHead>
+                <TableHead>Major Subjects</TableHead>
+                <TableHead>Attachment</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>{data.edu_pro_qualifications.level ?? '-'}</TableCell>
+                <TableCell>{data.edu_pro_qualifications.qualification ?? '-'}</TableCell>
+                <TableCell>{data.edu_pro_qualifications.institution ?? '-'}</TableCell>
+                <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
+                <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
+                <TableCell>
+                  {data.edu_pro_qualifications.attachments ? (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="flex items-center gap-2"
+                      onClick={() => setPdfUrl(data.edu_pro_qualifications?.attachments ?? '')}
+                    >
+                      <FaFilePdf className="text-red-500 mr-2"/>
+                      View
+                    </Button>
+                  ) : '-'}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="flex items-center justify-center p-4 text-muted-foreground">
+            No mandatory qualification data available
+          </div>
+        )}
+      </InfoCard>
+    );
+    const renderEmployment = () => (
+      <InfoCard title='Employment Information' icon={<Briefcase className="w-6 h-6 text-blue-500"/>}>
+        <InfoItem label="Current Institution" value={data?.employment_details?.current_institution ?? ''} />
+        <InfoItem label="Institution Type" value={data?.employment_details?.institution_type ?? ''} />
+        <InfoItem label="Region" value={data?.employment_details?.region ?? ''} />
+        <InfoItem label="District" value={data?.employment_details?.district ?? ''} />
+        <InfoItem label="City/Town" value={data?.employment_details?.city_or_town ?? ''} />
+        <InfoItem label="Years of Experience" value={data?.employment_details?.experience_years?.toString() ?? ''} />
+      </InfoCard>
+    );
+  
+    const renderBackgroundChecks = () => (
+      <InfoCard title='Background Checks' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={1}>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Checked By</TableHead>
+              <TableHead>Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data?.background_checks?.map((check, index) => (
+              <TableRow key={index}>
+                <TableCell>{check.name}</TableCell>
+                <TableCell>{check.description}</TableCell>
+                <TableCell>{check.checked_by}</TableCell>
+                <TableCell>{new Date(check.created_at || '').toLocaleDateString()}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </InfoCard>
+    );
+    const renderDocuments = () => (
+      <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={3}>
+        <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy ?? ''}/>
+        <InfoItem label="Qualification Documents" value={data.attachments?.qualification_copy ?? ''}/>
+        <InfoItem label="Proof of Payment" value={data.attachments?.proof_of_payment ?? ''}/>
+      </InfoCard>
     );
   
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Applicant Information</h1>
-        <div className="shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
-          {renderSection(renderCaseDetails(data))}
-          <Separator/>
-          {renderSection( renderPersonalInfo(data))}
-          <Separator/>
-          {renderSection(renderMandatoryQualifications(data, setPdfUrl))}
-          <Separator/>
-          {renderSection(renderQualifications(data, setPdfUrl))}
-          <Separator/>
-          {renderSection(renderEmployment(data))}
-          <Separator/>
-          {renderSection(renderDocuments(data, setPdfUrl))}
-          <Separator/>
-          {renderSection( renderOffences(data, setPdfUrl))}
-          <Separator/>
-          {renderSection( renderBackgroundChecks(data))}
-          <Separator/>
-          {renderSection(renderDeclaration(data))}
-        <div className="mt-8 space-x-4 flex justify-end">
+          <h1 className="text-3xl font-bold mb-8">Teacher Registration Request</h1>
+          <div className="bg-white shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
+            {renderCaseDetails()}
+            {renderPersonalInfo()}
+            {renderMandatoryQualifications()}
+            {renderQualifications()}
+            {renderEmployment()}
+            {renderBackgroundChecks()}
+            {renderDocuments()}
+          <div className="mt-8 space-x-4 flex justify-end">
           {(prev_status || inv_status || bar_status || rej_status) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -634,7 +776,12 @@ interface TeacherRegistrationViewProps {
   };
   
   
-
+  const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+    <div className=" flex items-center justify-normal space-x-2">
+      <Label className="font-semibold text-gray-700">{label}:</Label> 
+      <span className="text-sm text-gray-600">{value}</span>
+    </div>
+  );
   
   const DocumentItem: React.FC<{ label: string; url: string | null; onView: (url: string) => void }> = ({ label, url, onView }) => (
     <div className="flex items-center mb-2">
@@ -679,7 +826,7 @@ interface TeacherRegistrationViewProps {
   
   
   const renderPersonalInfo = (data: TeacherRegistrationData) => (
-    <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       <InfoItem label="Name" value={`${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`} />
       {data?.bio_datas?.national_id && <InfoItem label="National ID" value={data.bio_datas.national_id} />}
       {data?.bio_datas?.dob && <InfoItem label="Date of Birth" value={new Date(data.bio_datas.dob).toLocaleDateString()} />}
@@ -688,7 +835,7 @@ interface TeacherRegistrationViewProps {
       {data?.bio_datas?.email && <InfoItem label="Email" value={data.bio_datas.email} />}
       {data?.bio_datas?.mobile && <InfoItem label="Mobile" value={data.bio_datas.mobile} />}
       {data?.bio_datas?.postal_address && <InfoItem label="Postal Address" value={data.bio_datas.postal_address} />}
-    </InfoCard>
+    </div>
   );
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -703,6 +850,11 @@ interface TeacherRegistrationViewProps {
 
 function ConvertTime(time: string){
     return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
+}
+
+export function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toISOString(); // or any other consistent format
 }
 
 function getRelativeTime(updateTime: string) {
@@ -769,10 +921,11 @@ function getRelativeTime(updateTime: string) {
 
     return { badgeColor, displayText };
 }
+
   const renderCaseDetails = (data: TeacherRegistrationData) => (
-    <InfoCard title='Case Details' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       {data?.teacher_registrations?.registration_type && <InfoItem label="Registration Type" value={`${data.teacher_registrations.registration_type}`} />}
-      {data?.teacher_registrations?.registration_type && <InfoItem label="Application ID" value={`${data.teacher_registrations?.application_id}`} />}
+      <InfoItem label="Application ID" value={`59c0f722-5c06-46ab-9875-430bd3a236ca`} />
       {data?.teacher_registrations?.reg_status && <InfoItem label="Registration Status" value={`${data.teacher_registrations.reg_status}`} />}
       {data?.teacher_registrations?.endorsement_status && <InfoItem label="Endorsement Status" value={`${data.teacher_registrations.endorsement_status}`} />}
       {data.teacher_registrations?.payment_name && <InfoItem label="Payment Name" value={`${data.teacher_registrations.payment_name}`} />}
@@ -780,19 +933,19 @@ function getRelativeTime(updateTime: string) {
       {data?.teacher_registrations?.flags_no && <InfoItem label="Flags" value={`${data.teacher_registrations.flags_no}`} />}
       {data?.teacher_registrations?.institution_verification && <InfoItem label="Institution" value={`${data.teacher_registrations.institution_verification}`} />}
       {data?.teacher_registrations?.course_verification && <InfoItem label="Course" value={`${data.teacher_registrations.course_verification}`} />}
-      <div className="">
-          <Label className="text-sm text-gray-600">SLA Status:</Label>
-          <div>{data?.teacher_registrations?.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
+      <div className="flex justify-start space-x-2 items-center">
+          <Label className="font-semibold text-gray-700">SLA Status:</Label>
+          {data?.teacher_registrations?.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
               {getSLAStatus(data?.teacher_registrations?.updated_at).displayText}
-          </Badge>}</div>
+          </Badge>}
       </div>
-      {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={ConvertTime(data.teacher_registrations.created_at)} />}
+      {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={new Date(data.teacher_registrations.created_at).toLocaleString()} />}
       {data?.teacher_registrations?.updated_at && <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />}
-    </InfoCard>
+    </div>
   );
   
   const renderQualifications = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <InfoCard title='Other Qualifications' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+    <div>
       {data?.other_qualifications?.map((qual, index) => (
         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
           <h4 className="text-lg font-medium">{qual.qualification}</h4>
@@ -805,13 +958,13 @@ function getRelativeTime(updateTime: string) {
           </div>
         </div>
       ))}
-    </InfoCard>
+    </div>
   );
 
 
   const renderMandatoryQualifications = (qual: TeacherRegistrationData, onView: (url: string) => void) => (
-    <InfoCard title='Mandatory Qualifications' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      {/* <h4 className="text-lg font-medium">{qual?.edu_pro_qualifications?.qualification}</h4> */}
+    <div  className="mb-4 p-4 bg-gray-100 rounded-lg">
+      <h4 className="text-lg font-medium">{qual?.edu_pro_qualifications?.qualification}</h4>
       <div className="grid grid-cols-2 gap-2 mt-2">
         {qual?.edu_pro_qualifications?.level && <InfoItem label="Level" value={qual.edu_pro_qualifications.level} />}
         {qual?.edu_pro_qualifications?.institution && <InfoItem label="Institution" value={qual.edu_pro_qualifications.institution} /> && <InfoItem label="Institution" value={qual.edu_pro_qualifications.institution} />}
@@ -819,47 +972,47 @@ function getRelativeTime(updateTime: string) {
         {qual?.edu_pro_qualifications?.major_subjects && <InfoItem label="Major Subjects" value={qual.edu_pro_qualifications.major_subjects} />}
         {qual?.edu_pro_qualifications?.attachments && <DocumentItem label="Qualification Attachment" url={qual.edu_pro_qualifications.attachments} onView={onView} />}
       </div>
-    </InfoCard>
+  </div>
   )
   
   const renderEmployment = (data: TeacherRegistrationData) => (
-    <InfoCard title='Employment Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
       {data?.employment_details?.current_institution && <InfoItem label="Current Institution" value={data.employment_details.current_institution} />}
       {data?.employment_details?.institution_type && <InfoItem label="Institution Type" value={data.employment_details.institution_type} />}
       {data?.employment_details?.region && <InfoItem label="Region" value={data?.employment_details?.region} />}
       {data?.employment_details?.district && <InfoItem label="District" value={data.employment_details.district} />}
       {data?.employment_details?.city_or_town && <InfoItem label="City/Town" value={data.employment_details.city_or_town} />}
       {data?.employment_details?.experience_years && <InfoItem label="Years of Experience" value={data.employment_details.experience_years.toString()} />}
-    </InfoCard>
+    </div>
   );
   const renderBackgroundChecks = (data: TeacherRegistrationData) => (
-    <InfoCard title='Background Checks' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div>
       {data?.background_checks?.map((background, index) => (
         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
           <h4 className="text-lg font-medium">{background.name}</h4>
           <div className="grid grid-cols-2 gap-2 mt-2">
             <div className='col-span-2'>{background.description && <InfoItem label="Description" value={background.description} />}</div>
             {background.checked_by && <InfoItem label="Check By" value={background.checked_by} />}
-            {background.created_at && <InfoItem label="Created" value={background.created_at} />}
+            {background.created_at && <InfoItem label="Created" value={new Date(background.created_at).toLocaleString()} />}
             {background.updated_at && <InfoItem label="Updated" value={getRelativeTime(background.updated_at)} />}
           </div>
         </div>
       ))}
-    </InfoCard>
+    </div>
   );
   
   
   const renderDocuments = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <InfoCard title='Documents/Licenses' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div className='bg-gray-100 rounded-lg p-4'>
       {data.attachments?.national_id_copy && <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />}
       {data?.attachments?.qualification_copy && <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />}
       {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
       {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
-    </InfoCard>
+    </div>
   );
   
   const renderOffences = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <InfoCard title='Offences' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div className='bg-gray-100 rounded-lg p-4'>
       {data?.offence_convictions?.student_related_offence  &&  <OffenceItem 
         label="Student Related Offence" 
         value={data.offence_convictions.student_related_offence} 
@@ -882,18 +1035,22 @@ function getRelativeTime(updateTime: string) {
         details={data.offence_convictions.misconduct_flag_details}
         onView={onView}
       />}
-    </InfoCard>
+    </div>
   );
   
   const renderDeclaration = (data: TeacherRegistrationData) => (
-    <InfoCard title='Declaration' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <div className="p-4 bg-gray-100 rounded-lg">
       <p className="text-lg">
         {data?.declarations?.agreement === 'Yes' 
           ? <span className="text-green-600"><FaCheckCircle className="inline mr-2" />Applicant has agreed to the declaration.</span>
           : <span className="text-red-600"><FaExclamationTriangle className="inline mr-2" />Applicant has not agreed to the declaration.</span>
         }
       </p>
-    </InfoCard>
+    </div>
   );
   
-  export default TeacherRegistrationView;
+  export default TeacherRegistrationViewer;
+
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error('Function not implemented.');
+}
