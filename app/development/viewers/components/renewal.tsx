@@ -11,52 +11,52 @@ const dummyData: TeacherRegistrationResponse = {
   code: 200,
   message: "success",
   "background_checks": [
-    {
-        "id": 1,
-        "national_id": "436415528",
-        "name": "Criminal Record Check",
-        "description": "No criminal records found",
-        "checked_by": "Officer John Smith",
-        "created_at": "2024-12-04 08:21:39",
-        "updated_at": "2024-12-04 08:21:39"
-    },
-    {
-        "id": 2,
-        "national_id": "436415528",
-        "name": "Professional Conduct Check",
-        "description": "Clear history of professional conduct",
-        "checked_by": "Officer Jane Doe",
-        "created_at": "2024-12-04 08:21:39",
-        "updated_at": "2024-12-04 08:21:39"
-    }
+    // {
+    //     "id": 1,
+    //     "national_id": "436415528",
+    //     "name": "Criminal Record Check",
+    //     "description": "No criminal records found",
+    //     "checked_by": "Officer John Smith",
+    //     "created_at": "2024-12-04 08:21:39",
+    //     "updated_at": "2024-12-04 08:21:39"
+    // },
+    // {
+    //     "id": 2,
+    //     "national_id": "436415528",
+    //     "name": "Professional Conduct Check",
+    //     "description": "Clear history of professional conduct",
+    //     "checked_by": "Officer Jane Doe",
+    //     "created_at": "2024-12-04 08:21:39",
+    //     "updated_at": "2024-12-04 08:21:39"
+    // }
 ],
 "other_qualifications": [
-    {
-        "id": 9,
-        "national_id": "436415528",
-        "level": "Bachelor's Degree",
-        "qualification": "Bachelor of Education",
-        "institution": "University of Botswana",
-        "attachments": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/sample-1",
-        "qualification_year": "2005",
-        "minor_subjects": "English",
-        "major_subjects": "Mathematics",
-        "created_at": "2024-12-04 08:21:39",
-        "updated_at": "2024-12-04 08:21:39"
-    },
-    {
-        "id": 10,
-        "national_id": "436415528",
-        "level": "Master's Degree",
-        "qualification": "Master of Education",
-        "institution": "University of Cape Town",
-        "attachments": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/sample-2",
-        "qualification_year": "2009",
-        "minor_subjects": "Educational Psychology",
-        "major_subjects": "Curriculum Development",
-        "created_at": "2024-12-04 08:21:39",
-        "updated_at": "2024-12-04 08:21:39"
-    }
+    // {
+    //     "id": 9,
+    //     "national_id": "436415528",
+    //     "level": "Bachelor's Degree",
+    //     "qualification": "Bachelor of Education",
+    //     "institution": "University of Botswana",
+    //     "attachments": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/sample-1",
+    //     "qualification_year": "2005",
+    //     "minor_subjects": "English",
+    //     "major_subjects": "Mathematics",
+    //     "created_at": "2024-12-04 08:21:39",
+    //     "updated_at": "2024-12-04 08:21:39"
+    // },
+    // {
+    //     "id": 10,
+    //     "national_id": "436415528",
+    //     "level": "Master's Degree",
+    //     "qualification": "Master of Education",
+    //     "institution": "University of Cape Town",
+    //     "attachments": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/sample-2",
+    //     "qualification_year": "2009",
+    //     "minor_subjects": "Educational Psychology",
+    //     "major_subjects": "Curriculum Development",
+    //     "created_at": "2024-12-04 08:21:39",
+    //     "updated_at": "2024-12-04 08:21:39"
+    // }
 ],
 "teacher_registrations": {
     "national_id": "436415528",

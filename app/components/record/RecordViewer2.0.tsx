@@ -390,32 +390,42 @@ interface TeacherRegistrationViewProps {
     );
   
     const renderQualifications = () => (
-      <InfoCard title='Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Level</TableHead>
-              <TableHead>Qualification</TableHead>
-              <TableHead>Attachment</TableHead>
-              <TableHead>Institution</TableHead>
-              <TableHead>Year</TableHead>
-              <TableHead>Subjects</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data?.other_qualifications?.map((qual, index) => (
-              <TableRow key={index}>
-                <TableCell>{qual.level}</TableCell>
-                <TableCell>{qual.qualification}</TableCell>
-                <TableCell><InfoItem label="" value={qual.attachments ?? ''}/></TableCell>
-                <TableCell>{qual.institution}</TableCell>
-                <TableCell>{qual.qualification_year}</TableCell>
-                <TableCell>{qual.major_subjects}</TableCell>
+    <InfoCard title='Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
+        {data?.other_qualifications && data.other_qualifications.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Level</TableHead>
+                <TableHead>Qualification</TableHead>
+                <TableHead>Attachment</TableHead>
+                <TableHead>Institution</TableHead>
+                <TableHead>Year</TableHead>
+                <TableHead>Subjects</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </InfoCard>
+            </TableHeader>
+            <TableBody>
+              {data.other_qualifications.map((qual, index) => (
+                <TableRow key={index}>
+                  <TableCell>{qual.level ?? '-'}</TableCell>
+                  <TableCell>{qual.qualification ?? '-'}</TableCell>
+                  <TableCell>
+                    {qual.attachments ? (
+                      <InfoItem label="" value={qual.attachments}/>
+                    ) : '-'}
+                  </TableCell>
+                  <TableCell>{qual.institution ?? '-'}</TableCell>
+                  <TableCell>{qual.qualification_year ?? '-'}</TableCell>
+                  <TableCell>{qual.major_subjects ?? '-'}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+        <div className="flex items-center justify-center p-4 text-muted-foreground">
+          No qualifications data available
+        </div>
+      )}
+    </InfoCard>
     );
 
     const renderMandatoryQualifications = () => (
