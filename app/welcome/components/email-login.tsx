@@ -123,28 +123,68 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
         }
     }
 
+    const MAX_RETRIES = 3;
+    const INITIAL_DELAY = 1000; // 1 second
+    
     const handleResendOTP = async () => {
-        setIsResendLoading(true)
-
+        setIsResendLoading(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        
+        let retryCount = 0;
+    
+        const attemptResend = async (): Promise<any> => {
+            try {
+                const response = await axiosInstance.post(authUrl, {
+                    username,
+                    password
+                });
+                return response;
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    // Don't retry for authentication errors
+                    if (error.response?.status === 401 || error.response?.status === 403) {
+                        throw error;
+                    }
+                    
+                    // Check if we should retry
+                    if (retryCount < MAX_RETRIES) {
+                        retryCount++;
+                        const delay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
+                        console.log(`Retry attempt ${retryCount} after ${delay}ms`);
+                        
+                        // Update error message to show retry attempt
+                        setErrorMessage(`Connection failed. Retrying to resend OTP... (${retryCount}/${MAX_RETRIES})`);
+                        
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return attemptResend();
+                    }
+                }
+                throw error;
+            }
+        };
+    
         try {
-            const response = await axiosInstance.post(authUrl, {
-                username,
-                password
-            })
-
-            setValue("")
-            setSuccessMessage('OTP resent successfully.')
+            const response = await attemptResend();
+            setValue("");
+            setErrorMessage(null)
+            setSuccessMessage('OTP resent successfully.');
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                setErrorMessage(error.response?.data?.message || 'Failed to resend OTP.')
+                if (error.response?.status === 401) {
+                    setErrorMessage('Session expired. Please log in again.');
+                } else if (retryCount === MAX_RETRIES) {
+                    setErrorMessage(`Failed to resend OTP after ${MAX_RETRIES} attempts. Please try again later.`);
+                } else {
+                    setErrorMessage(error.response?.data?.message || 'Failed to resend OTP. Please try again!');
+                }
             } else {
-                setErrorMessage('Failed to resend OTP.')
+                setErrorMessage('Server error. Please try again later.');
             }
         } finally {
-            setIsResendLoading(false)
+            setIsResendLoading(false);
         }
-    }
-
+    };
     const { isStoringSession, isDecryptingSession, isRedirecting } = authState
 
     if (isStoringSession || isDecryptingSession || isRedirecting) {
@@ -220,27 +260,67 @@ export const Email: React.FC = () => {
         resolver: zodResolver(FormSchema)
     })
 
+    const MAX_RETRIES = 3;
+    const INITIAL_DELAY = 1000; // 1 second
+
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-        setIsLoading(true)
-
+        setIsLoading(true);
+        setErrorMessage(null);
+        
+        let retryCount = 0;
+        let lastError = null;
+    
+        const attemptLogin = async (): Promise<any> => {
+            try {
+                const response = await axiosInstance.post(authUrl, {
+                    username: data.email,
+                    password: data.password
+                });
+                return response;
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    // Don't retry for certain error status codes
+                    if (error.response?.status === 401 || error.response?.status === 403) {
+                        throw error;
+                    }
+                    
+                    // Check if we should retry
+                    if (retryCount < MAX_RETRIES) {
+                        retryCount++;
+                        const delay = INITIAL_DELAY * Math.pow(2, retryCount - 1); // Exponential backoff
+                        console.log(`Retry attempt ${retryCount} after ${delay}ms`);
+                        
+                        // Update loading message to show retry attempt
+                        setErrorMessage(`Connection failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
+                        
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return attemptLogin();
+                    }
+                }
+                throw error;
+            }
+        };
+    
         try {
-            const response = await axiosInstance.post(authUrl, {
-                username: data.email,
-                password: data.password
-            })
-
-            setAuthResponse(response.data)
+            const response = await attemptLogin();
+            setAuthResponse(response.data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.log(error.response?.data?.message)
-                setErrorMessage(error.response?.data?.message || 'Log in failed, Try again!')
+                console.log(error.response?.data?.message);
+                if (error.response?.status === 401) {
+                    setErrorMessage('Invalid credentials. Please check your email and password.');
+                } else if (retryCount === MAX_RETRIES) {
+                    setErrorMessage(`Failed to connect after ${MAX_RETRIES} attempts. Please try again later.`);
+                } else {
+                    setErrorMessage(error.response?.data?.message || 'Login failed. Please try again!');
+                }
             } else {
-                setErrorMessage('Server error')
+                setErrorMessage('Server error. Please try again later.');
             }
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     const { email, password } = form.watch()
 
