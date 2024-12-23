@@ -49,8 +49,159 @@ async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs:
   }
 }
 
-const TOKEN_REFRESH_THRESHOLD = 18 * 60; // 8 minutes in seconds
+//const TOKEN_REFRESH_THRESHOLD = 18 * 60; // 8 minutes in seconds
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+//import { DecodedToken } from '@/types'; // Adjust import path as needed
 
+const TOKEN_REFRESH_THRESHOLD = 300; // 5 minutes in seconds
+
+// Create a custom axios instance
+const axiosInstance: AxiosInstance = axios.create({
+  timeout: 120000, // Default timeout of 120 seconds
+});
+
+async function fetchWithAuth(
+  url: string,
+  options: AxiosRequestConfig = {},
+  timeoutMs: number = 120000,
+  maxRetries: number = 3
+): Promise<AxiosResponse> {
+  let retryCount = 0;
+
+  // Configure axios instance with custom timeout
+  axiosInstance.defaults.timeout = timeoutMs;
+
+  // Create retry handler
+  const handleRetry = async (error: any): Promise<AxiosResponse> => {
+    if (retryCount < maxRetries) {
+      retryCount++;
+      const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 10000);
+      console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
+      await new Promise(resolve => setTimeout(resolve, backoffDelay));
+      return attemptRequest();
+    }
+    throw error;
+  };
+
+  // Add request interceptor for token management
+  axiosInstance.interceptors.request.use(async (config) => {
+    try {
+      let session = await getSession();
+
+      if (!session?.auth?.access_token) {
+        throw new Error('No valid session or access token');
+      }
+
+      const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      // Check if token needs refresh
+      if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
+        const refreshed = await refreshToken();
+        if (!refreshed) {
+          throw new Error('Token refresh failed');
+        }
+        session = await getSession();
+        if (!session?.auth?.access_token) {
+          throw new Error('Invalid session after refresh');
+        }
+      }
+
+      // Set the Authorization header
+      config.headers.Authorization = `Bearer ${session.auth.access_token}`;
+      return config;
+    } catch (error) {
+      console.error('Request interceptor error:', error);
+      throw error;
+    }
+  });
+
+  // Add response interceptor for handling 401s
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (error.response?.status === 401) {
+        try {
+          const refreshed = await refreshToken();
+          if (!refreshed) {
+            throw new Error('Token refresh failed on 401');
+          }
+
+          const newSession = await getSession();
+          if (!newSession?.auth?.access_token) {
+            throw new Error('Invalid session after 401 refresh');
+          }
+
+          // Retry the original request with new token
+          const originalRequest = error.config;
+          originalRequest.headers.Authorization = `Bearer ${newSession.auth.access_token}`;
+          return axiosInstance(originalRequest);
+        } catch (refreshError) {
+          console.error('Error handling 401:', refreshError);
+          throw new Error('Authentication failed after refresh attempt');
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  // Main request function
+  async function attemptRequest(): Promise<AxiosResponse> {
+    try {
+      const response = await axiosInstance({
+        url,
+        ...options,
+      });
+      return response;
+    } catch (error: any) {
+      // Handle timeout and network errors
+      if (
+        error.code === 'ECONNABORTED' ||
+        error.message.includes('timeout') ||
+        error.message.includes('Network Error')
+      ) {
+        return handleRetry(error);
+      }
+
+      console.error('FetchWithAuth error:', {
+        url,
+        retryCount,
+        error: error.message || 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  return attemptRequest();
+}
+
+// Example usage:
+export async function makeAuthenticatedRequest(
+  url: string,
+  method: string = 'GET',
+  data?: any,
+  customConfig: AxiosRequestConfig = {}
+) {
+  const config: AxiosRequestConfig = {
+    method,
+    ...customConfig,
+  };
+
+  if (data) {
+    config.data = data;
+  }
+
+  try {
+    const response = await fetchWithAuth(url, config);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      // Handle Axios-specific errors
+      throw new Error(error.response?.data?.message || error.message);
+    }
+    throw error;
+  }
+}
 async function fetchWithAuth2(url: string, options: RequestInit = {}, timeoutMs: number = 120000): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
@@ -202,7 +353,7 @@ async function fetchWithAuth3(
   return attemptFetch();
 }
 
-async function fetchWithAuth(
+async function fetchWithAuth4(
   url: string, 
   options: RequestInit = {}, 
   timeoutMs: number = 120000,
@@ -861,7 +1012,7 @@ export async function createReport(payload: ReportPayload, ID: string): Promise<
 
 export async function getReportRecordById(Id: string) {
   try {
-    const res = await fetchWithAuth(`${invUrl}/preliminary-investigations/${Id}`, { cache: 'no-cache' } );
+    const res = await fetchWithAuth4(`${invUrl}/preliminary-investigations/${Id}`, { cache: 'no-cache' } );
 
     if (!res.ok) {
       if (res.status === 200) return null;
@@ -982,7 +1133,7 @@ export async function getActivityByNumber(ID: string): Promise<ActivityObject> {
 
 export async function getTipOffRecordById(Id: string) {
   try {
-    const res = await fetchWithAuth(`${invUrl}/get-tipoff/${Id}`, { cache: 'force-cache' } );
+    const res = await fetchWithAuth4(`${invUrl}/get-tipoff/${Id}`, { cache: 'force-cache' } );
 
     if (!res.ok) {
       if (res.status === 200) return null;
@@ -1556,14 +1707,14 @@ export async function revalidate(params: string) {
 }
 
 export async function getAll() {
-  const res = await fetchWithAuth(`${apiUrl}/teacher_registrations/`);
+  const res = await fetchWithAuth4(`${apiUrl}/teacher_registrations/`);
   if (!res.ok) return [];
   return res.json();
 }
 
 export async function getRegApplications(status: string, count: string) {
   try {
-    const res = await fetchWithAuth(`${apiUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`);
+    const res = await fetchWithAuth4(`${apiUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`);
     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
   } catch (error) {
     console.error('Error fetching registration applications:', error);
@@ -1604,7 +1755,7 @@ interface InvestigationsResponse {
 
 export async function getInvRecords(status: string, count: string){
   try{
-    const res = await fetchWithAuth(`${invUrl}/get-list?reg_status=${status}&count=${count}`);
+    const res = await fetchWithAuth4(`${invUrl}/get-list?reg_status=${status}&count=${count}`);
     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
   }catch(error){
     console.error('Error fetching records:', error);
@@ -1697,7 +1848,7 @@ export async function getInvestigations(status: string, count: string): Promise<
 
 export async function getLicenseApplications(status: string, count: string) {
   try {
-    const res = await fetchWithAuth(`${licUrl}/getLicensesByCount?reg_status=${status}&count=${count}`);
+    const res = await fetchWithAuth4(`${licUrl}/getLicensesByCount?reg_status=${status}&count=${count}`);
     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
   } catch (error) {
     console.error('Error fetching license applications:', error);
@@ -1707,7 +1858,7 @@ export async function getLicenseApplications(status: string, count: string) {
 
 export async function getEndorsementRecords(status: string, count: string) {
   try {
-    const res = await fetchWithAuth(`${apiUrl}/GetRegistrationsByCount?endorsement_status=${status}&count=${count}`);
+    const res = await fetchWithAuth4(`${apiUrl}/GetRegistrationsByCount?endorsement_status=${status}&count=${count}`);
     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
   } catch (error) {
     console.error('Error fetching endorsement records:', error);
@@ -1717,7 +1868,7 @@ export async function getEndorsementRecords(status: string, count: string) {
 
 export async function getLicenseEndorsementRecords(status: string, count: string) {
   try {
-    const res = await fetchWithAuth(`${licUrl}/getLicensesByCount?endorsement_status=${status}&count=${count}`);
+    const res = await fetchWithAuth4(`${licUrl}/getLicensesByCount?endorsement_status=${status}&count=${count}`);
     return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
   } catch (error) {
     console.error('Error fetching license endorsement records:', error);
@@ -1727,7 +1878,7 @@ export async function getLicenseEndorsementRecords(status: string, count: string
 
 export async function getNext(status: string) {
   try {
-    const res = await fetchWithAuth(`${apiUrl}/getNext/?reg_status=${status}`, { cache: 'no-cache' });
+    const res = await fetchWithAuth4(`${apiUrl}/getNext/?reg_status=${status}`, { cache: 'no-cache' });
     if (!res.ok || res.status !== 200) return null;
     return res.headers.get('content-type')?.startsWith('application/json') ? res.json() : null;
   } catch (error) {
@@ -1738,7 +1889,7 @@ export async function getNext(status: string) {
 
 export async function searchById(id: string){
   try{
-    const res = await fetchWithAuth(`${apiUrl}/search-record/?search=${id}`, { cache: 'no-cache' });
+    const res = await fetchWithAuth4(`${apiUrl}/search-record/?search=${id}`, { cache: 'no-cache' });
     if (!res.ok || res.status !== 200) return null;
     return res.headers.get('content-type')?.startsWith('application/json') ? res.json() : null;
   } catch (error){
@@ -1748,7 +1899,7 @@ export async function searchById(id: string){
 
 export async function getNextLicense(status: string) {
   try {
-    const res = await fetchWithAuth(`${licUrl}/getNext/?reg_status=${status}`, { cache: 'no-cache' });
+    const res = await fetchWithAuth4(`${licUrl}/getNext/?reg_status=${status}`, { cache: 'no-cache' });
     if (!res.ok || res.status === 204) return null;
     return res.headers.get('content-type')?.startsWith('application/json') ? res.json() : null;
   } catch (error) {
@@ -1760,7 +1911,7 @@ export async function getNextLicense(status: string) {
 export async function getRegById(Id: string) {
   revalidateTag('work');
   try {
-    const res = await fetchWithAuth(`${apiUrl}/teacher_registrations/${Id}`, { next: { tags: ['work'] } });
+    const res = await fetchWithAuth4(`${apiUrl}/teacher_registrations/${Id}`, { next: { tags: ['work'] } });
     if (!res.ok) {
       if (res.status === 204) return null;
       throw new Error('Failed to fetch data');
@@ -1774,7 +1925,7 @@ export async function getRegById(Id: string) {
 
 export async function getInvRecordById(Id: string) {
   try {
-    const res = await fetchWithAuth(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' } );
+    const res = await fetchWithAuth4(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' } );
     if (!res.ok) {
       if (res.status === 200) return null;
       throw new Error('Failed to fetch data');
@@ -1882,7 +2033,7 @@ export async function getInvById(Id: string) {
 
 export async function getComplaintsById(Id: string): Promise<InvestigationResponse> {
   try {
-    const response = await fetchWithAuth(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' });
+    const response = await fetchWithAuth4(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' });
 
     // Get the raw response text first
     const responseText = await response.text();
@@ -1926,7 +2077,7 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
 
 export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
   try {
-    const response = await fetchWithAuth(`${renewalUrl}/license-renewal/${Id}`, { cache: 'no-cache' });
+    const response = await fetchWithAuth4(`${renewalUrl}/license-renewal/${Id}`, { cache: 'no-cache' });
 
     // Get the raw response text first
     const responseText = await response.text();
@@ -1980,7 +2131,7 @@ export async function getRenewalById(Id: string): Promise<TeacherRegistrationRes
 
 export async function getLicenseById(Id: string) {
   try {
-    const res = await fetchWithAuth(`${licUrl}/license-data/${Id}`, { cache: 'no-cache' });
+    const res = await fetchWithAuth4(`${licUrl}/license-data/${Id}`, { cache: 'no-cache' });
     if (!res.ok) {
       if (res.status === 204) return null;
       throw new Error('Failed to fetch data');
@@ -2002,7 +2153,7 @@ export async function UpdateStatus(id: string, status: string, rejection_reason:
 
 export async function ReturnToCustomer(id: string, status: string, items: (string | undefined)[]) {
 
-  const res = await fetchWithAuth(`${apiUrl}/customer-action/${id}?reg_status=${status}`, {
+  const res = await fetchWithAuth4(`${apiUrl}/customer-action/${id}?reg_status=${status}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -2022,22 +2173,22 @@ export async function UpdateLicenseStatus(id: string, status: string) {
 }
 
 export async function GetReports() {
-  const res = await fetchWithAuth(`${apiUrl}/StatisticalReports/`);
+  const res = await fetchWithAuth4(`${apiUrl}/StatisticalReports/`);
   return res.json();
 }
 
 export async function getMonthlyTeacherRegistrations() {
-  const res = await fetchWithAuth(`${apiUrl}/Monthly-Statistics/`);
+  const res = await fetchWithAuth4(`${apiUrl}/Monthly-Statistics/`);
   return res.json();
 }
 
 export async function getStatuses() {
-  const res = await fetchWithAuth(`${apiUrl}/Status-Statistics-Graph/`);
+  const res = await fetchWithAuth4(`${apiUrl}/Status-Statistics-Graph/`);
   return res.json();
 }
 
 export async function getTeacherRegistrationsByStatus() {
-  const res = await fetchWithAuth(`${apiUrl}/Status-Statistics/`);
+  const res = await fetchWithAuth4(`${apiUrl}/Status-Statistics/`);
   return res.json();
 }
 
@@ -2059,7 +2210,7 @@ export async function UpdateEndorsementStatus(id: string, status: string) {
 
 export async function BulkRegistrationUpdate(data: string) {
   const jsonData = JSON.parse(data);
-  const res = await fetchWithAuth(`${apiUrl}/processBulkRegistrations/`, {
+  const res = await fetchWithAuth4(`${apiUrl}/processBulkRegistrations/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(jsonData),
