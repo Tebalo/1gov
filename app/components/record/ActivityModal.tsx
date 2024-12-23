@@ -11,6 +11,7 @@ import { createActivity } from '@/app/lib/actions';
 import { ActivityPayload } from '@/app/lib/types';
 import { getAccessGroups } from '@/app/auth/auth';
 import InfoCardTwo from '../InfoCardTwoColumn';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ActivityModalProps {
     onClose: () => void;
@@ -32,7 +33,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-
+  const { toast } = useToast();
   useEffect(() => {
     const initializeUser = async () => {
       try {
@@ -67,19 +68,30 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
       [field]: value
     }))
   }
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setError('')
-
+    
     try {
       const res = await createActivity(activityDetails)
 
       if (res.code === 200 || res.code === 201) {
-        router.push('/trls/home')
+        toast({
+          title: "Success",
+          description: "Activity submitted successfully",
+          variant: "default",
+        });
+        router.refresh();
+        onClose();
       } else {
-        setError(res.message || 'Failed to submit activity')
+        toast({
+          title: "Error",
+          description: res.message || 'Failed to submit activity',
+          variant: "destructive",
+        });
+        setError(res.message || 'Failed to submit activity');
       }
     } catch (error) {
       const errorMessage = error instanceof Error 
@@ -194,10 +206,10 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="complaint">Complaint</SelectItem>
-                  <SelectItem value="continuous professional development">Continuous Professional Development</SelectItem>
+                  {/* <SelectItem value="continuous professional development">Continuous Professional Development</SelectItem> */}
                   <SelectItem value="investigation">Investigation</SelectItem>
-                  <SelectItem value="registration">Registration</SelectItem>
-                  <SelectItem value="tip-off">Tip-off</SelectItem>
+                  {/* <SelectItem value="registration">Registration</SelectItem> */}
+                  {/* <SelectItem value="tip-off">Tip-off</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>

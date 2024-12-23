@@ -154,7 +154,7 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile}) => {
 
       <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-          <Button variant="ghost" className="w-full bg-none hover:bg-sky-500 px-0">
+          <Button variant="ghost" className="w-full bg-none hover:bg-slate-700 px-0">
             <div className="flex lg:justify-start justify-center md:w-full items-center">
                   <div className="flex lg:justify-start justify-center md:w-full items-center">
                     <Avatar className="h-6 w-6">

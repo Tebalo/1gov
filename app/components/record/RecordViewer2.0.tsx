@@ -521,7 +521,10 @@ interface TeacherRegistrationViewProps {
   
     return (
       <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8">Teacher Registration Request</h1>
+          <div className="mb-4 flex-shrink-0 shadow-md">
+            <h1 className="text-3xl font-bold mb-8">Teacher Registration Request</h1>
+            <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
+          </div>
           <div className="bg-white shadow-lg rounded-lg p-6 space-y-8 max-h-[calc(100vh-200px)] overflow-y-auto">
             {renderCaseDetails()}
             {renderPersonalInfo()}

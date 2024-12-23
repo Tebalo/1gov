@@ -3,10 +3,11 @@ import React, { Suspense, useState } from "react";
 import { PageTitle } from "../PageTitle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Layout, Activity, FileText, AlertCircle } from "lucide-react";
+import { Plus, Search, Layout, Activity, FileText, AlertCircle, ClipboardSignature, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { LoadingSkeleton } from "../LoadingSkeleton";
 import { cn } from "@/lib/utils";
+import LocationChangeBanner from "./components/TRLSBanner";
 
 interface ServiceCardProps {
   title: string;
@@ -46,11 +47,23 @@ export const SnrRegistrationOfficerHome = () => {
 
   const services = [
     {
-      title: "Create Activity",
-      description: "Log and track registration activities",
+      title: "My Work",
+      description: "Work lists and queues",
       icon: <Activity className="w-6 h-6 text-blue-500" />,
-      href: "/trls/work/activity/create"
+      href: "/trls/work"
     },
+    {
+      title: "Registrations Requests",
+      description: "New teacher registration requests",
+      icon: <ClipboardSignature className="w-6 h-6 text-blue-500" />,
+      href: "/trls/registration"
+    },
+    {
+      title: "Reports",
+      description: "View and generate reports",
+      icon: <BarChart3 className="w-6 h-6 text-blue-500" />,
+      href: "/trls/dashboard"
+    }
   ];
 
   const filteredServices = services.filter(service =>
@@ -63,7 +76,7 @@ export const SnrRegistrationOfficerHome = () => {
       <div className="mb-6">
         <PageTitle Title="Registration Services Dashboard" />
       </div>
-
+      <LocationChangeBanner />
       {/* Search Section */}
       <div className="mb-8">
         <Card>
@@ -87,7 +100,7 @@ export const SnrRegistrationOfficerHome = () => {
         <div className="flex items-center space-x-2">
           <Layout className="w-6 h-6 text-blue-500" />
           <h2 className="text-xl font-semibold text-gray-900">
-            Available Services
+            Quick Access
           </h2>
         </div>
 
