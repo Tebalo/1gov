@@ -25,6 +25,22 @@ const sidebarItems: SideBarItem[] = [
         roles: ['*'] 
     },
     { 
+        path: '/trls/dashboard', 
+        icon: <LayoutDashboard size={24} color="#FFFFFF" />, 
+        title: 'Dashboard', 
+        roles: [
+            'MANAGER', 
+            'REGISTRATION_OFFICER', 
+            'SNR_REGISTRATION_OFFICER', 
+            'DIRECTOR', 
+            'REGISTRAR', 
+            // 'INVESTIGATIONS_OFFICER', 
+            // 'SENIOR_INVESTIGATIONS_OFFICER', 
+            // 'INVESTIGATIONS_MANAGER', 
+            'ADMIN'
+        ] 
+    },
+    { 
         path: '/trls/work', 
         icon: <Briefcase size={24} color="#FFFFFF" />, 
         title: 'My Work', 
@@ -43,25 +59,9 @@ const sidebarItems: SideBarItem[] = [
         ] 
     },
     { 
-        path: '/trls/dashboard', 
-        icon: <LayoutDashboard size={24} color="#FFFFFF" />, 
-        title: 'Dashboard', 
-        roles: [
-            'MANAGER', 
-            'REGISTRATION_OFFICER', 
-            'SNR_REGISTRATION_OFFICER', 
-            'DIRECTOR', 
-            'REGISTRAR', 
-            'INVESTIGATIONS_OFFICER', 
-            'SENIOR_INVESTIGATIONS_OFFICER', 
-            'INVESTIGATIONS_MANAGER', 
-            'ADMIN'
-        ] 
-    },
-    { 
         path: '/trls/activity', 
         icon: <ClipboardList size={24} color="#FFFFFF" />, 
-        title: 'Activities', 
+        title: 'My Activities', 
         roles: [
             'INVESTIGATIONS_OFFICER', 
             'SENIOR_INVESTIGATIONS_OFFICER', 
