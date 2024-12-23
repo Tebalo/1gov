@@ -33,17 +33,17 @@ const DynamicSidebar: React.FC<SidebarProps> = async () => {
       className="top-0 left-0 lg:w-52 shadow-xl transition-transform -translate-x-full sm:translate-x-0 hidden md:block" 
       aria-label="Sidebar"
     >
-      <div className="h-screen px-0 bg-sky-400 shadow-lg rounded-r-lg">
+      <div className="h-screen px-0 bg-slate-800 shadow-lg rounded-r-sm">
         <div className="md:rounded-r-lg rounded-b-lg bg-white lg:p-5 md:p-1 lg:w-48 md:w-36">
           <Logo
             width={350}
             height={350}
           />
         </div>
-        <div className="my-10 ml-5">
+        <div className="my-10 ml-0">
           <SidebarNav currentPersona={access_profile?.current || ''} />
         </div>
-        <div className="absolute bottom-0 w-full border-t bg-sky-400">
+        <div className="absolute bottom-0 w-full border-t border-slate-700 bg-slate-900">
           <NavUtils accessProfile={access_profile} />
         </div>
       </div>

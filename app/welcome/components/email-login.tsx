@@ -89,27 +89,71 @@ const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ 
                 isRedirecting: false
             })
 
+            const MAX_RETRIES = 3;
+            const INITIAL_DELAY = 1000; // 1 second
+            let retryCount = 0;
+            // Define the function type before the implementation
+            const attemptDeTokenize: () => Promise<DecodedToken> = async () => {
+                try {
+                    const deTokenizeResponse = await axiosInstance.post(
+                        `${DeTokenizeUrl}${authResponse.access_token}`,
+                        { username, otp: value }
+                    );
+                    return deTokenizeResponse.data;
+                } catch (error) {
+                    if (retryCount < MAX_RETRIES) {
+                        retryCount++;
+                        const backoffDelay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
+                        console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
+                        setErrorMessage(`Decryption failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
+                        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+                        return attemptDeTokenize();
+                    }
+                    throw error;
+                }
+            };
+            
             try {
-                const deTokenizeResponse = await axiosInstance.post(
-                    `${DeTokenizeUrl}${authResponse.access_token}`,
-                    { username, otp: value }
-                )
-
-                const profile = deTokenizeResponse.data as DecodedToken
-                await storeAccessGroups(profile)
-
+                const profile = await attemptDeTokenize();
+                await storeAccessGroups(profile);
+            
                 setAuthState({
                     isStoringSession: false,
                     isDecryptingSession: false,
                     isRedirecting: true
-                })
-
-                router.push('/trls/work')
+                });
+            
+                router.push('/trls/home');
             } catch (error) {
                 if (axios.isAxiosError(error)) {
-                    setErrorMessage(error.response?.data?.message || 'Failed to decrypt access token')
+                    setErrorMessage(
+                        error.response?.data?.message || 
+                        `Failed to decrypt access token after ${MAX_RETRIES} attempts`
+                    );
                 } else {
-                    setErrorMessage('An error occurred during token decryption.')
+                    setErrorMessage('An error occurred during token decryption.');
+                }
+            }
+            
+            try {
+                const profile = await attemptDeTokenize();
+                await storeAccessGroups(profile);
+            
+                setAuthState({
+                    isStoringSession: false,
+                    isDecryptingSession: false,
+                    isRedirecting: true
+                });
+            
+                router.push('/trls/home');
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    setErrorMessage(
+                        error.response?.data?.message || 
+                        `Failed to decrypt access token after ${MAX_RETRIES} attempts`
+                    );
+                } else {
+                    setErrorMessage('An error occurred during token decryption.');
                 }
             }
         } catch (error) {

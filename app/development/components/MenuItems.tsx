@@ -19,66 +19,38 @@ interface SidebarProps {
 
 const sidebarItems: SideBarItem[] = [
     { 
-        path: '/trls/home', 
+        path: '/development', 
         icon: <Home size={24} color="#FFFFFF" />, 
         title: 'Home', 
         roles: ['*'] 
     },
     { 
-        path: '/trls/dashboard', 
+        path: '/development/components', 
         icon: <LayoutDashboard size={24} color="#FFFFFF" />, 
-        title: 'Dashboard', 
+        title: 'UI Components', 
         roles: [
-            'MANAGER', 
-            'REGISTRATION_OFFICER', 
-            'SNR_REGISTRATION_OFFICER', 
-            'DIRECTOR', 
-            'REGISTRAR', 
-            // 'INVESTIGATIONS_OFFICER', 
-            // 'SENIOR_INVESTIGATIONS_OFFICER', 
-            // 'INVESTIGATIONS_MANAGER', 
             'ADMIN'
         ] 
     },
     { 
-        path: '/trls/work', 
-        icon: <Briefcase size={24} color="#FFFFFF" />, 
-        title: 'My Work', 
-        roles: ['*'] 
-    },
-    { 
-        path: '/trls/registration', 
-        icon: <ClipboardSignature size={24} color="#FFFFFF" />, 
-        title: 'Registrations', 
+        path: '/development/viewers', 
+        icon: <LayoutDashboard size={24} color="#FFFFFF" />, 
+        title: 'Record Viewer', 
         roles: [
-            'REGISTRATION_OFFICER', 
-            'SNR_REGISTRATION_OFFICER', 
-            'MANAGER', 
-            'DIRECTOR', 
-            'REGISTRAR'
+            'ADMIN'
         ] 
     },
     { 
-        path: '/trls/activity', 
-        icon: <ClipboardList size={24} color="#FFFFFF" />, 
-        title: 'My Activities', 
-        roles: [
-            'INVESTIGATIONS_OFFICER', 
-            'SENIOR_INVESTIGATIONS_OFFICER', 
-            'INVESTIGATIONS_MANAGER',
-            'INVESTIGATIONS_DIRECTOR',
-            'DISCIPLINARY_COMMITTEE'
-        ] 
-    },
-    { 
-        path: '/trls/settings', 
-        icon: <Settings size={24} color="#FFFFFF" />, 
+        path: '/development/accesscontrol', 
+        icon: <LayoutDashboard size={24} color="#FFFFFF" />, 
         title: 'Settings', 
-        roles: [] 
+        roles: [
+            'ADMIN'
+        ] 
     },
 ];
 
-const SidebarNav: React.FC<SidebarProps> = ({ currentPersona }) => {
+const MenuItems: React.FC<SidebarProps> = ({ currentPersona }) => {
     const currentPath = usePathname();
 
     const hasAccess = (itemRoles: string[]) => {
@@ -87,7 +59,7 @@ const SidebarNav: React.FC<SidebarProps> = ({ currentPersona }) => {
 
     const isActivePath = (path: string) => {
         // Handle exact matches for home
-        if (path === '/trls/home') {
+        if (path === '/development') {
             return currentPath === path;
         }
         // For other paths, check if the current path starts with the item path
@@ -141,4 +113,4 @@ const SidebarNav: React.FC<SidebarProps> = ({ currentPersona }) => {
     );
 }
 
-export default SidebarNav;
+export default MenuItems;

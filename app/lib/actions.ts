@@ -960,55 +960,45 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
 
 export async function createReport(payload: ReportPayload, ID: string): Promise<ReportResponse> {
   try {
-    const stringifiedPayload = JSON.stringify(payload, null, 2);
-
-    const response = await fetch(`${invUrl}/update-preliminary-investigations/${ID}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: stringifiedPayload
-    });
-
-    const responseText = await response.text();
-
-    if (!response.ok) {
-      let errorMessage: string;
-      try {
-        const errorData = JSON.parse(responseText);
-        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
-      } catch (parseError) {
-        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+    const response = await fetchWithAuth(
+      `${invUrl}/update-preliminary-investigations/${ID}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        data: payload // Axios uses data instead of body
       }
-      throw new Error(errorMessage);
-    }
-
-    let result;
-    if (responseText) {
-      try {
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Error parsing response:', parseError);
-        throw new Error(`Invalid JSON response: ${responseText}`);
-      }
-    } else {
-      result = { message: 'Success', code: response.status, data: null };
-    }
-
+    );
+ 
+    // Successful response (2xx status code)
     return {
-      message: result.message || 'Success',
+      message: 'Report created successfully',
       code: response.status,
     };
-
+ 
   } catch (error) {
-    console.error('Error adding complaint:', error);
+    console.error('Error creating report:', error);
+    
+    if (axios.isAxiosError(error)) {
+      // Handle specific Axios errors
+      const statusCode = error.response?.status || 500;
+      const errorMessage = error.response?.data?.message || 'Failed to create report';
+ 
+      return {
+        code: statusCode,
+        message: errorMessage,
+      };
+    }
+ 
+    // Handle non-Axios errors
     return {
-      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
-      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again',
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to create report',
     };
   }
-}
+ }
 
 export async function getReportRecordById(Id: string) {
   try {
@@ -1027,57 +1017,48 @@ export async function getReportRecordById(Id: string) {
 
 export async function createActivity(payload: ActivityPayload): Promise<ActivityResponse> {
   try {
-
-    const stringifiedPayload = JSON.stringify(payload, null, 2);
-
-    const response = await fetch(`${invUrl}/activity-diaries`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: stringifiedPayload
-    });
-
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-    // Get the raw response text first
-    const responseText = await response.text();
-
-    if (!response.ok) {
-      let errorMessage: string;
-      try {
-        const errorData = JSON.parse(responseText);
-        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
-      } catch (parseError) {
-        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+    const response = await fetchWithAuth(
+      `${invUrl}/activity-diaries`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        data: payload  // Axios uses 'data' instead of 'body'
       }
-      throw new Error(errorMessage);
-    }
+    );
 
-    let result;
-    if (responseText) {
-      try {
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Error parsing response:', parseError);
-        throw new Error(`Invalid JSON response: ${responseText}`);
-      }
-    } else {
-      result = { message: 'Success', code: response.status, data: null };
-    }
-
+    // Successful response (2xx status code)
     return {
-      message: result.message || 'Success',
+      message: 'Activity created successfully',
       code: response.status,
-      data: result
+      data: response.data?.data || { 
+        success: true,
+        activity_number: response.data?.activity_number || 'Unknown'
+      }
     };
 
   } catch (error) {
-    console.error('Error adding complaint:', error);
+    console.error('Error creating activity:', error);
+    
+    if (axios.isAxiosError(error)) {
+      // Handle specific Axios errors
+      const statusCode = error.response?.status || 500;
+      const errorMessage = error.response?.data?.message || 'Failed to create activity';
+
+      return {
+        code: statusCode,
+        message: errorMessage,
+        // data: null
+      };
+    }
+
+    // Handle non-Axios errors
     return {
-      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
-      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again',
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to create activity',
+      // data: null
     };
   }
 }
@@ -1753,12 +1734,23 @@ interface InvestigationsResponse {
   data: Complaint[];
 }
 
-export async function getInvRecords(status: string, count: string){
-  try{
-    const res = await fetchWithAuth4(`${invUrl}/get-list?reg_status=${status}&count=${count}`);
-    return res.ok && res.headers.get('content-type')?.startsWith('application/json') ? res.json() : [];
-  }catch(error){
+export async function getInvRecords(status: string, count: string) {
+  try {
+    const response = await fetchWithAuth(`${invUrl}/get-list`, {
+      method: 'GET',
+      params: {
+        reg_status: status,
+        count: count
+      }
+    });
+
+    // Axios automatically parses JSON and throws on non-2xx status codes
+    return response.data || [];
+  } catch (error) {
     console.error('Error fetching records:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Response:', error.response?.data);
+    }
     return [];
   }
 }
@@ -1925,17 +1917,28 @@ export async function getRegById(Id: string) {
 
 export async function getInvRecordById(Id: string) {
   try {
-    const res = await fetchWithAuth4(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' } );
-    if (!res.ok) {
-      if (res.status === 200) return null;
-      throw new Error('Failed to fetch data');
-    }
-    return res.json();
+    const response = await fetchWithAuth(`${invUrl}/complaints/${Id}`, {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
+ 
+    // Axios automatically parses JSON and returns data property
+    return response.data || null;
+ 
   } catch (error) {
     console.error('Error fetching record by ID:', error);
+    if (axios.isAxiosError(error)) {
+      // Check for 404 or other specific status codes if needed
+      if (error.response?.status === 404) {
+        return null;
+      }
+      console.error('Response:', error.response?.data);
+    }
     return null;
   }
-}
+ }
 
 export async function updateCaseById(code: string, updateData: Investigation | null): Promise<{success: boolean, code: number; data: Promise<any> }> {
   
@@ -2033,47 +2036,45 @@ export async function getInvById(Id: string) {
 
 export async function getComplaintsById(Id: string): Promise<InvestigationResponse> {
   try {
-    const response = await fetchWithAuth4(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' });
-
-    // Get the raw response text first
-    const responseText = await response.text();
-
-    if (!response.ok) {
-      let errorMessage: string;
-      try {
-        const errorData = JSON.parse(responseText);
-        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
-      } catch (parseError) {
-        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+    const response = await fetchWithAuth(
+      `${invUrl}/complaints/${Id}`, 
+      {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
       }
-      throw new Error(errorMessage);
-    }
-
-    let result;
-    if (responseText) {
-      try {
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Error parsing response:', parseError);
-        throw new Error(`Invalid JSON response: ${responseText}`);
-      }
-    } else {
-      result = { message: 'Success', code: response.status, data: null };
-    }
-
+    );
+ 
+    // Successful response (2xx status code)
     return {
       code: response.status,
-      data: result.data || result,
+      data: response.data?.data || response.data
     };
-
+ 
   } catch (error) {
-    console.error('Error fetching record by ID:', error);
+    console.error('Error fetching complaint:', error);
+    
+    if (axios.isAxiosError(error)) {
+      // Handle specific Axios errors
+      const statusCode = error.response?.status || 500;
+      const errorMessage = error.response?.data?.message || 'Failed to fetch complaint';
+ 
+      return {
+        code: statusCode,
+        message: errorMessage,
+        //data: null
+      };
+    }
+ 
+    // Handle non-Axios errors
     return {
-      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
-      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch complaint',
+      //data: null
     };
   }
-}
+ }
 
 export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
   try {

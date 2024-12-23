@@ -55,7 +55,7 @@ interface InvestigationViewProps {
         <div className="mb-4 flex-shrink-0 shadow-md">
           <div className='flex justify-between'>
             <h1 className="text-3xl font-bold text-gray-800">
-              Complaint Information
+              Complaint Details
             </h1>
             <ActionButtons 
               recordId={data.reporter.inquiry_number  ?? ''} 
@@ -115,10 +115,10 @@ interface InvestigationViewProps {
   );
 
   const renderPreliminaryDetails = (data: Investigation) => (
-    <InfoCardTwo title='Pre-App Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Pre-App Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
         <InfoItem label="Status" value={data.reporter.reg_status}/>
         <InfoItem label="Submission type" value={data.reporter.submission_type}/>
-    </InfoCardTwo>
+    </InfoCard>
   )
 
   const renderComplaintInfo = (data: Investigation) => (

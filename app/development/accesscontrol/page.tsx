@@ -9,11 +9,11 @@ export default async function DevelopmentStudio() {
     return (
         <div className="h-screen overflow-auto pb-8">
             <div className="mb-8">
-                <PageTitle Title="Development Studio"/>
+                <PageTitle Title="Settings"/>
             </div>
             
             <div className="container mx-auto">
-                <Tabs defaultValue="roles" className="w-full">
+                <Tabs defaultValue="iam" className="w-full">
                     <TabsList className="w-full justify-start mb-6 bg-white p-1 border">
                         <TabsTrigger 
                             value="roles" 
