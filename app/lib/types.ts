@@ -340,6 +340,8 @@ interface cpd_activity {
   reg_status: string;
   sla: string;
   cpd_activity: string;
+  other: string;
+  activity_name: string;
   cpd_points: string;
   cpd_activity_description: string;
   service_provider: string;

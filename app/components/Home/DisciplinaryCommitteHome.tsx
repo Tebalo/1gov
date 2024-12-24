@@ -99,7 +99,7 @@ export const DisciplinaryCommitteHome = () => {
         <div className="flex items-center space-x-2">
           <Layout className="w-6 h-6 text-blue-500" />
           <h2 className="text-xl font-semibold text-gray-900">
-            Available Services
+          Quick Access
           </h2>
         </div>
 

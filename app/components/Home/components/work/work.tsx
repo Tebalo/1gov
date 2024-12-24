@@ -221,7 +221,7 @@ export const Work = ({ userRole }: Props) => {
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {/* Left Section - Select and Filters */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Show work for</Label>
+            <Label className="text-sm font-medium text-gray-700">Assignment source</Label>
             <div className="flex items-center gap-3">
               <Select 
                 onValueChange={handleSelectChange} 

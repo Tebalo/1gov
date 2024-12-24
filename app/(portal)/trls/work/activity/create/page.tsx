@@ -11,6 +11,7 @@ import { FileCheck, Info, User, SaveIcon } from 'lucide-react'
 import { createActivity } from '@/app/lib/actions'
 import { ActivityPayload } from '@/app/lib/types'
 import { getAccessGroups } from '@/app/auth/auth'
+import { columns } from '../../../applications/components/columns'
 
 const initialState: ActivityPayload = {
   full_name: '',
@@ -171,7 +172,7 @@ export default function Page() {
           </InfoCard>
 
           {/* Activity Details */}
-          <InfoCard title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
+          <InfoCard title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>} columns={1}>
             <div>
               <label htmlFor="activities" className="block text-sm font-medium text-gray-700">Activities</label>
               <Textarea
@@ -209,8 +210,8 @@ export default function Page() {
                 <SelectContent>
                   <SelectItem value="COMPLAINT">Complaint</SelectItem>
                   <SelectItem value="INVESTIGATION">Investigation</SelectItem>
-                  <SelectItem value="REGISTRATION">Registration</SelectItem>
-                  <SelectItem value="TIPOFF">Tip-off</SelectItem>
+                  {/* <SelectItem value="REGISTRATION">Registration</SelectItem>
+                  <SelectItem value="TIPOFF">Tip-off</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>

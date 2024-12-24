@@ -42,8 +42,10 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
       <InfoItem label="Activity Type" value={data.data?.cpd_activity.cpd_activity}/>
       <InfoItem label="CPD Points" value={data.data?.cpd_activity.cpd_points}/>
       <InfoItem label="Cumulative Points" value={data.data?.cpd_activity.cumulative_points}/>
+      <InfoItem label="Activity Name" value={data.data?.cpd_activity.activity_name}/>
       <InfoItem label="Service Provider" value={data.data?.cpd_activity.service_provider}/>
       <InfoItem label="Duration" value={data.data?.cpd_activity.duration}/>
+      <InfoItem label="Other" value={data.data?.cpd_activity.other}/>
       <InfoItem label="SLA" value={data.data?.cpd_activity.sla}/>
       <InfoItem label="Description" value={data.data?.cpd_activity.cpd_activity_description}/>
     </InfoCard>
