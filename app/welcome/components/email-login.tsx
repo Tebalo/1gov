@@ -31,7 +31,11 @@ import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
 // Create axios instance with default config
 const axiosInstance = axios.create({
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Connection':'keep-alive',
+        'Accept':'*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'User-Agent':'PostmanRuntime/7.43.0'
     },
     timeout: 10000 // 10 second timeout
 })

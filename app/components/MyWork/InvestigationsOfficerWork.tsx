@@ -12,7 +12,9 @@ export const InvestigationsOfficerWork = () => {
         <div className="rounded-lg">
           <div className="flex space-x-2">
             <div className="p-2 space-y-2 w-64 items-center flex-1 justify-center border border-gray-200 rounded bg-gray-50">
-              <Label>My Work</Label>
+                <div className="flex">
+                <Label>My Assignments</Label>
+                </div>
                 <Work userRole="investigations_officer"/>
             </div>
           </div>
