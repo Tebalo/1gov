@@ -44,18 +44,29 @@ const replaceNullWithEmptyString = (data: any): any => {
 // Helper function to safely process the API response
 const processApiResponse = (data: any[]): Restoration[] => {
     return data.map(item => ({
-        revocation_number: item.revocation_number || '',
-        userid: item.userid || '',
-        sla: item.sla || '',
-        reg_status: item.reg_status || '',
-        registration_number: item.registration_number || '',
-        current_employer: item.current_employer || '',
-        reason: item.reason || '',
-        date_of_submission: item.date_of_submission || '',
+        national_id: item.national_id || '',
+        reg_number: item.reg_number || '',
+        endorsement_status: item.endorsement_status || '',
+        rejection_reason: item.rejection_reason || '',
+        service_code: item.service_code || '',
+        payment_ref: item.payment_ref || '',
+        payment_amount: item.payment_amount || '',
+        payment_name: item.payment_name || '',
+        application_id: item.application_id || '',
+        license_link: item.license_link || '',
+        education_bg_checks: item.education_bg_checks || '',
+        flags_no: item.flags_no || '',
+        institution_verification: item.institution_verification || '',
+        course_verification: item.course_verification || '',
+        license_status: item.license_status || '',
+        pending_customer_action: item.pending_customer_action || '',
+        registration_type: item.registration_type || '',
+        created_at: item.created_at || '',
+        updated_at: item.updated_at || '',
     }));
 };
 
-export const RevocationTable: React.FC<WorkProps> = ({status, userRole}) => {
+export const RestorationTable: React.FC<WorkProps> = ({status, userRole}) => {
     const [response, setResponse] = useState<restoration[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -109,4 +120,4 @@ export const RevocationTable: React.FC<WorkProps> = ({status, userRole}) => {
     )
 }
 
-export default RevocationTable;
+export default RestorationTable;

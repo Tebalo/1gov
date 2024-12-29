@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/accordion"
 import RenewalContent from "./components/renewal";
 import RevocationContent from "./components/revocation";
+import CategoryContent from "./components/changeofcategory";
+import RestorationContent from "./components/restoration";
 
 export default async function Page() {
     return (
@@ -26,6 +28,18 @@ export default async function Page() {
                         <AccordionTrigger>Revocation View</AccordionTrigger>
                         <AccordionContent>
                             <RevocationContent/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                        <AccordionTrigger>Change of Category View</AccordionTrigger>
+                        <AccordionContent>
+                            <CategoryContent/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-4">
+                        <AccordionTrigger>Restoration View</AccordionTrigger>
+                        <AccordionContent>
+                            <RestorationContent/>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

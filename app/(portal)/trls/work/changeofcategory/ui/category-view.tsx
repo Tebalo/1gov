@@ -1,19 +1,21 @@
 'use client'
 import React from 'react';
-import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle, GraduationCap } from 'lucide-react'
-import { TeacherRegistrationResponse } from '@/app/lib/types';
-import InfoCard from '../InfoCard';
-import InfoItem from '../InfoItem';
+import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle, GraduationCap, Tags, RefreshCcw, AlertCircle  } from 'lucide-react'
 import { Role } from '@/app/lib/store';
-import RenewalActionButtons from './components/RenewalActionItems';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import CategoryActionButtons from '../actions/changeofcategory-action-items';
+import InfoCard from '@/app/components/InfoCard';
+import InfoItem from '@/app/components/InfoItem';
+import { ChangeOfCategoryResponse } from '../types/changeofcategory-type';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-interface RenewalViewerProps {
-  data: TeacherRegistrationResponse;
+interface CategoryViewerProps {
+  data: ChangeOfCategoryResponse;
   userRole: Role;
 }
 
-const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
+const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
   const renderSection = (content: React.ReactNode) => (
     <div className="mb-8">{content}</div>
   );
@@ -58,6 +60,18 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
       <InfoItem label="Region" value={data.employment_details?.region}/>
       <InfoItem label="District" value={data.employment_details?.district}/>
       <InfoItem label="Experience" value={`${data.employment_details?.experience_years} years`}/>
+    </InfoCard>
+  );
+
+  const renderCategoryInfo = () => (
+    <InfoCard title='Category' icon={<Tags  className="w-6 h-6 text-blue-500"/>}>
+      <InfoItem label="Registration number" value={data.categories?.registration_number}/>
+      <InfoItem label="Current Membership" value={data.categories?.current_membership}/>
+      <InfoItem label="Desired Membership" value={data.categories?.desired_membership}/>
+      <InfoItem label="Change Reason" value={data.categories?.change_reason}/>
+      <InfoItem label="Employment Contract" value={data.categories?.employment_contract}/>
+      <InfoItem label="Teaching Certificate" value={data.categories?.teaching_certificate}/>
+      <InfoItem label="CPD Transcript" value={data.categories?.cpd_transcript}/>
     </InfoCard>
   );
 
@@ -173,7 +187,32 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
   );
 
   if (!data || !data.bio_datas || !data.teacher_registrations) {
-    return <div>No data available</div>;
+    return (
+      <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-4">
+          <Alert variant="default" className="border-2">
+              <AlertCircle className="h-5 w-5" />
+              <AlertTitle>Information Not Found</AlertTitle>
+              <AlertDescription>
+                  The requested information could not be retrieved. This may be due to:
+                  <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                      <li>Incomplete data synchronization from 1Gov system</li>
+                  </ul>
+                  Please contact your system administrator for assistance.
+              </AlertDescription>
+          </Alert>
+          <div className="flex justify-center">
+              <Button 
+                  onClick={() => window.location.reload()}
+                  className="gap-2"
+              >
+                  <RefreshCcw className="h-4 w-4" />
+                  Refresh
+              </Button>
+          </div>
+      </div>
+    </div>
+    )
   }
 
   return (
@@ -181,9 +220,9 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
       <div className="mb-4 flex-shrink-0 shadow-md">
         <div className='flex justify-between'>
           <h1 className="text-3xl font-bold text-gray-800">
-            License Renewal Request
+            Change of Membership Request
           </h1>
-          <RenewalActionButtons 
+          <CategoryActionButtons 
             recordId={data.teacher_registrations.national_id ?? ''} 
             userRole={userRole} 
             current_status={data.teacher_registrations.reg_status ?? ''}
@@ -195,6 +234,7 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
       <div className='flex-grow overflow-y-auto'>
         <div className='space-y-8 pr-4'>
           {renderSection(renderPersonalInfo())}
+          {renderSection(renderCategoryInfo())}
           {renderSection(renderRegistrationInfo())}
           {renderSection(renderEmploymentInfo())}
           {renderSection(renderMandatoryQualifications())}
@@ -207,4 +247,4 @@ const RenewalViewer: React.FC<RenewalViewerProps> = ({ data, userRole }) => {
   );
 };
 
-export default RenewalViewer;
+export default CategoryViewer;

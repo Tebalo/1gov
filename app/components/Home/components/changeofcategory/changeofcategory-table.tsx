@@ -1,10 +1,10 @@
 "use client"
 import { DataTable } from "../data-table";
-import { getRevocations} from "@/app/lib/actions"
+import { getChangeOfCategories, getRevocations} from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
 import TableLoadingSkeleton from "../../../TableLoadingSkeleton";
-import { Revocation } from "./schema/changeofcategory";
-import { revocation } from "./types/changeofcategory";
+import { ChangeOfCategory } from "./schema/changeofcategory";
+import { changeofcategory } from "./types/changeofcategory";
 import { ChangeOfCategoryColumns } from "./changeofcategory-columns";
 
 interface WorkProps {
@@ -42,21 +42,32 @@ const replaceNullWithEmptyString = (data: any): any => {
 };
 
 // Helper function to safely process the API response
-const processApiResponse = (data: any[]): Revocation[] => {
+const processApiResponse = (data: any[]): ChangeOfCategory[] => {
     return data.map(item => ({
-        revocation_number: item.revocation_number || '',
-        userid: item.userid || '',
-        sla: item.sla || '',
-        reg_status: item.reg_status || '',
-        registration_number: item.registration_number || '',
-        current_employer: item.current_employer || '',
-        reason: item.reason || '',
-        date_of_submission: item.date_of_submission || '',
+          national_id: item.national_id || '',
+          reg_number: item.reg_number || '',
+          endorsement_status: item.endorsement_status || '',
+          rejection_reason: item.rejection_reason || '',
+          service_code: item.service_code || '',
+          payment_ref: item.payment_ref || '',
+          payment_amount: item.payment_amount || '',
+          payment_name: item.payment_name || '',
+          application_id: item.application_id || '',
+          license_link: item.license_link || '',
+          education_bg_checks: item.education_bg_checks || '',
+          flags_no: item.flags_no || '',
+          institution_verification: item.institution_verification || '',
+          course_verification: item.course_verification || '',
+          license_status: item.license_status || '',
+          pending_customer_action: item.pending_customer_action || '',
+          registration_type: item.registration_type || '',
+          created_at: item.created_at || '',
+          updated_at: item.updated_at || '',
     }));
 };
 
 export const ChangeOfCategoryTable: React.FC<WorkProps> = ({status, userRole}) => {
-    const [response, setResponse] = useState<revocation[] | null>(null);
+    const [response, setResponse] = useState<changeofcategory[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -65,10 +76,10 @@ export const ChangeOfCategoryTable: React.FC<WorkProps> = ({status, userRole}) =
         setError(null);
         
         try {
-            const result = await getRevocations(status, 100);
+            const result = await getChangeOfCategories(status, 100);
             
-            if (result.applications && Array.isArray(result.applications)) {
-                const processedData = processApiResponse(result.applications);
+            if (result.data && Array.isArray(result.data)) {
+                const processedData = processApiResponse(result.data);
                 setResponse(processedData);
             } else {
                 console.warn('Invalid or empty data received from API');
@@ -101,7 +112,7 @@ export const ChangeOfCategoryTable: React.FC<WorkProps> = ({status, userRole}) =
             {isLoading ? (
                 <TableLoadingSkeleton rows={6} columns={6} className="mt-4" />
             ) : response ? (
-                <DataTable data={[]} columns={ChangeOfCategoryColumns} userRole={userRole} />
+                <DataTable data={response} columns={ChangeOfCategoryColumns} userRole={userRole} />
             ) : (
                 <DataTable data={[]} columns={ChangeOfCategoryColumns} userRole={userRole} />
             )}
