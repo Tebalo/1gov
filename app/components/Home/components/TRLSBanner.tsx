@@ -8,7 +8,7 @@ const LocationChangeBanner = () => {
       <AlertTitle className="text-blue-700">Temporary Change Notice</AlertTitle>
       <AlertDescription className="text-blue-600">
         Teacher registration has been temporarily moved to the{' '}
-        <span className="font-semibold">Registration</span> menu while we update the system.
+        <span className="font-semibold">Registrations</span> menu while we update the system.
       </AlertDescription>
     </Alert>
   );

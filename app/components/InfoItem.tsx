@@ -53,7 +53,10 @@ const InfoItem: React.FC<InfoItemProps> = ({ label, value, isAnonymous = false, 
     "",
     "National ID Copy",
     "Qualification Documents",
-    "Proof of Payment"
+    "Proof of Payment",
+    "Employment Contract",
+    "Teaching Certificate",
+    "CPD Transcript" 
   ];
   
   const isPDFLink = value && PDF_LABELS.includes(label);

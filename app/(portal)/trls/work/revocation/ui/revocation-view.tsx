@@ -70,14 +70,15 @@ const RevocationViewer: React.FC<RevocationViewerProps> = ({ data, userRole }) =
             <div className="max-w-md w-full space-y-4">
                 <Alert variant="default" className="border-2">
                     <AlertCircle className="h-5 w-5" />
-                    <AlertTitle>No Data Found</AlertTitle>
+                    <AlertTitle>Information Not Found</AlertTitle>
                     <AlertDescription>
-                        We couldn&#39;t find the requested information. This might be because:
+                        The requested information could not be retrieved. This may be due to:
                         <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                            <li>The data has been removed</li>
-                            <li>You don&#39;t have access to this information</li>
-                            <li>There might be a temporary system issue</li>
+                            <li>Profile record does not exist</li>
+                            <li>Revocation record does not exist</li>
+                            <li>Incomplete data synchronization from 1Gov system</li>
                         </ul>
+                        Please contact your system administrator for assistance.
                     </AlertDescription>
                 </Alert>
                 <div className="flex justify-center">

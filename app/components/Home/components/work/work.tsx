@@ -12,6 +12,8 @@ import CPDTable from "../cpd-table";
 import AppealsTable from "../appeals-table";
 import RevocationTable from "../revocation/revocation-table";
 import RenewalTable from "../renewal/renewal-table";
+import ChangeOfCategoryTable from "../changeofcategory/changeofcategory-table";
+import RestorationTable from "../restoration/restoration-table";
 
 interface Props {
   userRole: Role;
@@ -179,6 +181,46 @@ const AVAILABLE_TABLES = {
     requiredPermission: 'view:renewal-pending-approval' as const,
     status: 'PENDING-APPROVAL',
     component: RenewalTable
+  },
+  'Category Cases Pending-Screening': { // Change of category
+    requiredPermission: 'view:changeofcategory-pending-screening' as const,
+    status: 'PENDING-SCREENING',
+    component: ChangeOfCategoryTable
+  },
+  'Category Cases Pending-Assessment': { // Change of category
+    requiredPermission: 'view:changeofcategory-pending-assessment' as const,
+    status: 'PENDING-ASSESSMENT',
+    component: ChangeOfCategoryTable
+  },
+  'Category Cases Pending-Approval': { // Change of category
+    requiredPermission: 'view:changeofcategory-pending-approval' as const,
+    status: 'PENDING-APPROVAL',
+    component: ChangeOfCategoryTable
+  },
+  'Category Cases Pending-Endorsement': { // Change of category
+    requiredPermission: 'view:changeofcategory-pending-endorsement' as const,
+    status: 'PENDING-ENDORSEMENT',
+    component: ChangeOfCategoryTable
+  },
+  'Restoration Cases Pending-Screening': { // Restoration
+    requiredPermission: 'view:restoration-pending-screening' as const,
+    status: 'PENDING-SCREENING',
+    component: RestorationTable
+  },
+  'Restoration Cases Pending-Assessment': { // Restoration
+    requiredPermission: 'view:restoration-pending-assessment' as const,
+    status: 'PENDING-ASSESSMENT',
+    component: RestorationTable
+  },
+  'Restoration Cases Pending-Approval': { // Restoration
+    requiredPermission: 'view:restoration-pending-approval' as const,
+    status: 'PENDING-APPROVAL',
+    component: RestorationTable
+  },
+  'Restoration Cases Pending-Endorsement': { // Restoration
+    requiredPermission: 'view:restoration-pending-endorsement' as const,
+    status: 'PENDING-ENDORSEMENT',
+    component: RestorationTable
   },
 } as const;
 

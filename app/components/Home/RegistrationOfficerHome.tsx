@@ -53,7 +53,7 @@ export const RegistrationOfficerHome = () => {
       href: "/trls/work"
     },
     {
-      title: "Registrations Requests",
+      title: "Registration Requests",
       description: "New teacher registration requests",
       icon: <ClipboardSignature className="w-6 h-6 text-blue-500" />,
       href: "/trls/registration"
@@ -72,68 +72,58 @@ export const RegistrationOfficerHome = () => {
   );
 
   return (
-    <div 
-      className="min-h-screen bg-cover bg-center bg-fixed bg-no-repeat"
-      style={{
-        backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.97)), url('/bg.jpg')`
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <PageTitle Title="Registration Services Dashboard" />
-        </div>
-        
-        <LocationChangeBanner />
-        
-        {/* Search Section */}
-        <div className="mb-8">
-          <Card className="backdrop-blur-sm bg-white/90">
-            <CardContent className="pt-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search all available e-Services by name, category, description..."
-                  className="pl-10 bg-white/80"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
+    <div className="min-h-screen">
+      <div className="mb-6">
+        <PageTitle Title="Registration Services Dashboard" />
+      </div>
+      <LocationChangeBanner />
+      {/* Search Section */}
+      <div className="mb-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search all available e-Services by name, category, description..."
+                className="pl-10 bg-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Services Section */}
+      <div className="space-y-6">
+        <div className="flex items-center space-x-2">
+          <Layout className="w-6 h-6 text-blue-500" />
+          <h2 className="text-xl font-semibold text-gray-900">
+            Quick Access
+          </h2>
         </div>
 
-        {/* Services Section */}
-        <div className="space-y-6">
-          <div className="flex items-center space-x-2">
-            <Layout className="w-6 h-6 text-blue-500" />
-            <h2 className="text-xl font-semibold text-gray-900">
-              Quick Access
-            </h2>
+        <Suspense fallback={<LoadingSkeleton />}>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredServices.map((service, index) => (
+              <ServiceCard
+                key={index}
+                {...service}
+              />
+            ))}
           </div>
 
-          <Suspense fallback={<LoadingSkeleton />}>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredServices.map((service, index) => (
-                <ServiceCard
-                  key={index}
-                  {...service}
-                  className="backdrop-blur-sm bg-white/90 hover:bg-white/95 transition-colors duration-200"
-                />
-              ))}
-            </div>
-
-            {filteredServices.length === 0 && (
-              <Card className="backdrop-blur-sm bg-white/90">
-                <CardContent className="py-8">
-                  <div className="text-center text-gray-500">
-                    <p>No services found matching your search.</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </Suspense>
-        </div>
+          {filteredServices.length === 0 && (
+            <Card>
+              <CardContent className="py-8">
+                <div className="text-center text-gray-500">
+                  <p>No services found matching your search.</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </Suspense>
       </div>
     </div>
   );

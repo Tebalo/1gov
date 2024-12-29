@@ -5,10 +5,10 @@ import React from "react"
 import { DataTableColumnHeader } from "../data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { RevocationTableRowActions } from "./changeofcategory-table-row-actions"
-import { Revocation } from "./schema/changeofcategory"
+import { ChangeOfCategory } from "./schema/changeofcategory"
+import { ChangeOfCategoryTableRowActions } from "./changeofcategory-table-row-actions"
 
-export const ChangeOfCategoryColumns: ColumnDef<Revocation>[] = [
+export const ChangeOfCategoryColumns: ColumnDef<ChangeOfCategory>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -34,42 +34,33 @@ export const ChangeOfCategoryColumns: ColumnDef<Revocation>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "revocation_number",
+    accessorKey: "national_id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Revocation Number" />
+      <DataTableColumnHeader column={column} title="National ID" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("revocation_number")}</Badge>
+          <Badge variant="outline">{row.getValue("national_id")}</Badge>
         </div>
       )
     },
   },
   {
-    accessorKey: "registration_number",
+    accessorKey: "reg_number",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Registration Number" />
     ),
-    cell: ({ row }) => <div className="w-[120px]">{row.getValue("registration_number")}</div>,
+    cell: ({ row }) => <div className="w-[120px]">{row.getValue("reg_number")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
   {
-    accessorKey: "current_employer",
+    accessorKey: "registration_type",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Current Employer" />
+      <DataTableColumnHeader column={column} title="Registration Type" />
     ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("current_employer")}</div>,
-    enableSorting: true,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "reason",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Reason" />
-    ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("reason")}</div>,
+    cell: ({ row }) => <div className="w-[120px]">{row.getValue("registration_type")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
@@ -79,7 +70,7 @@ export const ChangeOfCategoryColumns: ColumnDef<Revocation>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[120px]">
+      <div className="w-[150px]">
         <Badge variant={
           row.getValue("reg_status") === "Approved" ? "default" :
           row.getValue("reg_status") === "Rejected" ? "destructive" :
@@ -93,12 +84,27 @@ export const ChangeOfCategoryColumns: ColumnDef<Revocation>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "date_of_submission",
+    accessorKey: "endorsement_status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Endorsement Status" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[150px]">
+        <Badge variant="secondary">
+          {row.getValue("endorsement_status")}
+        </Badge>
+      </div>
+    ),
+    enableSorting: true,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "created_at",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Submission Date" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.getValue("date_of_submission"))
+      const date = new Date(row.getValue("created_at"))
       return <div className="w-[120px]">{date.toLocaleDateString()}</div>
     },
     enableSorting: true,
@@ -106,6 +112,6 @@ export const ChangeOfCategoryColumns: ColumnDef<Revocation>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <RevocationTableRowActions row={row} />,
+    cell: ({ row }) => <ChangeOfCategoryTableRowActions row={row} />,
   },
 ]

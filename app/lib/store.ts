@@ -6,7 +6,8 @@ export const cpdUrl = 'http://10.0.25.164:8086/trls-86';
 export const appealUrl = 'http://10.0.25.164:8087/trls-87';
 export const renewalUrl = 'http://10.0.25.164:8090/trls-90';
 export const revocationUrl = 'http://10.0.25.164:8097/trls-97';
-export const restorationUrl = 'http://10.0.25.164:8088/trls-94';
+export const restorationUrl = 'http://10.0.25.164:8094/trls-94';
+export const deltaCategoryUrl = 'http://10.0.25.164:7071/trls-71';
 
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
 
@@ -18,7 +19,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.30.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.32.99';
 
 export interface StatusTransition {
     [key: string]: {
