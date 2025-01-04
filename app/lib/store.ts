@@ -19,7 +19,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.32.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.33.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -336,7 +336,7 @@ const RESTORATION_FLOW: Record<string, FlowAction> = {
     'pending-assessment': {
         requiredPermission: 'update:restoration-pending-assessment',
         nextStatus: ['PENDING-APPROVAL'],
-        status_label: 'Submit for assessment',
+        status_label: 'Submit for approval',
         allowedRoles: ['snr_registration_officer']
     },
     'pending-approval': {
