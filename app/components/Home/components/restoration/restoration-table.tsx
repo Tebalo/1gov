@@ -50,6 +50,7 @@ const processApiResponse = (data: any[]): Restoration[] => {
         rejection_reason: item.rejection_reason || '',
         service_code: item.service_code || '',
         payment_ref: item.payment_ref || '',
+        reg_status: item.reg_status || '',
         payment_amount: item.payment_amount || '',
         payment_name: item.payment_name || '',
         application_id: item.application_id || '',

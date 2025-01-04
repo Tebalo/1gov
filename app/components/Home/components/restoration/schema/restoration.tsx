@@ -6,6 +6,7 @@ export const restorationSchema = z.object({
   rejection_reason: z.string().nullable(),
   service_code: z.string().nullable(),
   payment_ref: z.string().nullable(),
+  reg_status: z.string().nullable(),
   payment_amount: z.string().nullable(),
   payment_name: z.string().nullable(),
   application_id: z.string().nullable(),

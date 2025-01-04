@@ -7,6 +7,7 @@ export interface restoration {
     payment_ref: string | null,
     payment_amount: string | null,
     payment_name: string | null,
+    reg_status: string | null,
     application_id: string | null,
     license_link: string | null,
     education_bg_checks: string | null,
