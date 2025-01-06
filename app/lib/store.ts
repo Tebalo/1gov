@@ -19,7 +19,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.33.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.34.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -582,9 +582,7 @@ export const ROLES = {
         "update:cpd-recommed-for-approval"
     ],
     appeals_officer: [
-        "view:appeal-incoming",
         "view:appeal-pending-screening",
-        "update:appeal-incoming",
         "update:appeal-pending-screening",
     ],
     senior_appeals_officer: [
