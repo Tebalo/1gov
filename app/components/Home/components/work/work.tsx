@@ -106,11 +106,11 @@ const AVAILABLE_TABLES = {
     status: 'RECOMMEND-FOR-APPROVAL',
     component: CPDTable
   },
-  'Incoming-Appeal': { // Appeals
-    requiredPermission: 'view:appeal-incoming' as const,
-    status: 'INCOMING-APPEAL',
-    component: AppealsTable
-  },
+  // 'Incoming-Appeal': { // Appeals
+  //   requiredPermission: 'view:appeal-incoming' as const,
+  //   status: 'INCOMING-APPEAL',
+  //   component: AppealsTable
+  // },
   'Pending-Screening': { // Appeals
     requiredPermission: 'view:appeal-pending-screening' as const,
     status: 'PENDING-SCREENING',
