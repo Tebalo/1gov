@@ -38,7 +38,7 @@ export default async function Home(){
     } else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <RegistrarHome/>
     }else if(CPDROLES.includes(userRole ?? '')){
-        return <InvestigationsOfficerHome/>
+        return <UserHome/>
     }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
         return <InvestigationsDirectorHome/>
     } else if(userRole?.toUpperCase() === 'DISCIPLINARY_COMMITTEE'){
