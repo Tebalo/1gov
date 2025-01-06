@@ -97,7 +97,7 @@ const AVAILABLE_TABLES = {
     component: CPDTable
   },
   'CPD Cases Pending-Verification': { // CPD
-    requiredPermission: 'view:cpd-pending-screening' as const,
+    requiredPermission: 'view:cpd-pending-verification' as const,
     status: 'PENDING-VERIFICATION',
     component: CPDTable
   },
