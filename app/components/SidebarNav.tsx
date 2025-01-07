@@ -27,7 +27,7 @@ const sidebarItems: SideBarItem[] = [
     { 
         path: '/trls/dashboard', 
         icon: <LayoutDashboard size={24} color="#FFFFFF" />, 
-        title: 'Dashboard', 
+        title: 'Reports', 
         roles: [
             'MANAGER', 
             'REGISTRATION_OFFICER', 

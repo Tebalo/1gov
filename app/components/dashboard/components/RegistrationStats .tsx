@@ -61,23 +61,23 @@ export const RegistrationStats = () => {
 
     const stats = [
         {
-            title: "Total Registrations",
-            value: response?.all_teacher_registrations_count || "0",
+            title: "Teacher Registrations",
+            value: response?.teacher_registrations_count || "N/A",
             icon: <Users className="h-4 w-4 text-muted-foreground" />
         },
         {
             title: "Issued Licenses",
-            value: response?.teacher_registrations_count || "0",
+            value: response?.teacher_registrations_count || "N/A",
             icon: <GraduationCap className="h-4 w-4 text-muted-foreground" />
         },
         {
             title: "Female Teachers",
-            value: response?.females_count || 0,
+            value: response?.females_count || 'N/A',
             icon: <UserCircle2 className="h-4 w-4 text-muted-foreground" />
         },
         {
             title: "Male Teachers",
-            value: response?.males_count || 0,
+            value: response?.males_count || 'N/A',
             icon: <UserCircle className="h-4 w-4 text-muted-foreground" />
         }
     ];

@@ -1,114 +1,52 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageTitle } from "../PageTitle";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarDateRangePicker } from "./date-range-picker";
-import { RecentSales } from "./components/recent-sales";
-import { Overview } from "./components/overview";
-import { AllTeacherRegistrations } from "./components/AllTeacherRegistrations";
-import { TeacherRegistrations } from "./components/TeacherRegistrations";
-import { StudentRegistrations } from "./components/StudentRegistrations";
-import { MaleTeacherRegistrations } from "./components/MaleTeacherRegistrations";
-import { MonthlyTeacherRegistrations } from "./components/MonthlyTeacherRegistrations-SimpleBarGraph";
-import { ListOfTeacherRegistrationsByStatus } from "./components/TeacherRegistrationByStatus-List";
 import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
-import { MixedBarChartStatuses } from "./components/bar-chart-mixed-statuses";
-import { BarChartMonthlyRegistrations } from "./components/bar-chart-monthly-regustrations";
-import { BarChartDailyRegistrations } from "./components/bar-chart-daily-registrations";
-import { PieChartStatuses } from "./components/pie-chart-statuses";
-import { LineChartDailyRegistrations } from "./components/line-chart-daily-registrations";
-import { FemaleTeacherRegistrations } from "./components/FemaleTeacherRegistrations";
-import { TotalIssuedLicenses } from "./components/TotalIssuedLicenses";
 import { RegistrationStats } from "./components/RegistrationStats ";
+import TeacherStatusLineChart from "./components/line-chart";
 
 export const RegistrationOfficerDashboard = () => {
-    return(
-        <>
-         <div className="overflow-auto h-screen rounded-lg">
-            <div className="mb-2">
-                <div className="flex items-center justify-between space-y-2 mr-10">
-                    <PageTitle Title="Dashboard"/>
-                    <div className="flex items-center space-x-2">
-                        {/* <CalendarDateRangePicker />
-                        <Button>Download</Button> */}
+    return (
+        <div className="h-screen overflow-y-auto bg-background">
+            <div className="sticky top-0 z-10 bg-background p-6 border-b">
+                <div className="mx-auto max-w-7xl">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <PageTitle Title="Dashboard"/>
+                        <Button className="w-full sm:w-auto">
+                            <span className="flex items-center gap-2">
+                                Download Report
+                            </span>
+                        </Button>
                     </div>
                 </div>
             </div>
-            <div className="w-full">
-                <div className="rounded-lg">
-                    <div className="flex-1 space-y-4 p-8 pt-6">
-                        <Tabs defaultValue="overview" className="space-y-4">
-                            <TabsList>
-                                <TabsTrigger value="overview">
-                                    Overview
-                                </TabsTrigger>
-                                {/* <TabsTrigger value="analytics" disabled>
-                                    Analytics
-                                </TabsTrigger> */}
-                                <TabsTrigger value="reports">
-                                    Reports
-                                </TabsTrigger>
 
-                            </TabsList>
-                            <TabsContent value="overview" className="space-y-4">
-    <RegistrationStats />
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="col-span-1">
-            <MixedBarChartStatuses />
-        </div>
-        <div className="col-span-1">
-            <HorizontalBarChartStatus />
-        </div> 
-        <div>
-            <BarChartMonthlyRegistrations />
-        </div>
-    </div>
-</TabsContent>
-                            <TabsContent value="analytics" className="space-y-4">
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                    {/* <AllTeacherRegistrations/>
-                                    <TeacherRegistrations/>
-                                    <StudentRegistrations/>
-                                    <MaleTeacherRegistrations/> */}
-
+            <div className="p-6">
+                <div className="mx-auto max-w-7xl">
+                    <Tabs defaultValue="overview" className="w-full">
+                        <TabsList className="w-full sm:w-auto bg-muted/20 p-1 sticky top-24 z-10">
+                            <TabsTrigger 
+                                value="overview"
+                                className="text-sm font-medium transition-colors"
+                            >
+                                Reports
+                            </TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="overview" className="space-y-6 mt-6">
+                            <RegistrationStats />
+                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                <div className="md:col-span-3 bg-card rounded-xl shadow-sm">
+                                    <TeacherStatusLineChart />
+                                </div> 
+                                <div className="md:col-span-3 bg-card rounded-xl shadow-sm">
+                                    <HorizontalBarChartStatus />
                                 </div>
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    <div className="col-span-1">
-                                        <MixedBarChartStatuses />
-                                    </div>
-                                    <div className="col-span-1">
-                                        <HorizontalBarChartStatus />
-                                    </div> 
-                                    <div>
-                                        <BarChartMonthlyRegistrations />
-                                    </div>
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="reports" className="space-y-4">
-                                {/* <BarChartDailyRegistrations /> */}
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    {/* <div className="col-span-1">
-                                        <MixedBarChartStatuses />
-                                    </div> */}
-                                    <div className="col-span-1">
-                                        <HorizontalBarChartStatus />
-                                    </div> 
-                                    {/* <div>
-                                        <BarChartMonthlyRegistrations />
-                                    </div> */}
-                                    {/* <div>
-                                        <PieChartStatuses />
-                                    </div> */}
-                                    {/* <div>
-                                        <LineChartDailyRegistrations />
-                                    </div> */}
-                                </div>
-                            </TabsContent>
-                        </Tabs>
-                    </div>
+                            </div>
+                        </TabsContent>
+                    </Tabs>
                 </div>
             </div>
         </div>
-        </>
     );
 }

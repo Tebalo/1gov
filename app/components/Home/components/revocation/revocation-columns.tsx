@@ -34,12 +34,12 @@ export const RevocationColumns: ColumnDef<Revocation, unknown>[] = [
     enableHiding: false,
   },
   {
-    id: "registration_number",
-    accessorFn: (row) => row.registration_number,
+    id: "revocation_number",
+    accessorFn: (row) => row.revocation_number,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Registration Number" />
+      <DataTableColumnHeader column={column} title="Revocation Number" />
     ),
-    cell: ({ row }) => <div className="w-[120px]">{row.getValue("registration_number")}</div>,
+    cell: ({ row }) => <div className="w-[180px]">{row.getValue("revocation_number")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
@@ -49,7 +49,7 @@ export const RevocationColumns: ColumnDef<Revocation, unknown>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="SLA Days" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("sla")} days</div>,
+    cell: ({ row }) => <div className="w-[200px]">{row.getValue("sla")} days</div>,
     enableSorting: true,
     enableHiding: false,
   },
@@ -59,20 +59,20 @@ export const RevocationColumns: ColumnDef<Revocation, unknown>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Current Employer" />
     ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("current_employer")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("current_employer")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
-  {
-    id: "reason",
-    accessorFn: (row) => row.reason,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Reason" />
-    ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("reason")}</div>,
-    enableSorting: true,
-    enableHiding: false,
-  },
+  // {
+  //   id: "reason",
+  //   accessorFn: (row) => row.reason,
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Reason" />
+  //   ),
+  //   cell: ({ row }) => <div className="w-[150px]">{row.getValue("reason")}</div>,
+  //   enableSorting: true,
+  //   enableHiding: false,
+  // },
   {
     id: "reg_status",
     accessorFn: (row) => row.reg_status,
@@ -80,7 +80,7 @@ export const RevocationColumns: ColumnDef<Revocation, unknown>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
-      <div className="w-[120px]">
+      <div className="w-[180px]">
         <Badge variant={
           row.getValue("reg_status") === "Approved" ? "default" :
           row.getValue("reg_status") === "Rejected" ? "destructive" :
@@ -101,10 +101,10 @@ export const RevocationColumns: ColumnDef<Revocation, unknown>[] = [
     ),
     cell: ({ row }) => {
       const dateValue = row.getValue("date_of_submission") as string | null;
-      if (!dateValue) return <div className="w-[120px]">N/A</div>;
+      if (!dateValue) return <div className="w-[20px]">N/A</div>;
       
       const date = new Date(dateValue);
-      return <div className="w-[120px]">{date.toLocaleDateString()}</div>;
+      return <div className="w-[80px]">{date.toLocaleDateString()}</div>;
     },
     enableSorting: true,
     enableHiding: false,
