@@ -86,11 +86,6 @@ const AVAILABLE_TABLES = {
     status: 'CASE-CLOSED',
     component: InvestigationsTable
   },
-  // 'Incoming CPD Cases': { // CPD
-  //   requiredPermission: 'view:cpd-incoming' as const,
-  //   status: 'INCOMING',
-  //   component: CPDTable
-  // },
   'CPD Cases Pending-Screening': { // CPD
     requiredPermission: 'view:cpd-pending-screening' as const,
     status: 'PENDING-SCREENING',
@@ -106,11 +101,6 @@ const AVAILABLE_TABLES = {
     status: 'RECOMMEND-FOR-APPROVAL',
     component: CPDTable
   },
-  // 'Incoming-Appeal': { // Appeals
-  //   requiredPermission: 'view:appeal-incoming' as const,
-  //   status: 'INCOMING-APPEAL',
-  //   component: AppealsTable
-  // },
   'Pending-Screening': { // Appeals
     requiredPermission: 'view:appeal-pending-screening' as const,
     status: 'PENDING-SCREENING',
@@ -141,11 +131,6 @@ const AVAILABLE_TABLES = {
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: AppealsTable
   },
-  // 'Revocation Cases Incoming': { // Revocation
-  //   requiredPermission: 'view:revocation-pending-screening' as const,
-  //   status: 'INCOMING',
-  //   component: RevocationTable
-  // },
   'Revocation Cases Pending-Screening': { // Revocation
     requiredPermission: 'view:revocation-pending-screening' as const,
     status: 'PENDING-SCREENING',

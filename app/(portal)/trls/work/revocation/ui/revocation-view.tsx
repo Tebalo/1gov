@@ -25,7 +25,7 @@ const RevocationViewer: React.FC<RevocationViewerProps> = ({ data, userRole }) =
   const renderRevocationInfo = () => (
     <InfoCard title='Revocation Information' icon={<AlertTriangle className="w-6 h-6 text-red-500"/>}>
       <InfoItem label="Revocation Number" value={data?.revocation?.revocation_number}/>
-      <InfoItem label="Registration Number" value={data?.revocation?.registration_number}/>
+      <InfoItem label="Registration Number" value={data?.revocation?.userid}/>
       <InfoItem label="Status" value={data?.revocation?.reg_status}/>
       <InfoItem label="SLA Days" value={`${data?.revocation?.sla}`}/>
       <InfoItem label="Reason" value={data?.revocation?.reason}/>

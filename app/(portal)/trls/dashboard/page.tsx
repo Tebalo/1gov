@@ -19,13 +19,13 @@ export default async function Dashboard(){
     }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerDashboard/>
     } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
-        return <SnrRegistrationOfficerDashboard/>
+        return <RegistrationOfficerDashboard/>
     } else if(userRole?.toUpperCase() === 'MANAGER'){
-        return <ManagerDashboard/>
+        return <RegistrationOfficerDashboard/>
     } else if(userRole?.toUpperCase() === 'DIRECTOR'){
-        return <DirectorDashboard/>
+        return <RegistrationOfficerDashboard/>
     } else if(userRole?.toUpperCase() === 'REGISTRAR'){
-        return <RegistrarDashboard/>
+        return <RegistrationOfficerDashboard/>
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminDashboard/>
     } else {
