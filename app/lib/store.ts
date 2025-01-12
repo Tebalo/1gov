@@ -174,13 +174,6 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
 } as const;
 
 const CPD_FLOW: Record<string, FlowAction> = {
-    // 'incoming': {
-    //     requiredPermission: 'update:cpd-incoming',
-    //     nextStatus: ['PENDING-SCREENING'],
-    //     message: 'This action will...',
-    //     status_label: 'Submit for Screening',
-    //     allowedRoles: ['teacher_development_officer']
-    // },
     'pending-screening': {
         requiredPermission: 'update:cpd-pending-screening',
         nextStatus: ['PENDING-VERIFICATION'],
@@ -247,7 +240,29 @@ const APPEAL_FLOW: Record<string, FlowAction> = {
     }
 } as const;
 
-const REVOCATION_FLOW: Record<string, FlowAction> = {
+const RENEWAL_FLOW: Record<string, FlowAction> = {
+    'pending-screening': {
+        requiredPermission: 'update:renewal-pending-screening',
+        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        message: 'This action will...',
+        status_label: 'Allocate to',
+        allowedRoles: ['license_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:renewal-pending-assessment',
+        nextStatus: ['PENDING-APPROVAL'],
+        status_label: 'Submit for approval',
+        allowedRoles: ['snr_license_officer']
+    },
+    'pending-approval': {
+        requiredPermission: 'update:renewal-pending-approval',
+        nextStatus: ['MANAGER-APPROVED'],
+        status_label: 'Approve',
+        allowedRoles: ['license_manager']
+    },
+} as const;
+
+const REVOCATION_FLOW: Record<string, FlowAction> = { // Registration
     'pending-screening': {
         requiredPermission: 'update:revocation-pending-screening',
         nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
@@ -275,79 +290,57 @@ const REVOCATION_FLOW: Record<string, FlowAction> = {
     },
 } as const;
 
-const RENEWAL_FLOW: Record<string, FlowAction> = {
-    'pending-screening': {
-        requiredPermission: 'update:renewal-pending-screening',
-        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
-        message: 'This action will...',
-        status_label: 'Allocate to',
-        allowedRoles: ['license_officer']
-    },
-    'pending-assessment': {
-        requiredPermission: 'update:renewal-pending-assessment',
-        nextStatus: ['PENDING-APPROVAL'],
-        status_label: 'Submit for approval',
-        allowedRoles: ['snr_license_officer']
-    },
-    'pending-approval': {
-        requiredPermission: 'update:renewal-pending-approval',
-        nextStatus: ['MANAGER-APPROVED'],
-        status_label: 'Approve',
-        allowedRoles: ['license_manager']
-    },
-} as const;
-
-const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = {
-    'pending-screening': {
+const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration
+    'Pending-Screening': {
         requiredPermission: 'update:changeofcategory-pending-screening',
-        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'This action will...',
         status_label: 'Send to',
         allowedRoles: ['registration_officer']
     },
-    'pending-assessment': {
+    'Pending-Assessment': {
         requiredPermission: 'update:changeofcategory-pending-assessment',
-        nextStatus: ['PENDING-APPROVAL'],
+        nextStatus: ['Pending-Approval'],
         status_label: 'Submit for approval',
         allowedRoles: ['snr_registration_officer']
     },
-    'pending-approval': {
+    'Pending-Approval': {
         requiredPermission: 'update:changeofcategory-pending-approval',
-        nextStatus: ['PENDING-ENDORSEMENT'],
+        nextStatus: ['Pending-Endorsement'],
         status_label: 'Submit for endorsement',
         allowedRoles: ['manager']
     },
-    'pending-endorsement': {
+    'Pending-Endorsement': {
         requiredPermission: 'update:changeofcategory-pending-endorsement',
-        nextStatus: ['MANAGER-APPROVED'],
+        nextStatus: ['Manager-Approved'],
         status_label: 'Approve endorsement',
         allowedRoles: ['director']
     },
 } as const;
 
-const RESTORATION_FLOW: Record<string, FlowAction> = {
-    'pending-screening': {
+const RESTORATION_FLOW: Record<string, FlowAction> = { // Registration
+    'Pending-Screening': {
         requiredPermission: 'update:restoration-pending-screening',
-        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
+        nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'This action will...',
         status_label: 'Submit for screening',
         allowedRoles: ['registration_officer']
     },
-    'pending-assessment': {
+    'Pending-Assessment': {
         requiredPermission: 'update:restoration-pending-assessment',
-        nextStatus: ['PENDING-APPROVAL'],
-        status_label: 'Submit for approval',
+        nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
+        status_label: 'Recommend',
         allowedRoles: ['snr_registration_officer']
     },
-    'pending-approval': {
+    'Pending-Approval': {
         requiredPermission: 'update:restoration-pending-approval',
-        nextStatus: ['PENDING-ENDORSEMENT'],
-        status_label: 'Approve',
+        nextStatus: ['Manager-Approved'],
+        status_label: 'Recommend for endorsement',
         allowedRoles: ['manager']
     },
-    'pending-endorsement': {
+    'Pending-Endorsement': {
         requiredPermission: 'update:restoration-pending-endorsement',
-        nextStatus: ['MANAGER-APPROVED'],
+        nextStatus: ['Endorsement-Complete'],
         status_label: 'Approve endorsement',
         allowedRoles: ['director']
     },
