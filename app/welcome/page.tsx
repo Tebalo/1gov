@@ -47,7 +47,7 @@ export default function Welcome() {
       <div className="relative z-10 flex-grow flex items-center justify-center px-4">
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="space-y-1 flex flex-col items-center">
-            <div className="w-32 h-32 mb-4 relative">
+            <div className="w-32 h-32 mb-2 relative">
               <Image 
                 src="/Code-of-Arms-colour.png"
                 alt='Logo'
@@ -55,11 +55,12 @@ export default function Welcome() {
                 className="object-contain"
               />
             </div>
-            <CardTitle>Welcome back</CardTitle>
+            <CardTitle className="text-2xl font-bold">Welcome to TRLS</CardTitle>
+            <CardTitle className="text-xl text-primary">BackOffice Portal</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Complete the form below to access your account
             </CardDescription>
-            <Separator className="mt-4"/>
+            <Separator className="mt-2"/>
           </CardHeader>
           <CardContent>
             <Email />

@@ -439,7 +439,7 @@ export const Email: React.FC = () => {
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
-                                                    placeholder="Enter password"
+                                                    placeholder="Enter your password"
                                                     className="border-2 border-slate-300"
                                                     type={showPassword ? "text" : "password"}
                                                     {...field}
@@ -459,7 +459,6 @@ export const Email: React.FC = () => {
                                                 )}
                                             </Button>
                                         </div>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -468,6 +467,13 @@ export const Email: React.FC = () => {
                             </Button>
                         </div>
                     </form>
+                    <div className="mt-4 text-center text-sm">
+                        <span>Don&lsquo;t have an account?</span>{" "}
+                        <a 
+                        href="https://1gov.gov.bw/welcome" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:text-primary/90">
+                            Sign up
+                        </a>
+                    </div>
                 </Form>
             ) : (
                 <InputOTPControlled 
