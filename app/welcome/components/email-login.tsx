@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
@@ -24,9 +24,11 @@ import {
 } from "@/components/ui/input-otp"
 
 import { storeSession, storeAccessGroups } from "@/app/auth/auth"
-import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
+import { AlertCircle, CheckCircle2, Clock, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { cn } from "@/lib/utils"
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
@@ -52,251 +54,279 @@ const LoadingState = ({ message }: { message: string }) => (
         <p className="text-center text-sm">{message}</p>
     </div>
 )
-
-const InputOTPControlled: React.FC<{ username: string; password: string }> = ({ username, password }) => {
-    const [value, setValue] = useState("")
-    const [isOtpLoading, setIsOtpLoading] = useState(false)
-    const [isResendLoading, setIsResendLoading] = useState(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const [successMessage, setSuccessMessage] = useState<string | null>(null)
-    const router = useRouter()
-
+interface InputOTPControlledProps {
+    username: string;
+    password: string;
+  }
+  
+const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, password }) => {
+    const [value, setValue] = useState("");
+    const [isOtpLoading, setIsOtpLoading] = useState(false);
+    const [isResendLoading, setIsResendLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [countdown, setCountdown] = useState(0);
+    const router = useRouter();
+  
     const [authState, setAuthState] = useState({
-        isStoringSession: false,
-        isDecryptingSession: false,
-        isRedirecting: false
-    })
-
+      isStoringSession: false,
+      isDecryptingSession: false,
+      isRedirecting: false
+    });
+  
+    useEffect(() => {
+      let timer: NodeJS.Timeout;
+      if (countdown > 0) {
+        timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
+      }
+      return () => clearTimeout(timer);
+    }, [countdown]);
+  
     const handleOtpSubmit = async () => {
-        setIsOtpLoading(true)
-        setErrorMessage(null)
-        setSuccessMessage(null)
-
-        try {
-            const validateResponse = await axiosInstance.post(validateUrl, {
-                username,
-                otp: value
-            })
-
-            setAuthState({
-                isStoringSession: true,
-                isDecryptingSession: false,
-                isRedirecting: false
-            })
-
-            const authResponse = validateResponse.data as AuthResponse
-            await storeSession(authResponse)
-
-            setAuthState({
-                isStoringSession: false,
-                isDecryptingSession: true,
-                isRedirecting: false
-            })
-
-            const MAX_RETRIES = 3;
-            const INITIAL_DELAY = 1000; // 1 second
-            let retryCount = 0;
-            // Define the function type before the implementation
-            const attemptDeTokenize: () => Promise<DecodedToken> = async () => {
-                try {
-                    const deTokenizeResponse = await axiosInstance.post(
-                        `${DeTokenizeUrl}${authResponse.access_token}`,
-                        { username, otp: value }
-                    );
-                    return deTokenizeResponse.data;
-                } catch (error) {
-                    if (retryCount < MAX_RETRIES) {
-                        retryCount++;
-                        const backoffDelay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
-                        console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
-                        setErrorMessage(`Decryption failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
-                        await new Promise(resolve => setTimeout(resolve, backoffDelay));
-                        return attemptDeTokenize();
-                    }
-                    throw error;
-                }
-            };
-            
-            try {
-                const profile = await attemptDeTokenize();
-                await storeAccessGroups(profile);
-            
-                setAuthState({
-                    isStoringSession: false,
-                    isDecryptingSession: false,
-                    isRedirecting: true
-                });
-            
-                router.push('/trls/home');
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    setErrorMessage(
-                        error.response?.data?.message || 
-                        `Failed to decrypt access token after ${MAX_RETRIES} attempts`
-                    );
-                } else {
-                    setErrorMessage('An error occurred during token decryption.');
-                }
-            }
-            
-            try {
-                const profile = await attemptDeTokenize();
-                await storeAccessGroups(profile);
-            
-                setAuthState({
-                    isStoringSession: false,
-                    isDecryptingSession: false,
-                    isRedirecting: true
-                });
-            
-                router.push('/trls/home');
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    setErrorMessage(
-                        error.response?.data?.message || 
-                        `Failed to decrypt access token after ${MAX_RETRIES} attempts`
-                    );
-                } else {
-                    setErrorMessage('An error occurred during token decryption.');
-                }
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                setErrorMessage(error.response?.data?.message || 'OTP validation failed. Please try again')
-            } else {
-                setErrorMessage('An error occurred during OTP validation. Please try again.')
-            }
-        } finally {
-            setIsOtpLoading(false)
-        }
-    }
-
-    const MAX_RETRIES = 3;
-    const INITIAL_DELAY = 1000; // 1 second
-    
-    const handleResendOTP = async () => {
-        setIsResendLoading(true);
-        setErrorMessage(null);
-        setSuccessMessage(null);
-        
+      setIsOtpLoading(true);
+      setErrorMessage(null);
+      setSuccessMessage(null);
+  
+      try {
+        const validateResponse = await axiosInstance.post(validateUrl, {
+          username,
+          otp: value
+        });
+  
+        setAuthState({
+          isStoringSession: true,
+          isDecryptingSession: false,
+          isRedirecting: false
+        });
+  
+        const authResponse = validateResponse.data as AuthResponse;
+        await storeSession(authResponse);
+  
+        setAuthState({
+          isStoringSession: false,
+          isDecryptingSession: true,
+          isRedirecting: false
+        });
+  
+        const MAX_RETRIES = 3;
+        const INITIAL_DELAY = 1000;
         let retryCount = 0;
-    
-        const attemptResend = async (): Promise<any> => {
-            try {
-                const response = await axiosInstance.post(authUrl, {
-                    username,
-                    password
-                });
-                return response;
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    // Don't retry for authentication errors
-                    if (error.response?.status === 401 || error.response?.status === 403) {
-                        throw error;
-                    }
-                    
-                    // Check if we should retry
-                    if (retryCount < MAX_RETRIES) {
-                        retryCount++;
-                        const delay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
-                        console.log(`Retry attempt ${retryCount} after ${delay}ms`);
-                        
-                        // Update error message to show retry attempt
-                        setErrorMessage(`Connection failed. Retrying to resend OTP... (${retryCount}/${MAX_RETRIES})`);
-                        
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        return attemptResend();
-                    }
-                }
-                throw error;
+  
+        const attemptDeTokenize = async (): Promise<DecodedToken> => {
+          try {
+            const deTokenizeResponse = await axiosInstance.post(
+              `${DeTokenizeUrl}${authResponse.access_token}`,
+              { username, otp: value }
+            );
+            return deTokenizeResponse.data;
+          } catch (error) {
+            if (retryCount < MAX_RETRIES) {
+              retryCount++;
+              const backoffDelay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
+              setErrorMessage(`Decryption failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
+              await new Promise(resolve => setTimeout(resolve, backoffDelay));
+              return attemptDeTokenize();
             }
+            throw error;
+          }
         };
-    
+  
         try {
-            const response = await attemptResend();
-            setValue("");
-            setErrorMessage(null)
-            setSuccessMessage('OTP resent successfully.');
+          const profile = await attemptDeTokenize();
+          await storeAccessGroups(profile);
+  
+          setAuthState({
+            isStoringSession: false,
+            isDecryptingSession: false,
+            isRedirecting: true
+          });
+  
+          router.push('/trls/home');
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.status === 401) {
-                    setErrorMessage('Session expired. Please log in again.');
-                } else if (retryCount === MAX_RETRIES) {
-                    setErrorMessage(`Failed to resend OTP after ${MAX_RETRIES} attempts. Please try again later.`);
-                } else {
-                    setErrorMessage(error.response?.data?.message || 'Failed to resend OTP. Please try again!');
-                }
-            } else {
-                setErrorMessage('Server error. Please try again later.');
-            }
-        } finally {
-            setIsResendLoading(false);
+          if (axios.isAxiosError(error)) {
+            setErrorMessage(
+              error.response?.data?.message ||
+              `Failed to decrypt access token after ${MAX_RETRIES} attempts`
+            );
+          } else {
+            setErrorMessage('An error occurred during token decryption.');
+          }
         }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data?.message || 'OTP validation failed. Please try again');
+        } else {
+          setErrorMessage('An error occurred during OTP validation. Please try again.');
+        }
+      } finally {
+        setIsOtpLoading(false);
+      }
     };
-    const { isStoringSession, isDecryptingSession, isRedirecting } = authState
-
+  
+    const handleResendOTP = async () => {
+      setIsResendLoading(true);
+      setErrorMessage(null);
+      setSuccessMessage(null);
+  
+      let retryCount = 0;
+      const MAX_RETRIES = 3;
+      const INITIAL_DELAY = 1000;
+  
+      const attemptResend = async (): Promise<any> => {
+        try {
+          const response = await axiosInstance.post(authUrl, {
+            username,
+            password
+          });
+          return response;
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            if (error.response?.status === 401 || error.response?.status === 403) {
+              throw error;
+            }
+            
+            if (retryCount < MAX_RETRIES) {
+              retryCount++;
+              const delay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
+              setErrorMessage(`Connection failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              return attemptResend();
+            }
+          }
+          throw error;
+        }
+      };
+  
+      try {
+        const response = await attemptResend();
+        setValue("");
+        setErrorMessage(null);
+        setSuccessMessage('OTP resent successfully.');
+        setCountdown(60); // Start 60-second countdown
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            setErrorMessage('Session expired. Please log in again.');
+          } else if (retryCount === MAX_RETRIES) {
+            setErrorMessage(`Failed to resend OTP after ${MAX_RETRIES} attempts. Please try again later.`);
+          } else {
+            setErrorMessage(error.response?.data?.message || 'Failed to resend OTP. Please try again!');
+          }
+        } else {
+          setErrorMessage('Server error. Please try again later.');
+        }
+      } finally {
+        setIsResendLoading(false);
+      }
+    };
+  
+    const { isStoringSession, isDecryptingSession, isRedirecting } = authState;
+  
     if (isStoringSession || isDecryptingSession || isRedirecting) {
-        const message = isStoringSession
-            ? "Saving session..."
-            : isDecryptingSession
-                ? "Decrypting access token..."
-                : "Redirecting to the home page..."
-
-        return <LoadingState message={message} />
+      const message = isStoringSession
+        ? "Saving session..."
+        : isDecryptingSession
+          ? "Decrypting access token..."
+          : "Redirecting to the home page...";
+  
+      return <LoadingState message={message} />;
     }
-
+  
     return (
+      <div className="space-y-6">
+        {/* Status Messages */}
+        {errorMessage && (
+          <Alert variant="destructive" className="animate-in fade-in-50">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+        
+        {successMessage && (
+          <Alert variant="default" className="border-green-500 bg-green-50 animate-in fade-in-50">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertTitle className="text-green-600">Success</AlertTitle>
+            <AlertDescription className="text-green-600">{successMessage}</AlertDescription>
+          </Alert>
+        )}
+  
+        {/* OTP Input */}
         <div className="space-y-4">
-            {errorMessage && (
-                <p className="text-sm text-center text-red-600">{errorMessage}</p>
-            )}
-            {successMessage && (
-                <p className="text-sm text-center text-green-600">{successMessage}</p>
-            )}
-            <div className="w-full flex justify-center">
-                <InputOTP maxLength={6} value={value} onChange={setValue}>
-                    <InputOTPGroup>
-                        {[...Array(6)].map((_, index) => (
-                            <InputOTPSlot key={index} index={index} />
-                        ))}
-                    </InputOTPGroup>
-                </InputOTP>
+          <div className="w-full flex flex-col items-center gap-4">
+            <InputOTP
+              maxLength={6}
+              value={value}
+              onChange={setValue}
+              className="gap-2"
+            >
+              <InputOTPGroup>
+                {[...Array(6)].map((_, index) => (
+                  <InputOTPSlot
+                    key={index}
+                    index={index}
+                    className={cn(
+                      "w-10 h-12 text-center text-lg border-2 transition-all duration-200",
+                      value[index] && "border-sky-500 ring-sky-500",
+                      errorMessage && "border-red-500 ring-red-500"
+                    )}
+                  />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            
+            <div className="text-center space-y-2">
+              <p className="text-sm text-gray-600">
+                Enter the 6-digit code sent to your device
+              </p>
+              {countdown > 0 && (
+                <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  Resend available in {countdown} seconds
+                </p>
+              )}
             </div>
-            <p className="text-center text-sm">
-                Enter your one-time password.
-            </p>
-            <div className="space-y-2">
-                <Button
-                    type="submit"
-                    className="w-full"
-                    onClick={handleOtpSubmit}
-                    disabled={isOtpLoading || value.length !== 6}
-                >
-                    {isOtpLoading ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Validating...
-                        </>
-                    ) : 'Submit OTP'}
-                </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleResendOTP}
-                    disabled={isResendLoading}
-                >
-                    {isResendLoading ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Resending...
-                        </>
-                    ) : 'Resend OTP'}
-                </Button>
-            </div>
+          </div>
+  
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <Button
+              type="submit"
+              className="w-full"
+              onClick={handleOtpSubmit}
+              disabled={isOtpLoading || value.length !== 6}
+            >
+              {isOtpLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verifying code...
+                </span>
+              ) : (
+                'Verify Code'
+              )}
+            </Button>
+  
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleResendOTP}
+              disabled={isResendLoading || countdown > 0}
+            >
+              {isResendLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending new code...
+                </span>
+              ) : (
+                'Resend Code'
+              )}
+            </Button>
+          </div>
         </div>
-    )
-}
+      </div>
+    );
+  };
 
 export const Email: React.FC = () => {
     const [authResponse, setAuthResponse] = useState<AuthResponse | null>(null)
@@ -388,9 +418,13 @@ export const Email: React.FC = () => {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>1Gov ID</FormLabel>
+                                        {/* <FormLabel>1Gov ID</FormLabel> */}
                                         <FormControl>
-                                            <Input placeholder="Enter your 1gov ID" type="text" {...field} />
+                                            <Input 
+                                            placeholder="Enter your 1gov ID" 
+                                            type="text" 
+                                            className="border-2 border-slate-300"
+                                            {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -401,11 +435,12 @@ export const Email: React.FC = () => {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        {/* <FormLabel>Password</FormLabel> */}
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     placeholder="Enter password"
+                                                    className="border-2 border-slate-300"
                                                     type={showPassword ? "text" : "password"}
                                                     {...field}
                                                 />
@@ -435,7 +470,9 @@ export const Email: React.FC = () => {
                     </form>
                 </Form>
             ) : (
-                <InputOTPControlled username={email} password={password} />
+                <InputOTPControlled 
+                username={email} 
+                password={password} />
             )}
         </>
     )

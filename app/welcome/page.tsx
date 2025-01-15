@@ -22,57 +22,60 @@ import { version } from "../lib/store";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { CreateInvestigation } from "../components/MyWork/components/createInvestigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Welcome() {
   return (
-    <main className="min-h-screen flex flex-col bg-gradient-to-r from-sky-400 to-sky-600">
-      <header className="flex md:justify-start justify-center md:py-10 py-5">
-        <div className="md:rounded-r-lg rounded-b-lg bg-white p-5 md:w-72 w-48">
-          <Image
-            src={Logo}
-            width={350}
-            height={350}
-            priority
-            alt="Botepco logo"
-          />
-        </div>
-      </header>
+    <main 
+      className="min-h-screen flex flex-col relative"
+    >
+      {/* Background Image Container */}
+      <div className="absolute inset-0 w-full h-full">
+        <Image
+          src={'/background.png'}
+          alt=""
+          fill
+          className="object-cover"
+          quality={100}
+          priority
+        />
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-sky-400/55"/>
+      </div>
 
-      <section className="flex-grow flex flex-col justify-center items-center md:items-start md:ml-10">
-        <h1 className="text-4xl font-bold text-white mb-4">Welcome to</h1>
-        
-        <div className="md:hidden mb-4">
-          <Image
-            src={MainIcon}
-            width={176}
-            height={176}
-            priority
-            alt="Main icon"
-          />
-        </div>
+      {/* Main Content */}
+      <div className="relative z-10 flex-grow flex items-center justify-center px-4">
+        <Card className="w-full max-w-md mx-auto">
+          <CardHeader className="space-y-1 flex flex-col items-center">
+            <div className="w-32 h-32 mb-4 relative">
+              <Image 
+                src="/Code-of-Arms-colour.png"
+                alt='Logo'
+                fill
+                className="object-contain"
+              />
+            </div>
+            <CardTitle>Welcome back</CardTitle>
+            <CardDescription>
+              Enter your credentials to access your account
+            </CardDescription>
+            <Separator className="mt-4"/>
+          </CardHeader>
+          <CardContent>
+            <Email />
+          </CardContent>
+        </Card>
+      </div>
 
-        <div className="flex flex-col md:flex-row items-center md:items-start mb-6">
-          <h2 className="text-5xl font-bold text-white">
-            <span className="font-light">T</span>RLS
-          </h2>
-          <h2 className="text-5xl font-bold text-white ml-2">e-Services Portal</h2>
-        </div>
-      </section>
-
-      <footer className="mt-auto">
-        <div className="flex justify-center md:justify-end space-x-4 md:space-x-10 md:pr-10 mb-5">
-          <LoginDialog />
-          <RegisterDialog />
-        </div>
-
+      {/* Footer */}
+      <footer className="relative z-10 mt-auto">
         <div className="flex flex-col items-center mb-4">
           <Button variant="secondary" className="mb-2" asChild>
             <Link href="/development" target="_blank" rel="noopener noreferrer">
               Get In Touch
             </Link>
           </Button>
-          <p className="text-sm text-white">©2024 TRLS Portal {version}</p>
+          <p className="text-sm text-white">©2025 TRLS Portal {version}</p>
         </div>
       </footer>
     </main>

@@ -240,7 +240,7 @@ const APPEAL_FLOW: Record<string, FlowAction> = {
     }
 } as const;
 
-const RENEWAL_FLOW: Record<string, FlowAction> = {
+const RENEWAL_FLOW: Record<string, FlowAction> = { // License: Gezzy
     'pending-screening': {
         requiredPermission: 'update:renewal-pending-screening',
         nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
@@ -262,7 +262,7 @@ const RENEWAL_FLOW: Record<string, FlowAction> = {
     },
 } as const;
 
-const REVOCATION_FLOW: Record<string, FlowAction> = { // Registration
+const REVOCATION_FLOW: Record<string, FlowAction> = { // Registration: Leah
     'pending-screening': {
         requiredPermission: 'update:revocation-pending-screening',
         nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
@@ -290,27 +290,27 @@ const REVOCATION_FLOW: Record<string, FlowAction> = { // Registration
     },
 } as const;
 
-const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration
-    'Pending-Screening': {
+const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
+    'pending-screening': {
         requiredPermission: 'update:changeofcategory-pending-screening',
         nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'This action will...',
         status_label: 'Send to',
         allowedRoles: ['registration_officer']
     },
-    'Pending-Assessment': {
+    'pending-assessment': {
         requiredPermission: 'update:changeofcategory-pending-assessment',
         nextStatus: ['Pending-Approval'],
         status_label: 'Submit for approval',
         allowedRoles: ['snr_registration_officer']
     },
-    'Pending-Approval': {
+    'pending-approval': {
         requiredPermission: 'update:changeofcategory-pending-approval',
         nextStatus: ['Pending-Endorsement'],
         status_label: 'Submit for endorsement',
         allowedRoles: ['manager']
     },
-    'Pending-Endorsement': {
+    'pending-endorsement': {
         requiredPermission: 'update:changeofcategory-pending-endorsement',
         nextStatus: ['Manager-Approved'],
         status_label: 'Approve endorsement',
@@ -318,27 +318,27 @@ const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration
     },
 } as const;
 
-const RESTORATION_FLOW: Record<string, FlowAction> = { // Registration
-    'Pending-Screening': {
+const RESTORATION_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
+    'pending-screening': {
         requiredPermission: 'update:restoration-pending-screening',
         nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'This action will...',
         status_label: 'Submit for screening',
         allowedRoles: ['registration_officer']
     },
-    'Pending-Assessment': {
+    'pending-assessment': {
         requiredPermission: 'update:restoration-pending-assessment',
         nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
         status_label: 'Recommend',
         allowedRoles: ['snr_registration_officer']
     },
-    'Pending-Approval': {
+    'pending-approval': {
         requiredPermission: 'update:restoration-pending-approval',
         nextStatus: ['Manager-Approved'],
         status_label: 'Recommend for endorsement',
         allowedRoles: ['manager']
     },
-    'Pending-Endorsement': {
+    'pending-endorsement': {
         requiredPermission: 'update:restoration-pending-endorsement',
         nextStatus: ['Endorsement-Complete'],
         status_label: 'Approve endorsement',
