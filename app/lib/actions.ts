@@ -694,10 +694,13 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
 
 export async function updateRenewalStatus(ID: string, status: string): Promise<{code: number; message: string}> {
   try {
+    let param_key='reg_status';
+    if(status == "Endorsement-Complete" || status == "Endorsement-Recommendation"){
+      param_key='endorsement_status';
+    }
 
-    console.log(ID,status)
-    const response = await fetch(`${renewalUrl}/license-renewal/${ID}?reg_status=${status}`, {
-      method: 'PATCH',
+    const response = await fetch(`${renewalUrl}/license-renewal/${ID}?${param_key}=${status}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -1462,8 +1465,12 @@ export async function getRevocations(status: string, count: number): Promise<Rev
 
 export async function getRestorations(status: string, count: number): Promise<RestorationListResponse> {
   try {
+    let param_key='reg_status';
+    if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
+      param_key='endorsement_status';
+    }
 
-    const response = await fetch(`${restorationUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`, {
+    const response = await fetch(`${restorationUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1512,8 +1519,11 @@ export async function getRestorations(status: string, count: number): Promise<Re
 export async function getRenewals(status: string, count: number): Promise<RenewalListResponse> {
 
   try {
-
-    const response = await fetch(`${renewalUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`, {
+    let param_key='reg_status';
+    if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
+      param_key='endorsement_status';
+    }
+    const response = await fetch(`${renewalUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1563,8 +1573,11 @@ export async function getRenewals(status: string, count: number): Promise<Renewa
 export async function getChangeOfCategories(status: string, count: number): Promise<RenewalListResponse> {
 
   try {
-
-    const response = await fetch(`${deltaCategoryUrl}/GetRegistrationsByCount?reg_status=${status}&count=${count}`, {
+    let param_key='reg_status';
+    if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
+      param_key='endorsement_status';
+    }
+    const response = await fetch(`${deltaCategoryUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

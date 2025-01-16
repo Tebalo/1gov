@@ -177,47 +177,57 @@ const AVAILABLE_TABLES = {
     status: 'Endorsement-Complete',
     component: RenewalTable
   },
-  'Category Cases Pending-Screening': { // Change of category
+  'Category Cases Pending-Screening': { // Change of category - Gezzy - REG OFFICER
     requiredPermission: 'view:changeofcategory-pending-screening' as const,
-    status: 'PENDING-SCREENING',
+    status: 'Pending-Screening',
     component: ChangeOfCategoryTable
   },
-  'Category Cases Pending-Assessment': { // Change of category
+  'Category Cases Pending-Assessment': { // Change of category - Gezzy - SNR REG OFFICER
     requiredPermission: 'view:changeofcategory-pending-assessment' as const,
-    status: 'PENDING-ASSESSMENT',
+    status: 'Pending-Assessment',
     component: ChangeOfCategoryTable
   },
-  'Category Cases Pending-Approval': { // Change of category
-    requiredPermission: 'view:changeofcategory-pending-approval' as const,
-    status: 'PENDING-APPROVAL',
+  'Category Cases Pending-Manager-Approval': { // Change of category - Gezzy - Manager
+    requiredPermission: 'view:changeofcategory-pending-manager-approval' as const,
+    status: 'Pending-Manager-Approval',
     component: ChangeOfCategoryTable
   },
-  'Category Cases Pending-Endorsement': { // Change of category
+  'Category Cases Pending-Endorsement': { // Change of category - Gezzy - Director
     requiredPermission: 'view:changeofcategory-pending-endorsement' as const,
-    status: 'PENDING-ENDORSEMENT',
+    status: 'Pending-Endorsement',
     component: ChangeOfCategoryTable
   },
-  'Restoration Cases Pending-Screening': { // Restoration
+  'Endorsed Category Cases': { // Change of category - Gezzy - Director
+    requiredPermission: 'view:changeofcategory-endorsement-complete' as const,
+    status: 'Endorsement-Complete',
+    component: ChangeOfCategoryTable
+  },
+  'Restoration Cases Pending-Screening': { // Restoration - Gezzy - REG OFFICER
     requiredPermission: 'view:restoration-pending-screening' as const,
-    status: 'PENDING-SCREENING',
+    status: 'Pending-Screening',
     component: RestorationTable
   },
-  'Restoration Cases Pending-Assessment': { // Restoration
+  'Restoration Cases Pending-Assessment': { // Restoration - GEZZY - SNR REG OFFICER
     requiredPermission: 'view:restoration-pending-assessment' as const,
-    status: 'PENDING-ASSESSMENT',
+    status: 'Pending-Assessment',
     component: RestorationTable
   },
-  'Restoration Cases Pending-Approval': { // Restoration
-    requiredPermission: 'view:restoration-pending-approval' as const,
-    status: 'PENDING-APPROVAL',
+  'Restoration Cases Pending-Manager-Approval': { // Restoration -GEZZY - MANAGER
+    requiredPermission: 'view:restoration-pending-manager-approval' as const,
+    status: 'Pending-Manager-Approval',
     component: RestorationTable
   },
-  'Restoration Cases Pending-Endorsement': { // Restoration
+  'Restoration Cases Pending-Endorsement': { // Restoration - GEZZY - DIRECTOR
     requiredPermission: 'view:restoration-pending-endorsement' as const,
-    status: 'PENDING-ENDORSEMENT',
+    status: 'Pending-Endorsement',
     component: RestorationTable
   },
-} as const;
+  'Endorsed Restoration Cases': { // Restoration - GEZZY - DIRECTOR
+    requiredPermission: 'view:restoration-endorsement-complete' as const,
+    status: 'Endorsement-Complete',
+    component: RestorationTable
+  },
+} as const; 
 
 export const Work = ({ userRole }: Props) => {
 
