@@ -19,7 +19,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.35.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.36.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -245,25 +245,25 @@ const RENEWAL_FLOW: Record<string, FlowAction> = { // License: Gezzy
         requiredPermission: 'update:renewal-pending-screening',
         nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'Send to',
-        status_label: 'Allocate to',
+        status_label: 'Pass screening',
         allowedRoles: ['license_officer']
     },
     'pending-assessment': {
         requiredPermission: 'update:renewal-pending-assessment',
         nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
-        status_label: 'Send to',
+        status_label: 'Pass assessment',
         allowedRoles: ['snr_license_officer']
     },
     'pending-manager-approval': {
         requiredPermission: 'update:renewal-recommended-for-approval',
         nextStatus: ['Manager-Approved','Manager-Rejected'],
-        status_label: 'Send to',
+        status_label: 'Recommend for endorsement',
         allowedRoles: ['license_manager']
     },
     'pending-endorsement': {
         requiredPermission: 'update:renewal-pending-endorsement',
-        nextStatus: ['Endorsement-Recommendation','Endorsement-Complete'],
-        status_label: 'Send to',
+        nextStatus: ['Endorsement-Complete'],
+        status_label: 'Endorse',
         allowedRoles: ['director']
     },
 } as const;
@@ -301,25 +301,25 @@ const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration: Gez
         requiredPermission: 'update:changeofcategory-pending-screening',
         nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'This action will...',
-        status_label: 'Send to',
+        status_label: 'Pass screening',
         allowedRoles: ['registration_officer']
     },
     'pending-assessment': {
         requiredPermission: 'update:changeofcategory-pending-assessment',
-        nextStatus: ['Pending-Approval'],
-        status_label: 'Submit for approval',
+        nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
+        status_label: 'Pass assessment',
         allowedRoles: ['snr_registration_officer']
     },
-    'pending-approval': {
-        requiredPermission: 'update:changeofcategory-pending-approval',
-        nextStatus: ['Pending-Endorsement'],
-        status_label: 'Submit for endorsement',
+    'pending-manager-approval': {
+        requiredPermission: 'update:changeofcategory-pending-manager-approval',
+        nextStatus: ['Manager-Approved','Manager-Rejected'],
+        status_label: 'Recommend for endorsement',
         allowedRoles: ['manager']
     },
     'pending-endorsement': {
         requiredPermission: 'update:changeofcategory-pending-endorsement',
-        nextStatus: ['Manager-Approved'],
-        status_label: 'Approve endorsement',
+        nextStatus: ['Endorsement-Complete'],
+        status_label: 'Endorse',
         allowedRoles: ['director']
     },
 } as const;
@@ -329,25 +329,25 @@ const RESTORATION_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
         requiredPermission: 'update:restoration-pending-screening',
         nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
         message: 'This action will...',
-        status_label: 'Submit for screening',
+        status_label: 'Pass screening',
         allowedRoles: ['registration_officer']
     },
     'pending-assessment': {
         requiredPermission: 'update:restoration-pending-assessment',
         nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
-        status_label: 'Recommend',
+        status_label: 'Pass assessment',
         allowedRoles: ['snr_registration_officer']
     },
-    'pending-approval': {
-        requiredPermission: 'update:restoration-pending-approval',
-        nextStatus: ['Manager-Approved'],
+    'pending-manager-approval': {
+        requiredPermission: 'update:restoration-pending-manager-approval',
+        nextStatus: ['Manager-Approved','Manager-Rejected'],
         status_label: 'Recommend for endorsement',
         allowedRoles: ['manager']
     },
     'pending-endorsement': {
         requiredPermission: 'update:restoration-pending-endorsement',
         nextStatus: ['Endorsement-Complete'],
-        status_label: 'Approve endorsement',
+        status_label: 'Endorse',
         allowedRoles: ['director']
     },
 } as const;
@@ -647,12 +647,12 @@ export const ROLES = {
         "view:revocation-pending-approval",
 
         // Change of category
-        "update:changeofcategory-pending-approval",
-        "view:changeofcategory-pending-approval",
+        "update:changeofcategory-pending-manager-approval",
+        "view:changeofcategory-pending-manager-approval",
 
         // Restoration
-        "view:restoration-pending-approval",
-        "update:restoration-pending-approval",
+        "view:restoration-pending-manager-approval",
+        "update:restoration-pending-manager-approval",
  
     ],
     director: [
@@ -663,9 +663,11 @@ export const ROLES = {
         // Change of category
         "update:changeofcategory-pending-endorsement",
         "view:changeofcategory-pending-endorsement",
+        "view:changeofcategory-endorsement-complete",
 
         // Restoration
         "view:restoration-pending-endorsement",
+        "view:restoration-endorsement-complete",
         "update:restoration-pending-endorsement",
 
         // Renewal
