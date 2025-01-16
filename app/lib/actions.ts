@@ -53,6 +53,7 @@ async function fetchWithAuth1(url: string, options: RequestInit = {}, timeoutMs:
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ChangeOfCategoryResponse } from "../(portal)/trls/work/changeofcategory/types/changeofcategory-type";
 import { RestorationResponse } from "../(portal)/trls/work/restoration/types/restoration-type";
+import { endorsement_status } from "../components/Home/data/data";
 //import { DecodedToken } from '@/types'; // Adjust import path as needed
 
 const TOKEN_REFRESH_THRESHOLD = 300; // 5 minutes in seconds
@@ -691,58 +692,6 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
   }
 }
 
-export async function updateRevocationStatus(ID: string, status: string): Promise<{code: number; message: string}> {
-  try {
-    const response = await fetch(`${revocationUrl}/update_status/${ID}?reg_status=${status}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      cache:'no-cache'
-    });
-
-
-    // Get the raw response text first
-    const responseText = await response.text();
-
-    if (!response.ok) {
-      let errorMessage: string;
-      try {
-        const errorData = JSON.parse(responseText);
-        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
-      } catch (parseError) {
-        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
-      }
-      throw new Error(errorMessage);
-    }
-
-    let result;
-    if (responseText) {
-      try {
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Error parsing response:', parseError);
-        throw new Error(`Invalid JSON response: ${responseText}`);
-      }
-    } else {
-      result = { message: 'Success', code: response.status, data: null };
-    }
-
-    return {
-      code: response.status,
-      message: result.message || 'Success',
-    };
-
-  } catch (error) {
-    console.error('Error adding complaint:', error);
-    return {
-      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
-      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
-    };
-  }
-}
-
 export async function updateRenewalStatus(ID: string, status: string): Promise<{code: number; message: string}> {
   try {
 
@@ -797,24 +746,104 @@ export async function updateRenewalStatus(ID: string, status: string): Promise<{
   }
 }
 
-export async function updateChangeOfCategoryStatus(
-  ID: string, 
-  status: string
-): Promise<{code: number; message: string}> {
+export async function updateRevocationStatus(ID: string, status: string): Promise<{code: number; message: string}> {
   try {
-    const response = await fetchWithAuth(
-      `${deltaCategoryUrl}/category-change/${ID}`,
-      {
+    let response;
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation'){
+      response = await fetch(`${revocationUrl}/update_status/${ID}?endorsement_status=${status}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        params: {
-          reg_status: status
-        }
+        cache:'no-cache'
+      });
+    } else {
+      response = await fetch(`${revocationUrl}/update_status/${ID}?reg_status=${status}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        cache:'no-cache'
+      });
+    }
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
       }
-    );
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: result.message || 'Success',
+    };
+
+  } catch (error) {
+    console.error('Error adding complaint:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to add complaint. Please try again'
+    };
+  }
+}
+
+export async function updateChangeOfCategoryStatus(
+  ID: string, 
+  status: string
+): Promise<{code: number; message: string}> {
+  try {
+    let response;
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation'){
+      response = await fetchWithAuth(
+        `${deltaCategoryUrl}/category-change/${ID}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          params: {
+            endorsement_status: status
+          }
+        }
+      );
+    }else {
+      response = await fetchWithAuth(
+        `${deltaCategoryUrl}/category-change/${ID}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          params: {
+            reg_status: status
+          }
+        }
+      );
+    }
 
     return {
       code: response.status,
@@ -848,20 +877,36 @@ export async function updateRestorationStatus(
   status: string
 ): Promise<{code: number; message: string}> {
   try {
-    const response = await fetchWithAuth(
-      `${restorationUrl}/license-restoration/${ID}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        params: {
-          reg_status: status
+    let response;
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation'){
+      response = await fetchWithAuth(
+        `${restorationUrl}/license-restoration/${ID}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          params: {
+            endorsement_status: status
+          }
         }
-      }
-    );
-
+      );
+    }else{
+      response = await fetchWithAuth(
+        `${restorationUrl}/license-restoration/${ID}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          params: {
+            reg_status: status
+          }
+        }
+      );
+    }
     return {
       code: response.status,
       message: response.data?.message || 'Success'
