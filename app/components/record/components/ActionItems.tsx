@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { createReport, updateComplaintStatus } from '@/app/lib/actions'
+import { createInvestigationReport, createReport, updateComplaintStatus } from '@/app/lib/actions'
 import { useRouter } from 'next/navigation'
 import {
   AlertDialog,
@@ -27,11 +27,17 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { Role, canUserAccessStatusFull } from '@/app/lib/store'
 import ActivityModal from '../ActivityModal'
+import { Separator } from '@/components/ui/separator'
+import { investigation, preliminary_investigation } from '@/app/lib/types'
+import { Input } from '@/components/ui/input'
+import InfoCard from '../../InfoCard'
 
 interface ActionButtonsProps {
   recordId: string;
   userRole: Role;
   current_status: string;
+  investigation: investigation;
+  preliminary_investigation: preliminary_investigation;
 }
 
 interface StatusAccessConfig {
@@ -41,17 +47,25 @@ interface StatusAccessConfig {
   isAllowedRole: boolean;
 }
 
-type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | null;
+type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | 'investigation' | null;
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status, investigation, preliminary_investigation }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [formData, setFormData] = useState({
-    investigation_details: '',
-    investigation_outcome: ''
+    investigation_details: preliminary_investigation?.investigation_details ?? '',
+    investigation_outcome: preliminary_investigation?.investigation_outcome ?? ''
   });
+
+  const [invFormData, setInvFormData] = useState({
+    investigating_officer: investigation.investigating_officer ?? '',
+    police_station: investigation.police_station ?? '',
+    cr_number: investigation.cr_number ?? '',
+    offence: investigation.offence ?? '',
+    outcome: investigation.outcome ?? '',
+  })
   
   const router = useRouter();
   const { toast } = useToast();
@@ -104,6 +118,25 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
       setIsSubmitting(false);
     }
   };
+
+  const handleInvestigationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await createInvestigationReport(invFormData, recordId);
+      if(response.code == 200 || response.code == 201){
+        closeDialog();
+        window.location.reload();
+      }else{
+        showError(response.message || 'Failed to add investigation report')
+      }
+    } catch (error){
+      showError(error instanceof Error ? error.message : 'Failed to add investigation report');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   const handleStatusUpdate = async (status: string) => {
     setIsSubmitting(true);
@@ -267,7 +300,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
       {/* Actions Dialog */}
       <Dialog open={activeDialog === 'actions'} onOpenChange={() => closeDialog()}>
         <DialogContent className="sm:max-w-[350px] p-0 overflow-hidden">
-          <DialogHeader className="px-6 py-4 border-b bg-gray-50">
+          <DialogHeader className="px-6 py-2 border-b bg-gray-50">
             <DialogTitle className="text-lg font-semibold text-gray-900">
               Actions
             </DialogTitle>
@@ -282,21 +315,31 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
                   'blue'
                 )
               )}
+              <Separator/>
               {renderActionButton(
                 PlusCircle,
-                'Add Activity',
+                'Add an Activity',
                 () => setActiveDialog('activity'),
                 'green'
               )}
+              <Separator/>
               {renderActionButton(
-                FileText,
-                'Add Report',
+                PlusCircle,
+                'Add Preliminary Report',
                 () => setActiveDialog('report'),
                 'amber'
               )}
+              <Separator/>
+              {renderActionButton(
+                PlusCircle,
+                'Add Investigation Report',
+                () => setActiveDialog('investigation'),
+                'blue'
+              )}
+              <Separator/>
               {renderActionButton(
                 Edit,
-                'Update Record',
+                'Edit',
                 () => window.open(`/trls/work/investigation/edit/${recordId}`, '_self'),
                 'red'
               )}
@@ -318,13 +361,13 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
         )
       )}
 
-      {/* Report Dialog */}
+      {/* Pre-Investigation Details Dialog */}
       <Dialog open={activeDialog === 'report'} onOpenChange={() => closeDialog()}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Update Investigation Details</DialogTitle>
+            <DialogTitle>Update Preliminary Investigation Details</DialogTitle>
             <DialogDescription>
-              Update the investigation details and outcome below.
+              Update the preliminary investigation details and outcome below.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleReportSubmit} className="space-y-4">
@@ -337,7 +380,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
               </div>
             )}
             <div className="space-y-2">
-              <Label>Investigation Details</Label>
+              <Label>Preliminary Investigation Details</Label>
               <Textarea
                 value={formData.investigation_details}
                 onChange={(e) => setFormData(prev => ({ 
@@ -350,7 +393,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
               />
             </div>
             <div className="space-y-2">
-              <Label>Investigation Outcome</Label>
+              <Label>Preliminary Investigation Outcome</Label>
               <Select
                 value={formData.investigation_outcome}
                 onValueChange={(value) => setFormData(prev => ({ 
@@ -369,6 +412,113 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={closeDialog}>
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                disabled={isSubmitting || !formData.investigation_details || !formData.investigation_outcome}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit Report
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Investigation Dialog */}
+      <Dialog open={activeDialog === 'investigation'} onOpenChange={() => closeDialog()}>
+        <DialogContent className="sm:max-w-[500px] md:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>Update Investigation Details</DialogTitle>
+            <DialogDescription>
+              Update the investigation details below.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleInvestigationSubmit} className="space-y-4">
+            {error && (
+              <div className="p-4 rounded-md bg-red-50">
+                <div className="flex">
+                  <AlertTriangle className="h-5 w-5 text-red-400" />
+                  <p className="ml-3 text-sm text-red-800">{error}</p>
+                </div>
+              </div>
+            )}
+            <div className='grid md:grid-cols-2 gap-6'>
+              <div className="space-y-2">
+                <Label>Investigation Officer</Label>
+                <Input
+                  value={invFormData.investigating_officer ?? ''}
+                  onChange={(e) => setInvFormData(prev => ({
+                    ...prev,
+                    investigating_officer: e.target.value
+                  }))}
+                  placeholder='Enter investigation officer name'
+                  className=''
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Police Station</Label>
+                <Input
+                  value={invFormData.police_station ?? ''}
+                  onChange={(e) => setInvFormData(prev => ({
+                    ...prev,
+                    police_station: e.target.value
+                  }))}
+                  placeholder='Enter police station'
+                  className=''
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>CR Number</Label>
+                <Input
+                  value={invFormData.cr_number ?? ''}
+                  onChange={(e) => setInvFormData(prev => ({
+                    ...prev,
+                    cr_number: e.target.value
+                  }))}
+                  placeholder='Enter CR Number'
+                  className=''
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Offence</Label>
+              <Textarea
+                value={invFormData.offence}
+                onChange={(e) => setInvFormData(prev => ({ 
+                  ...prev, 
+                  offence: e.target.value 
+                }))}
+                placeholder="Enter offence details..."
+                rows={2}
+                className="resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Outcome</Label>
+              <Textarea
+                value={invFormData.outcome}
+                onChange={(e) => setInvFormData(prev => ({ 
+                  ...prev, 
+                  outcome: e.target.value 
+                }))}
+                placeholder="Enter outcome details..."
+                rows={2}
+                className="resize-none"
+              />
             </div>
             <div className="flex justify-end space-x-2">
               <Button type="button" variant="outline" onClick={closeDialog}>

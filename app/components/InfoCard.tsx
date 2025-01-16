@@ -1,6 +1,7 @@
 'use client'
 
 import React, { ReactNode } from 'react';
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 interface InfoCardProps {
   title: string;
@@ -31,24 +32,24 @@ const InfoCard: React.FC<InfoCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow duration-200">
-      <div className="border-b">
-        <div className="flex items-center gap-3 p-4">
+    <Card className="hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="border-b">
+        <div className="flex items-center gap-3">
           <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
             {icon}
           </div>
-          <h2 className="font-semibold text-lg text-gray-900">
+          <h2 className="font-semibold text-lg text-foreground">
             {title}
           </h2>
         </div>
-      </div>
+      </CardHeader>
       
-      <div className="p-4">
+      <CardContent className="p-4">
         <div className={`grid ${getGridCols()} gap-6`}>
           {children}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

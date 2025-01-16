@@ -116,7 +116,7 @@ interface FlowAction {
     allowedRoles: Role[];
 }
 
-const STATUS_CONFIG: Record<string, StatusConfig> = {
+const STATUS_CONFIG: Record<string, StatusConfig> = { // Investigation/Complaints -Leah
     'incoming': {
         requiredPermission: 'update:complaints-incoming',
         nextStatus: ['UNDER-REVIEW'],
@@ -164,6 +164,12 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
         nextStatus: ['EXTERNAL-INVESTIGATION'],
         status_label: 'Submit for External Investigation',
         allowedRoles: ['investigations_director']
+    },
+    'external-investigation': {
+        requiredPermission: 'update:complaints-external-investigation',
+        nextStatus: ['CASE-CLOSED'],
+        status_label: 'Close Investigation',
+        allowedRoles: ['investigations_manager']
     },
     'recommend-for-investigation': {
         requiredPermission: 'update:complaints-ongoing-disciplinary',
@@ -546,12 +552,13 @@ export const ROLES = {
         "view:complaints-assessment",
         "view:complaints-ongoing-investigation",
         "view:complaints-investigation-complete",
+        'view:complaints-external-investigation',
         "view:cpd-incoming",
         "allocate:complaints-assessment",
 
         "update:complaints-ongoing-investigation",
         "update:complaints-ongoing-investigation",
-
+        'update:complaints-external-investigation',
         "update:complaints-investigation-complete",
     ],
     investigations_director: [

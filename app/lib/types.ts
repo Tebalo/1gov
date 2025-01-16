@@ -132,7 +132,6 @@ export interface reporter {
   name: string | null;
   contact_number: string | null;
   Omang_id: string | null;
-  passport_no: string | null;
   occupation: string | null;
   sex: string | null;
   nationality: string | null;
@@ -178,7 +177,7 @@ interface offender {
   updated_at: string | null;
 }
 
-interface investigation {
+export interface investigation {
   investigating_officer: string | null;
   police_station: string | null;
   cr_number: string | null;
@@ -189,7 +188,7 @@ interface investigation {
   updated_at: string | null;
 }
 
-interface preliminary_investigation {
+export interface preliminary_investigation {
   id: number | null;
   inquiry_number: string | null;
   investigation_details: string | null;
@@ -435,6 +434,16 @@ export interface ReportPayload {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface InvestigationReportPayload {
+  investigating_officer: string | null;
+  police_station: string | null;
+  cr_number: string | null;
+  offence: string | null;
+  outcome: string | null;
+}
+
+
 
 export interface GETReportResponse {
   message: string;

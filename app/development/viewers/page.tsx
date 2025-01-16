@@ -9,6 +9,9 @@ import RenewalContent from "./components/renewal";
 import RevocationContent from "./components/revocation";
 import CategoryContent from "./components/changeofcategory";
 import RestorationContent from "./components/restoration";
+import CreateCasePage from "@/app/(portal)/trls/work/investigation/create/page";
+import InvestigationContent from "./components/investigation";
+import RegistrationContent from "./components/registration";
 
 export default async function Page() {
     return (
@@ -42,6 +45,24 @@ export default async function Page() {
                             <RestorationContent/>
                         </AccordionContent>
                     </AccordionItem>
+                    <AccordionItem value="item-5">
+                        <AccordionTrigger>Investigation Form</AccordionTrigger>
+                        <AccordionContent>
+                            <CreateCasePage/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-6">
+                        <AccordionTrigger>Investigation View</AccordionTrigger>
+                        <AccordionContent>
+                            <InvestigationContent/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-7">
+                        <AccordionTrigger>Registration View</AccordionTrigger>
+                        <AccordionContent>
+                            <RegistrationContent/>
+                        </AccordionContent>
+                    </AccordionItem>              
                 </Accordion>
             </div>
         </>

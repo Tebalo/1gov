@@ -28,7 +28,6 @@ interface Reporter {
   name: string;
   contact_number: string;
   Omang_id: string;
-  passport_no: string;
   occupation: string;
   sex: string;
   anonymous: boolean;
@@ -43,9 +42,7 @@ interface Complaint {
   date: string;
   time: string;
   bif_number: string;
-  case_number: string;
   fir_number: string;
-  outcome: string;
 }
 
 interface Offender {
@@ -79,46 +76,43 @@ interface InvestigationRecord {
 
 const initialState: InvestigationRecord = {
   reporter: {
-    name: 'Bopaki Tebalo',
-    contact_number: '123456789',
-    Omang_id: '440418213',
-    passport_no: 'P123456',
-    occupation: 'Engineer',
-    sex: 'Male',
+    name: '',
+    contact_number: '',
+    Omang_id: '',
+    occupation: '',
+    sex: '',
     submission_type: '',
     anonymous: false,
-    nationality: 'Botswana',
-    address: '123 Main Street'
+    nationality: '',
+    address: ''
   },
   complaint: {
-    crime_location: 'Gaborone',
-    nature_of_crime: 'Theft',
-    date: '2024-10-01',
-    time: '14:00',
-    bif_number: 'BIF123456',
-    case_number: 'CASE789',
-    fir_number: 'FIR456',
-    outcome: 'Pending'
+    crime_location: '',
+    nature_of_crime: '',
+    date: '',
+    time: '',
+    bif_number: '',
+    fir_number: '',
   },
   offender: {
-    name: 'Jane Smith',
-    sex: 'Female',
-    nationality: 'Botswana',
-    dob: '1990-01-01',
+    name: '',
+    sex: '',
+    nationality: '',
+    dob: '',
     age: 34,
-    contact_number: '987654321',
-    id_passport_number: 'ID987654',
-    address: '456 Side Street',
-    ward: 'Ward 1',
-    occupation: 'Teacher',
-    place_of_work: 'XYZ School'
+    contact_number: '',
+    id_passport_number: '',
+    address: '',
+    ward: '',
+    occupation: '',
+    place_of_work: ''
   },
   investigation: {
-    investigating_officer: 'Officer Brown',
-    police_station: 'Gaborone Police Station',
-    cr_number: 'CR123456',
-    offence: 'Theft',
-    outcome: 'Under investigation'
+    investigating_officer: '',
+    police_station: '',
+    cr_number: '',
+    offence: '',
+    outcome: ''
   }
 }
 
@@ -221,8 +215,7 @@ export default function CreateCasePage() {
     return {
       name: '',
       contact_number: '',
-      Omang_id: '',      // This was missing
-      passport_no: '',
+      Omang_id: '',     
       occupation: '',
       sex: '',
       submission_type: caseDetails.reporter.submission_type,
@@ -275,7 +268,7 @@ export default function CreateCasePage() {
               </div>
           )} */}
           {/* Preliminary Details */}
-          <InfoCardTwo title='Preliminary Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>}>
+          <InfoCard title='Preliminary Details' columns={2} icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>}>
           <div className="space-y-6">
             <div className="items-top flex space-x-3 p-4 rounded-lg border border-gray-200 bg-white shadow-sm">
               <Checkbox 
@@ -332,7 +325,7 @@ export default function CreateCasePage() {
                     </div>
                   </RadioGroup>
             </div>
-          </InfoCardTwo>
+          </InfoCard>
           {/* Reporter Information */}
           {caseDetails.reporter.anonymous === false  && 
           <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
@@ -348,7 +341,7 @@ export default function CreateCasePage() {
               />
             </div>
             <div>
-                <label htmlFor="reporter.Omang_id" className="block text-sm font-medium text-gray-700">Omang</label>
+                <label htmlFor="reporter.Omang_id" className="block text-sm font-medium text-gray-700">Omang/Passport</label>
                 <Input
                   type="text"
                   id="reporter.Omang_id"
@@ -357,16 +350,6 @@ export default function CreateCasePage() {
                   onChange={handleInputChange}
                   required
                 />
-            </div>
-            <div>
-              <label htmlFor="passport_no" className="block text-sm font-medium text-gray-700">Passport number</label>
-              <Input
-                type="text"
-                id="reporter.passport_no"
-                name="reporter.passport_no"
-                value={caseDetails?.reporter.passport_no}
-                onChange={handleInputChange}
-              />
             </div>
             <div>
               <label htmlFor="occupation" className="block text-sm font-medium text-gray-700">Occupation</label>
@@ -414,23 +397,14 @@ export default function CreateCasePage() {
           
           <InfoCard title='Complaint Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
             <div>
-              <label htmlFor="complaint.nature_of_crime" className="block text-sm font-medium text-gray-700">Nature of crime</label>
-              <Select
+              <label htmlFor="complaint.nature_of_crime" className="block text-sm font-medium text-gray-700">Nature of breach</label>
+              <Input
+                type="text"
+                id="complaint.nature_of_crime"
                 name="complaint.nature_of_crime"
-                value={caseDetails.complaint.nature_of_crime}
-                onValueChange={handleSelectChange('complaint.nature_of_crime')}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select crime" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Theft">Theft</SelectItem>
-                  <SelectItem value="Assault">Assault</SelectItem>
-                  <SelectItem value="Rape">Rape</SelectItem>
-                  <SelectItem value="Grand theft">Grand theft</SelectItem>
-                  <SelectItem value="Drug use">Drug use</SelectItem>
-                </SelectContent>
-              </Select>
+                value={caseDetails?.complaint.nature_of_crime}
+                onChange={handleInputChange}
+              />
             </div>
             <div>
                   <label htmlFor="complaint.fir_number" className="block text-sm font-medium text-gray-700">FIR number</label>
@@ -443,7 +417,7 @@ export default function CreateCasePage() {
                   />
             </div>
             <div>
-              <label htmlFor="complaint.crime_location" className="block text-sm font-medium text-gray-700">Crime location</label>
+              <label htmlFor="complaint.crime_location" className="block text-sm font-medium text-gray-700">Breach location</label>
               <Input
                 type="text"
                 id="complaint.crime_location"
@@ -459,37 +433,10 @@ export default function CreateCasePage() {
                   setDate={handleDateChange('complaint.date')}
                 />
             </div>
-            <div>
-              <label htmlFor="complaint.case_number" className="block text-sm font-medium text-gray-700">Case number</label>
-              <Input
-                type="text"
-                id="complaint.case_number"
-                name="complaint.case_number"
-                value={caseDetails?.complaint.case_number}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="complaint.outcome" className="block text-sm font-medium text-gray-700">Outcome</label>
-              <Select
-                name="complaint.outcome"
-                value={caseDetails?.complaint.outcome}
-                onValueChange={(value) => handleInputChange({ target: { name: 'complaint.outcome', value } } as any)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select outcome" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Under Investigation">Under Investigation</SelectItem>
-                  <SelectItem value="Resolved">Resolved</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </InfoCard>
 
-          {/* Offender Information */}
-          <InfoCard title='Offender Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+          {/* Defaulters Information */}
+          <InfoCard title='Defaulter&lsquo;s Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="offender.name" className="block text-sm font-medium text-gray-700">Name</label>
               <Input
@@ -595,7 +542,7 @@ export default function CreateCasePage() {
           </InfoCard>
 
           {/* Investigation Information */}
-          <InfoCard title='Investigation Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
+          {/* <InfoCard title='Investigation Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
             <div>
               <label htmlFor="investigation.investigating_officer" className="block text-sm font-medium text-gray-700">Investigation officer</label>
               <Input
@@ -654,7 +601,7 @@ export default function CreateCasePage() {
                 </SelectContent>
               </Select>
             </div>
-          </InfoCard>
+          </InfoCard> */}
         </form>
       </div>
     </div>
