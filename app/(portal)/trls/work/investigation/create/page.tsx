@@ -189,7 +189,8 @@ export default function CreateCasePage() {
 
                 if (result.inquiry_number) {
 
-                    router.push(`/trls/work/investigation/${result.inquiry_number}`);
+                    // router.push(`/trls/work/investigation/${result.inquiry_number}`);
+                    router.push(`/trls/work/`);
                 } else {
                     setError('No inquiry number received from server, but the record was created successfully!');
                     setShowErrorDialog(true);

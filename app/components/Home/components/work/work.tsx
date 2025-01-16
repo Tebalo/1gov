@@ -152,19 +152,29 @@ const AVAILABLE_TABLES = {
     component: RevocationTable
   },
 
-  'Renewal Cases Pending-Screening': { // Renewal
+  'Renewal Cases Pending-Screening': { // Renewal - License officer
     requiredPermission: 'view:renewal-pending-screening' as const,
-    status: 'PENDING-SCREENING',
+    status: 'Pending-Screening',
     component: RenewalTable
   },
-  'Renewal Cases Pending-Assessment': { // Renewal
+  'Renewal Cases Pending-Assessment': { // Renewal - Snr License Officer
     requiredPermission: 'view:renewal-pending-assessment' as const,
-    status: 'PENDING-ASSESSMENT',
+    status: 'Pending-Assessment',
     component: RenewalTable
   },
-  'Renewal Cases Pending-Approval': { // Renewal
-    requiredPermission: 'view:renewal-pending-approval' as const,
-    status: 'PENDING-APPROVAL',
+  'Renewal Cases Recommended-For-Approval': { // Renewal - License Manager
+    requiredPermission: 'view:renewal-recommended-for-approval' as const,
+    status: 'Pending-Manager-Approval',
+    component: RenewalTable
+  },
+  'Renewal Cases Pending-Endorsement': { // Renewal - Director
+    requiredPermission: 'view:renewal-pending-endorsement' as const,
+    status: 'Pending-Endorsement',
+    component: RenewalTable
+  },
+  'Endorsed Renewal Cases': { // Renewal - Director
+    requiredPermission: 'view:renewal-endorsement-complete' as const,
+    status: 'Endorsement-Complete',
     component: RenewalTable
   },
   'Category Cases Pending-Screening': { // Change of category

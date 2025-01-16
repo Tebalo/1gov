@@ -243,22 +243,28 @@ const APPEAL_FLOW: Record<string, FlowAction> = {
 const RENEWAL_FLOW: Record<string, FlowAction> = { // License: Gezzy
     'pending-screening': {
         requiredPermission: 'update:renewal-pending-screening',
-        nextStatus: ['PENDING-ASSESSMENT','PENDING-CUSTOMER-ACTION'],
-        message: 'This action will...',
+        nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
+        message: 'Send to',
         status_label: 'Allocate to',
         allowedRoles: ['license_officer']
     },
     'pending-assessment': {
         requiredPermission: 'update:renewal-pending-assessment',
-        nextStatus: ['PENDING-APPROVAL'],
-        status_label: 'Submit for approval',
+        nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
+        status_label: 'Send to',
         allowedRoles: ['snr_license_officer']
     },
-    'pending-approval': {
-        requiredPermission: 'update:renewal-pending-approval',
-        nextStatus: ['MANAGER-APPROVED'],
-        status_label: 'Approve',
+    'pending-manager-approval': {
+        requiredPermission: 'update:renewal-recommended-for-approval',
+        nextStatus: ['Manager-Approved','Manager-Rejected'],
+        status_label: 'Send to',
         allowedRoles: ['license_manager']
+    },
+    'pending-endorsement': {
+        requiredPermission: 'update:renewal-pending-endorsement',
+        nextStatus: ['Endorsement-Recommendation','Endorsement-Complete'],
+        status_label: 'Send to',
+        allowedRoles: ['director']
     },
 } as const;
 
@@ -606,8 +612,8 @@ export const ROLES = {
     ],
     license_manager: [
         // Renewal
-        'view:renewal-pending-approval',
-        'update:renewal-pending-approval',
+        'view:renewal-recommended-for-approval',
+        'update:renewal-recommended-for-approval',
     ],
     registration_officer:[
         // Recocation
@@ -661,7 +667,12 @@ export const ROLES = {
         // Restoration
         "view:restoration-pending-endorsement",
         "update:restoration-pending-endorsement",
-    ]
+
+        // Renewal
+        "view:renewal-pending-endorsement",
+        "view:renewal-endorsement-complete",
+        "update:renewal-pending-endorsement"
+    ],
 } as const
 
 export const CPDROLES = [
