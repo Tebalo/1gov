@@ -99,7 +99,7 @@ const initialState: InvestigationRecord = {
     sex: '',
     nationality: '',
     dob: '',
-    age: 34,
+    age: null,
     contact_number: '',
     id_passport_number: '',
     address: '',
@@ -378,6 +378,16 @@ export default function CreateCasePage() {
                 id="reporter.nationality"
                 name="reporter.nationality"
                 value={caseDetails?.reporter.nationality}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="reporter.contact_number" className="block text-sm font-medium text-gray-700">Contact Number</label>
+              <Input
+                type="text"
+                id="reporter.contact_number"
+                name="reporter.contact_number"
+                value={caseDetails?.reporter.contact_number}
                 onChange={handleInputChange}
               />
             </div>
