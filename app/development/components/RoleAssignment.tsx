@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Check } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 
 const ROLE_CATEGORIES = {
   Registration: [
@@ -98,27 +98,28 @@ export default function RoleAssignment() {
   }
 
   return (
-    <div className="h-screen p-6">
-      {/* Fixed username input at top */}
-      <div className="sticky top-0 bg-white pb-4 z-10 border-b">
-        <Label htmlFor="username" className="text-lg font-semibold">Username</Label>
+    <div className="h-full p-0 md:p-6">
+      {/* Username input - Full width on mobile */}
+      <div className="sticky top-0 bg-white pb-4 z-10 border-b p-2 rounded-md">
+        <Label htmlFor="username" className="text-base md:text-lg font-semibold">Username</Label>
         <Input
           id="username"
           placeholder="Enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="mt-2 max-w-md"
+          className="mt-2 w-full md:max-w-md"
         />
       </div>
 
-      <div className="mt-6 flex gap-6">
+      {/* Flex container - Stack on mobile, side by side on desktop */}
+      <div className="mt-4 md:mt-6 flex flex-col lg:flex-row gap-4 md:gap-6 e">
         {/* Scrollable roles section */}
-        <ScrollArea className="flex-1 h-[calc(100vh-200px)]">
-          <div className="space-y-6 pr-4">
+        <ScrollArea className="flex-1 h-[calc(100vh-280px)] md:h-[calc(100vh-200px)] bg-white p-2 rounded-md">
+          <div className="space-y-4 md:space-y-6 pr-2 md:pr-4">
             {Object.entries(ROLE_CATEGORIES).map(([category, roles]) => (
-              <div key={category} className="space-y-3">
-                <h3 className="font-semibold text-lg text-gray-700">{category}</h3>
-                <div className="grid grid-cols-3 gap-3">
+              <div key={category} className="space-y-2 md:space-y-3">
+                <h3 className="font-semibold text-base md:text-lg text-gray-700">{category}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
                   {roles.map(role => (
                     <button
                       key={role}
@@ -130,9 +131,9 @@ export default function RoleAssignment() {
                         }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-sm">{role.replace(/_/g, ' ')}</span>
+                        <span className="text-xs md:text-xs">{role.replace(/_/g, ' ')}</span>
                         {selectedRoles.includes(role) && (
-                          <Check className="h-4 w-4 text-blue-500" />
+                          <Check className="h-4 w-4 text-blue-500 flex-shrink-0 ml-2" />
                         )}
                       </div>
                     </button>
@@ -143,26 +144,32 @@ export default function RoleAssignment() {
           </div>
         </ScrollArea>
 
-        {/* Fixed selected roles sidebar */}
-        <div className="w-80">
+        {/* Selected roles sidebar - Full width on mobile */}
+        <div className="w-full lg:w-80">
           <Card className="p-4 sticky top-0">
             <h3 className="font-semibold mb-4">Selected Roles</h3>
-            <ScrollArea className="h-[calc(100vh-300px)]">
+            <ScrollArea className="h-48 md:h-[calc(100vh-300px)]">
               <div className="space-y-2">
                 {selectedRoles.map(role => (
                   <div 
                     key={role}
                     className="flex items-center justify-between p-2 bg-blue-50 rounded"
                   >
-                    <span className="text-sm text-blue-700">{role.replace(/_/g, ' ')}</span>
+                    <span className="text-xs md:text-sm text-blue-700">{role.replace(/_/g, ' ')}</span>
                     <button 
                       onClick={() => toggleRole(role)}
-                      className="text-blue-700 hover:text-blue-900"
+                      className="text-blue-700 hover:text-blue-900 p-1"
+                      aria-label="Remove role"
                     >
-                      ×
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ))}
+                {selectedRoles.length === 0 && (
+                  <div className="text-sm text-gray-500 text-center py-4">
+                    No roles selected
+                  </div>
+                )}
               </div>
             </ScrollArea>
             <Button 

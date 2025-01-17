@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
     return (
-        <div className="min-h-screen p-10">
+        <div className="min-h-screen md:p-2 absolute">
             <div className="mb-6">
                 <PageTitle Title="Components Factory" />
             </div>

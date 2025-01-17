@@ -19,6 +19,7 @@ Libraries and Components
 16. REACT ICONS: https://react-icons.github.io/react-icons/icons/fa/
 17. RECHARTS: https://recharts.org/en-US/examples
 18. Radix icons: https://www.radix-ui.com/icons
+19. https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/s
 
 TODO:
 1. Setup Themes: https://www.youtube.com/watch?v=l93uukpAoxE
