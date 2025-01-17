@@ -153,10 +153,16 @@ const STATUS_CONFIG: Record<string, StatusConfig> = { // Investigation/Complaint
         status_label: 'Complete Disciplinary',
         allowedRoles: ['disciplinary_committee']
     },
-    'recommend-for-closure': {
+        'recommend-for-closure': {
         requiredPermission: 'update:complaints-ongoing-disciplinary',
         nextStatus: ['CASE-CLOSED'],
         status_label: 'Close Case',
+        allowedRoles: ['investigations_director']
+    },
+    'recommend-for-disciplinary': {
+        requiredPermission: 'update:complaints-recommend-for-disciplinary',
+        nextStatus: ['ONGOING-DISCIPLINARY'],
+        status_label: 'Submit for disciplinary action',
         allowedRoles: ['investigations_director']
     },
     'recommend-for-external-investigation': {
@@ -571,6 +577,7 @@ export const ROLES = {
         'update:complaints-recommend-for-investigation',
         "update:complaints-ongoing-disciplinary",
         'update:complaints-recommend-for-closure',
+        'update:complaints-recommend-for-disciplinary'
     ],
     disciplinary_committee: [
         "view:complaints-ongoing-disciplinary",

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, FileText, Save, Send, UserPlus2, SendIcon, PlusCircle, FileCheck2, ChevronDownIcon, X, AlertTriangle, InfoIcon, Loader2 } from 'lucide-react'
+import { Edit, FileText, Save, Send, UserPlus2, SendIcon, PlusCircle, FileCheck2, ChevronDownIcon, X, AlertTriangle, InfoIcon, Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -31,7 +31,21 @@ import { Separator } from '@/components/ui/separator'
 import { investigation, preliminary_investigation } from '@/app/lib/types'
 import { Input } from '@/components/ui/input'
 import InfoCard from '../../InfoCard'
-
+import { cn } from '@/lib/utils'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  InboxIcon,
+  ClipboardCheck,
+  Search,
+  FileSearch,
+  Microscope,
+  Building2,
+  Globe,
+  Scale,
+  Gavel,
+  FolderClosed,
+} from "lucide-react";
+import { Badge } from '@/components/ui/badge'
 interface ActionButtonsProps {
   recordId: string;
   userRole: Role;
@@ -48,6 +62,20 @@ interface StatusAccessConfig {
 }
 
 type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | 'investigation' | null;
+
+type StatusType = 
+| 'INCOMING'
+| 'ASSESSMENT'
+| 'UNDER-REVIEW'
+| 'RECOMMEND-FOR-INVESTIGATION'
+| 'ONGOING-INVESTIGATION'
+| 'INVESTIGATION-COMPLETE'
+| 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION'
+| 'EXTERNAL-INVESTIGATION'
+| 'RECOMMEND-FOR-DISCIPLINARY'
+| 'RECOMMEND-FOR-CLOSURE'
+| 'ONGOING-DISCIPLINARY'
+| 'CASE-CLOSED';
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status, investigation, preliminary_investigation }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
@@ -185,39 +213,169 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
 
   // Render submit dialog content based on status count
   const renderSubmitContent = () => {
+
+
+    const getStatusDescription = (status: StatusType): string => {
+      const descriptions: Record<StatusType, string> = {
+        'INCOMING': 'New case awaiting assessment',
+        'ASSESSMENT': 'Assess case details and evidence ',
+        'UNDER-REVIEW': 'Submit for Senior Officer review',
+        'RECOMMEND-FOR-INVESTIGATION': 'Request to open investigation',
+        'ONGOING-INVESTIGATION': 'Conduct active investigation',
+        'INVESTIGATION-COMPLETE': 'Submit investigation findings',
+        'RECOMMEND-FOR-EXTERNAL-INVESTIGATION': 'Request external body investigation',
+        'EXTERNAL-INVESTIGATION': 'Monitor external investigation progress',
+        'RECOMMEND-FOR-DISCIPLINARY': 'Submit for disciplinary action',
+        'ONGOING-DISCIPLINARY': 'Track disciplinary proceedings',
+        'RECOMMEND-FOR-CLOSURE': 'Submit closure recommendation',
+        'CASE-CLOSED': 'Case processing complete'
+      };
+      return descriptions[status];
+    };
+
+
+
+    const getStatusIcon = (status: StatusType) => {
+      const icons: Record<StatusType, JSX.Element> = {
+        'INCOMING': <InboxIcon className="h-5 w-5 text-blue-500" />,
+        'ASSESSMENT': <ClipboardCheck className="h-5 w-5 text-orange-500" />,
+        'UNDER-REVIEW': <Search className="h-5 w-5 text-purple-500" />,
+        'RECOMMEND-FOR-INVESTIGATION': <FileSearch className="h-5 w-5 text-yellow-500" />,
+        'ONGOING-INVESTIGATION': <Microscope className="h-5 w-5 text-blue-600" />,
+        'INVESTIGATION-COMPLETE': <CheckCircle2 className="h-5 w-5 text-green-500" />,
+        'RECOMMEND-FOR-EXTERNAL-INVESTIGATION': <Building2 className="h-5 w-5 text-indigo-500" />,
+        'EXTERNAL-INVESTIGATION': <Globe className="h-5 w-5 text-cyan-500" />,
+        'RECOMMEND-FOR-DISCIPLINARY': <Scale className="h-5 w-5 text-red-500" />,
+        'ONGOING-DISCIPLINARY': <Gavel className="h-5 w-5 text-red-600" />,
+        'RECOMMEND-FOR-CLOSURE': <FolderClosed className="h-5 w-5 text-gray-500" />,
+        'CASE-CLOSED': <CheckCircle2 className="h-5 w-5 text-green-500" />,
+      };
+      return icons[status] || null;
+    };
+    
+    const getStatusColor = (status: StatusType) => {
+      const colors: Record<StatusType, string> = {
+        'INCOMING': 'bg-blue-50 text-blue-700',
+        'ASSESSMENT': 'bg-orange-50 text-orange-700',
+        'UNDER-REVIEW': 'bg-purple-50 text-purple-700',
+        'RECOMMEND-FOR-INVESTIGATION': 'bg-yellow-50 text-yellow-700',
+        'ONGOING-INVESTIGATION': 'bg-blue-50 text-blue-700',
+        'INVESTIGATION-COMPLETE': 'bg-green-50 text-green-700',
+        'RECOMMEND-FOR-EXTERNAL-INVESTIGATION': 'bg-indigo-50 text-indigo-700',
+        'EXTERNAL-INVESTIGATION': 'bg-cyan-50 text-cyan-700',
+        'RECOMMEND-FOR-DISCIPLINARY': 'bg-red-50 text-red-700',
+        'ONGOING-DISCIPLINARY': 'bg-red-50 text-red-700',
+        'RECOMMEND-FOR-CLOSURE': 'bg-gray-50 text-gray-700',
+        'CASE-CLOSED': 'bg-gray-50 text-gray-700'
+      };
+      return colors[status] || 'bg-gray-50 text-gray-700';
+    };
+
+    interface StatusBadgeProps {
+      status: StatusType;
+    }
+
+    const getStepDescription = (status: StatusType) => {
+      switch(status){
+        case 'INCOMING':
+          return 'Investigation officer'
+        case 'UNDER-REVIEW':
+          return 'Senior Investigation officer'
+        case 'ASSESSMENT':
+          return 'Investigation manager'
+        case 'ONGOING-INVESTIGATION':
+          return 'Investigation team'
+        case 'INVESTIGATION-COMPLETE':
+          return 'Investigation manager'
+        case 'RECOMMEND-FOR-INVESTIGATION':
+          return 'Investigation director'
+        case 'RECOMMEND-FOR-DISCIPLINARY':
+          return 'Investigation director'
+        case 'ONGOING-DISCIPLINARY':
+          return 'Discplinary committe'
+        case 'RECOMMEND-FOR-CLOSURE':
+          return 'Investigation director'
+        case 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION':
+          return 'Investigation director'
+        case 'EXTERNAL-INVESTIGATION':
+          return 'Investigation manager'
+        case 'CASE-CLOSED':
+          return 'Investigation Completed'
+        default:
+          return 'Select an action'
+      }
+    }
+    
+    const StatusBadge = ({ status }: StatusBadgeProps) => {
+      return (
+        <Badge 
+          className={cn(
+            "flex items-center gap-2 px-3 py-1",
+            getStatusColor(status)
+          )}
+        >
+          {getStatusIcon(status)}
+          <span>{status.replace(/-/g, ' ')}</span>
+        </Badge>
+      );
+    };
+
     if (hasSingleStatus && availableStatuses[0]) {
       return (
         <AlertDialogContent className="sm:max-w-[500px]">
           <AlertDialogHeader>
-            <AlertDialogTitle>{status_label}</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action will update the status to <span className="font-medium text-green-600">{availableStatuses[0]}</span>
+            <AlertDialogTitle className="text-slate-900">
+              {status_label}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600">
+              <div className="flex items-center gap-2">
+                {getStatusIcon(availableStatuses[0] as StatusType)}
+                <span className="font-medium text-blue-900 group-hover:text-blue-800 transition-colors">
+                  {getStepDescription(availableStatuses[0] as StatusType)}
+                </span>
+              </div>
+              <p className="text-sm text-blue-600 group-hover:text-blue-700 transition-colors mt-1">
+                {getStatusDescription(availableStatuses[0].toUpperCase() as StatusType)}
+              </p>
+              {/* This action will update the status to{" "}
+              <span className="font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
+                {availableStatuses[0].replace(/-/g, ' ').toLowerCase()}
+              </span> */}
             </AlertDialogDescription>
           </AlertDialogHeader>
+          
           {error && (
-            <div className="p-4 rounded-md bg-red-50">
-              <div className="flex">
-                <AlertTriangle className="h-5 w-5 text-red-400" />
-                <p className="ml-3 text-sm text-red-800">{error}</p>
+            <div className="p-4 rounded-lg border border-red-200 bg-red-50 transition-all duration-200">
+              <div className="flex items-center">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                <p className="ml-3 text-sm font-medium text-red-800">{error}</p>
               </div>
             </div>
           )}
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={closeDialog}>Cancel</AlertDialogCancel>
+    
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel 
+              onClick={closeDialog}
+              className="text-slate-600 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            >
+              Cancel
+            </AlertDialogCancel>
             <Button
-              className="bg-blue-700 hover:bg-blue-800"
+              className="bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200
+                flex items-center justify-center gap-2 min-w-[100px]
+                disabled:bg-blue-300"
               onClick={() => handleStatusUpdate(availableStatuses[0])}
               disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Updating...</span>
                 </>
               ) : (
                 <>
-                  <Send className="mr-2 h-4 w-4" />
-                  Submit
+                  <Send className="h-4 w-4" />
+                  <span>Submit</span>
                 </>
               )}
             </Button>
@@ -227,10 +385,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
     }
 
     return (
-      <DialogContent className="sm:max-w-[400px]">
+      <DialogContent className="sm:max-w-[400px] md:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>{status_label}</DialogTitle>
-          <DialogDescription>Select the next step for this record</DialogDescription>
+          <DialogDescription>Select the next step for this case</DialogDescription>
         </DialogHeader>
         {error && (
           <div className="p-4 rounded-md bg-red-50">
@@ -242,24 +400,45 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
         )}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Allocate</Label>
-            <Select
-              value={selectedStatus}
-              onValueChange={setSelectedStatus}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select next step" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {availableStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace(/-/g, ' ').toLocaleLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            {/* <Label>Allocate</Label> */}
+
+            <RadioGroup 
+                value={selectedStatus} 
+                onValueChange={setSelectedStatus}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+              {availableStatuses.map((status) => (
+                <div key={status}>
+                  <RadioGroupItem
+                    value={status}
+                    id={status}
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor={status}
+                    className="group flex flex-col items-start justify-between rounded-lg border-2 border-muted bg-popover p-4 
+                      transition-all duration-200 ease-in-out
+                      hover:bg-blue-50 hover:border-blue-200
+                      peer-data-[state=checked]:border-blue-500 [&:has([data-state=checked])]:border-blue-500 
+                      cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(status as StatusType)}
+                      <span className="font-medium text-blue-900 group-hover:text-blue-800 transition-colors">
+                        {getStepDescription(status as StatusType)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-blue-600 group-hover:text-blue-700 transition-colors mt-1">
+                      {getStatusDescription(status.toUpperCase() as StatusType)}
+                    </p>
+                    <p className="text-xs text-blue-400 group-hover:text-blue-500 transition-colors italic">
+                      STATUS: {status}
+                    </p>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            
           </div>
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={closeDialog}>
@@ -286,6 +465,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
       </DialogContent>
     );
   };
+  
 
   return (
     <>

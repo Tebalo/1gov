@@ -17,7 +17,7 @@ const dummyData: InvestigationResponse = {
             'occupation': 'Teacher',
             'inquiry_number': '123',
             'case_number': '123',
-            'reg_status': 'External-Investigation',
+            'reg_status': 'RECOMMEND-FOR-DISCIPLINARY',
             'sex': 'Male',
             'submission_type': 'In-Person',
             'anonymous': false,
@@ -97,7 +97,7 @@ export default function InvestigationContent() {
     {dummyData?.data ? (
       <InvestigationView
       data={dummyData?.data}
-      userRole="investigations_manager"
+      userRole="investigations_director"
     />
     ):(
         <>No data available</>
