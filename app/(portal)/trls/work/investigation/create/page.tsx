@@ -4,10 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DatePicker } from '@/components/ui/date-picker'
 import InfoCard from '@/app/components/InfoCard'
-import { ClipboardCheck, FileCheck, FileText, Info, SaveIcon } from 'lucide-react'
+import { ClipboardCheck, FileCheck, Info, SaveIcon } from 'lucide-react'
 import { createComplaint } from '@/app/lib/actions'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
@@ -99,7 +98,7 @@ const initialState: InvestigationRecord = {
     sex: '',
     nationality: '',
     dob: '',
-    age: null,
+    age: 0,
     contact_number: '',
     id_passport_number: '',
     address: '',
