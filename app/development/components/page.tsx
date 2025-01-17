@@ -13,10 +13,10 @@ export default function Page() {
                 <PageTitle Title="Components Factory" />
             </div>
             <div className="grid grid-cols-4 space-x-2">
-                <div className="border border-spacing-1 border-cyan-800 p-5 rounded-md">
+                {/* <div className="border border-spacing-1 border-cyan-800 p-5 rounded-md">
                     <Label>Investigations Action Items</Label>
-                    <ActionButtons recordId="INQ2024-11-00001" userRole="investigations_manager" current_status={"assessment"}/>
-                </div>
+                    <ActionButtons recordId="INQ2024-11-00001" userRole="investigations_manager" current_status={"assessment"} investigation={undefined} preliminary_investigation={undefined}/>
+                </div> */}
                 <div className="border border-spacing-1 border-cyan-800 p-5 rounded-md">
                     <Label>CPD Action Items</Label>
                     <CPDActionButtons recordId="INQ2024-11-00001" userRole="teacher_development_manager" current_status={"recommend-for-approval"}/>

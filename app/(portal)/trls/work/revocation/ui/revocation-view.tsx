@@ -27,9 +27,9 @@ const RevocationViewer: React.FC<RevocationViewerProps> = ({ data, userRole }) =
       <InfoItem label="Revocation Number" value={data?.revocation?.revocation_number}/>
       <InfoItem label="Registration Number" value={data?.revocation?.userid}/>
       <InfoItem label="Status" value={data?.revocation?.reg_status}/>
-      <InfoItem label="SLA Days" value={`${data?.revocation?.sla}`}/>
+      <InfoItem label="SLA" value={`${data?.revocation?.created_at }`} isSLA/>
       <InfoItem label="Reason" value={data?.revocation?.reason}/>
-      <InfoItem label="Submission Date" value={new Date(data?.revocation?.created_at ?? '').toLocaleDateString()}/>
+      <InfoItem label="Submission Date" value={data?.revocation?.created_at} isDate/>
     </InfoCard>
   );
 

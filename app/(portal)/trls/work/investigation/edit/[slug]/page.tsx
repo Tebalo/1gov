@@ -210,7 +210,6 @@ export default function EditCasePage({ params }: { params: { slug: string } }) {
               <InfoItem label="Name" value={caseDetails?.reporter.name}/>
               <InfoItem label="Contact number" value={caseDetails?.reporter.contact_number}/>
               <InfoItem label="Omang" value={caseDetails?.reporter.Omang_id}/>
-              <InfoItem label="Passport number" value={caseDetails?.reporter.passport_no}/>
               <InfoItem label="Occupation" value={caseDetails?.reporter.occupation}/>
               <InfoItem label="Sex" value={caseDetails?.reporter.sex}/>
               <InfoItem label="Nationality" value={caseDetails?.reporter.nationality}/>

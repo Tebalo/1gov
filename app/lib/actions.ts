@@ -3,7 +3,7 @@
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, appealUrl, cpdUrl, deltaCategoryUrl, invUrl, licUrl, renewalUrl, restorationUrl, revocationUrl } from "./store";
-import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse } from './types';
+import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse, InvestigationReportPayload } from './types';
 import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
 import { options } from './schema';
 import { RevocationListResponse } from "../components/Home/components/revocation/types/revocation";
@@ -1052,6 +1052,48 @@ export async function createReport(payload: ReportPayload, ID: string): Promise<
   try {
     const response = await fetchWithAuth(
       `${invUrl}/update-preliminary-investigations/${ID}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        data: payload // Axios uses data instead of body
+      }
+    );
+ 
+    // Successful response (2xx status code)
+    return {
+      message: 'Report created successfully',
+      code: response.status,
+    };
+ 
+  } catch (error) {
+    console.error('Error creating report:', error);
+    
+    if (axios.isAxiosError(error)) {
+      // Handle specific Axios errors
+      const statusCode = error.response?.status || 500;
+      const errorMessage = error.response?.data?.message || 'Failed to create report';
+ 
+      return {
+        code: statusCode,
+        message: errorMessage,
+      };
+    }
+ 
+    // Handle non-Axios errors
+    return {
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to create report',
+    };
+  }
+ }
+
+ export async function createInvestigationReport(payload: InvestigationReportPayload, ID: string): Promise<ReportResponse> {
+  try {
+    const response = await fetchWithAuth(
+      `${invUrl}/update-investigations/${ID}`,
       {
         method: 'PUT',
         headers: {

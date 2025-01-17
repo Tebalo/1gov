@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Info, FileCheck, FileText, File, Briefcase, School, AlertTriangle, UserCircle, GraduationCap } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '../InfoCard';
+import InfoItem from '../InfoItem';
 
 
 interface TeacherRegistration {
@@ -156,7 +157,7 @@ interface Attachment {
     updated_at: string | null;
 }
   
-interface TeacherRegistrationData {
+export interface TeacherRegistrationData {
     teacher_registrations?: TeacherRegistration;
     teacher_preliminary_infos?: TeacherPreliminaryInfo;
     edu_pro_qualifications?: EduProQualification;
@@ -364,7 +365,7 @@ interface TeacherRegistrationViewProps {
       <InfoCard title='Personal Information' icon={<UserCircle className="w-6 h-6 text-blue-500"/>}>
         <InfoItem label="Name" value={`${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`} />
         <InfoItem label="National ID" value={data?.bio_datas?.national_id ?? ''} />
-        <InfoItem label="Date of Birth" value={data?.bio_datas?.dob ? new Date(data.bio_datas.dob).toLocaleDateString() : ''} />
+        <InfoItem label="Date of Birth" isDate value={data?.bio_datas?.dob} />
         <InfoItem label="Gender" value={data?.bio_datas?.gender ?? ''} />
         <InfoItem label="Nationality" value={data?.bio_datas?.nationality ?? ''} />
         <InfoItem label="Email" value={data?.bio_datas?.email ?? ''} />
@@ -377,13 +378,12 @@ interface TeacherRegistrationViewProps {
         <InfoItem label="Registration Type" value={data?.teacher_registrations?.registration_type ?? ''} />
         <InfoItem label="Application ID" value={data?.teacher_registrations?.application_id ?? ''} />
         <InfoItem label="Registration Status" value={data?.teacher_registrations?.reg_status ?? ''} />
+        <InfoItem label="Payment" value={data?.teacher_registrations?.payment_name ?? ''} />
+        <InfoItem label="Amount" value={data?.teacher_registrations?.payment_amount ?? ''} />
+        <InfoItem label="Payment Reference" value={data?.teacher_registrations?.payment_ref ?? ''} />
+        <InfoItem label="Service Code" value={data?.teacher_registrations?.service_code ?? ''} />
         <InfoItem label="Endorsement Status" value={data?.teacher_registrations?.endorsement_status ?? ''} />
-        <div className="flex justify-start space-x-2 items-center">
-            <Label className="font-semibold text-gray-700">SLA Status:</Label>
-            {data?.teacher_registrations?.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
-                {getSLAStatus(data?.teacher_registrations?.updated_at).displayText}
-            </Badge>}
-        </div>
+        <InfoItem label='SLA' value={data?.teacher_registrations?.created_at} isSLA/>
         <InfoItem label="Institution Verification" value={data?.teacher_registrations?.institution_verification ?? ''} />
         <InfoItem label="Course Verification" value={data?.teacher_registrations?.course_verification ?? ''} />
       </InfoCard>
@@ -454,17 +454,7 @@ interface TeacherRegistrationViewProps {
                 <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
                 <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
                 <TableCell>
-                  {data.edu_pro_qualifications.attachments ? (
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="flex items-center gap-2"
-                      onClick={() => setPdfUrl(data.edu_pro_qualifications?.attachments ?? '')}
-                    >
-                      <FaFilePdf className="text-red-500 mr-2"/>
-                      View
-                    </Button>
-                  ) : '-'}
+                  <InfoItem label='' value={data.edu_pro_qualifications?.attachments ?? ''}/>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -512,7 +502,7 @@ interface TeacherRegistrationViewProps {
       </InfoCard>
     );
     const renderDocuments = () => (
-      <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={3}>
+      <InfoCard title='Attachments' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
         <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy ?? ''}/>
         <InfoItem label="Qualification Documents" value={data.attachments?.qualification_copy ?? ''}/>
         <InfoItem label="Proof of Payment" value={data.attachments?.proof_of_payment ?? ''}/>
@@ -789,13 +779,6 @@ interface TeacherRegistrationViewProps {
   };
   
   
-  const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-    <div className=" flex items-center justify-normal space-x-2">
-      <Label className="font-semibold text-gray-700">{label}:</Label> 
-      <span className="text-sm text-gray-600">{value}</span>
-    </div>
-  );
-  
   const DocumentItem: React.FC<{ label: string; url: string | null; onView: (url: string) => void }> = ({ label, url, onView }) => (
     <div className="flex items-center mb-2">
       <FaFilePdf className="text-red-500 mr-2" />
@@ -1015,14 +998,14 @@ function getRelativeTime(updateTime: string) {
   );
   
   
-  const renderDocuments = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <div className='bg-gray-100 rounded-lg p-4'>
-      {data.attachments?.national_id_copy && <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />}
-      {data?.attachments?.qualification_copy && <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />}
-      {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
-      {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
-    </div>
-  );
+  // const renderDocuments = (data: TeacherRegistrationData, onView: (url: string) => void) => (
+  //   <div className='bg-gray-100 rounded-lg p-4'>
+  //     {data.attachments?.national_id_copy && <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />}
+  //     {data?.attachments?.qualification_copy && <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />}
+  //     {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
+  //     {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
+  //   </div>
+  // );
   
   const renderOffences = (data: TeacherRegistrationData, onView: (url: string) => void) => (
     <div className='bg-gray-100 rounded-lg p-4'>

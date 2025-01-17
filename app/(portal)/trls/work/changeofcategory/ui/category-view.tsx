@@ -31,7 +31,7 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
       <InfoItem label="Registration Number" value={data.teacher_registrations?.reg_number}/>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="National ID" value={data.bio_datas?.national_id}/>
-      <InfoItem label="Date of Birth" value={data.bio_datas?.dob}/>
+      <InfoItem label="Date of Birth" value={data.bio_datas?.dob} isDate/>
       <InfoItem label="Gender" value={data.bio_datas?.gender}/>
       <InfoItem label="Email" value={data.bio_datas?.email}/>
       <InfoItem label="Mobile" value={data.bio_datas?.mobile}/>
@@ -46,6 +46,7 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
       <InfoItem label="Payment Amount" value={data.teacher_registrations?.payment_amount}/>
       <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name}/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
+      <InfoItem label="SLA" value={data.teacher_registrations?.created_at} isSLA/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
       <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>

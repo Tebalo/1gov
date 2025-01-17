@@ -1,4 +1,3 @@
-import { FaFilePdf } from 'react-icons/fa';
 import { Role, statusTransitions } from '@/app/lib/store';
 import { 
   Info, FileText,  FileCheck,
@@ -15,10 +14,6 @@ const InfoItem = dynamic(() => import('../InfoItem'), { ssr: false })
 
 export const dynamicParams = true
 
-const PDFViewer: React.FC<{ url: string }> = ({ url }) => (
-  <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`} width="100%" height="500px" />
-);
-  
 export const getNextStatus = (userRole: string): { 
   prev_status: string | null; 
   inv_status: string | null; 
@@ -49,6 +44,8 @@ interface InvestigationViewProps {
         {content}
       </div>
     );
+    const STATUSES = ['EXTERNAL-INVESTIGATION','CASE-CLOSED']
+    const isShowInvInfo = STATUSES.includes(data?.reporter?.reg_status?.toUpperCase() ?? '');
   
     return (
       <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
@@ -61,6 +58,8 @@ interface InvestigationViewProps {
               recordId={data.reporter.inquiry_number  ?? ''} 
               userRole={userRole} 
               current_status={data.reporter.reg_status ?? ''}
+              preliminary_investigation={data.preliminary_investigation}
+              investigation={data.investigation}
             />
           </div>
           <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
@@ -73,51 +72,32 @@ interface InvestigationViewProps {
             {renderSection(renderComplaintInfo(data))}
             {renderSection(renderOffenderInfo(data))}
             {renderSection(renderPreInvestigationInfo(data))} 
-            {renderSection(renderInvestigationInfo(data))}
+            {isShowInvInfo && renderSection(renderInvestigationInfo(data))}
           </div>
       </div>
       </div>
     );
   };
-  
-  const DocumentItem: React.FC<{ label: string; url: string | null; onView: (url: string) => void }> = ({ label, url, onView }) => (
-    <div className="flex items-center mb-2">
-      <FaFilePdf className="text-red-500 mr-2" />
-      <span className="font-medium mr-2">{label}:</span>
-      {url ? (
-        <>
-          <button onClick={() => onView(url)} className="text-blue-500 hover:underline mr-2">View</button>
-          <a href={url} download className="text-green-500 hover:underline">Download</a>
-        </>
-      ) : (
-        <span className="text-gray-500">Not provided</span>
-      )}
-    </div>
-  );
-  
+   
   const renderReporterInfo = (data: Investigation) => (
     <InfoCard title='Reporter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Name" value={data.reporter.name} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Contact number" value={data.reporter.contact_number} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Omang" value={data.reporter.Omang_id} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Passport number" value={data.reporter.passport_no} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Occupation" value={data.reporter.occupation} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Sex" value={data.reporter.sex} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Nationality" value={data.reporter.nationality} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Address" value={data.reporter.address} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      {/* <InfoItem label="Inquiry number" value={data.reporter.inquiry_number}/> */}
-      {/* <InfoItem label="Case number" value={data.reporter.case_number}/> */}
-      {/* <InfoItem label="Anonymous" value={data.reporter.anonymous}/> */}
-      
-      <InfoItem label="Created At" value={data.reporter.created_at} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
-      <InfoItem label="Updated At" value={data.reporter.updated_at} isAnonymous={data.reporter.anonymous || false} isPersonalInfo={true}/>
+      <InfoItem label="Name" value={data.reporter.name} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Contact number" value={data.reporter.contact_number} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Omang" value={data.reporter.Omang_id} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Occupation" value={data.reporter.occupation} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Sex" value={data.reporter.sex} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Nationality" value={data.reporter.nationality} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Address" value={data.reporter.address} isAnonymous={data.reporter.anonymous || false} isPersonalInfo/>
+      <InfoItem label="Created At" value={data.reporter.created_at} isAnonymous={data.reporter.anonymous || false} isPersonalInfo isDate/>
+      <InfoItem label="Updated At" value={data.reporter.updated_at} isAnonymous={data.reporter.anonymous || false} isPersonalInfo isDate/>
     </InfoCard>
   );
 
   const renderPreliminaryDetails = (data: Investigation) => (
-    <InfoCard title='Pre-App Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
+    <InfoCard title='Pre-App Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>} columns={3}>
         <InfoItem label="Status" value={data.reporter.reg_status}/>
         <InfoItem label="Submission type" value={data.reporter.submission_type}/>
+        <InfoItem label="SLA" value={data.reporter.created_at} isSLA/>
     </InfoCard>
   )
 
@@ -136,7 +116,7 @@ interface InvestigationViewProps {
   );
 
   const renderPreInvestigationInfo = (data: Investigation) => (
-    <InfoCard title='Preliminary Investigation Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Preliminary Investigation Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Details" value={data.preliminary_investigation.investigation_details}/>
       <InfoItem label="Outcome" value={data.preliminary_investigation.investigation_outcome}/>
     </InfoCard>

@@ -19,7 +19,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.36.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.37.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -116,7 +116,7 @@ interface FlowAction {
     allowedRoles: Role[];
 }
 
-const STATUS_CONFIG: Record<string, StatusConfig> = {
+const STATUS_CONFIG: Record<string, StatusConfig> = { // Investigation/Complaints -Leah
     'incoming': {
         requiredPermission: 'update:complaints-incoming',
         nextStatus: ['UNDER-REVIEW'],
@@ -153,10 +153,16 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
         status_label: 'Complete Disciplinary',
         allowedRoles: ['disciplinary_committee']
     },
-    'recommend-for-closure': {
+        'recommend-for-closure': {
         requiredPermission: 'update:complaints-ongoing-disciplinary',
         nextStatus: ['CASE-CLOSED'],
         status_label: 'Close Case',
+        allowedRoles: ['investigations_director']
+    },
+    'recommend-for-disciplinary': {
+        requiredPermission: 'update:complaints-recommend-for-disciplinary',
+        nextStatus: ['ONGOING-DISCIPLINARY'],
+        status_label: 'Submit for disciplinary action',
         allowedRoles: ['investigations_director']
     },
     'recommend-for-external-investigation': {
@@ -164,6 +170,12 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
         nextStatus: ['EXTERNAL-INVESTIGATION'],
         status_label: 'Submit for External Investigation',
         allowedRoles: ['investigations_director']
+    },
+    'external-investigation': {
+        requiredPermission: 'update:complaints-external-investigation',
+        nextStatus: ['CASE-CLOSED'],
+        status_label: 'Close Investigation',
+        allowedRoles: ['investigations_manager']
     },
     'recommend-for-investigation': {
         requiredPermission: 'update:complaints-ongoing-disciplinary',
@@ -546,12 +558,13 @@ export const ROLES = {
         "view:complaints-assessment",
         "view:complaints-ongoing-investigation",
         "view:complaints-investigation-complete",
+        'view:complaints-external-investigation',
         "view:cpd-incoming",
         "allocate:complaints-assessment",
 
         "update:complaints-ongoing-investigation",
         "update:complaints-ongoing-investigation",
-
+        'update:complaints-external-investigation',
         "update:complaints-investigation-complete",
     ],
     investigations_director: [
@@ -564,6 +577,7 @@ export const ROLES = {
         'update:complaints-recommend-for-investigation',
         "update:complaints-ongoing-disciplinary",
         'update:complaints-recommend-for-closure',
+        'update:complaints-recommend-for-disciplinary'
     ],
     disciplinary_committee: [
         "view:complaints-ongoing-disciplinary",
