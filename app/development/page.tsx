@@ -71,7 +71,7 @@ const DevelopmentStudio = () => {
   );
 
   return (
-    <div className="min-h-screen p-10">
+    <div className="min-h-screen p-10 absolute">
       <div className="mb-6">
         <PageTitle Title="Development Studio" />
       </div>
