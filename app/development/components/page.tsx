@@ -8,26 +8,27 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
     return (
-        <div className="min-h-screen md:p-2 absolute">
-            <div className="mb-6">
-                <PageTitle Title="Components Factory" />
-            </div>
-            <div className="grid grid-cols-4 space-x-2">
-                {/* <div className="border border-spacing-1 border-cyan-800 p-5 rounded-md">
-                    <Label>Investigations Action Items</Label>
-                    <ActionButtons recordId="INQ2024-11-00001" userRole="investigations_manager" current_status={"assessment"} investigation={undefined} preliminary_investigation={undefined}/>
-                </div> */}
+        <div className="min-h-screen w-full bg-white relative flex flex-col flex-grow p-4 md:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="border border-spacing-1 border-cyan-800 p-5 rounded-md">
                     <Label>CPD Action Items</Label>
-                    <CPDActionButtons recordId="INQ2024-11-00001" userRole="teacher_development_manager" current_status={"recommend-for-approval"}/>
+                    <CPDActionButtons 
+                        recordId="INQ2024-11-00001" 
+                        userRole="teacher_development_manager" 
+                        current_status={"recommend-for-approval"}
+                    />
                 </div>
                 <div className="border border-spacing-1 border-cyan-800 p-5 rounded-md">
                     <Label>Appeal Action Items</Label>
-                    <AppealsActionButtons recordId="INQ2024-11-00001" userRole="appeals_officer" current_status={"incoming-appeal"}/>
+                    <AppealsActionButtons 
+                        recordId="INQ2024-11-00001" 
+                        userRole="appeals_officer" 
+                        current_status={"incoming-appeal"}
+                    />
                 </div>
             </div>
-            <Separator/>
-            <div className="my-8">
+            <Separator className="my-6"/>
+            <div className="flex-grow">
                 <Work userRole="appeals_officer"/>
             </div>
         </div>

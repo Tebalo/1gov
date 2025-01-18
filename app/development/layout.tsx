@@ -8,6 +8,8 @@ import Link from "next/link";
 import Image from 'next/image';
 import { NavItem } from "./components/nav-item";
 import { Home, Settings, SprayCanIcon, UserCheck2, Warehouse, WindIcon } from "lucide-react";
+import { SearchInput } from "./components/search";
+import { User } from "./components/user";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +28,7 @@ export default function DashboardLayout({
         {/* Background Image Container */}
         <div className="absolute inset-0 w-full h-full ">
           <Image
-            src={'/subtle-prism.png'}
+            src={'/subtle-prism1.png'}
             alt=""
             fill
             className="object-cover"
@@ -34,17 +36,21 @@ export default function DashboardLayout({
             priority
           />
           {/* Overlay for better readability */}
-          <div className="absolute inset bg-sky-400/55"/>
+          {/* <div className="absolute inset-0 bg-sky-400/55"/> */}
         </div>
-        <DesktopNav/>
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-
-          </header>
-          <main className="grid flex-1 items-start gap-2 md:p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
-            <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
-          </main>
-          <Toaster />
+        {/* Content wrapper */}
+        <div className="flex relative z-10 h-screen overflow-hidden">
+          <DesktopNav/>
+          <div className="flex flex-col flex-grow relative md:pl-16">
+            <header className="flex h-16 items-center gap-4 border-b bg-white/95 backdrop-blur-sm px-6">
+              <SearchInput/>
+              <User/>
+            </header>
+            <main className="flex-grow overflow-auto p-4">
+              <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
+            </main>
+            <Toaster />
+          </div>
         </div>
     </main>
   );
