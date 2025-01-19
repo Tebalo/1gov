@@ -108,7 +108,7 @@ export const Search: React.FC = () => {
                                 <div className="space-y-4">
                                     <InfoItem label="Inquiry Number" value={response.inquiry_number || 'N/A'} />
                                     <InfoItem label="Case Number" value={response.case_number || 'N/A'} />
-                                    <InfoItem label="Status" value={response.reg_status || 'N/A'} />
+                                    {/* <InfoItem label="Status" value={response. || 'N/A'} /> */}
                                     <InfoItem label="Submission Type" value={response.submission_type || 'N/A'} />
                                     {/* <InfoItem label="Reporter Name" value={response.anonymous === 'Yes' ? 'Anonymous' : (response.name || 'N/A')} /> */}
                                     <InfoItem label="Created" value={ConvertTime(response.created_at)} />

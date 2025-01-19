@@ -1,6 +1,6 @@
 "use client"
 import { DataTable } from "./data-table";
-import {  getInvRecords } from "@/app/lib/actions"
+import {  getInvestigationsList, getInvRecords } from "@/app/lib/actions"
 import React, { useEffect, useState } from "react"
 import TableLoadingSkeleton from "../../TableLoadingSkeleton";
 import { investigationsColumns } from "./investigations-columns";
@@ -12,14 +12,27 @@ interface WorkProps {
 }
 
 interface Complaint {
-    Omang_id: string;
-    submission_type: string;
-    reg_status: string;
-    date_of_submission: string;
-    anonymous: boolean;
-    case_number: string;
-    inquiry_number: string;
+    inquiry_number: string,
+    case_number: string,
+    reg_status: string,
+    date_of_submission: string,
+    nature_of_crime: string,
+    crime_location: string
 }
+
+interface investigation_data{
+    inquiry_number: string,
+    case_number: string,
+    reg_status: string,
+    date_of_submission: string,
+    nature_of_crime: string,
+    crime_location: string
+  }
+  
+  export interface InvestigationResponseList{
+      success: boolean,
+      data?: investigation_data[]
+  }
 
 // Utility function to replace null with empty string recursively
 const replaceNullWithEmptyString = <T extends object>(obj: T): T => {
@@ -54,8 +67,11 @@ export const InvestigationsTable: React.FC<WorkProps> = ({status, userRole}) => 
     async function getApplications(status: string) {
         setIsLoading(true);
         try {
-            const list: Complaint[] = await getInvRecords(status, '100');
-            setResponse(list);
+            const list: InvestigationResponseList = await getInvestigationsList(status, 100);
+            if(list.data){
+                setResponse(list.data);
+            }
+            
         } catch (error) {
             setResponse(null);
         } finally {

@@ -38,14 +38,14 @@ interface InvestigationViewProps {
 }
 
   const InvestigationView: React.FC<InvestigationViewProps> = ({ data, userRole }) => {
-
+    console.log('ui data',data?.complaint?.nature_of_crime)
     const renderSection = (content: React.ReactNode) => (
       <div className="mb-8">
         {content}
       </div>
     );
     const STATUSES = ['EXTERNAL-INVESTIGATION','CASE-CLOSED']
-    const isShowInvInfo = STATUSES.includes(data?.reporter?.reg_status?.toUpperCase() ?? '');
+    const isShowInvInfo = STATUSES.includes(data?.complaint?.reg_status?.toUpperCase() ?? '');
   
     return (
       <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
@@ -55,9 +55,9 @@ interface InvestigationViewProps {
               Complaint Details
             </h1>
             <ActionButtons 
-              recordId={data.reporter.inquiry_number  ?? ''} 
+              recordId={data?.complaint?.inquiry_number  ?? ''} 
               userRole={userRole} 
-              current_status={data.reporter.reg_status ?? ''}
+              current_status={data?.complaint?.reg_status ?? ''}
               preliminary_investigation={data.preliminary_investigation}
               investigation={data.investigation}
             />
@@ -95,7 +95,7 @@ interface InvestigationViewProps {
 
   const renderPreliminaryDetails = (data: Investigation) => (
     <InfoCard title='Pre-App Details' icon={<ClipboardCheck className="w-6 h-6 text-blue-500"/>} columns={3}>
-        <InfoItem label="Status" value={data.reporter.reg_status}/>
+        <InfoItem label="Status" value={data?.complaint?.reg_status}/>
         <InfoItem label="Submission type" value={data.reporter.submission_type}/>
         <InfoItem label="SLA" value={data.reporter.created_at} isSLA/>
     </InfoCard>
@@ -104,14 +104,13 @@ interface InvestigationViewProps {
   const renderComplaintInfo = (data: Investigation) => (
     <InfoCard title='Complaint Details' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Case number" value={data.complaint.case_number}/>
-      <InfoItem label="Inquiry number" value={data.reporter.inquiry_number}/>
+      <InfoItem label="Inquiry number" value={data.complaint.inquiry_number}/>
       <InfoItem label="FIR number" value={data.complaint.fir_number}/>
       <InfoItem label="BIF number" value={data.complaint.bif_number}/>
       <InfoItem label="Crime location" value={data.complaint.crime_location}/>
       <InfoItem label="Nature of crime" value={data.complaint.nature_of_crime}/>
       <InfoItem label="Date" value={data.complaint.date}/>
       <InfoItem label="Time" value={data.complaint.time}/>
-      <InfoItem label="Outcome" value={data.complaint.outcome}/>
     </InfoCard>
   );
 

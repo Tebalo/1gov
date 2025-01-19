@@ -107,7 +107,7 @@ import {
 
   export const invstatuses = [
     {
-      value: "Incoming",
+      value: "INCOMING",
       label: "Incoming",
       icon: QuestionMarkCircledIcon,
     },
