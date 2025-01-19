@@ -35,6 +35,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|assets|public|subtle-prism.png|pattern-randomized.png|background2.jpg|background.jpg|trsl logo.png|favicon.ico|botepco.png|Code-of-Arms-colour.png|background.png|sw.js).*)',
+    '/((?!api|_next/static|_next/image|assets|public|subtle-prism1.png|alternating-arrowhead.png|subtle-prism.png|pattern-randomized.png|background2.jpg|background.jpg|trsl logo.png|favicon.ico|botepco.png|Code-of-Arms-colour.png|background.png|sw.js).*)',
   ],
 };

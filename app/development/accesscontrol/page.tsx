@@ -39,13 +39,10 @@ export default function DevelopmentStudio() {
     };
 
     return (
-        <div className="min-h-screen overflow-auto pb-8">
-            <div className="mb-4 md:mb-8 md:block">
-                <PageTitle Title="Roles"/>
-            </div>
+        <div className="min-h-screen overflow-auto">
             
             {/* Mobile Menu Toggle */}
-            <div className="md:hidden container mx-auto mb-4">
+            <div className="md:hidden container mx-auto">
                 <Card className="p-2">
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -82,7 +79,7 @@ export default function DevelopmentStudio() {
 
                 {/* Content Area */}
                 <div className="md:col-span-9">
-                    <Card className="p-4 md:p-6">
+                    <Card className="p-4 md:p-0">
                         {menuItems.find(item => item.id === activeSection)?.component}
                     </Card>
                 </div>

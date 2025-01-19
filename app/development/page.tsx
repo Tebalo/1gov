@@ -46,20 +46,20 @@ const DevelopmentStudio = () => {
 
   const services = [
     {
-      title: "Access control",
+      title: "Access Control",
       description: "Manage access control settings",
       icon: <FileText className="w-6 h-6 text-blue-500" />,
       href: "/development/accesscontrol"
     },
     {
-      title: "Components Factory",
+      title: "Interface Components",
       description: "Build and test components",
       icon: <AlertCircle className="w-6 h-6 text-blue-500" />,
       href: "/development/components"
     },
     {
-      title: "Viewers Factory",
-      description: "Build and test components",
+      title: "Case Interface",
+      description: "Build and test interfaces",
       icon: <AlertCircle className="w-6 h-6 text-blue-500" />,
       href: "/development/viewers"
     }
@@ -71,13 +71,9 @@ const DevelopmentStudio = () => {
   );
 
   return (
-    <div className="min-h-screen p-10 absolute">
-      <div className="mb-6">
-        <PageTitle Title="Development Studio" />
-      </div>
-
+    <div className="min-h-screen p-2 overflow-auto pr-10 rounded-md">
       {/* Search Section */}
-      <div className="mb-8">
+      <div className="mb-8 bg-white rounded-md">
         <Card>
           <CardContent className="pt-6">
             <div className="relative">
@@ -85,7 +81,7 @@ const DevelopmentStudio = () => {
               <Input
                 type="text"
                 placeholder="Search all available e-Services by name, category, description..."
-                className="pl-10 bg-white"
+                className="px-10 bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -95,7 +91,7 @@ const DevelopmentStudio = () => {
       </div>
 
       {/* Services Section */}
-      <div className="space-y-6">
+      <div className="space-y-6 bg-white p-2 rounded-md">
         <div className="flex items-center space-x-2">
           <Layout className="w-6 h-6 text-blue-500" />
           <h2 className="text-xl font-semibold text-gray-900">
