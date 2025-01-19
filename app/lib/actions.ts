@@ -54,6 +54,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ChangeOfCategoryResponse } from "../(portal)/trls/work/changeofcategory/types/changeofcategory-type";
 import { RestorationResponse } from "../(portal)/trls/work/restoration/types/restoration-type";
 import { endorsement_status } from "../components/Home/data/data";
+import { InvestigationResponseList } from "../components/Home/components/investigations-table";
 //import { DecodedToken } from '@/types'; // Adjust import path as needed
 
 const TOKEN_REFRESH_THRESHOLD = 300; // 5 minutes in seconds
@@ -66,7 +67,7 @@ const axiosInstance: AxiosInstance = axios.create({
 async function fetchWithAuth(
   url: string,
   options: AxiosRequestConfig = {},
-  timeoutMs: number = 120000,
+  timeoutMs: number = 160000,
   maxRetries: number = 3
 ): Promise<AxiosResponse> {
   let retryCount = 0;
@@ -1936,7 +1937,7 @@ export async function getInvRecords(status: string, count: string) {
         count: count
       }
     });
-
+    console.log(response.data)
     // Axios automatically parses JSON and throws on non-2xx status codes
     return response.data || [];
   } catch (error) {
@@ -1947,6 +1948,56 @@ export async function getInvRecords(status: string, count: string) {
     return [];
   }
 }
+
+export async function getInvestigationsList(status: string, count: number): Promise<InvestigationResponseList> {
+
+  try {
+    const response = await fetch(`${invUrl}/get-list?reg_status=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    cache:'no-cache'
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+        console.log(result)
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      success: result.success,
+      data: result.data
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      success: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
 
 export async function getInvestigations(status: string, count: string): Promise<string> {
   // Simulate API delay
@@ -2110,28 +2161,34 @@ export async function getRegById(Id: string) {
 
 export async function getInvRecordById(Id: string) {
   try {
-    const response = await fetchWithAuth(`${invUrl}/complaints/${Id}`, {
+    const response = await fetch(`${invUrl}/complaints/${Id}`, {
       method: 'GET',
       headers: {
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
+        // Add any auth headers if needed
+      },
+      // Next.js 13+ fetch options
+      cache: 'no-cache',
+      next: {
+        revalidate: 3600 // Optional: revalidate every hour
       }
     });
- 
-    // Axios automatically parses JSON and returns data property
-    return response.data || null;
- 
-  } catch (error) {
-    console.error('Error fetching record by ID:', error);
-    if (axios.isAxiosError(error)) {
-      // Check for 404 or other specific status codes if needed
-      if (error.response?.status === 404) {
+
+    if (!response.ok) {
+      if (response.status === 404) {
         return null;
       }
-      console.error('Response:', error.response?.data);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data || null;
+
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
     return null;
   }
- }
+}
 
 export async function updateCaseById(code: string, updateData: Investigation | null): Promise<{success: boolean, code: number; data: Promise<any> }> {
   
@@ -2156,77 +2213,6 @@ export async function updateCaseById(code: string, updateData: Investigation | n
   }
 }
 
-export async function getInvById(Id: string) {
-  // Simulating an async operation
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  // Sample data
-  const sampleData = {
-    "reporter": {
-        "id": 1,
-        "name": "Bopaki Tebalo",
-        "contact_number": "123456789",
-        "Omang_id": "440418213",
-        "passport_no": "P123456",
-        "occupation": "Engineer",
-        "sex": "Male",
-        "nationality": "Botswana",
-        "address": "123 Main Street",
-        "reg_status": "Incoming ",
-        "inquiry_number": "INQ2024-10-00001",
-        "case_number": null,
-        "anonymous": null,
-        "submission_type": null,
-        "created_at": "2024-10-26T19:20:00.000000Z",
-        "updated_at": "2024-10-26T19:20:00.000000Z"
-    },
-    "complaint": {
-        "id": 1,
-        "crime_location": "Gaborone",
-        "inquiry_number": "INQ2024-10-00001",
-        "nature_of_crime": "Theft",
-        "date": "2024-10-01",
-        "time": "14:00:00",
-        "bif_number": "BIF123456",
-        "case_number": "CASE789",
-        "fir_number": "FIR456",
-        "outcome": "Pending",
-        "created_at": "2024-10-26T19:20:00.000000Z",
-        "updated_at": "2024-10-26T19:20:00.000000Z"
-    },
-    "offender": {
-        "id": 1,
-        "name": "Jane Smith",
-        "sex": "Female",
-        "inquiry_number": "INQ2024-10-00001",
-        "nationality": "Botswana",
-        "dob": "1990-01-01",
-        "age": 34,
-        "contact_number": "987654321",
-        "id_passport_number": "ID987654",
-        "address": "456 Side Street",
-        "ward": "Ward 1",
-        "occupation": "Teacher",
-        "place_of_work": "XYZ School",
-        "created_at": "2024-10-26T19:20:00.000000Z",
-        "updated_at": "2024-10-26T19:20:00.000000Z"
-    },
-    "investigation": {
-        "id": 1,
-        "inquiry_number": "INQ2024-10-00001",
-        "investigating_officer": "Officer Brown",
-        "police_station": "Gaborone Police Station",
-        "cr_number": "CR123456",
-        "offence": "Theft",
-        "outcome": "Under investigation",
-        "created_at": "2024-10-26T19:20:00.000000Z",
-        "updated_at": "2024-10-26T19:20:00.000000Z"
-    }
-};
-
-  return sampleData;
-}
-
 export async function getComplaintsById(Id: string): Promise<InvestigationResponse> {
   try {
     const response = await fetchWithAuth(
@@ -2241,8 +2227,8 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
  
     // Successful response (2xx status code)
     return {
-      code: response.status,
-      data: response.data?.data || response.data
+      success: true,
+      data: response.data
     };
  
   } catch (error) {
@@ -2254,7 +2240,7 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
       const errorMessage = error.response?.data?.message || 'Failed to fetch complaint';
  
       return {
-        code: statusCode,
+        success: false,
         message: errorMessage,
         //data: null
       };
@@ -2262,12 +2248,56 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
  
     // Handle non-Axios errors
     return {
-      code: 500,
+      success: false,
       message: error instanceof Error ? error.message : 'Failed to fetch complaint',
       //data: null
     };
   }
  }
+
+ export async function getInById(Id: string): Promise<InvestigationResponse> {
+  try {
+    const response = await fetchWithAuth4(`${invUrl}/complaints/${Id}`, { cache: 'no-cache' });
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      success: true,
+      data: result.data
+    };
+
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
+    return {
+      success: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+    };
+  }
+}
 
 export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
   try {

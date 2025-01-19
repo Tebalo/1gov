@@ -63,11 +63,11 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
     },
   },
   {
-    accessorKey: "submission_type",
+    accessorKey: "nature_of_crime",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Submission type" />
+      <DataTableColumnHeader column={column} title="Nature of crime" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("submission_type")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("nature_of_crime")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -101,11 +101,11 @@ export const investigationsColumns: ColumnDef<Complaint>[] = [
     },
   },
   {
-    accessorKey: "date_of_submission",
+    accessorKey: "crime_location",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date of submission" />
+      <DataTableColumnHeader column={column} title="Crime location" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("date_of_submission")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("crime_location")}</div>,
     enableSorting: false,
     enableHiding: false,
   },

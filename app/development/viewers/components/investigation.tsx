@@ -7,74 +7,75 @@ import InvestigationView from '@/app/components/record/ComplaintViewer';
 import { InvestigationResponse } from '@/app/lib/types';
 
 const dummyData: InvestigationResponse = {
-    code: 200,
-    message: "success",
-    data: {
-        reporter: {
-            'name': 'John Mokwena',
-            'contact_number': '+267 71234567',
-            'Omang_id': '123456789',
-            'occupation': 'Teacher',
-            'inquiry_number': '123',
-            'case_number': '123',
-            'reg_status': 'RECOMMEND-FOR-DISCIPLINARY',
-            'sex': 'Male',
-            'submission_type': 'In-Person',
-            'anonymous': false,
-            'nationality': 'Motswana',
-            'address': 'Plot 1234, Broadhurst Phase 4',
-            'created_at': '2025-01-04 08:21:39',
-            'updated_at': '2025-01-04 08:21:39',
-            'id': 1
-        },
-        'complaint': {
-            'crime_location': 'Gaborone Secondary School',
-            'nature_of_crime': 'Professional Misconduct',
-            'case_number': 'jfj',
-            'outcome': 'Deak',
-            'date': '2024-01-15',
-            'time': '14:30',
-            'bif_number': 'BIF/2024/001',
-            'fir_number': 'FIR/2024/123',
-            'created_at': '',
-            'updated_at': '',
-            'id': 1
-        },
-        'offender': {
-            'name': 'Sarah Smith',
-            'sex': 'Female',
-            'nationality': 'Motswana',
-            'dob': '1990-05-15',
-            'age': 34,
-            'contact_number': '+267 72345678',
-            'id_passport_number': '987654321',
-            'address': 'Plot 567, Extension 12',
-            'ward': 'Block 8',
-            'occupation': 'Mathematics Teacher',
-            'place_of_work': 'Gaborone Secondary School',
-            'created_at': '',
-            'updated_at': '',
-            'id': 1
-        },
-        'investigation': {
-            'investigating_officer': 'Officer K. Molefe',
-            'police_station': 'Central Police Station',
-            'cr_number': 'CR/2024/456',
-            'offence': 'Unprofessional Conduct',
-            'outcome': 'Under Investigation',
-            'created_at': '',
-            'updated_at': '',
-            'id': 1
-        },
-        preliminary_investigation: {
-            id: 1,
-            inquiry_number: '',
-            investigation_details: 'Something',
-            investigation_outcome: 'Closed',
-            created_at: '',
-            updated_at: ''
-        }
-    }
+  "success": true,
+  "data": {
+      "complaint": {
+          "id": 6,
+          "crime_location": "Gabane",
+          "inquiry_number": "INQ2025-01-00006",
+          "nature_of_crime": "Theft",
+          "reg_status": "INCOMING",
+          "case_number": "CS2025-01-00001",
+          "date": "2025-01-13",
+          "time": null,
+          "bif_number": null,
+          "fir_number": "FIR1234",
+          "created_at": "2025-01-18T07:02:07.000000Z",
+          "updated_at": "2025-01-18T07:02:07.000000Z"
+      },
+      "reporter": {
+          "id": 6,
+          "name": "Naledi Naledi",
+          "contact_number": null,
+          "Omang_id": "000020000",
+          "occupation": "Student",
+          "sex": "Female",
+          "nationality": "Botswana",
+          "address": "Plot 112 Gaborone",
+          "inquiry_number": "INQ2025-01-00006",
+          "case_number": null,
+          "anonymous": false,
+          "submission_type": "Walk-In",
+          "created_at": "2025-01-18T07:02:07.000000Z",
+          "updated_at": "2025-01-18T07:02:07.000000Z"
+      },
+      "offender": {
+          "id": 6,
+          "name": "Mr Mosweu",
+          "sex": "Male",
+          "inquiry_number": "INQ2025-01-00006",
+          "nationality": null,
+          "dob": null,
+          "age": 45,
+          "contact_number": "71234567",
+          "id_passport_number": "123412222",
+          "address": "456 Sechele Street",
+          "ward": "Gabane",
+          "occupation": "Teacher",
+          "place_of_work": "Gabane",
+          "created_at": "2025-01-18T07:02:07.000000Z",
+          "updated_at": "2025-01-18T07:02:07.000000Z"
+      },
+      "investigation": {
+          "id": 6,
+          "inquiry_number": "INQ2025-01-00006",
+          "investigating_officer": null,
+          "police_station": null,
+          "cr_number": null,
+          "offence": null,
+          "outcome": null,
+          "created_at": "2025-01-18T07:02:07.000000Z",
+          "updated_at": "2025-01-18T07:02:07.000000Z"
+      },
+      "preliminary_investigation": {
+          "id": 6,
+          "inquiry_number": "INQ2025-01-00006",
+          "investigation_details": null,
+          "investigation_outcome": null,
+          "created_at": "2025-01-18T07:02:07.000000Z",
+          "updated_at": "2025-01-18T07:02:07.000000Z"
+      }
+  }
 };
 
 export default function InvestigationContent() {

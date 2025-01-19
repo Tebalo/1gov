@@ -18,23 +18,21 @@ export const regSchema = z.object({
 })
 
 export const complaintSchema = z.object({
-  Omang_id: z.string(),
-  submission_type: z.string(),
-  case_number:z.string(),
-  inquiry_number:z.string(),
+  inquiry_number: z.string().optional(),
+  case_number: z.string().optional(),
   reg_status: z.string(),
-  date_of_submission: z.string(),
-  anonymous: z.boolean() 
+  date_of_submission: z.string().optional(),
+  nature_of_crime: z.string().optional(),
+  crime_location: z.string().optional()
 })
 
 export const complaintSchemawithNullValues = z.object({
-  Omang_id: z.string().nullable().optional(),
-  submission_type: z.string().nullable().optional(),
-  case_number: z.string().nullable().optional(),
-  inquiry_number: z.string().nullable().optional(),
-  reg_status: z.string().nullable().optional(),
-  date_of_submission: z.string().nullable().optional(),
-  anonymous: z.boolean().nullable().optional()
+  inquiry_number: z.string().nullable(),
+  case_number: z.string().nullable(),
+  reg_status: z.string().nullable(),
+  date_of_submission: z.string().nullable(),
+  nature_of_crime: z.string().nullable(),
+  crime_location: z.string().nullable()
 });
 
 export const InvestigationsSchema = z.object({

@@ -136,7 +136,6 @@ export interface reporter {
   sex: string | null;
   nationality: string | null;
   address: string | null;
-  reg_status: string | null;
   inquiry_number: string | null;
   case_number: string | null;
   anonymous: boolean | null;
@@ -151,10 +150,11 @@ interface complaint {
   nature_of_crime: string | null;
   date: string | null;
   time: string | null;
+  reg_status: string | null;
   bif_number: string | null;
+  inquiry_number: string | null;
   case_number: string | null;
   fir_number: string | null;
-  outcome: string | null;
   id: number | null;
   created_at: string | null;
   updated_at: string | null;
@@ -170,6 +170,7 @@ interface offender {
   id_passport_number: string | null;
   address: string | null;
   ward: string | null;
+  inquiry_number: string | null;
   occupation: string | null;
   place_of_work: string | null;
   id: number | null;
@@ -182,6 +183,7 @@ export interface investigation {
   police_station: string | null;
   cr_number: string | null;
   offence: string | null;
+  inquiry_number: string | null;
   outcome: string | null;
   id: number | null;
   created_at: string | null;
@@ -206,7 +208,7 @@ export interface Investigation {
 }
 
 export interface InvestigationResponse{
-  code: number;
+  success: boolean;
   data?: Investigation;
   message?: string;
 }
