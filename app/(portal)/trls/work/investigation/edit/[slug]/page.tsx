@@ -215,12 +215,12 @@ export default function EditCasePage({ params }: { params: { slug: string } }) {
               <InfoItem label="Nationality" value={caseDetails?.reporter.nationality}/>
               <InfoItem label="Address" value={caseDetails?.reporter.address}/>
               {/* <InfoItem label="Anonymous" value={caseDetails?.reporter.anonymous}/> */}
-              <InfoItem label="Status" value={caseDetails?.reporter.reg_status}/>
+              <InfoItem label="Status" value={caseDetails?.complaint?.reg_status}/>
               <div>
                 <label htmlFor="reporter.reg_status" className="block text-sm font-medium text-gray-700">Set New Status</label>
                 <Select
                   name="reporter.reg_status"
-                  value={caseDetails.reporter.reg_status ?? ''}
+                  value={caseDetails.complaint.reg_status ?? ''}
                   onValueChange={(value) => handleInputChange({ target: { name: 'reporter.reg_status', value } } as any)}
                 >
                   <SelectTrigger className="w-full">
@@ -303,23 +303,6 @@ export default function EditCasePage({ params }: { params: { slug: string } }) {
                     value={caseDetails?.complaint.case_number ?? ''}
                     onChange={handleInputChange}
                   />
-                </div>
-                <div>
-                  <label htmlFor="complaint.outcome" className="block text-sm font-medium text-gray-700">Outcome</label>
-                  <Select
-                    name="complaint.outcome"
-                    value={caseDetails?.complaint.outcome ?? ''}
-                    onValueChange={(value) => handleInputChange({ target: { name: 'complaint.outcome', value } } as any)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select outcome" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Pending">Pending</SelectItem>
-                      <SelectItem value="Under Investigation">Under Investigation</SelectItem>
-                      <SelectItem value="Resolved">Resolved</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
             </InfoCard>
 
