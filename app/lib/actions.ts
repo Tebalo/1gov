@@ -1045,13 +1045,13 @@ export async function updateRestorationStatus(
     const data = await response.json();
  
     // Trigger revalidation after successful update
-    await fetch('/api/revalidate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ tag: `restoration-${ID}` })
-    });
+    // await fetch('/api/revalidate', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ tag: `restoration-${ID}` })
+    // });
  
     return {
       code: response.status,
