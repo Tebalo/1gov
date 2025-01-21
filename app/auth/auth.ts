@@ -75,7 +75,7 @@ async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: Reque
       const decodedToken = await decryptAccessToken(session.auth);
       
       if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
-        console.log("Token close to expiry, attempting refresh");
+        // console.log("Token close to expiry, attempting refresh");
         const refreshSuccessful = await refreshToken();
         if (!refreshSuccessful) {
           throw new Error('Failed to refresh token');
@@ -99,7 +99,7 @@ async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: Reque
     if (!response.ok) {
       if (response.status === 401) {
         // Token might have expired right after refresh, try refreshing one more time
-        console.log("Received 401, attempting one more token refresh");
+        // console.log("Received 401, attempting one more token refresh");
         const refreshSuccessful = await refreshToken();
         if (refreshSuccessful) {
           // Retry the request with the new token
@@ -285,7 +285,7 @@ export async function updateSession(request: NextRequest) {
     const currentTime = Math.floor(Date.now() / 1000);
 
     const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
-    console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
+    // console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
     if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
       // Token is close to expiring, attempt to refresh
       const refreshSuccessful = await refreshToken();
@@ -373,6 +373,7 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       username: decodedToken.name,
       userid: decodedToken.preferred_username,
     }
+
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
   } catch(error){

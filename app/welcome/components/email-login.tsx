@@ -277,7 +277,7 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
             
             <div className="text-center space-y-2">
               <p className="text-sm text-gray-600">
-                Enter the 6-digit code sent to your device
+                Enter first 6 digit of your cellphone number registered with 1gov
               </p>
               {countdown > 0 && (
                 <p className="text-xs text-gray-500 flex items-center justify-center gap-1">

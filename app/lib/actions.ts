@@ -2170,7 +2170,7 @@ export async function getInvRecordById(Id: string) {
       // Next.js 13+ fetch options
       cache: 'no-cache',
       next: {
-        revalidate: 3600 // Optional: revalidate every hour
+        revalidate: 60 // Optional: revalidate every minute
       }
     });
 

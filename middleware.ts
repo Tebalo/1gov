@@ -13,11 +13,11 @@ export async function middleware(request: NextRequest) {
   // Define public routes that should always be accessible
   const publicRoutes = ['/welcome', '/login', '/register', '/development','/development/accesscontrol','/development/components',,'/development/viewers'];
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
-
-  if (!session || !access) {
+  // !session ||
+  if (!access) {
     if (isProtectedRoute) {
       // Redirect to welcome page if there's no session and trying to access a protected route
-      return NextResponse.redirect(new URL('/welcome', request.url));
+      //return NextResponse.redirect(new URL('/welcome', request.url));
     } else if (!isPublicRoute) {
       // For non-public routes without session, also redirect to welcome
       return NextResponse.redirect(new URL('/welcome', request.url));
