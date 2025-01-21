@@ -813,7 +813,7 @@ export async function updateRevocationStatus(ID: string, status: string): Promis
   }
 }
 
-export async function updateChangeOfCategoryStatus(
+export async function updateChangeOfCategoryStatusV1(
   ID: string, 
   status: string
 ): Promise<{code: number; message: string}> {
@@ -876,7 +876,79 @@ export async function updateChangeOfCategoryStatus(
   }
 }
 
-export async function updateRestorationStatus(
+export async function updateChangeOfCategoryStatus(
+  ID: string, 
+  status: string
+ ): Promise<{code: number; message: string}> {
+  try {
+    // Prepare query parameters
+    const params = new URLSearchParams();
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
+      params.append('endorsement_status', status);
+    } else {
+      params.append('reg_status', status);
+    }
+ 
+    const response = await fetch(
+      `${deltaCategoryUrl}/category-change/${ID}?${params.toString()}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // Add auth headers as needed
+        },
+        // Trigger revalidation
+        next: {
+          tags: [`category-${ID}`]
+        }
+      }
+    );
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+ 
+    const data = await response.json();
+ 
+    // Trigger revalidation after successful update
+    // await fetch('/api/revalidate', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ tag: `category-${ID}` })
+    // });
+ 
+    return {
+      code: response.status,
+      message: data?.message || 'Success'
+    };
+ 
+  } catch (error) {
+    // Log the error with more context
+    console.error('Error updating category status:', {
+      ID,
+      status,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+ 
+    // Handle specific HTTP errors
+    if (error instanceof Error && 'status' in error) {
+      return {
+        code: (error as any).status || 500,
+        message: (error as any).message || 'Failed to update status. Please try again'
+      };
+    }
+ 
+    return {
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to update status. Please try again'
+    };
+  }
+ }
+
+export async function updateRestorationStatusV1(
   ID: string, 
   status: string
 ): Promise<{code: number; message: string}> {
@@ -938,7 +1010,75 @@ export async function updateRestorationStatus(
   }
 }
 
-
+export async function updateRestorationStatus(
+  ID: string, 
+  status: string
+ ): Promise<{code: number; message: string}> {
+  try {
+    // Prepare query parameters
+    const params = new URLSearchParams();
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
+      params.append('endorsement_status', status);
+    } else {
+      params.append('reg_status', status);
+    }
+ 
+    const response = await fetch(
+      `${restorationUrl}/license-restoration/${ID}?${params.toString()}`, 
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // Add auth headers as needed
+        },
+        next: {
+          tags: [`restoration-${ID}`]
+        }
+      }
+    );
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+ 
+    const data = await response.json();
+ 
+    // Trigger revalidation after successful update
+    // await fetch('/api/revalidate', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ tag: `restoration-${ID}` })
+    // });
+ 
+    return {
+      code: response.status,
+      message: data?.message || 'Success'
+    };
+ 
+  } catch (error) {
+    // Log the error with more context
+    console.error('Error updating restoration status:', {
+      ID,
+      status,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+ 
+    if (error instanceof Error && 'status' in error) {
+      return {
+        code: (error as any).status || 500,
+        message: (error as any).message || 'Failed to update status. Please try again'
+      };
+    }
+ 
+    return {
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to update status. Please try again'
+    };
+  }
+ }
 
 export async function searchComplaintByInquiry(ID: string): Promise<ComplaintSearchResponse> {
   try {
@@ -2164,11 +2304,11 @@ export async function getInvRecordById(Id: string) {
     const response = await fetch(`${invUrl}/complaints/${Id}`, {
       method: 'GET',
       headers: {
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-store',
         // Add any auth headers if needed
       },
       // Next.js 13+ fetch options
-      cache: 'no-cache',
+      cache: 'no-store',
       next: {
         revalidate: 60 // Optional: revalidate every minute
       }
@@ -2299,7 +2439,7 @@ export async function getComplaintsById(Id: string): Promise<InvestigationRespon
   }
 }
 
-export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
+export async function getRenewalByIdV1(Id: string): Promise<TeacherRegistrationResponse> {
   try {
     const response = await fetchWithAuth4(`${renewalUrl}/license-renewal/${Id}`, { cache: 'no-cache' });
 
@@ -2353,7 +2493,104 @@ export async function getRenewalById(Id: string): Promise<TeacherRegistrationRes
   }
 }
 
-export async function getChangeOfCategoryById(Id: string): Promise<ChangeOfCategoryResponse> {
+export async function getRenewalById(Id: string): Promise<TeacherRegistrationResponse> {
+  try {
+    const response = await fetch(`${renewalUrl}/license-renewal/${Id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add auth headers as needed
+      },
+      cache: 'no-store', // Equivalent to no-cache
+      next: {
+        tags: [`renewal-${Id}`] // Tag for revalidation
+      }
+    });
+ 
+    // Get the raw response text first
+    const responseText = await response.text();
+ 
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+ 
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+ 
+    return {
+      code: response.status,
+      message: 'success',
+      teacher_registrations: result?.teacher_registrations,
+      teacher_preliminary_infos: result?.teacher_preliminary_infos,
+      edu_pro_qualifications: result?.edu_pro_qualifications,
+      other_qualifications: result?.edu_pro_qualifications,
+      bio_datas: result?.bio_datas,
+      background_checks: result?.background_checks,
+      declarations: result?.declarations,
+      offence_convictions: result?.offence_convictions,
+      employment_details: result?.employment_details,
+      attachments: result?.attachments,
+    };
+ 
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+    };
+  }
+ }
+ 
+ 
+ // Example update function that triggers revalidation
+ export async function updateRenewal(Id: string, data: any) {
+  try {
+    const response = await fetch(`${renewalUrl}/license-renewal/${Id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add auth headers
+      },
+      body: JSON.stringify(data)
+    });
+ 
+    if (!response.ok) {
+      throw new Error('Failed to update renewal');
+    }
+ 
+    // Trigger revalidation
+    await fetch('/api/revalidate/renewal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: Id })
+    });
+ 
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating renewal:', error);
+    throw error;
+  }
+ }
+
+export async function getChangeOfCategoryByIdV1(Id: string): Promise<ChangeOfCategoryResponse> {
   try {
     const response = await fetchWithAuth4(`${deltaCategoryUrl}/category-change/${Id}`, { cache: 'no-cache' });
 
@@ -2408,7 +2645,72 @@ export async function getChangeOfCategoryById(Id: string): Promise<ChangeOfCateg
   }
 }
 
-export async function getRestorationById(Id: string): Promise<RestorationResponse> {
+export async function getChangeOfCategoryById(Id: string): Promise<ChangeOfCategoryResponse> {
+  try {
+    const response = await fetch(`${deltaCategoryUrl}/category-change/${Id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any auth headers if needed
+      },
+      cache: 'no-store', // Equivalent to 'no-cache'
+      next: {
+        tags: ['category-change'], // Optional: for revalidation
+      }
+    });
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: 'success',
+      teacher_registrations: result?.teacher_registrations,
+      teacher_preliminary_infos: result?.teacher_preliminary_infos,
+      edu_pro_qualifications: result?.edu_pro_qualifications,
+      other_qualifications: result?.edu_pro_qualifications,
+      bio_datas: result?.bio_datas,
+      background_checks: result?.background_checks,
+      declarations: result?.declarations,
+      offence_convictions: result?.offence_convictions,
+      employment_details: result?.employment_details,
+      attachments: result?.attachments,
+      categories: result?.categories
+    };
+
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+    };
+  }
+}
+
+export async function getRestorationByIdv1(Id: string): Promise<RestorationResponse> {
   try {
     const response = await fetchWithAuth4(`${restorationUrl}/license-restoration/${Id}`, { cache: 'no-cache' });
 
@@ -2462,6 +2764,71 @@ export async function getRestorationById(Id: string): Promise<RestorationRespons
     };
   }
 }
+
+export async function getRestorationById(Id: string): Promise<RestorationResponse> {
+  try {
+    const response = await fetch(`${restorationUrl}/license-restoration/${Id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add auth headers as needed
+      },
+      cache: 'no-store',
+      next: { 
+        tags: [`restoration-${Id}`]
+      }
+    });
+ 
+    // Get the raw response text first
+    const responseText = await response.text();
+ 
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+ 
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+ 
+    return {
+      code: response.status,
+      message: 'success',
+      teacher_registrations: result?.teacher_registrations,
+      teacher_preliminary_infos: result?.teacher_preliminary_infos,
+      edu_pro_qualifications: result?.edu_pro_qualifications,
+      other_qualifications: result?.edu_pro_qualifications,
+      bio_datas: result?.bio_datas,
+      background_checks: result?.background_checks,
+      declarations: result?.declarations,
+      offence_convictions: result?.offence_convictions,
+      employment_details: result?.employment_details,
+      attachments: result?.attachments,
+      categories: result?.categories
+    };
+ 
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+    };
+  }
+ }
 
 export async function getLicenseById(Id: string) {
   try {

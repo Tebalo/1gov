@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, getAccessGroups } from "./app/auth/auth";
+import { getAccessGroups } from "./app/auth/auth";
 
 export async function middleware(request: NextRequest) {
   // Get the current session and access groups
-  const session = await getSession();
+  // const session = await getSession();
   const access = await getAccessGroups();
 
   // Define protected routes
@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
   if (!access) {
     if (isProtectedRoute) {
       // Redirect to welcome page if there's no session and trying to access a protected route
-      //return NextResponse.redirect(new URL('/welcome', request.url));
+      return NextResponse.redirect(new URL('/welcome', request.url));
     } else if (!isPublicRoute) {
       // For non-public routes without session, also redirect to welcome
       return NextResponse.redirect(new URL('/welcome', request.url));

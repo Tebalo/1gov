@@ -21,17 +21,17 @@ interface Props {
 
 // Define available tables and their required permissions
 const AVAILABLE_TABLES = {
-  'Incoming Cases': { // Investigation
+  'Investigation Incoming': { // Investigation
     requiredPermission: 'view:complaints-incoming' as const,
     status: 'INCOMING',
     component: InvestigationsTable
   },
-  'Cases Under Review': { // Investigation
+  'Investigation Under Review': { // Investigation
     requiredPermission: 'view:complaints-review' as const,
     status: 'UNDER-REVIEW',
     component: InvestigationsTable
   },
-  'Assessment Cases': { // Investigation
+  'Investigation Assessment': { // Investigation
     requiredPermission: 'view:complaints-assessment' as const,
     status: 'ASSESSMENT',
     component: InvestigationsTable
@@ -41,188 +41,188 @@ const AVAILABLE_TABLES = {
     status: 'INCOMING',
     component: TipOffsTable
   },
-  'Ongoing Investigations': { // Investigation
+  'Investigation Ongoing': { // Investigation
     requiredPermission: 'view:complaints-ongoing-investigation' as const,
     status: 'ONGOING-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Ongoing Disciplinary Cases': { // Investigation
+  'Investigation Ongoing Disciplinary': { // Investigation
     requiredPermission: 'view:complaints-ongoing-disciplinary' as const,
     status: 'ONGOING-DISCIPLINARY',
     component: InvestigationsTable
   },
-  'Completed Investigations': { // Investigation
+  'Investigation Completed': { // Investigation
     requiredPermission: 'view:complaints-investigation-complete' as const,
     status: 'INVESTIGATION-COMPLETE',
     component: InvestigationsTable
   },
-  'Recommended for EX-Investigations': { // Investigation
+  'Investigation External-Review Recommended': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-external-investigation' as const,
     status: 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Recommended for Disciplinary': { // Investigation
+  'Investigation Disciplinary Recommended': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-disciplinary' as const,
     status: 'RECOMMEND-FOR-DISCIPLINARY',
     component: InvestigationsTable
   },
-  'Recommended for Closure': { // Investigation
+  'Investigation Closure Recommended': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-closure' as const,
     status: 'RECOMMEND-FOR-CLOSURE',
     component: InvestigationsTable
   },
-  'Recommended for RE-Investigation': { // Investigation
+  'Investigation RE-Investigation Recommended': { // Investigation
     requiredPermission: 'view:complaints-recommend-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: InvestigationsTable
   },
-  'External Investigations': { // Investigation
+  'Investigation External-Review': { // Investigation
     requiredPermission: 'view:complaints-external-investigation' as const,
     status: 'EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Closed Cases': { // Investigation
+  'Investigation Closed Cases': { // Investigation
     requiredPermission: 'view:complaints-closed' as const,
     status: 'CASE-CLOSED',
     component: InvestigationsTable
   },
-  'CPD Cases Pending-Screening': { // CPD
+  'CPD Pending Screening': { // CPD
     requiredPermission: 'view:cpd-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: CPDTable
   },
-  'CPD Cases Pending-Verification': { // CPD
+  'CPD Pending Verification': { // CPD
     requiredPermission: 'view:cpd-pending-verification' as const,
     status: 'PENDING-VERIFICATION',
     component: CPDTable
   },
-  'CPDs Cases Recommeded for Approval': { // CPD
+  'CPD Recommeded for Approval': { // CPD
     requiredPermission: 'view:cpd-recommed-for-approval' as const,
     status: 'RECOMMEND-FOR-APPROVAL',
     component: CPDTable
   },
-  'Pending-Screening': { // Appeals
+  'Appeal Pending Screening': { // Appeals
     requiredPermission: 'view:appeal-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: AppealsTable
   },
-  'Pending-Assessment': { // Appeals
+  'Appeal Pending Assessment': { // Appeals
     requiredPermission: 'view:appeal-pending-assessment' as const,
     status: 'PENDING-ASSESSMENT',
     component: AppealsTable
   },
-  'Pending-Approval': { // Appeals
+  'Appeal Pending Approval': { // Appeals
     requiredPermission: 'view:appeal-pending-approval' as const,
     status: 'PENDING-APPROVAL',
     component: AppealsTable
   },
-  'Recommended-for-Approval': { // Appeals
+  'Appeal Recommended for Approval': { // Appeals
     requiredPermission: 'view:appeal-recommed-for-approval' as const,
     status: 'RECOMMEND-FOR-APPROVAL',
     component: AppealsTable
   },
-  'Recommended-for-Rejection': { // Appeals
+  'Appeal Recommended for Rejection': { // Appeals
     requiredPermission: 'view:appeal-recommed-for-rejection' as const,
     status: 'RECOMMEND-FOR-REJECTION',
     component: AppealsTable
   },
-  'Recommended-for-Investigation': { // Appeals
+  'Appeal Recommended for Investigation': { // Appeals
     requiredPermission: 'view:appeal-recommed-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: AppealsTable
   },
-  'Revocation Cases Pending-Screening': { // Revocation
+  'Revocation Pending Screening': { // Revocation
     requiredPermission: 'view:revocation-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: RevocationTable
   },
-  'Revocation Cases Pending-Assessment': { // Revocation
+  'Revocation Pending Assessment': { // Revocation
     requiredPermission: 'view:revocation-pending-assessment' as const,
     status: 'PENDING-ASSESSMENT',
     component: RevocationTable
   },
-  'Revocation Cases Pending-Approval': { // Revocation
+  'Revocation Pending Approval': { // Revocation
     requiredPermission: 'view:revocation-pending-approval' as const,
     status: 'PENDING-APPROVAL',
     component: RevocationTable
   },
-  'Revocation Cases Pending-Endorsement': { // Revocation
+  'Revocation Pending Endorsement': { // Revocation
     requiredPermission: 'view:revocation-pending-endorsement' as const,
     status: 'PENDING-ENDORSEMENT',
     component: RevocationTable
   },
 
-  'Renewal Cases Pending-Screening': { // Renewal - License officer
+  'Renewal Pending Screening': { // Renewal - License officer
     requiredPermission: 'view:renewal-pending-screening' as const,
     status: 'Pending-Screening',
     component: RenewalTable
   },
-  'Renewal Cases Pending-Assessment': { // Renewal - Snr License Officer
+  'Renewal Pending Assessment': { // Renewal - Snr License Officer
     requiredPermission: 'view:renewal-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: RenewalTable
   },
-  'Renewal Cases Recommended-For-Approval': { // Renewal - License Manager
+  'Renewal Pending Manager Approval': { // Renewal - License Manager
     requiredPermission: 'view:renewal-recommended-for-approval' as const,
     status: 'Pending-Manager-Approval',
     component: RenewalTable
   },
-  'Renewal Cases Pending-Endorsement': { // Renewal - Director
+  'Renewal Pending Endorsement': { // Renewal - Director
     requiredPermission: 'view:renewal-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: RenewalTable
   },
-  'Endorsed Renewal Cases': { // Renewal - Director
+  'Renewal Endorsement Complete': { // Renewal - Director
     requiredPermission: 'view:renewal-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: RenewalTable
   },
-  'Category Cases Pending-Screening': { // Change of category - Gezzy - REG OFFICER
+  'Category Pending Screening': { // Change of category - Gezzy - REG OFFICER
     requiredPermission: 'view:changeofcategory-pending-screening' as const,
     status: 'Pending-Screening',
     component: ChangeOfCategoryTable
   },
-  'Category Cases Pending-Assessment': { // Change of category - Gezzy - SNR REG OFFICER
+  'Category Pending Assessment': { // Change of category - Gezzy - SNR REG OFFICER
     requiredPermission: 'view:changeofcategory-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: ChangeOfCategoryTable
   },
-  'Category Cases Pending-Manager-Approval': { // Change of category - Gezzy - Manager
+  'Category Pending Manager Approval': { // Change of category - Gezzy - Manager
     requiredPermission: 'view:changeofcategory-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: ChangeOfCategoryTable
   },
-  'Category Cases Pending-Endorsement': { // Change of category - Gezzy - Director
+  'Category Pending Endorsement': { // Change of category - Gezzy - Director
     requiredPermission: 'view:changeofcategory-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: ChangeOfCategoryTable
   },
-  'Endorsed Category Cases': { // Change of category - Gezzy - Director
+  'Category Endorsement Complete': { // Change of category - Gezzy - Director
     requiredPermission: 'view:changeofcategory-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: ChangeOfCategoryTable
   },
-  'Restoration Cases Pending-Screening': { // Restoration - Gezzy - REG OFFICER
+  'Restoration Pending Screening': { // Restoration - Gezzy - REG OFFICER
     requiredPermission: 'view:restoration-pending-screening' as const,
     status: 'Pending-Screening',
     component: RestorationTable
   },
-  'Restoration Cases Pending-Assessment': { // Restoration - GEZZY - SNR REG OFFICER
+  'Restoration Pending Assessment': { // Restoration - GEZZY - SNR REG OFFICER
     requiredPermission: 'view:restoration-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: RestorationTable
   },
-  'Restoration Cases Pending-Manager-Approval': { // Restoration -GEZZY - MANAGER
+  'Restoration Pending Manager Approval': { // Restoration -GEZZY - MANAGER
     requiredPermission: 'view:restoration-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: RestorationTable
   },
-  'Restoration Cases Pending-Endorsement': { // Restoration - GEZZY - DIRECTOR
+  'Restoration Pending-Endorsement': { // Restoration - GEZZY - DIRECTOR
     requiredPermission: 'view:restoration-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: RestorationTable
   },
-  'Endorsed Restoration Cases': { // Restoration - GEZZY - DIRECTOR
+  'Restoration Endorsement Complete': { // Restoration - GEZZY - DIRECTOR
     requiredPermission: 'view:restoration-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: RestorationTable
