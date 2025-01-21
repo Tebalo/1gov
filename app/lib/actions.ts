@@ -813,7 +813,7 @@ export async function updateRevocationStatus(ID: string, status: string): Promis
   }
 }
 
-export async function updateChangeOfCategoryStatus(
+export async function updateChangeOfCategoryStatusV1(
   ID: string, 
   status: string
 ): Promise<{code: number; message: string}> {
@@ -875,6 +875,78 @@ export async function updateChangeOfCategoryStatus(
     };
   }
 }
+
+export async function updateChangeOfCategoryStatus(
+  ID: string, 
+  status: string
+ ): Promise<{code: number; message: string}> {
+  try {
+    // Prepare query parameters
+    const params = new URLSearchParams();
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
+      params.append('endorsement_status', status);
+    } else {
+      params.append('reg_status', status);
+    }
+ 
+    const response = await fetch(
+      `${deltaCategoryUrl}/category-change/${ID}?${params.toString()}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // Add auth headers as needed
+        },
+        // Trigger revalidation
+        next: {
+          tags: [`category-${ID}`]
+        }
+      }
+    );
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+ 
+    const data = await response.json();
+ 
+    // Trigger revalidation after successful update
+    // await fetch('/api/revalidate', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ tag: `category-${ID}` })
+    // });
+ 
+    return {
+      code: response.status,
+      message: data?.message || 'Success'
+    };
+ 
+  } catch (error) {
+    // Log the error with more context
+    console.error('Error updating category status:', {
+      ID,
+      status,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+ 
+    // Handle specific HTTP errors
+    if (error instanceof Error && 'status' in error) {
+      return {
+        code: (error as any).status || 500,
+        message: (error as any).message || 'Failed to update status. Please try again'
+      };
+    }
+ 
+    return {
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to update status. Please try again'
+    };
+  }
+ }
 
 export async function updateRestorationStatus(
   ID: string, 
