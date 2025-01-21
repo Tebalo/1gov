@@ -404,6 +404,7 @@ export function canUserAccessStatusFull(user: Role, status: string) {
 }
 
 export function getFlowActionUserDetails(user: Role, status: string, flow: string) {
+    
     let flowaction;
     if(flow==='investigation'){
         flowaction = getStatusConfig(status.toLowerCase());
@@ -414,12 +415,27 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
     }else if(flow==='appeals'){
         flowaction = getApealFlowAction(status.toLowerCase());
     }else if(flow==='renewal'){
+        if(status.toLowerCase()==='recommended-for-approval' || status.toLowerCase()==='recommended-for-rejection'){
+            status="pending-manager-approval"
+        }else if(status.toLowerCase()==='manager-approved' || status.toLowerCase()==='manager-rejected'){
+            status="pending-endorsement"
+        }
         flowaction = getRenewalFlowAction(status.toLowerCase());
     } else if(flow === 'revocation'){
         flowaction = getRevocationFlowAction(status.toLowerCase());
     } else if(flow == 'changeofcategory'){
+        if(status.toLowerCase()==='recommended-for-approval' || status.toLowerCase()==='recommended-for-rejection'){
+            status="pending-manager-approval"
+        }else if(status.toLowerCase()==='manager-approved' || status.toLowerCase()==='manager-rejected'){
+            status="pending-endorsement"
+        }
         flowaction = getChangeOfCategoryFlowAction(status.toLowerCase());
     } else if(flow === 'restoration'){
+        if(status.toLowerCase()==='recommended-for-approval' || status.toLowerCase()==='recommended-for-rejection'){
+            status="pending-manager-approval"
+        }else if(status.toLowerCase()==='manager-approved' || status.toLowerCase()==='manager-rejected'){
+            status="pending-endorsement"
+        }
         flowaction = getRestorationFlowAction(status.toLowerCase());
     }
     
