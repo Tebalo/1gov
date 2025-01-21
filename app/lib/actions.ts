@@ -948,7 +948,7 @@ export async function updateChangeOfCategoryStatus(
   }
  }
 
-export async function updateRestorationStatus(
+export async function updateRestorationStatusV1(
   ID: string, 
   status: string
 ): Promise<{code: number; message: string}> {
@@ -1010,7 +1010,75 @@ export async function updateRestorationStatus(
   }
 }
 
-
+export async function updateRestorationStatus(
+  ID: string, 
+  status: string
+ ): Promise<{code: number; message: string}> {
+  try {
+    // Prepare query parameters
+    const params = new URLSearchParams();
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
+      params.append('endorsement_status', status);
+    } else {
+      params.append('reg_status', status);
+    }
+ 
+    const response = await fetch(
+      `${restorationUrl}/license-restoration/${ID}?${params.toString()}`, 
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // Add auth headers as needed
+        },
+        next: {
+          tags: [`restoration-${ID}`]
+        }
+      }
+    );
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+ 
+    const data = await response.json();
+ 
+    // Trigger revalidation after successful update
+    await fetch('/api/revalidate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tag: `restoration-${ID}` })
+    });
+ 
+    return {
+      code: response.status,
+      message: data?.message || 'Success'
+    };
+ 
+  } catch (error) {
+    // Log the error with more context
+    console.error('Error updating restoration status:', {
+      ID,
+      status,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+ 
+    if (error instanceof Error && 'status' in error) {
+      return {
+        code: (error as any).status || 500,
+        message: (error as any).message || 'Failed to update status. Please try again'
+      };
+    }
+ 
+    return {
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to update status. Please try again'
+    };
+  }
+ }
 
 export async function searchComplaintByInquiry(ID: string): Promise<ComplaintSearchResponse> {
   try {
