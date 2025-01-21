@@ -48,6 +48,7 @@ interface bio_datas {
     reg_number: string | null;
     reg_status: string | null;
     endorsement_status: string;
+    support_documents: string | null;
     rejection_reason: string | null;
     service_code: string | null;
     payment_ref: string | null;
