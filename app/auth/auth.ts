@@ -373,6 +373,7 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       username: decodedToken.name,
       userid: decodedToken.preferred_username,
     }
+    console.log(access_group)
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
   } catch(error){
