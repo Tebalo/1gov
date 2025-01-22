@@ -14,7 +14,7 @@ const dummyData: InvestigationResponse = {
           "crime_location": "Gabane",
           "inquiry_number": "INQ2025-01-00006",
           "nature_of_crime": "Theft",
-          "reg_status": "INCOMING",
+          "reg_status": "ASSESSMENT",
           "case_number": "CS2025-01-00001",
           "date": "2025-01-13",
           "time": null,
@@ -98,7 +98,7 @@ export default function InvestigationContent() {
     {dummyData?.data ? (
       <InvestigationView
       data={dummyData?.data}
-      userRole="investigations_director"
+      userRole="investigations_manager"
     />
     ):(
         <>No data available</>
