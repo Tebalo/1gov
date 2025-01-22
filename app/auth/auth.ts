@@ -75,7 +75,7 @@ async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: Reque
       const decodedToken = await decryptAccessToken(session.auth);
       
       if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
-        // console.log("Token close to expiry, attempting refresh");
+        console.log("Token close to expiry, attempting refresh");
         const refreshSuccessful = await refreshToken();
         if (!refreshSuccessful) {
           throw new Error('Failed to refresh token');
@@ -99,7 +99,7 @@ async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: Reque
     if (!response.ok) {
       if (response.status === 401) {
         // Token might have expired right after refresh, try refreshing one more time
-        // console.log("Received 401, attempting one more token refresh");
+        console.log("Received 401, attempting one more token refresh");
         const refreshSuccessful = await refreshToken();
         if (refreshSuccessful) {
           // Retry the request with the new token
@@ -285,7 +285,7 @@ export async function updateSession(request: NextRequest) {
     const currentTime = Math.floor(Date.now() / 1000);
 
     const decodedToken: DecodedToken = await decryptAccessToken(parsed.auth);
-    // console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
+    console.log("Difference: ",decodedToken.exp- currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD)
     if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
       // Token is close to expiring, attempt to refresh
       const refreshSuccessful = await refreshToken();
@@ -329,7 +329,7 @@ export async function storeSessionLegacy(authResponse: AuthResponse){
     }
     const profile = await decryptAccessToken(authResponse)
     await storeAccessGroups(profile)
-    const expires = new Date(Date.now() + session.auth.expires_in * 1000);
+    const expires = new Date(Date.now() + 1800 * 1000);
     const encryptedSession = await encrypt(session)
     cookies().set("session", encryptedSession, {expires, httpOnly: true});
     redirect('/trls/home');
@@ -345,9 +345,233 @@ export async function storeSession(authResponse: AuthResponse) {
   }
   // const profile = await decryptAccessToken(authResponse)
   // await storeAccessGroups(profile)
-  const expires = new Date(Date.now() + session.auth.expires_in * 1000)
+  // const expires = new Date(Date.now() + session.auth.expires_in * 1000)
+  console.log('Date now',new Date(Date.now()))
+  const expires = new Date(Date.now() + 1800 * 1000)
+  console.log('Expires',expires)
   const encryptedSession = await encrypt(session)
-  cookies().set("session", encryptedSession, { expires, httpOnly: true })
+  // console.log(encryptedSession)
+  await cookies().set("session", encryptedSession, { expires, httpOnly: true });
+  // await new Promise(resolve =>setTimeout(resolve, 100));
+  // console.log('After storing',cookies().get("session")?.name)
+}
+
+export async function storeSession2(authResponse: AuthResponse) {
+  try {
+    const session: Session = {
+      auth: authResponse,
+      expires: new Date(Date.now() + 1800 * 1000).toString(),
+    }
+    const expires = new Date(Date.now() + 1800 * 1000)
+    const encryptedSession = await encrypt(session)
+    
+    // Set the cookie
+    cookies().set("session", encryptedSession, { 
+      expires, 
+      httpOnly: true,
+      path: '/' // Ensure cookie is available for all paths
+    });
+
+    // Verify the cookie was set
+    const storedCookie = cookies().get("session");
+    if (!storedCookie) {
+      throw new Error('Failed to store session');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error storing session:', error);
+    throw error;
+  }
+}
+
+export async function storeSession3(authResponse: AuthResponse) {
+  try {
+    // Validate input
+    if (!authResponse || !authResponse.access_token) {
+      throw new Error('Invalid auth response');
+    }
+
+    // Calculate expiration (use expires_in from response if available)
+    const expirySeconds = parseInt(authResponse.expires_in) || 1800;
+    const expires = new Date(Date.now() + expirySeconds * 1000);
+
+    const session: Session = {
+      auth: authResponse,
+      expires: expires.toISOString()
+    };
+
+    const encryptedSession = await encrypt(session);
+    
+    // Set cookie with more specific options
+    cookies().set("session", encryptedSession, {
+      expires,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    // Verify storage
+    const storedSession = cookies().get("session");
+    if (!storedSession) {
+      throw new Error('Session failed to store');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error storing session:', error);
+    throw error;
+  }
+}
+
+export async function storeSession4(authResponse: AuthResponse) {
+  try {
+    console.log('Starting session storage...');
+    
+    const session: Session = {
+      auth: authResponse,
+      expires: new Date(Date.now() + 1800 * 1000).toString(),
+    }
+    const expires = new Date(Date.now() + 1800 * 1000)
+    
+    console.log('Session object created:', {
+      hasAuth: !!session.auth,
+      expires: expires.toISOString()
+    });
+
+    const encryptedSession = await encrypt(session)
+    console.log('Session encrypted successfully');
+
+    // Set cookie with more specific options
+    cookies().set("session", encryptedSession, {
+      expires,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    // Verify storage immediately
+    const verificationCookie = cookies().get("session");
+    console.log('Session storage verification:', {
+      cookieExists: !!verificationCookie,
+      cookieName: verificationCookie?.name,
+      cookieValue: !!verificationCookie?.value
+    });
+
+    if (!verificationCookie) {
+      throw new Error('Session cookie not stored successfully');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Session storage failed:', error);
+    throw error;
+  }
+}
+
+export async function storeSession5(authResponse: AuthResponse) {
+  try {
+    const session: Session = {
+      auth: authResponse,
+      expires: new Date(Date.now() + 1800 * 1000).toString(),
+    }
+
+    const expires = new Date(Date.now() + 1800 * 1000);
+    const encryptedSession = await encrypt(session);
+
+    // Modify cookie settings
+    cookies().set("session", encryptedSession, {
+      expires,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      // Add these settings
+      priority: 'high',
+      maxAge: 1800, // 30 minutes in seconds
+    });
+
+    // Verify cookie was set
+    const storedCookie = cookies().get("session");
+    if (!storedCookie) {
+      console.error('Cookie not found immediately after setting');
+      throw new Error('Session storage failed - cookie not set');
+    }
+
+    // Double check the cookie value
+    const verifyDecrypt = await decrypt(storedCookie.value);
+    if (!verifyDecrypt) {
+      console.error('Cookie value invalid after setting');
+      throw new Error('Session storage failed - invalid cookie value');
+    }
+
+    console.log('Session storage complete with verification');
+    return true;
+
+  } catch (error) {
+    console.error('Session storage failed:', error);
+    throw error;
+  }
+}
+
+export async function storeSession7(authResponse: AuthResponse) {
+  try {
+    // 1. Validate required fields
+    if (!authResponse?.access_token || !authResponse?.expires_in) {
+      console.error('Missing required auth fields:', authResponse);
+      throw new Error('Invalid auth response structure');
+    }
+
+    // 2. Create a properly typed session object
+    const session: Session = {
+      auth: {
+        message: authResponse.message,
+        access_token: authResponse.access_token,
+        expires_in: authResponse.expires_in,
+        refresh_expires_in: authResponse.refresh_expires_in,
+        refresh_token: authResponse.refresh_token,
+        token_type: authResponse.token_type,
+        id_token: authResponse.id_token,
+        session_state: authResponse.session_state,
+        scope: authResponse.scope,
+        error: authResponse.error || null,
+        error_description: authResponse.error_description || null,
+        error_uri: authResponse.error_uri || null,
+        code: authResponse.code || null,
+        'not-before-policy': authResponse['not-before-policy']
+      },
+      expires: new Date(Date.now() + (parseInt(authResponse.expires_in) * 1000)).toISOString()
+    };
+
+    // 3. Encrypt session
+    const encryptedSession = await encrypt(session);
+
+    // 4. Set cookie with proper expiry
+    const expires = new Date(Date.now() + (parseInt(authResponse.expires_in) * 1000));
+    
+    // 5. Set cookie with specific options
+    cookies().set("session", encryptedSession, {
+      expires,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: parseInt(authResponse.expires_in)
+    });
+
+    // 6. Verify storage
+    const verificationCookie = cookies().get("session");
+    if (!verificationCookie?.value) {
+      throw new Error('Failed to verify session storage');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Session storage error:', error);
+    throw error;
+  }
 }
 
 function findFirstValidPersona(personas: string[], userRoles: string[]): string {
@@ -362,7 +586,7 @@ function findFirstValidPersona(personas: string[], userRoles: string[]): string 
 
 export async function storeAccessGroups(decodedToken: DecodedToken){
   try{
-    const expires = new Date(Date.now() + 30 * 60 * 1000);
+    const expires = new Date(Date.now() + 1800 * 1000);
     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
 
     const currentPersona = findFirstValidPersona(personas, ROLES);
@@ -373,7 +597,6 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       username: decodedToken.name,
       userid: decodedToken.preferred_username,
     }
-
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
   } catch(error){
@@ -386,7 +609,7 @@ export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
 }
 
 
-export async function getAccessGroups(): Promise<AccessGroup | null>{
+export async function getAccessGroups1(): Promise<AccessGroup | null>{
   const encryptedAccessGroup = cookies().get("access")?.value;
   if (!encryptedAccessGroup) return null;
   const decryptedPayload = await decrypt(encryptedAccessGroup);
@@ -395,6 +618,24 @@ export async function getAccessGroups(): Promise<AccessGroup | null>{
     // cookies().delete("session");
     return null;
   }
+ 
+  return decryptedPayload;
+}
+
+export async function getAccessGroups(): Promise<AccessGroup | null> {
+  // First check if session exists - no access should exist without session
+  const session = await getSession();
+  if (!session) return null;
+
+  const encryptedAccessGroup = cookies().get("access")?.value;
+  if (!encryptedAccessGroup) return null;
+  
+  const decryptedPayload = await decrypt(encryptedAccessGroup);
+  if (decryptedPayload === null) {
+    cookies().delete("access");
+    return null;
+  }
+ 
   return decryptedPayload;
 }
 
@@ -441,10 +682,11 @@ export async function logout() {
 }
 
 export async function getSession(): Promise<Session | null> {
-  const encryptedSession = cookies().get("session")?.value;
-  
+  const encryptedSession = await cookies().get("session")?.value;
+  console.log('encrypted session',encryptedSession)
   if (!encryptedSession) return null;
   const decryptedPayload = await decrypt(encryptedSession);
+
   if (decryptedPayload === null) {
     // cookies().delete("session");
     // cookies().delete("access");

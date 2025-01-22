@@ -4,7 +4,7 @@
 import { revalidateTag } from "next/cache";
 import { apiUrl, appealUrl, cpdUrl, deltaCategoryUrl, invUrl, licUrl, renewalUrl, restorationUrl, revocationUrl } from "./store";
 import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse, InvestigationReportPayload } from './types';
-import { decryptAccessToken, getSession, refreshToken } from '../auth/auth';
+import { decryptAccessToken, getAccessGroups, getSession, refreshToken } from '../auth/auth';
 import { options } from './schema';
 import { RevocationListResponse } from "../components/Home/components/revocation/types/revocation";
 import { RevocationResponse } from "../(portal)/trls/work/revocation/types/revocation-type";
@@ -91,7 +91,9 @@ async function fetchWithAuth(
   axiosInstance.interceptors.request.use(async (config) => {
     try {
       let session = await getSession();
+      let groups = await getAccessGroups();
 
+      console.log('Auth from Fetch with Auth',session)
       if (!session?.auth?.access_token) {
         throw new Error('No valid session or access token');
       }
@@ -704,7 +706,8 @@ export async function updateRenewalStatus(ID: string, status: string): Promise<{
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Bearer': ''
       },
       cache:'no-cache'
     });
@@ -948,7 +951,7 @@ export async function updateChangeOfCategoryStatus(
   }
  }
 
-export async function updateRestorationStatusV1(
+export async function updateRestorationStatus(
   ID: string, 
   status: string
 ): Promise<{code: number; message: string}> {
@@ -1010,7 +1013,7 @@ export async function updateRestorationStatusV1(
   }
 }
 
-export async function updateRestorationStatus(
+export async function updateRestorationStatusV1(
   ID: string, 
   status: string
  ): Promise<{code: number; message: string}> {
