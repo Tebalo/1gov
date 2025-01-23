@@ -346,9 +346,9 @@ export async function storeSession(authResponse: AuthResponse) {
   // const profile = await decryptAccessToken(authResponse)
   // await storeAccessGroups(profile)
   // const expires = new Date(Date.now() + session.auth.expires_in * 1000)
-  console.log('Date now',new Date(Date.now()))
+  // console.log('Date now',new Date(Date.now()))
   const expires = new Date(Date.now() + 1800 * 1000)
-  console.log('Expires',expires)
+  // console.log('Expires',expires)
   const encryptedSession = await encrypt(session)
   // console.log(encryptedSession)
   await cookies().set("session", encryptedSession, { expires, httpOnly: true });
