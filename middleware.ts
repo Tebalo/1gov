@@ -6,17 +6,17 @@ export async function middleware(request: NextRequest) {
   const session = await getSession();
   const access = await getAccessGroups();
 
-  console.log('Access: ',access)
+  console.log('Session: ',session)
 
   // Define protected routes
   const protectedRoutes = ['/trls', '/trls/home', '/trls/work', '/trls/dashboard'];
   const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route));
 
   // Define public routes that should always be accessible
-  const publicRoutes = ['/welcome', '/login', '/register', '/development','/development/accesscontrol','/development/components',,'/development/viewers'];
+  const publicRoutes = ['/welcome', '/login', '/register', '/development','/development/accesscontrol','/development/components','/development/viewers'];
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
-
-  if (!access) {
+  // !session ||
+  if ( !access) {
     if (isProtectedRoute) {
       // Redirect to welcome page if there's no session and trying to access a protected route
       return NextResponse.redirect(new URL('/welcome', request.url));

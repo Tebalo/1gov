@@ -87,8 +87,6 @@ export interface DecodedToken {
 
 export interface Session {
   auth: AuthResponse;
-  user?: DecodedToken;
-  expires?: string;
 }
 
 export interface AccessGroup {

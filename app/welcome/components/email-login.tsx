@@ -23,7 +23,7 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 
-import { storeSession, storeAccessGroups } from "@/app/auth/auth"
+import { storeSession, storeAccessGroups, getAccessGroups } from "@/app/auth/auth"
 import { AlertCircle, CheckCircle2, Clock, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
@@ -133,8 +133,9 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
   
         try {
           const profile = await attemptDeTokenize();
-          await storeAccessGroups(profile);
-  
+          const prod = await storeAccessGroups(profile);
+          console.log('Saved roles',prod)
+          console.log('Get session',getAccessGroups())
           setAuthState({
             isStoringSession: false,
             isDecryptingSession: false,
