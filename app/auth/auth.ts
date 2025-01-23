@@ -362,6 +362,7 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       username: decodedToken.name,
       userid: decodedToken.preferred_username,
     }
+
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
   } catch(error){
@@ -370,13 +371,19 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
 }
 
 export async function storeSession(authResponse: AuthResponse) {
-  const session: Session = {
-    auth: authResponse
+  try{
+    const expires = new Date(Date.now() + 30 * 60 * 1000);
+
+    const session: Session = {
+      auth: authResponse
+    }
+    
+    const encryptedSession = await encrypt(session);
+    await cookies().set("session", encryptedSession, { expires, httpOnly: true })
+  } catch(error){
+    throw error;
   }
 
-  const expires = new Date(Date.now() + 1800 * 1000)
-  const encryptedSession = await encrypt(session)
-  cookies().set("session", encryptedSession, { expires, httpOnly: true })
 }
 
 export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
@@ -391,6 +398,17 @@ export async function getAccessGroups(): Promise<AccessGroup | null>{
   if (decryptedPayload === null) {
     // cookies().delete("access");
     // cookies().delete("session");
+    return null;
+  }
+  return decryptedPayload;
+}
+
+export async function getSession(): Promise<Session | null> {
+  const encryptedSession = cookies().get("session")?.value;
+  
+  if (!encryptedSession) return null;
+  const decryptedPayload = await decrypt(encryptedSession);
+  if (decryptedPayload === null) {
     return null;
   }
   return decryptedPayload;
@@ -436,19 +454,6 @@ export async function logout() {
   cookies().set("access", "", { expires: new Date(0) });
   revalidatePath('/trls/home');
   redirect('/welcome');
-}
-
-export async function getSession(): Promise<Session | null> {
-  const encryptedSession = cookies().get("session")?.value;
-  
-  if (!encryptedSession) return null;
-  const decryptedPayload = await decrypt(encryptedSession);
-  if (decryptedPayload === null) {
-    // cookies().delete("session");
-    // cookies().delete("access");
-    return null;
-  }
-  return decryptedPayload;
 }
 
 // Main functions

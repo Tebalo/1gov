@@ -1,6 +1,6 @@
 import { getRole } from "@/app/auth/auth";
 import InvestigationView from "@/app/components/record/ComplaintViewer";
-import { getComplaintsById, getInvRecordById } from "@/app/lib/actions";
+import {  getInvRecordById } from "@/app/lib/actions";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 import { Role } from "@/app/lib/store";

@@ -23,7 +23,7 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 
-import { storeSession, storeAccessGroups, getAccessGroups } from "@/app/auth/auth"
+import { storeSession, storeAccessGroups, getAccessGroups, getSession } from "@/app/auth/auth"
 import { AlertCircle, CheckCircle2, Clock, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
@@ -99,9 +99,10 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
           isRedirecting: false
         });
   
-        const authResponse = validateResponse.data as AuthResponse;
+        const authResponse = await validateResponse.data as AuthResponse;
+
         await storeSession(authResponse);
-  
+
         setAuthState({
           isStoringSession: false,
           isDecryptingSession: true,
@@ -133,9 +134,8 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
   
         try {
           const profile = await attemptDeTokenize();
-          const prod = await storeAccessGroups(profile);
-          console.log('Saved roles',prod)
-          console.log('Get session',getAccessGroups())
+          await storeAccessGroups(profile);
+
           setAuthState({
             isStoringSession: false,
             isDecryptingSession: false,
@@ -336,7 +336,11 @@ export const Email: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema)
+        resolver: zodResolver(FormSchema),
+        defaultValues:{
+          email: '',
+          password: ''
+        }
     })
 
     const MAX_RETRIES = 3;

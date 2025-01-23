@@ -41,9 +41,9 @@ export interface AuthResponse {
   id_token: string | null;
   session_state: string;
   scope: string;
-  error: string | null;
-  error_description: string | null;
-  error_uri: string | null;
+  error?: string | null;
+  error_description?: string | null;
+  error_uri?: string | null;
   code: number | null;
   'not-before-policy'?: string;
 }
