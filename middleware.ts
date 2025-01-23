@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const session = await getSession();
   const access = await getAccessGroups();
 
-  console.log(access)
+  console.log('Access: ',access)
 
   // Define protected routes
   const protectedRoutes = ['/trls', '/trls/home', '/trls/work', '/trls/dashboard'];

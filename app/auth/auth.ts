@@ -683,7 +683,7 @@ export async function logout() {
 
 export async function getSession(): Promise<Session | null> {
   const encryptedSession = await cookies().get("session")?.value;
-  console.log('encrypted session',encryptedSession)
+  // console.log('encrypted session',encryptedSession)
   if (!encryptedSession) return null;
   const decryptedPayload = await decrypt(encryptedSession);
 
