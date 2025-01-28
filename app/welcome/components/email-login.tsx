@@ -57,7 +57,32 @@ const LoadingState = ({ message }: { message: string }) => (
 interface InputOTPControlledProps {
     username: string;
     password: string;
+}
+
+// Store auth data
+export const storeAuthData = (authData: AuthResponse): void => {
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('authData', JSON.stringify(authData));
+    }
+  } catch (error) {
+    console.error('Error storing auth data:', error);
   }
+};
+
+// Get auth data
+export const getAuthData = (): AuthResponse | null => {
+  try {
+    if (typeof window !== 'undefined') {
+      const data = localStorage.getItem('authData');
+      return data ? JSON.parse(data) as AuthResponse : null;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error retrieving auth data:', error);
+    return null;
+  }
+};
   
 const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, password }) => {
     const [value, setValue] = useState("");
@@ -102,6 +127,7 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
         const authResponse = await validateResponse.data as AuthResponse;
 
         await storeSession(authResponse);
+        await storeAuthData(authResponse);
 
         setAuthState({
           isStoringSession: false,

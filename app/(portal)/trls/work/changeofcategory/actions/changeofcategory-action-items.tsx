@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
 import ActivityModal from '@/app/components/record/ActivityModal'
+import { getAuthData } from '@/app/welcome/components/email-login'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -91,7 +92,9 @@ const CategoryActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRol
   const handleStatusUpdate = async (status: string) => {
     setIsSubmitting(true);
     try {
-      const result = await updateChangeOfCategoryStatus(recordId, status);
+      const authData = getAuthData();
+      const bearerToken = authData?.access_token;
+      const result = await updateChangeOfCategoryStatus(recordId, status, bearerToken);
       if (result.code === 200 || result.code === 201) {
         closeDialog();
         toast({
