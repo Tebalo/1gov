@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
 import ActivityModal from '../ActivityModal'
+import { getAuthData } from '@/app/welcome/components/email-login'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -52,6 +53,7 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
     investigation_details: '',
     investigation_outcome: ''
   });
+  // const [bearer, setBearer] = useState('');
   
   const router = useRouter();
   const { toast } = useToast();
@@ -91,7 +93,9 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
   const handleStatusUpdate = async (status: string) => {
     setIsSubmitting(true);
     try {
-      const result = await updateRenewalStatus(recordId, status);
+      const authData = getAuthData();
+      const bearerToken = authData?.access_token;
+      const result = await updateRenewalStatus(recordId, status, bearerToken);
       if (result.code === 200 || result.code === 201) {
         closeDialog();
         toast({

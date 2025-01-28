@@ -80,7 +80,7 @@ async function fetchWithAuth(
     if (retryCount < maxRetries) {
       retryCount++;
       const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 10000);
-      console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
+    
       await new Promise(resolve => setTimeout(resolve, backoffDelay));
       return attemptRequest();
     }
@@ -93,7 +93,6 @@ async function fetchWithAuth(
       let session = await getSession();
       let groups = await getAccessGroups();
 
-      console.log('Auth from Fetch with Auth',session)
       if (!session?.auth?.access_token) {
         throw new Error('No valid session or access token');
       }
@@ -212,7 +211,6 @@ async function fetchWithAuth2(url: string, options: RequestInit = {}, timeoutMs:
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
     controller.abort();
-    console.log(`Request aborted due to timeout after ${timeoutMs}ms`);
   }, timeoutMs);
 
   try {0
@@ -691,7 +689,7 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
   }
 }
 
-export async function updateRenewalStatus(ID: string, status: string): Promise<{code: number; message: string}> {
+export async function updateRenewalStatus(ID: string, status: string, bearer?:string): Promise<{code: number; message: string}> {
   try {
     let param_key='reg_status';
     if(status == "Endorsement-Complete" || status == "Endorsement-Recommendation"){
@@ -703,7 +701,7 @@ export async function updateRenewalStatus(ID: string, status: string): Promise<{
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Bearer': ''
+        'Authorization': `Bearer ${bearer}`
       },
       cache:'no-cache'
     });
@@ -877,7 +875,8 @@ export async function updateChangeOfCategoryStatusV1(
 
 export async function updateChangeOfCategoryStatus(
   ID: string, 
-  status: string
+  status: string,
+  bearer?: string
  ): Promise<{code: number; message: string}> {
   try {
     // Prepare query parameters
@@ -895,7 +894,7 @@ export async function updateChangeOfCategoryStatus(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          // Add auth headers as needed
+          'Authorization': `Bearer ${bearer}`
         },
         // Trigger revalidation
         next: {
@@ -945,7 +944,7 @@ export async function updateChangeOfCategoryStatus(
       message: error instanceof Error ? error.message : 'Failed to update status. Please try again'
     };
   }
- }
+}
 
 export async function updateRestorationStatusV1(
   ID: string, 
@@ -1011,7 +1010,8 @@ export async function updateRestorationStatusV1(
 
 export async function updateRestorationStatus(
   ID: string, 
-  status: string
+  status: string,
+  bearer?: string
  ): Promise<{code: number; message: string}> {
   try {
     // Prepare query parameters
@@ -1029,7 +1029,7 @@ export async function updateRestorationStatus(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          // Add auth headers as needed
+          'Authorization': `Bearer ${bearer}`
         },
         next: {
           tags: [`restoration-${ID}`]
@@ -1189,8 +1189,6 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
 }
 
 export async function createReport(payload: ReportPayload, ID: string): Promise<ReportResponse> {
-  console.log(ID)
-  console.log(payload)
   try {
     const response = await fetch(
       `${invUrl}/update-preliminary-investigations/${ID}`,
@@ -1379,7 +1377,6 @@ export async function createActivityV1(payload: ActivityPayload): Promise<Activi
 
 export async function createActivity(payload: ActivityPayload): Promise<ActivityResponse> {
   try {
-    console.log(payload)
     const response = await fetch(
       `${invUrl}/activity-diaries`,
       {
@@ -1417,7 +1414,7 @@ export async function createActivity(payload: ActivityPayload): Promise<Activity
       message: error instanceof Error ? error.message : 'Failed to create activity'
     };
   }
- }
+}
 
 export async function getActivityByNumber(ID: string): Promise<ActivityObject> {
   try {
@@ -1430,7 +1427,6 @@ export async function getActivityByNumber(ID: string): Promise<ActivityObject> {
 
     });
 
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
 
     if (!response.ok) {
@@ -1503,7 +1499,6 @@ export async function getTipOffById(ID: string): Promise<TipOffResponse> {
 
     });
 
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
 
     if (!response.ok) {
@@ -1555,7 +1550,6 @@ export async function getTipOffs(status: string, count: number): Promise<TipOffL
 
     });
 
-    //console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
     if (!response.ok) {
       let errorMessage: string;
@@ -1822,7 +1816,6 @@ export async function getRenewals(status: string, count: number): Promise<Renewa
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);
@@ -1876,7 +1869,6 @@ export async function getChangeOfCategories(status: string, count: number): Prom
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);
@@ -1912,7 +1904,6 @@ export async function getCPDByNumber(ID: string): Promise<CPDResponseGet> {
     cache:'no-cache'
     });
 
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
 
     if (!response.ok) {
@@ -1963,7 +1954,6 @@ export async function getAppealByNumber(ID: string): Promise<appeal> {
       cache:'no-cache'
     });
 
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
 
     if (!response.ok) {
@@ -2066,7 +2056,6 @@ export async function getUserActivities(userid: string, count: number): Promise<
 
     });
 
-    //console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
     if (!response.ok) {
       let errorMessage: string;
@@ -2189,7 +2178,7 @@ export async function getInvRecordsv1(status: string, count: string) {
         count: count
       }
     });
-    // console.log(response.data)
+
     // Axios automatically parses JSON and throws on non-2xx status codes
     return response.data || [];
   } catch (error) {
@@ -2221,7 +2210,7 @@ export async function getInvRecords(status: string, count: string) {
     if (!res.ok) return [];
     
     const data = await res.json();
-    // console.log(data);
+
     return data || [];
  
   } catch (error) {
@@ -2257,7 +2246,6 @@ export async function getInvestigationsList(status: string, count: number): Prom
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        // console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);
