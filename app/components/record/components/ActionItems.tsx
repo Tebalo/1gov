@@ -509,7 +509,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
                 () => setActiveDialog('report'),
                 'amber'
               )}
-              <Separator/>
+              {/* <Separator/>
               {renderActionButton(
                 PlusCircle,
                 'Add Investigation Report',
@@ -522,7 +522,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
                 'Edit',
                 () => window.open(`/trls/work/investigation/edit/${recordId}`, '_self'),
                 'red'
-              )}
+              )} */}
             </div>
           </div>
         </DialogContent>

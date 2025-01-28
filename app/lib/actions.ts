@@ -1189,6 +1189,8 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
 }
 
 export async function createReport(payload: ReportPayload, ID: string): Promise<ReportResponse> {
+  console.log(ID)
+  console.log(payload)
   try {
     const response = await fetch(
       `${invUrl}/update-preliminary-investigations/${ID}`,
@@ -1198,6 +1200,7 @@ export async function createReport(payload: ReportPayload, ID: string): Promise<
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
+        cache: "no-store",
         body: JSON.stringify(payload)
       }
     );
@@ -1376,6 +1379,7 @@ export async function createActivityV1(payload: ActivityPayload): Promise<Activi
 
 export async function createActivity(payload: ActivityPayload): Promise<ActivityResponse> {
   try {
+    console.log(payload)
     const response = await fetch(
       `${invUrl}/activity-diaries`,
       {
@@ -2185,7 +2189,7 @@ export async function getInvRecordsv1(status: string, count: string) {
         count: count
       }
     });
-    console.log(response.data)
+    // console.log(response.data)
     // Axios automatically parses JSON and throws on non-2xx status codes
     return response.data || [];
   } catch (error) {
@@ -2217,7 +2221,7 @@ export async function getInvRecords(status: string, count: string) {
     if (!res.ok) return [];
     
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data || [];
  
   } catch (error) {
@@ -2253,7 +2257,7 @@ export async function getInvestigationsList(status: string, count: number): Prom
     if (responseText) {
       try {
         result = JSON.parse(responseText);
-        console.log(result)
+        // console.log(result)
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         throw new Error(`Invalid JSON response: ${responseText}`);
@@ -2505,14 +2509,8 @@ export async function getInvRecordById(Id: string) {
     const response = await fetch(`${invUrl}/complaints/${Id}`, {
       method: 'GET',
       headers: {
-        'Cache-Control': 'no-store',
-        // Add any auth headers if needed
       },
-      // Next.js 13+ fetch options
-      cache: 'no-store',
-      next: {
-        revalidate: 60 // Optional: revalidate every minute
-      }
+      cache: 'no-cache',
     });
 
     if (!response.ok) {

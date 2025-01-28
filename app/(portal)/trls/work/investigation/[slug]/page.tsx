@@ -10,7 +10,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const id = params.slug;
   let inv;
   let error = null;
-  console.log('Inquiry number',id)
+
   if(!id){
     <p>Invalid inquiry number</p>
   }
@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     inv = await getInvRecordById(id) as InvestigationResponse ;
     const rawRole = await getRole() ?? 'default'; // type assertion
     const userRole = rawRole.toLowerCase() as Lowercase<Role>;
-    console.log('response',inv)
+
     return (
       <main className="h-full">
         <div className="flex flex-row h-full gap-0">

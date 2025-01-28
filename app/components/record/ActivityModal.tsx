@@ -25,7 +25,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
     role: '',
     activities: '',
     action_taken: '',
-    record_type: '',
+    record_type: 'investigation',
     anonymous: 'false',
     submission_type: 'Walk-In',
     userid: '',

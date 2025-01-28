@@ -7,7 +7,7 @@ import {
 import dynamic from 'next/dynamic'
 import ActionButtons from './components/ActionItems';
 import { Investigation } from '@/app/lib/types';
-import InfoCardTwo from '../InfoCardTwoColumn';
+
 
 const InfoCard = dynamic(() => import('../InfoCard'), { ssr: false })
 const InfoItem = dynamic(() => import('../InfoItem'), { ssr: false })
@@ -38,7 +38,6 @@ interface InvestigationViewProps {
 }
 
   const InvestigationView: React.FC<InvestigationViewProps> = ({ data, userRole }) => {
-    console.log('ui data',data?.complaint?.nature_of_crime)
     const renderSection = (content: React.ReactNode) => (
       <div className="mb-8">
         {content}
