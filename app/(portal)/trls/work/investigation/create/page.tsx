@@ -514,7 +514,7 @@ export default function CreateCasePage() {
                 type="text"
                 id="offender.nationality"
                 name="offender.nationality"
-                value={caseDetails?.reporter.nationality}
+                value={caseDetails?.offender.nationality}
                 onChange={handleInputChange}
               />
             </div>
