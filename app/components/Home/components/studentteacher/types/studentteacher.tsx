@@ -1,6 +1,7 @@
 export interface studentteacher {
     national_id: string | null,
     reg_number: string | null,
+    reg_status: string | null,
     endorsement_status: string | null,
     rejection_reason: string | null,
     service_code: string | null,

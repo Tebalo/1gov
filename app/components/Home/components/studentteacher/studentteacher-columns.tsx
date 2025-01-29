@@ -65,21 +65,21 @@ export const StudentTeacherColumns: ColumnDef<StudentTeacher>[] = [
     enableSorting: true,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "reg_status",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Status" />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <div className="w-[150px]">
-  //       <Badge variant={"secondary"}>
-  //         {row.getValue("reg_status")}
-  //       </Badge>
-  //     </div>
-  //   ),
-  //   enableSorting: true,
-  //   enableHiding: false,
-  // },
+  {
+    accessorKey: "reg_status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[150px]">
+        <Badge variant={"secondary"}>
+          {row.getValue("reg_status")}
+        </Badge>
+      </div>
+    ),
+    enableSorting: true,
+    enableHiding: false,
+  },
   {
     accessorKey: "endorsement_status",
     header: ({ column }) => (
