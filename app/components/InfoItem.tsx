@@ -61,6 +61,7 @@ const InfoItem: React.FC<InfoItemProps> = ({
     "Picture",
     "attachments",
     "",
+    "Attachment Letter",
     "National ID Copy",
     "Qualification Documents",
     "Proof of Payment",

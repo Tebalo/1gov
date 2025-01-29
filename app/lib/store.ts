@@ -8,6 +8,7 @@ export const renewalUrl = 'http://10.0.25.164:8090/trls-90';
 export const revocationUrl = 'http://10.0.25.164:8097/trls-97';
 export const restorationUrl = 'http://10.0.25.164:8094/trls-94';
 export const deltaCategoryUrl = 'http://10.0.25.164:7071/trls-71';
+export const studentTeacherUrl = 'http://10.0.25.164:7072/trls-72';
 
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
 
@@ -19,7 +20,7 @@ export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://
 export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/v2/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.42.99';
+export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.43.99';
 
 export interface StatusTransition {
     [key: string]: {
@@ -336,6 +337,34 @@ const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration: Gez
     },
 } as const;
 
+const STUDENTTEACHER_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
+    'pending-screening': {
+        requiredPermission: 'update:registration-pending-screening',
+        nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
+        message: 'This action will...',
+        status_label: 'Pass screening',
+        allowedRoles: ['registration_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:registration-pending-assessment',
+        nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
+        status_label: 'Pass assessment',
+        allowedRoles: ['snr_registration_officer']
+    },
+    'pending-manager-approval': {
+        requiredPermission: 'update:registration-pending-manager-approval',
+        nextStatus: ['Manager-Approved','Manager-Rejected'],
+        status_label: 'Recommend for endorsement',
+        allowedRoles: ['manager']
+    },
+    'pending-endorsement': {
+        requiredPermission: 'update:registration-pending-endorsement',
+        nextStatus: ['Endorsement-Complete'],
+        status_label: 'Endorse',
+        allowedRoles: ['director']
+    },
+} as const;
+
 const RESTORATION_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
     'pending-screening': {
         requiredPermission: 'update:restoration-pending-screening',
@@ -392,6 +421,10 @@ export function getChangeOfCategoryFlowAction(status: string): FlowAction | unde
     return CHANGEOFCATEGORY_FLOW[status];
 }
 
+export function getStudentTeacherFlowAction(status: string): FlowAction | undefined {
+    return STUDENTTEACHER_FLOW[status];
+}
+
 export function canUserAccessStatusFull(user: Role, status: string) {
     const config = getStatusConfig(status.toLowerCase());
     if (!config) return false;
@@ -437,7 +470,16 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
             status="pending-endorsement"
         }
         flowaction = getRestorationFlowAction(status.toLowerCase());
+    } else if(flow === 'student'){
+        if(status.toLowerCase()==='recommended-for-approval' || status.toLowerCase()==='recommended-for-rejection'){
+            status="pending-manager-approval"
+        }else if(status.toLowerCase()==='manager-approved' || status.toLowerCase()==='manager-rejected'){
+            status="pending-endorsement"
+        }
+        flowaction = getStudentTeacherFlowAction(status.toLowerCase());
     }
+
+    
     
     if (!flowaction) return false;
     return {
@@ -656,7 +698,11 @@ export const ROLES = {
 
         // Restoration
         "view:restoration-pending-screening",
-        "update:restoration-pending-screening"
+        "update:restoration-pending-screening",
+
+        // Registration
+        'view:registration-pending-screening',
+        'update:registration-pending-screening'
     ],
     snr_registration_officer:[
         // Recocation
@@ -670,6 +716,10 @@ export const ROLES = {
         // Restoration
         "view:restoration-pending-assessment",
         "update:restoration-pending-assessment",
+
+        // Registration
+        'view:registration-pending-assessment',
+        'update:registration-pending-assessment'
     ],
     manager: [
         // Recocation
@@ -683,7 +733,10 @@ export const ROLES = {
         // Restoration
         "view:restoration-pending-manager-approval",
         "update:restoration-pending-manager-approval",
- 
+        
+        // Registration
+        'view:registration-pending-manager-approval',
+        'update:registration-pending-manager-approval'
     ],
     director: [
         // Revocation
@@ -703,7 +756,12 @@ export const ROLES = {
         // Renewal
         "view:renewal-pending-endorsement",
         "view:renewal-endorsement-complete",
-        "update:renewal-pending-endorsement"
+        "update:renewal-pending-endorsement",
+
+        // Registration
+        'view:registration-pending-endorsement',
+        'view:registration-endorsement-complete',
+        'update:registration-pending-endorsement',
     ],
 } as const
 
