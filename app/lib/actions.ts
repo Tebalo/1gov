@@ -2,7 +2,7 @@
 
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
-import { apiUrl, appealUrl, cpdUrl, deltaCategoryUrl, invUrl, licUrl, renewalUrl, restorationUrl, revocationUrl } from "./store";
+import { apiUrl, appealUrl, cpdUrl, deltaCategoryUrl, invUrl, licUrl, renewalUrl, restorationUrl, revocationUrl, studentTeacherUrl } from "./store";
 import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse, InvestigationReportPayload } from './types';
 import { decryptAccessToken, getAccessGroups, getSession, refreshToken } from '../auth/auth';
 import { options } from './schema';
@@ -55,6 +55,8 @@ import { ChangeOfCategoryResponse } from "../(portal)/trls/work/changeofcategory
 import { RestorationResponse } from "../(portal)/trls/work/restoration/types/restoration-type";
 import { endorsement_status } from "../components/Home/data/data";
 import { InvestigationResponseList } from "../components/Home/components/investigations-table";
+import { StudentTeacherListResponse } from "../components/Home/components/studentteacher/types/studentteacher";
+import { StudentTeacherResponse } from "../(portal)/trls/work/student-teacher/types/student-type";
 //import { DecodedToken } from '@/types'; // Adjust import path as needed
 
 const TOKEN_REFRESH_THRESHOLD = 300; // 5 minutes in seconds
@@ -917,6 +919,70 @@ export async function updateChangeOfCategoryStatus(
     //   },
     //   body: JSON.stringify({ tag: `category-${ID}` })
     // });
+ 
+    return {
+      code: response.status,
+      message: data?.message || 'Success'
+    };
+ 
+  } catch (error) {
+    // Log the error with more context
+    console.error('Error updating category status:', {
+      ID,
+      status,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+ 
+    // Handle specific HTTP errors
+    if (error instanceof Error && 'status' in error) {
+      return {
+        code: (error as any).status || 500,
+        message: (error as any).message || 'Failed to update status. Please try again'
+      };
+    }
+ 
+    return {
+      code: 500,
+      message: error instanceof Error ? error.message : 'Failed to update status. Please try again'
+    };
+  }
+}
+
+export async function updateStudentTeacherStatus(
+  ID: string, 
+  status: string,
+  bearer?: string
+ ): Promise<{code: number; message: string}> {
+  try {
+    // Prepare query parameters
+    const params = new URLSearchParams();
+    if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
+      params.append('endorsement_status', status);
+    } else {
+      params.append('reg_status', status);
+    }
+ 
+    const response = await fetch(
+      `${studentTeacherUrl}/student-teacher/${ID}?${params.toString()}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${bearer}`
+        },
+        // Trigger revalidation
+        next: {
+          tags: [`student-${ID}`]
+        }
+      }
+    );
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+ 
+    const data = await response.json();
  
     return {
       code: response.status,
@@ -1846,6 +1912,59 @@ export async function getChangeOfCategories(status: string, count: number): Prom
       param_key='endorsement_status';
     }
     const response = await fetch(`${deltaCategoryUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    cache:'no-cache'
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: "success",
+      data: result
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getStudentTeacherList(status: string, count: number): Promise<StudentTeacherListResponse> {
+
+  try {
+    let param_key='reg_status';
+    if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
+      param_key='endorsement_status';
+    }
+    const response = await fetch(`${studentTeacherUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -2886,6 +3005,69 @@ export async function getChangeOfCategoryById(Id: string): Promise<ChangeOfCateg
       employment_details: result?.employment_details,
       attachments: result?.attachments,
       categories: result?.categories
+    };
+
+  } catch (error) {
+    console.error('Error fetching record by ID:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch record. Please try again'
+    };
+  }
+}
+
+export async function getStudentTeacherById(Id: string): Promise<StudentTeacherResponse> {
+
+  try {
+    const response = await fetch(`${studentTeacherUrl}/student-teacher/${Id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any auth headers if needed
+      },
+      cache: 'no-store', // Equivalent to 'no-cache'
+      // next: {
+      //   tags: ['category-change'], // Optional: for revalidation
+      // }
+    });
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: 'success',
+      teacher_registrations: result?.teacher_registrations,
+      student_study_programmes: result?.student_study_programmes,
+      student_preliminary_infos: result?.student_preliminary_infos,
+      bio_datas: result?.bio_datas,
+      background_checks: result?.background_checks,
+      declarations: result?.declarations,
+      offence_convictions: result?.offence_convictions,
+      attachments: result?.attachments,
     };
 
   } catch (error) {
