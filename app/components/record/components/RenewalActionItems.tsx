@@ -96,14 +96,7 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
       const authData = getAuthData();
       const bearerToken = authData?.access_token;
       const result = await updateRenewalStatus(recordId, status, bearerToken);
-      if (result.code === 200 || result.code === 201) {
-        closeDialog();
-        toast({
-          title: "Success",
-          description: `Status updated to: ${status}`
-        });
-        router.push('/trls/work')
-      } else if(result.code === 500 || result.code === 201){
+      if (result.code === 200 || result.code === 201 || result.code === 500) {
         closeDialog();
         toast({
           title: "Success",
