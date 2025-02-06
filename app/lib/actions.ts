@@ -2596,7 +2596,7 @@ export async function getNextLicense(status: string) {
   }
 }
 
-export async function getRegById(Id: string) {
+export async function getRegByIdV2(Id: string) {
   revalidateTag('work');
   try {
     const res = await fetchWithAuth4(`${apiUrl}/teacher_registrations/${Id}`, { next: { tags: ['work'] } });
@@ -2605,6 +2605,28 @@ export async function getRegById(Id: string) {
       throw new Error('Failed to fetch data');
     }
     return res.json();
+  } catch (error) {
+    console.error('Error fetching registration by ID:', error);
+    return null;
+  }
+}
+
+export async function getRegById(Id: string) {
+  try {
+    const response = await fetch(`${apiUrl}/teacher_registrations/${Id}`, {
+      method: 'GET',
+      headers: {},
+      cache: 'no-cache'
+    });
+
+    if (!response.ok) {
+      if (response.status === 200) return null;
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data || null;
+    
   } catch (error) {
     console.error('Error fetching registration by ID:', error);
     return null;
