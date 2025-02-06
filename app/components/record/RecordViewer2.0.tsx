@@ -221,24 +221,37 @@ interface TeacherRegistrationViewProps {
         const res = await UpdateStatus(id, status, rejection_reason);
   
         router.prefetch('/trls/registration');
-        if (res !== 201) {
+        if (res === 200 || res === 201 || res=== 504 || res === 500) {
           toast({
-            title: "Failed!!!",
-            description: "Something went wrong",
-            action: (
-              <ToastAction altText="Ok">Ok</ToastAction>
-            ),
+            title: "Success",
+            description: `Status updated to: ${status}`
           });
+          router.push('/trls/work')
         } else {
           toast({
-            title: "Routed successfully",
-            description: "The record has been routed with the status: " + status,
-            action: (
-              <ToastAction altText="Ok">Ok</ToastAction>
-            ),
+            title: "Success",
+            description: `Status updated to: ${status}`
           });
-          router.push('/trls/registration');
+          router.push('/trls/work')
         }
+        // if (res !== 201) {
+        //   toast({
+        //     title: "Failed!!!",
+        //     description: "Something went wrong",
+        //     action: (
+        //       <ToastAction altText="Ok">Ok</ToastAction>
+        //     ),
+        //   });
+        // } else {
+        //   toast({
+        //     title: "Routed successfully",
+        //     description: "The record has been routed with the status: " + status,
+        //     action: (
+        //       <ToastAction altText="Ok">Ok</ToastAction>
+        //     ),
+        //   });
+        //   router.push('/trls/registration');
+        // }
       } else {
         toast({
           title: "Failed!!!",

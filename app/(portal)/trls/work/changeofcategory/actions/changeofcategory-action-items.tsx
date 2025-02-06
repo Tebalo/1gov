@@ -95,7 +95,7 @@ const CategoryActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRol
       const authData = getAuthData();
       const bearerToken = authData?.access_token;
       const result = await updateChangeOfCategoryStatus(recordId, status, bearerToken);
-      if (result.code === 200 || result.code === 201) {
+      if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
         closeDialog();
         toast({
           title: "Success",

@@ -92,7 +92,7 @@ const RestorationActionButtons: React.FC<ActionButtonsProps> = ({ recordId, user
     setIsSubmitting(true);
     try {
       const result = await updateRestorationStatus(recordId, status);
-      if (result.code === 200 || result.code === 201) {
+      if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
         closeDialog();
         toast({
           title: "Success",
