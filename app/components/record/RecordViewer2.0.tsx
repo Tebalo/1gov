@@ -385,8 +385,20 @@ interface TeacherRegistrationViewProps {
         <InfoItem label="Mobile" value={data?.bio_datas?.mobile ?? ''} />
       </InfoCard>
     );
+
+    const getLicenseStatus = () => {
+        const isManagerApproved = data?.teacher_registrations?.reg_status === 'Manager-Approved';
+        const isEndorsementComplete = data.teacher_registrations?.endorsement_status === 'Endorsement-Complete'
+        const hasPayment = data.teacher_registrations?.payment_amount != null;
+
+        return isManagerApproved && isEndorsementComplete && hasPayment ? 'Valid' : 'Invalid';
+    }
+
+    const isEndorsementComplete = () => {
+      return data.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
+    }
   
-    const renderCaseDetails = () => (
+    const renderCaseDetails = () => ( 
       <InfoCard title='Case Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
         <InfoItem label="Registration Type" value={data?.teacher_registrations?.registration_type ?? ''} />
         <InfoItem label="Application ID" value={data?.teacher_registrations?.application_id ?? ''} />
@@ -399,6 +411,7 @@ interface TeacherRegistrationViewProps {
         <InfoItem label='SLA' value={data?.teacher_registrations?.created_at} isSLA/>
         <InfoItem label="Institution Verification" value={data?.teacher_registrations?.institution_verification ?? ''} />
         <InfoItem label="Course Verification" value={data?.teacher_registrations?.course_verification ?? ''} />
+        {isEndorsementComplete() && <InfoItem label='License Status' value={getLicenseStatus()} isLicenseStatus/>}
       </InfoCard>
     );
   

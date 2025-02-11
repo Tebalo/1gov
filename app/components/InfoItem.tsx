@@ -12,6 +12,7 @@ interface InfoItemProps {
   label: string;
   value: string | null | undefined;
   isAnonymous?: boolean; 
+  isLicenseStatus?: boolean;
   isPersonalInfo?: boolean; 
   isSLA?: boolean;
   isDate?: boolean;
@@ -47,7 +48,8 @@ const InfoItem: React.FC<InfoItemProps> = ({
   label, 
   value, 
   isAnonymous = false, 
-  isPersonalInfo = false, 
+  isPersonalInfo = false,
+  isLicenseStatus = false, 
   isSLA = false,
   isDate=false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -165,7 +167,16 @@ function getRelativeTime(updateTime: string) {
     }
 
     return { badgeColor, displayText };
-}
+  }
+
+  function getLicenseStatus(reg_status: string){
+    let badgeColor = "bg-green-100 text-green-800";
+
+    if(reg_status == 'Invalid'){
+      badgeColor = "bg-red-100 text-red-800";
+    }
+    return {badgeColor};
+  }
 
   return (
     <div>
@@ -213,6 +224,12 @@ function getRelativeTime(updateTime: string) {
         </div>
       ): isDate ? (
         <p>{value ? new Date(value).toLocaleDateString(): ''}</p>
+      ): isLicenseStatus ? (
+        <div>{value && 
+          <Badge className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 hover:bg-slate-300`}>
+              {value || 'N/A'}
+          </Badge>}
+        </div>
       ):(
         <p className="font-medium mt-1">{value || 'N/A'}</p>
       )}
