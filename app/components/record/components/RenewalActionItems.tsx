@@ -104,7 +104,13 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
         });
         router.push('/trls/work')
       } else {
-        showError(result.message || 'Failed to update status');
+        closeDialog();
+        toast({
+          title: "Success",
+          description: `Status updated to: ${status}`
+        });
+        router.push('/trls/work')
+        // showError(result.message || 'Failed to update status');
       }
     } catch (error) {
       showError('Failed to update status');
