@@ -25,6 +25,7 @@ import { Info, FileCheck, FileText, File, Briefcase, School, AlertTriangle, User
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '../InfoCard';
 import InfoItem from '../InfoItem';
+import { getAuthData } from '@/app/welcome/components/email-login';
 
 
 interface TeacherRegistration {
@@ -215,10 +216,12 @@ interface TeacherRegistrationViewProps {
     const router = useRouter();
   
     const { prev_status, next_status, rej_status, bar_status, inv_status, recommend, endorse, approve_label, reject_label, recommend_label, endorse_label } = getNextStatus(userRole);
-  
+
     const handleStatusChange = async (id: string, status: string, rejection_reason: string) => {
+      const authData = getAuthData();
+      const bearerToken = authData?.access_token;
       if (status) {
-        const res = await UpdateStatus(id, status, rejection_reason);
+        const res = await UpdateStatus(id, status, rejection_reason, bearerToken || '');
   
         router.prefetch('/trls/registration');
         if (res === 200 || res === 201 || res=== 504 || res === 500) {
@@ -284,9 +287,10 @@ interface TeacherRegistrationViewProps {
             return;
           }
 
-          
+        const authData = getAuthData();
+        const bearerToken = authData?.access_token;
         if(data?.teacher_registrations?.national_id && record.items){
-            const res = await ReturnToCustomer(data.teacher_registrations.national_id, record.status, record.items);
+            const res = await ReturnToCustomer(data.teacher_registrations.national_id, record.status, record.items, bearerToken || '');
 
             if(res == 200 || res == 201){ // (200 || 201) test this next time, backend keeps changing the codes
               toast({
@@ -314,7 +318,9 @@ interface TeacherRegistrationViewProps {
               return;
             }
           }
-          const res = await UpdateStatus(data.teacher_registrations.national_id, record.status, record?.rejection_reason || '');
+          const authData = getAuthData();
+          const bearerToken = authData?.access_token;
+          const res = await UpdateStatus(data.teacher_registrations.national_id, record.status, record?.rejection_reason || '', bearerToken || '');
       
           if(res == 201 || res == 200){
             toast({
@@ -335,7 +341,9 @@ interface TeacherRegistrationViewProps {
 
     const handleEndorsementStatusUpdate = async (id: string, status: string) => {
       if (status) {
-        const res = await UpdateEndorsementStatus(id, status);
+        const authData = getAuthData();
+        const bearerToken = authData?.access_token;
+        const res = await UpdateEndorsementStatus(id, status, bearerToken || '');
         
         router.prefetch('/trls/work');
         if (res !== 201) {

@@ -693,6 +693,7 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
 
 export async function updateRenewalStatus(ID: string, status: string, bearer?:string): Promise<{code: number; message: string}> {
   try {
+    // console.log('Bearer:', bearer);
     let param_key='reg_status';
     if(status == "Endorsement-Complete" || status == "Endorsement-Recommendation"){
       param_key='endorsement_status';
@@ -3243,14 +3244,15 @@ export async function UpdateStatusV1(id: string, status: string, rejection_reaso
   return res.status;
 }
 
-export async function UpdateStatus(id: string, status: string, rejection_reason: string) {
+export async function UpdateStatus(id: string, status: string, rejection_reason: string, bearer?: string) {
   const res = await fetch(
     `${apiUrl}/teacher_registrations/${id}?reg_status=${status}&rejection_reason=${rejection_reason}`,
     {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearer}`
+      },
     }
   );
   return res.status;
@@ -3269,13 +3271,14 @@ export async function ReturnToCustomerv1(id: string, status: string, items: (str
   return res.status;
 }
 
-export async function ReturnToCustomer(id: string, status: string, items: (string | undefined)[]) {
+export async function ReturnToCustomer(id: string, status: string, items: (string | undefined)[], bearer?: string) {
   const res = await fetch(
     `${apiUrl}/customer-action/${id}?reg_status=${status}`,
     {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearer}`
       },
       body: JSON.stringify({
         reg_status: status,
@@ -3374,12 +3377,15 @@ export async function UpdateEndorsementStatusv1(id: string, status: string) {
   return res.status;
 }
 
-export async function UpdateEndorsementStatus(id: string, status: string) {
+export async function UpdateEndorsementStatus(id: string, status: string, bearer?: string) {
   const res = await fetch(
     `${apiUrl}/teacher_registrations/${id}?endorsement_status=${status}`,
     {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${bearer}` 
+      }
     }
   );
   return res.status;
