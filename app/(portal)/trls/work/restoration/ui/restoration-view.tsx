@@ -37,11 +37,20 @@ const RestorationViewer: React.FC<RestorationViewerProps> = ({ data, userRole })
       <InfoItem label="Mobile" value={data.bio_datas?.mobile}/>
     </InfoCard>
   );
+  const getLicenseStatus = () => {
+    const isManagerApproved = data?.teacher_registrations?.reg_status === 'Manager-Approved';
+    const isEndorsementComplete = data.teacher_registrations?.endorsement_status === 'Endorsement-Complete'
+    const hasPayment = data.teacher_registrations?.payment_amount != null;
 
+    return isManagerApproved && isEndorsementComplete && hasPayment ? 'Valid' : 'Invalid';
+}
+
+const isEndorsementComplete = () => {
+  return data.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
+}
   const renderRegistrationInfo = () => (
     <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Registration Status" value={data.teacher_registrations?.reg_status}/>
-      <InfoItem label="License Status" value={data.teacher_registrations?.license_status}/>
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
       <InfoItem label="Payment Amount" value={data.teacher_registrations?.payment_amount}/>
       <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name}/>
@@ -51,6 +60,7 @@ const RestorationViewer: React.FC<RestorationViewerProps> = ({ data, userRole })
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
       <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
       <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
+      {isEndorsementComplete() && <InfoItem label='License Status' value={getLicenseStatus()} isLicenseStatus/>}
     </InfoCard>
   );
 
