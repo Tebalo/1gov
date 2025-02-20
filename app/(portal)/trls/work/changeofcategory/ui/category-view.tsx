@@ -28,7 +28,6 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
 
   const renderPersonalInfo = () => (
     <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Registration Number" value={data.teacher_registrations?.reg_number}/>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="National ID" value={data.bio_datas?.national_id}/>
       <InfoItem label="Date of Birth" value={data.bio_datas?.dob} isDate/>
