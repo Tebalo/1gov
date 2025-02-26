@@ -5,7 +5,7 @@ import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
 import { RegistrationStats } from "./components/RegistrationStats ";
 import TeacherStatusLineChart from "./components/line-chart";
 import TeacherRegistrationReport from "@/app/public/registrations/components/teacher-registration-report";
-// import TeacherRegistrationReport from "@/app/registrations/components/teacher-registration-report";
+
 
 export const RegistrationOfficerDashboard = () => {
     return (
