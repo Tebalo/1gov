@@ -11,30 +11,6 @@ import { Registration } from "../data/schema"
 
 export const columns: ColumnDef<Registration>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "national_id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="National ID" />
@@ -43,18 +19,28 @@ export const columns: ColumnDef<Registration>[] = [
     enableSorting: true,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "reg_number",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Registration Number" />
-  //   ),
-  //   cell: ({ row }) => <div>{row.getValue("reg_number")}</div>,
-  //   enableSorting: true,
-  // },
+  {
+    id: "full_name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Full Name" />
+    ),
+    cell: ({ row }) => {
+      const forenames = row.original.forenames || "";
+      const surname = row.original.surname || "";
+      const fullName = `${forenames} ${surname}`.trim();
+      
+      return (
+        <div className="font-medium">
+          {fullName || "N/A"}
+        </div>
+      );
+    },
+    enableSorting: true,
+  },
   {
     accessorKey: "registration_type",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Registration Type" />
+      <DataTableColumnHeader column={column} title="Type" />
     ),
     cell: ({ row }) => {
       const label = labels.find((label) => label.value === row.original.registration_type)
@@ -149,17 +135,39 @@ export const columns: ColumnDef<Registration>[] = [
   {
     accessorKey: "created_at",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created Date" />
+      <DataTableColumnHeader column={column} title="Registration Date" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.getValue("created_at"));
-      const formattedDate = date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-      return <div>{formattedDate}</div>;
+      try {
+        // Get raw date value
+        const dateValue = row.getValue("created_at");
+        if (!dateValue) return <div>-</div>;
+        
+        // Trim the date value to just the YYYY-MM-DD part
+        const trimmedDate = String(dateValue).split('T')[0];
+        
+        // Parse the trimmed date
+        const [year, month, day] = trimmedDate.split('-').map(Number);
+        
+        // JavaScript months are 0-indexed (0-11), so subtract 1 from the month
+        const date = new Date(year, month - 1, day);
+        
+        // Format the date
+        const formattedDate = date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        
+        return <div>{formattedDate}</div>;
+      } catch (error) {
+        // If any error occurs during parsing, show the original value
+        const rawValue = row.getValue("created_at");
+        return <div>{String(rawValue).split('T')[0] || "Invalid Date"}</div>;
+      }
     },
+    enableSorting: true,
+    sortingFn: "datetime",
   },
   {
     id: "license_status",
@@ -170,11 +178,43 @@ export const columns: ColumnDef<Registration>[] = [
       const isManagerApproved = row.original.reg_status === 'Manager-Approved';
       const isEndorsementComplete = row.original.endorsement_status === 'Endorsement-Complete';
       const hasPayment = row.original.payment_amount != null;
+      const licenseLink = row.original.license_link;
       
       const licenseStatus = isManagerApproved && isEndorsementComplete && hasPayment ? 'Valid' : 'Invalid';
-      
       const badgeVariant = licenseStatus === 'Valid' ? 'default' : 'destructive';
       
+      // If license is valid and has a link
+      if (licenseStatus === 'Valid' && licenseLink) {
+        return (
+          <div className="flex w-full items-center">
+            <a 
+              href={licenseLink} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center hover:underline"
+            >
+              <Badge variant={badgeVariant as any} className="inline-flex items-center space-x-1">
+                <span>{licenseStatus}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-1 h-3.5 w-3.5"
+                >
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </Badge>
+            </a>
+          </div>
+        )
+      }
+      
+      // Default case (no link or invalid license)
       return (
         <div className="flex w-full items-center">
           <Badge variant={badgeVariant as any}>

@@ -13,6 +13,9 @@ import { columns } from "./components/columns"
 export const metadata: Metadata = {
   title: "Teacher Registrations",
   description: "View and manage teacher registrations",
+  icons: {
+    icon: '/Code-of-Arms-colour.png'
+  }
 }
 
 async function getRegistrations() {
@@ -41,7 +44,6 @@ async function getRegistrations() {
 
 export default async function TeacherRegistrationsPage() {
   const registrations = await getRegistrations()
-  
   return (
     <div className="min-h-screen bg-gray-50">
       {/* App Bar */}
@@ -148,7 +150,7 @@ export default async function TeacherRegistrationsPage() {
         
         {/* Data Table */}
         <div className="rounded-lg bg-white p-6 shadow-sm">
-          <DataTable data={registrations} columns={columns} />
+          <DataTable data={registrations.data} columns={columns} />
         </div>
       </main>
       
