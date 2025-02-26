@@ -52,7 +52,7 @@ export const RegistrationOfficerDashboard = () => {
                             </div>
                         </TabsContent>
                         <TabsContent value="reports">
-                            <TeacherRegistrationReport/>
+                            {/* <TeacherRegistrationReport/> */}
                         </TabsContent>                    
                     </Tabs>
                 </div>
