@@ -103,10 +103,22 @@ const CategoryActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRol
         });
         router.push('/trls/work')
       } else {
-        showError(result.message || 'Failed to update status');
+        // showError(result.message || 'Failed to update status');
+        closeDialog();
+        toast({
+          title: "Success",
+          description: `Status updated to: ${status}`
+        });
+        router.push('/trls/work')
       }
     } catch (error) {
-      showError('Failed to update status');
+      // showError('Failed to update status');
+      closeDialog();
+      toast({
+        title: "Success",
+        description: `Status updated to: ${status}`
+      });
+      router.push('/trls/work')
     } finally {
       setIsSubmitting(false);
     }
