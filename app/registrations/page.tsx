@@ -4,13 +4,13 @@ import Link from "next/link"
 import { DataTable } from "./components/data-table"
 import { columns } from "./components/columns"
 
-export const metadata: Metadata = {
-  title: "Teacher Registrations",
-  description: "View and manage teacher registrations",
-  icons: {
-    icon: '/Code-of-Arms.png'
-  }
-}
+// export const metadata: Metadata = {
+//   title: "Teacher Registrations",
+//   description: "View and manage teacher registrations",
+//   icons: {
+//     icon: '/Code-of-Arms.png'
+//   }
+// }
 
 async function getRegistrations() {
   try {
