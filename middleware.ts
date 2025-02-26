@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route));
 
   // Define public routes that should always be accessible
-  const publicRoutes = ['/welcome', '/public', '/public/registrations', '/login', '/register', '/development','/development/accesscontrol','/development/components','/development/viewers'];
+  const publicRoutes = ['/welcome', '/registrations', '/login', '/register', '/development','/development/accesscontrol','/development/components','/development/viewers'];
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
   // !session || 
   if (!access) {

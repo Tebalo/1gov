@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 import Link from "next/link"
 
-import { DataTable } from "../components/data-table"
-import { columns } from "../components/columns"
+import { DataTable } from "./components/data-table"
+import { columns } from "./components/columns"
 
 export const metadata: Metadata = {
   title: "Teacher Registrations",
