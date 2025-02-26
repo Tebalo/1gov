@@ -14,11 +14,6 @@ export const RegistrationOfficerDashboard = () => {
                 <div className="mx-auto max-w-7xl">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <PageTitle Title="Dashboard"/>
-                        <Button className="w-full sm:w-auto">
-                            <span className="flex items-center gap-2">
-                                Download Report
-                            </span>
-                        </Button>
                     </div>
                 </div>
             </div>
