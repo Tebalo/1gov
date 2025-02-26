@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "TRLS",
   description: "Teacher registration and licensing system",
+  icons: {
+    icon: '/Code-of-Arms-colour.png'
+  }
 };
 
 export default function DashboardLayout({

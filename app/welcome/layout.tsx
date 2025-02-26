@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Welcome to Botepco e-Services Portal",
   description: "Teacher registration and licensing system for Botepco",
+  icons: {
+    icon: '/Code-of-Arms-colour.png'
+  }
 };
 
 interface WelcomeLayoutProps {

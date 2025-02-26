@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
 import { RegistrationStats } from "./components/RegistrationStats ";
 import TeacherStatusLineChart from "./components/line-chart";
+import TeacherRegistrationReport from "@/app/public/registrations/components/teacher-registration-report";
+
 
 export const RegistrationOfficerDashboard = () => {
     return (
@@ -29,6 +31,12 @@ export const RegistrationOfficerDashboard = () => {
                                 value="overview"
                                 className="text-sm font-medium transition-colors"
                             >
+                                Overview
+                            </TabsTrigger>
+                            <TabsTrigger 
+                                value="reports"
+                                className="text-sm font-medium transition-colors"
+                            >
                                 Reports
                             </TabsTrigger>
                         </TabsList>
@@ -44,6 +52,9 @@ export const RegistrationOfficerDashboard = () => {
                                 </div>
                             </div>
                         </TabsContent>
+                        <TabsContent value="reports">
+                            <TeacherRegistrationReport/>
+                        </TabsContent>                    
                     </Tabs>
                 </div>
             </div>
