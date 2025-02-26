@@ -1,21 +1,12 @@
-import { promises as fs } from "fs"
-import path from "path"
 import { Metadata } from "next"
-import Image from "next/image"
-import { z } from "zod"
 import Link from "next/link"
-import { Menu, Search, Bell, User, ChevronDown } from "lucide-react"
 
 import { DataTable } from "./components/data-table"
-import { UserNav } from "./components/user-nav"
 import { columns } from "./components/columns"
 
 export const metadata: Metadata = {
   title: "Teacher Registrations",
-  description: "View and manage teacher registrations",
-  icons: {
-    icon: '/Code-of-Arms-colour.png'
-  }
+  description: "View and manage teacher registrations"
 }
 
 async function getRegistrations() {
