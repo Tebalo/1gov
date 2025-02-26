@@ -6,7 +6,10 @@ import { columns } from "./components/columns"
 
 export const metadata: Metadata = {
   title: "Teacher Registrations",
-  description: "View and manage teacher registrations"
+  description: "View and manage teacher registrations",
+  icons: {
+    icon: '/Code-of-Arms.png'
+  }
 }
 
 async function getRegistrations() {
