@@ -53,14 +53,14 @@ export const ManagerHome = () => {
       href: "/trls/work"
     },
     {
-      title: "Registration Requests",
-      description: "New teacher registration requests",
+      title: "Registration",
+      description: "Registration requests",
       icon: <ClipboardSignature className="w-6 h-6 text-blue-500" />,
       href: "/trls/registration"
     },
     {
       title: "Reports",
-      description: "View and generate reports",
+      description: "View and generate",
       icon: <BarChart3 className="w-6 h-6 text-blue-500" />,
       href: "/trls/dashboard"
     }
