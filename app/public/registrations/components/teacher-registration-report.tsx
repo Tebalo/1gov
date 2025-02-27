@@ -84,9 +84,9 @@ const TeacherRegistrationReport = async () => {
           </p>
         </div>
         
-        <div className="mt-4 md:mt-0">
+        {/* <div className="mt-4 md:mt-0">
           <ExportButton data={result.data.data} />
-        </div>
+        </div> */}
       </div>
       <div className="rounded-lg bg-white p-6 shadow-sm">
         <DataTable data={result.data.data} columns={columns} />
