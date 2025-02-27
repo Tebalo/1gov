@@ -12,13 +12,16 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route));
 
   // Define public routes that should always be accessible
-  const publicRoutes = ['/welcome', '/public', '/public/registrations', '/login', '/register', '/development','/development/accesscontrol','/development/components','/development/viewers'];
+  const publicRoutes = ['/welcome', '/public','/admin/login', '/public/registrations', '/login', '/register', '/development','/development/accesscontrol','/development/components','/development/viewers'];
   const adminRoutes = ['/admin','/admin/roles']
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
   const isAdminRoute = adminRoutes.some(route=>request.nextUrl.pathname === route);
   
   // !session || 
   if (!access) {
+    if(isAdminRoute){
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
     if (isProtectedRoute) {
       // Redirect to welcome page if there's no session and trying to access a protected route
       return NextResponse.redirect(new URL('/welcome', request.url));
