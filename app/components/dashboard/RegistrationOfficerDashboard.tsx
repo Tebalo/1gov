@@ -1,11 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageTitle } from "../PageTitle";
-import { Button } from "@/components/ui/button";
 import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
 import { RegistrationStats } from "./components/RegistrationStats ";
 import TeacherStatusLineChart from "./components/line-chart";
 import TeacherRegistrationReport from "@/app/public/registrations/components/teacher-registration-report";
-
 
 export const RegistrationOfficerDashboard = () => {
     return (
