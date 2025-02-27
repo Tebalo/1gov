@@ -12,12 +12,12 @@ export const studentTeacherUrl = 'http://10.0.25.164:7072/trls-72';
 
 export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
 
-export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/v2/auth/login/sms';
+export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login/sms';
 export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
 export const iamURL = process.env.NEXT_PUBLIC_IAM_URL ?? 'https://gateway-cus-acc.gov.bw';
 export const otpUrl = process.env.NEXT_PUBLIC_OTP_URL ?? 'https://dev-gateway.example.com/auth/login/sms';
 export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate-token?token=';
-export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/v2/auth/validate/otp';
+export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate/otp';
 export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
 export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
 export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.50.99';
