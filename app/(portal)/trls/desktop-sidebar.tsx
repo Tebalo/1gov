@@ -169,7 +169,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
               label={item.title}
             >
               {React.cloneElement(item.icon as React.ReactElement, { 
-                color: isActivePath(item.path) ? "#FFFFFF" : undefined 
+                color: isActivePath(item.path) ? "#000000" : undefined 
               })}
             </NavItem>
           )
