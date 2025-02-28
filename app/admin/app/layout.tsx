@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Image from "next/image";
-import Appbar from "@/app/components/appbar"; 
 import { Suspense } from "react";
 import { LoadingSkeleton } from "@/app/components/LoadingSkeleton";
 import { Toaster } from "@/components/ui/toaster";
-import DesktopNav from "./desktop-sidebar";
 import { AccessGroup, Session } from "@/app/lib/types";
 import { getAccessGroups, getRole } from "@/app/auth/auth";
+import AdminNav from "./components/admin-siderbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TRLS",
+  title: "Admin",
   description: "Teacher registration and licensing system",
   icons: {
     icon: '/Code-of-Arms-colour.png'
@@ -45,7 +44,7 @@ export default async function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-100">
       {/* Desktop Navigation */}
-      {access_profile && <DesktopNav currentPersona={access_profile.current || ''} access_profile={access_profile} />}
+      {access_profile && <AdminNav currentPersona={access_profile.current || ''} access_profile={access_profile} />}
       
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden pl-16 sm:pl-16"> {/* Added padding-left to account for sidebar width */}
@@ -56,7 +55,7 @@ export default async function DashboardLayout({
           {/* Background Image Container */}
           <div className="absolute inset-0 w-full h-full ">
             <Image
-              src={'/subtle-prism1.png'}
+              src={'/admin/subtle-prism.png'}
               alt=""
               fill
               className="object-cover"
@@ -66,7 +65,7 @@ export default async function DashboardLayout({
             {/* Overlay for better readability */}
             {/* <div className="absolute inset-0 bg-sky-400/55"/> */}
           </div>
-          <div className="container mx-auto py-10 max-w-7xl bg-white/95 relative z-10">
+          <div className="container mx-auto max-w-7xl bg-white/95 relative z-10">
             <Suspense fallback={<LoadingSkeleton />}>
               {children}
             </Suspense>

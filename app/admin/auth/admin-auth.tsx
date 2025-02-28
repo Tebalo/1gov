@@ -4,9 +4,9 @@ import { SignJWT, errors, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
-import { DeTokenizeUrl, authUrl, emailauthUrl, iamURL, secretKey, validateUrl } from '../lib/store';
+import { DeTokenizeUrl, authUrl, emailauthUrl, iamURL, secretKey, validateUrl,  } from '@/app/lib/store';
 import { revalidatePath } from 'next/cache';
-import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole } from '../lib/types';
+import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Session, UserRole, } from '@/app/lib/types';
 
 // Constants
 const key = new TextEncoder().encode(secretKey);
@@ -156,7 +156,7 @@ export async function authenticate(_currentState: unknown, formData: FormData) {
     const authResponse = await login(formData);
     if (authResponse.access_token) {
       await DeTokenize(authResponse);
-      return redirect('/trls/home');
+      return redirect('/admin/app/roles');
     }
     return 'Authentication failed. Please try again.';
   } catch (error) {
@@ -219,9 +219,9 @@ export async function DeTokenize(authResponse: AuthResponse) {
       auth: authResponse
     };
     const encryptedSession = await encrypt(session);
-    cookies().set("session", encryptedSession, { expires, httpOnly: true });
+    cookies().set("admin-session", encryptedSession, { expires, httpOnly: true });
     
-    redirect('/trls/home');
+    redirect('/admin/app/roles');
   } catch (error) {
     console.error('DeTokenize error:', error);
     throw error;
@@ -247,7 +247,7 @@ export async function refreshTokenAction(refreshToken: string): Promise<boolean>
     const session: Session = { auth: newAuthResponse };
     const encryptedSession = await encrypt(session);
     
-    cookies().set("session", encryptedSession, { 
+    cookies().set("admin-session", encryptedSession, { 
       expires, 
       httpOnly: true,
       // secure: process.env.NODE_ENV === 'production',
@@ -271,14 +271,14 @@ export async function refreshToken(): Promise<boolean> {
 // const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 5 minutes in seconds
 
 export async function updateSession(request: NextRequest) {
-  const sessionCookie = request.cookies.get("session")?.value;
+  const sessionCookie = request.cookies.get("admin-session")?.value;
   if (!sessionCookie) return;
 
   try {
     const decryptPayload = await decrypt(sessionCookie);
     if(decryptPayload === null){
-      cookies().delete("session");
-      cookies().delete("access");
+      cookies().delete("admin-session");
+      cookies().delete("admin-access");
       return null;
     }
     let parsed = decryptPayload as Session; 
@@ -302,7 +302,7 @@ export async function updateSession(request: NextRequest) {
     console.error('Error updating session:', error);
     // If there's an error, clear the session cookie
     const res = NextResponse.next();
-    res.cookies.delete("session");
+    res.cookies.delete("admin-session");
     return res;
   }
 }
@@ -361,7 +361,7 @@ export async function storeSession(authResponse: AuthResponse) {
     }
     
     const encryptedSession = await encrypt(session);
-    await cookies().set("session", encryptedSession, { expires, httpOnly: true })
+    await cookies().set("admin-session", encryptedSession, { expires, httpOnly: true })
   } catch(error){
     throw error;
   }
@@ -374,19 +374,19 @@ export async function getTrlsPersonas(roles: string[]): Promise<UserRole[]> {
 
 
 export async function getAccessGroups(): Promise<AccessGroup | null>{
-  const encryptedAccessGroup = cookies().get("access")?.value;
+  const encryptedAccessGroup = cookies().get("admin-access")?.value;
   if (!encryptedAccessGroup) return null;
   const decryptedPayload = await decrypt(encryptedAccessGroup);
   if (decryptedPayload === null) {
-    // cookies().delete("access");
-    // cookies().delete("session");
+    // cookies().delete("admin-access");
+    // cookies().delete("admin-session");
     return null;
   }
   return decryptedPayload;
 }
 
 export async function getSession(): Promise<Session | null> {
-  const encryptedSession = cookies().get("session")?.value;
+  const encryptedSession = cookies().get("admin-session")?.value;
   
   if (!encryptedSession) return null;
   const decryptedPayload = await decrypt(encryptedSession);
@@ -424,7 +424,7 @@ export async function updateAccessGroup(newCurrentPersona: string): Promise<void
 
     // Update the cookie
     cookies().set('access', encryptedAccessGroup, { expires, httpOnly: true });
-    redirect('/trls/home')
+    redirect('/admin/app/roles')
   } catch (error) {
     console.error('Error updating access group:', error);
     throw error;
@@ -432,10 +432,10 @@ export async function updateAccessGroup(newCurrentPersona: string): Promise<void
 }
 
 export async function logout() {
-  cookies().set("session", "", { expires: new Date(0) });
-  cookies().set("access", "", { expires: new Date(0) });
-  revalidatePath('/trls/home');
-  redirect('/welcome');
+  cookies().set("admin-session", "", { expires: new Date(0) });
+  cookies().set("admin-access", "", { expires: new Date(0) });
+  revalidatePath('/admin/app');
+  redirect('/admin/login');
 }
 
 // Main functions
@@ -443,7 +443,7 @@ export async function getRole(): Promise<string | null> {
   const access = await getAccessGroups();
 
   if (!access) {
-    redirect('/welcome');
+    redirect('/admin/login');
     return null
   }
   return access?.current ?? null;
