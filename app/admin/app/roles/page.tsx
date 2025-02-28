@@ -43,7 +43,8 @@ const ROLE_CATEGORIES = {
     "TEACHER_DEVELOPMENT_MANAGER",
   ],
   Other: [
-    "CUSTOMER"
+    "CUSTOMER",
+    "SYSTEM_USER"
   ]
 }
 
@@ -76,8 +77,8 @@ export default function RoleAssignment() {
       if (!response.ok) throw new Error('Failed to assign roles')
       const roles = await response.json()
       // Filter out SYSTEM_USER from the roles
-      const filteredRoles = roles.filter((role: string) => role !== 'SYSTEM_USER')
-      setSelectedRoles(filteredRoles)
+      // const filteredRoles = roles.filter((role: string) => role !== 'SYSTEM_USER')
+      setSelectedRoles(roles)
       toast({
         title: "Success",
         description: "User roles pulled successfully",
