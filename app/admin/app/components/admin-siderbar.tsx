@@ -5,11 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   Settings,
-  ClipboardSignature,
-  ClipboardList,
   BarChart3,
-  Building,
-  FolderOpenDot,
   UserCheck2,
 } from 'lucide-react';
 import { NavItem } from '@/app/development/components/nav-item';

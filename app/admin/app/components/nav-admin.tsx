@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -19,10 +18,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { getSession, logout, updateAccessGroup } from "@/app/auth/auth";
 import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
 import { portalNames } from '@/app/lib/store';
+import { logout, updateAccessGroup } from '../../auth/admin-auth';
 
 interface NavUtilsProps {
   accessProfile: AccessGroup | null;

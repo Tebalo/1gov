@@ -14,7 +14,7 @@ export default function Welcome() {
       {/* Background Image Container */}
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src={'/background.png'}
+          src={'/admin/background.svg'}
           alt=""
           fill
           className="object-cover"

@@ -11,7 +11,7 @@ import AdminNav from "./components/admin-siderbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TRLS",
+  title: "Admin",
   description: "Teacher registration and licensing system",
   icons: {
     icon: '/Code-of-Arms-colour.png'
@@ -55,7 +55,7 @@ export default async function DashboardLayout({
           {/* Background Image Container */}
           <div className="absolute inset-0 w-full h-full ">
             <Image
-              src={'/subtle-prism1.png'}
+              src={'/admin/subtle-prism.png'}
               alt=""
               fill
               className="object-cover"

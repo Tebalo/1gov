@@ -6,6 +6,7 @@
 6. https://gemini.google.com/app/420dcb0d4eae6f35
 7. File to base64: https://base64.guru/converter/encode/file
 8. FileReader: https://developer.mozilla.org/en-US/docs/Web/API/FileReader/result
+9. SVGBackgrounds: https://www.svgbackgrounds.com/
 
 Libraries and Components
 1. npm i zod (https://www.npmjs.com/package/zod)
@@ -44,4 +45,3 @@ Erros and Resolutions
 1. https://github.com/shadcn-ui/ui/issues/800: My mistake was that my editor auto imported Form component from react-hook-form when it should have been imported from @/components/ui/form. Hope this helps somebody.
 2. Hydration error is a result of local storage, because the render tree between pre-render(SSR/SSG) and the first render in browser is different: https://nextjs.org/docs/messages/react-hydration-error
 3. Installation for WSL: https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-wsl
-4.

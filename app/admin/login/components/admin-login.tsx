@@ -18,11 +18,10 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 
-import { storeSession, storeAccessGroups, getAccessGroups, getSession } from "@/app/auth/auth"
 import { AlertCircle, CheckCircle2, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { cn } from "@/lib/utils"
+import { storeAccessGroups, storeSession } from "../../auth/admin-auth"
 
 // Auth endpoints
 const authUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
@@ -308,7 +307,7 @@ export const Admin: React.FC = () => {
                     <Button 
                         type="submit" 
                         disabled={isLoading}
-                        className="w-full mt-2 bg-red-500"
+                        className="w-full mt-2 bg-red-500 hover:bg-red-400"
                     >
                         {isLoading ? (
                             <span className="flex items-center gap-2">

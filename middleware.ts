@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
 
   // Define public routes that should always be accessible
   const publicRoutes = ['/welcome', '/public','/admin/login', '/public/registrations', '/login', '/register', '/development','/development/accesscontrol','/development/components','/development/viewers'];
-  const adminRoutes = ['/admin','/admin/roles']
+  const adminRoutes = ['/admin','/admin/roles', '/admin/app/roles']
   const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
   const isAdminRoute = adminRoutes.some(route=>request.nextUrl.pathname === route);
   
@@ -42,6 +42,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|assets|public|subtle-prism1.png|alternating-arrowhead.png|subtle-prism.png|pattern-randomized.png|background2.jpg|background.jpg|trsl logo.png|favicon.ico|botepco.png|Code-of-Arms-colour.png|background.png|sw.js).*)',
+    '/((?!api|_next/static|_next/image|assets|public|subtle-prism1.png|alternating-arrowhead.png|subtle-prism.png|pattern-randomized.png|/admin/subtle-prism.png|background2.jpg|background.jpg|trsl logo.png|favicon.ico|botepco.png|Code-of-Arms-colour.png|background.png|sw.js).*)',
   ],
 };
