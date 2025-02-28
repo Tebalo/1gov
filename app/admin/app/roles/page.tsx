@@ -75,7 +75,9 @@ export default function RoleAssignment() {
 
       if (!response.ok) throw new Error('Failed to assign roles')
       const roles = await response.json()
-      setSelectedRoles(roles)
+      // Filter out SYSTEM_USER from the roles
+      const filteredRoles = roles.filter((role: string) => role !== 'SYSTEM_USER')
+      setSelectedRoles(filteredRoles)
       toast({
         title: "Success",
         description: "User roles pulled successfully",
