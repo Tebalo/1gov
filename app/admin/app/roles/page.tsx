@@ -78,6 +78,7 @@ export default function RoleAssignment() {
       // Filter out SYSTEM_USER from the roles
       const filteredRoles = roles.filter((role: string) => role !== 'SYSTEM_USER')
       setSelectedRoles(filteredRoles)
+      console.log('GET',selectedRoles)
       toast({
         title: "Success",
         description: "User roles pulled successfully",
@@ -105,6 +106,7 @@ export default function RoleAssignment() {
   
     setRolesDeleting(true)
     try {
+    console.log('DELETE',selectedRoles)
     const response = await fetch(`https://gateway-cus-acc.gov.bw/roles/users?username=${username}`, {
         method: 'DELETE',
         headers: {
