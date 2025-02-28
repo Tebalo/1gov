@@ -7,6 +7,7 @@ import {
   Settings,
   BarChart3,
   UserCheck2,
+  Home,
 } from 'lucide-react';
 import { NavItem } from '@/app/development/components/nav-item';
 import { AccessGroup } from '@/app/lib/types';
@@ -31,9 +32,15 @@ const AdminNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile })
   // Define sidebar items
   const sidebarItems: SideBarItem[] = [
     { 
+      path: '/admin/app/home', 
+      icon: <Home size={24} />, 
+      title: 'Home', 
+      roles: ['ADMIN'] 
+    },
+    { 
         path: '/admin/app/roles', 
         icon: <UserCheck2 size={24} color="#FFFFFF" />, 
-        title: 'Roles', 
+        title: 'Users', 
         roles: ['ADMIN'] 
     },
     { 
