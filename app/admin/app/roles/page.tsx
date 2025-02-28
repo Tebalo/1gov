@@ -52,6 +52,7 @@ export default function RoleAssignment() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingRoles, setRolesLoading] = useState(false)
+  const [deletingRoles, setRolesDeleting] = useState(false)
 
   const getUserRoles = async () => {
     if (!username) {
@@ -100,7 +101,7 @@ export default function RoleAssignment() {
         return
       }
   
-    setLoading(true)
+    setRolesDeleting(true)
     try {
     const response = await fetch(`https://gateway-cus-acc.gov.bw/roles/users?username=${username}`, {
         method: 'DELETE',
@@ -124,7 +125,7 @@ export default function RoleAssignment() {
         variant: "destructive"
     })
     } finally {
-    setLoading(false)
+    setRolesDeleting(false)
     }
   }
 
@@ -193,6 +194,22 @@ export default function RoleAssignment() {
                 >
                     {loadingRoles ? "Processing..." : "Get User Roles"}
                 </Button>
+                <Button
+                className="mt-2 whitespace-nowrap bg-secondary text-gray-700 outline"
+                // onClick={getUserRoles} 
+                // disabled={loadingRoles || !username}
+                disabled
+                >
+                    {loadingRoles ? "Processing..." : "Get User Profile"}
+                </Button>
+                <Button
+                className="mt-2 whitespace-nowrap bg-secondary text-gray-700 outline"
+                // onClick={getUserRoles} 
+                // disabled={loadingRoles || !username}
+                disabled
+                >
+                    {loadingRoles ? "Processing..." : "Create User"}
+                </Button>
             </div>
         </div>
       {/* Flex container - Stack on mobile, side by side on desktop */}
@@ -260,9 +277,9 @@ export default function RoleAssignment() {
                 <Button 
                 className="w-full mt-4 bg-red-500 hover:bg-red-400"
                 onClick={deleteSubmit} 
-                disabled={loading || !username || selectedRoles.length === 0}
+                disabled={loading || deletingRoles || !username || selectedRoles.length === 0}
                 >
-                {loading ? "Deleting..." : "Delete Roles"}
+                {deletingRoles ? "Deleting..." : "Delete Roles"}
                 </Button>
                 <Button 
                 className="w-full mt-4"
