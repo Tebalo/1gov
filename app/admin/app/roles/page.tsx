@@ -142,7 +142,7 @@ export default function RoleAssignment() {
     setLoading(true)
     try {
       const response = await fetch(`https://gateway-cus-acc.gov.bw/roles/users?username=${username}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
