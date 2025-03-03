@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
-import React from 'react';
+import React, { Suspense } from 'react';
 import Image from "next/image";
 import Link from 'next/link';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
 
 export const metadata: Metadata = {
     title: "Registrations",
@@ -38,7 +39,9 @@ export default function RootLayout({
                         <div className="absolute inset-0 bg-sky-400/55"/>
                     </div>
                     <div className='container mx-auto max-w-7xl bg-white/95 relative z-10 mt-16 md:mt-0'>
-                        {children}
+                        <Suspense fallback={<LoadingSkeleton />}>
+                            {children}
+                        </Suspense>
                     </div>   
                 </main>
                 
