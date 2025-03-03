@@ -1,18 +1,59 @@
-import React from 'react';
+import React, { cache } from 'react';
 import { DataTable } from './data-table';
 import { columns } from './columns';
 import { ExportButton } from './teacher-registration-export';
 import { AlertCircle } from 'lucide-react';
+import { metadata } from '@/app/layout';
+import RefreshButton from './refresh-button';
+
+// async function getRegistrations() {
+//   try {
+//     const response = await fetch('http://10.0.25.164:8080/trls-80/teacher_registrations/', {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       next: {
+//         revalidate: 36 // Revalidate every hour (in seconds)
+//       }
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+    
+//     // Validate that data has the expected structure
+//     if (!data || !data.data || !Array.isArray(data.data)) {
+//       throw new Error('Invalid data structure received from API');
+//     }
+    
+//     return { success: true, data };
+//   } catch (error) {
+//     console.error('Error fetching registrations:', error);
+//     return { 
+//       success: false, 
+//       error: error instanceof Error ? error.message : 'Failed to connect..'
+//     };
+//   }
+// }
 
 async function getRegistrations() {
+  // Create a unique tag for this data
+  const fetchTag = 'teacher-registrations';
+  
   try {
+    const startTime = Date.now();
+    
     const response = await fetch('http://10.0.25.164:8080/trls-80/teacher_registrations/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
       next: {
-        revalidate: 36 // Revalidate every hour (in seconds)
+        revalidate: 7200, // Revalidate every hour (in seconds)
+        tags: [fetchTag], // Add a tag to enable manual revalidation
       }
     });
 
@@ -27,21 +68,38 @@ async function getRegistrations() {
       throw new Error('Invalid data structure received from API');
     }
     
-    return { success: true, data };
+    // Construct metadata
+    const metadata = {
+      fetchedAt: new Date().toISOString(),
+      lastModified: response.headers.get('last-modified') || new Date().toISOString(),
+      nextUpdate: new Date(Date.now() + 3600 * 1000).toISOString(), // Next revalidation time
+      responseTime: `${Date.now() - startTime}ms`,
+      cacheTag: fetchTag
+    };
+    
+    return { 
+      success: true, 
+      data,
+      metadata
+    };
   } catch (error) {
     console.error('Error fetching registrations:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Failed to connect..'
+      error: error instanceof Error ? error.message : 'Failed to connect..',
+      metadata: {
+        fetchedAt: new Date().toISOString(),
+        error: true
+      }
     };
   }
 }
 
 const TeacherRegistrationReport = async () => {
-  const result = await getRegistrations();
+  const {success, data, metadata, error} = await getRegistrations();
   
   // If data fetching failed, show error state
-  if (!result.success) {
+  if (!success) {
     return (
       <div className="teacher-registration-report">
         <div className="mb-6">
@@ -63,7 +121,7 @@ const TeacherRegistrationReport = async () => {
               Failed to connect to the data component. Please try again later or contact support if the issue persists.
             </p>
             <p className="text-sm text-gray-400">
-              Error details: {result.error}
+              Error details: {error}
             </p>
           </div>
         </div>
@@ -73,23 +131,67 @@ const TeacherRegistrationReport = async () => {
   
   // If successful, show the data table
   return (
-    <div className="teacher-registration-report">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-            Teacher Certification Registry
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 md:text-base">
-            Search for and verify teacher certification status in our public database
-          </p>
+    <div className="teacher-registration-report space-y-6">
+      {/* Header Section with improved design */}
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+            {/* Left side - Title and description */}
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold tracking-tight text-gray-800 md:text-3xl">
+                Teacher Certification Registry
+              </h1>
+              <p className="mt-2 text-sm text-gray-600 md:text-base">
+                Search for and verify teacher certification status in our public database
+              </p>
+            </div>
+            
+            {/* Right side - Refresh button and metadata */}
+            <div className="flex flex-col space-y-3 md:space-y-4 md:items-end">
+              <div className="flex items-center justify-end">
+                <RefreshButton />
+              </div>
+              
+              <div className="bg-white px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-600 shadow-sm w-full md:w-auto">
+                <div className="flex items-start gap-3 md:justify-end">
+                  <div className="mt-0.5">
+                    <svg className="h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-700">Last Updated</div>
+                    <div>{new Date(metadata.fetchedAt).toLocaleString()}</div>
+                  </div>
+                </div>
+                
+                {!('error' in metadata) && (
+                  <div className="flex items-start gap-3 mt-3 md:justify-end">
+                    <div className="mt-0.5">
+                      <svg className="h-4 w-4 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M23 12a11 11 0 1 1-22 0 11 11 0 0 1 22 0Z"></path>
+                        <path d="M8 12h8"></path>
+                        <path d="M12 8v8"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-700">Next Update</div>
+                      <div>{new Date(metadata.nextUpdate).toLocaleString()}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        
-        {/* <div className="mt-4 md:mt-0">
-          <ExportButton data={result.data.data} />
-        </div> */}
       </div>
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <DataTable data={result.data.data} columns={columns} />
+      
+      {/* Data Table Section */}
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+        <div className="p-6">
+          <DataTable data={data.data} columns={columns} />
+        </div>
       </div>
     </div>
   );
