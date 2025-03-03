@@ -42,7 +42,7 @@ import RefreshButton from './refresh-button';
 async function getRegistrations() {
   // Create a unique tag for this data
   const fetchTag = 'teacher-registrations';
-  
+  const cacheTime = 14400; // 4 hours
   try {
     const startTime = Date.now();
     
@@ -52,7 +52,7 @@ async function getRegistrations() {
         'Content-Type': 'application/json',
       },
       next: {
-        revalidate: 7200, // Revalidate every hour (in seconds)
+        revalidate: cacheTime, // Revalidate every hour (in seconds)
         tags: [fetchTag], // Add a tag to enable manual revalidation
       }
     });
@@ -72,7 +72,7 @@ async function getRegistrations() {
     const metadata = {
       fetchedAt: new Date().toISOString(),
       lastModified: response.headers.get('last-modified') || new Date().toISOString(),
-      nextUpdate: new Date(Date.now() + 3600 * 1000).toISOString(), // Next revalidation time
+      nextUpdate: new Date(Date.now() + cacheTime * 1000).toISOString(), // Next revalidation time
       responseTime: `${Date.now() - startTime}ms`,
       cacheTag: fetchTag
     };
@@ -120,9 +120,12 @@ const TeacherRegistrationReport = async () => {
             <p className="text-gray-500 max-w-md mb-6">
               Failed to connect to the data component. Please try again later or contact support if the issue persists.
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 mb-6">
               Error details: {error}
             </p>
+            <div className="flex items-center justify-end">
+                <RefreshButton />
+            </div>
           </div>
         </div>
       </div>
