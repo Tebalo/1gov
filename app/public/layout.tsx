@@ -23,7 +23,7 @@ export default function RootLayout({
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </head>
             <body>
-                <main className='container mx-auto px-4 py-8 md:px-6'>
+                <main className='container mx-auto md:py-8 md:px-6'>
                     {/* Background Image Container */}
                     <div className="absolute inset-0 w-full h-full">
                         <Image

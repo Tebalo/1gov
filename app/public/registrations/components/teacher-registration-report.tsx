@@ -134,7 +134,7 @@ const TeacherRegistrationReport = async () => {
     <div className="teacher-registration-report space-y-6">
       {/* Header Section with improved design */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 md:px-6 py-4 border-b border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
             {/* Left side - Title and description */}
             <div className="flex-1">
@@ -152,7 +152,7 @@ const TeacherRegistrationReport = async () => {
                 <RefreshButton />
               </div>
               
-              <div className="bg-white px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-600 shadow-sm w-full md:w-auto">
+              <div className="bg-white md:px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-600 shadow-sm w-full md:w-auto">
                 <div className="flex items-start gap-3 md:justify-end">
                   <div className="mt-0.5">
                     <svg className="h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -189,7 +189,7 @@ const TeacherRegistrationReport = async () => {
       
       {/* Data Table Section */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-        <div className="p-6">
+        <div className="md:p-6">
           <DataTable data={data.data} columns={columns} />
         </div>
       </div>
