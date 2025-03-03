@@ -72,7 +72,7 @@ const NavAdmin: React.FC<NavUtilsProps> = ({ accessProfile }) => {
         <PopoverTrigger asChild>
           <Button variant="ghost" className="h-14 w-14 p-0 flex flex-col items-center justify-center gap-1">
             <Avatar className="h-6 w-6">
-              <AvatarImage src="/avatars/01.png" alt="Avatar" />
+              <AvatarImage src="/avatars/010.png" alt="Avatar" />
               <AvatarFallback>{accessProfile?.username[0]}</AvatarFallback>
             </Avatar>
             <span className="text-[10px] text-center font-medium text-muted-foreground">Profile</span>
@@ -95,7 +95,7 @@ const NavAdmin: React.FC<NavUtilsProps> = ({ accessProfile }) => {
                 <span>Profile</span>
               </Link>
               
-              <Popover open={isPortalOpen} onOpenChange={setIsPortalOpen}>
+              {/* <Popover open={isPortalOpen} onOpenChange={setIsPortalOpen}>
                 <PopoverTrigger asChild>
                   <div className="flex items-center justify-between gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent cursor-pointer">
                     <div className="flex items-center gap-2">
@@ -123,7 +123,7 @@ const NavAdmin: React.FC<NavUtilsProps> = ({ accessProfile }) => {
                     ))}
                   </div>
                 </PopoverContent>
-              </Popover>
+              </Popover> */}
               
               <div 
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent cursor-pointer" 
