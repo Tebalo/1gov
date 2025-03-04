@@ -42,7 +42,7 @@ const ROLE_CATEGORIES = {
     "SENIOR_DEVELOPMENT_OFFICER",
     "TEACHER_DEVELOPMENT_MANAGER",
   ],
-  Other: [
+  ONEGOV: [
     "CUSTOMER",
     "SYSTEM_USER"
   ]
@@ -153,7 +153,8 @@ export default function RoleAssignment() {
       })
 
       if (!response.ok) throw new Error('Failed to assign roles')
-
+      setSelectedRoles([])
+      setUsername('')
       toast({
         title: "Success",
         description: "Roles assigned successfully",
