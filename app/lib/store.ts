@@ -622,7 +622,12 @@ export const ROLES = {
         "view:changeofcategory-pending-assessment",
         "view:changeofcategory-pending-approval",
         "view:changeofcategory-pending-endorsement",
-        
+
+        // Endorsement - Complete
+        "view:changeofcategory-endorsement-complete",
+        "view:renewal-endorsement-complete",
+        'view:registration-endorsement-complete',
+        "view:restoration-endorsement-complete"
     ],
     investigations_officer: [
         "create:complaints",
