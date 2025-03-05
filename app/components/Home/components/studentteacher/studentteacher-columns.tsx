@@ -48,15 +48,6 @@ export const StudentTeacherColumns: ColumnDef<StudentTeacher>[] = [
     },
   },
   {
-    accessorKey: "reg_number",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Registration Number" />
-    ),
-    cell: ({ row }) => <div className="w-[120px]">{row.getValue("reg_number")}</div>,
-    enableSorting: true,
-    enableHiding: false,
-  },
-  {
     accessorKey: "registration_type",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Registration Type" />

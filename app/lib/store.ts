@@ -3,8 +3,8 @@ import { InvestigationStatuses } from "./types";
 /**
  * TRLS Base URL
  */
-const trlsBaseUrl = 'http://10.0.25.164:8080' // Development UAT
-const trlsBaseUrlPROD = 'http://10.0.26.164:8080' // Production
+const trlsBaseUrl = 'http://10.0.25.164' // Development UAT
+const trlsBaseUrlPROD = 'http://10.0.26.164' // Production
 
 /**
  * IAM Base URL
@@ -41,11 +41,17 @@ export const emailauthUrl = `${iamBaseUrl}/auth/login`;
 export const version = 'v2.50.99';
 
 /**
+ * ADMIN IAM URLs
+ */
+export const adminAuthUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
+export const AdminDeTokenizeUrl = "https://gateway-cus-acc.gov.bw/auth/validate-token?token="
+
+/**
  * CMS URLs
  */
 export const cmsUrl = `${cmsBaseUrl}:8080/download/MESD_006_08_001/`;
 
-export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
+export const licUrl = 'http://66.179.253.57:8081/api';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';
 export const otpUrl = 'https://dev-gateway.example.com/auth/login/sms';
 
@@ -384,7 +390,7 @@ const STUDENTTEACHER_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
     'pending-manager-approval': {
         requiredPermission: 'update:registration-pending-manager-approval',
         nextStatus: ['Manager-Approved','Manager-Rejected'],
-        status_label: 'Recommend for endorsement',
+        status_label: 'Approve',
         allowedRoles: ['manager']
     },
     'pending-endorsement': {
@@ -776,21 +782,21 @@ export const ROLES = {
         // Change of category
         "update:changeofcategory-pending-endorsement",
         "view:changeofcategory-pending-endorsement",
-        "view:changeofcategory-endorsement-complete",
+        // "view:changeofcategory-endorsement-complete",
 
         // Restoration
         "view:restoration-pending-endorsement",
-        "view:restoration-endorsement-complete",
+        // "view:restoration-endorsement-complete",
         "update:restoration-pending-endorsement",
 
         // Renewal
         "view:renewal-pending-endorsement",
-        "view:renewal-endorsement-complete",
+        // "view:renewal-endorsement-complete",
         "update:renewal-pending-endorsement",
 
         // Registration
         'view:registration-pending-endorsement',
-        'view:registration-endorsement-complete',
+        // 'view:registration-endorsement-complete',
         'update:registration-pending-endorsement',
     ],
 } as const

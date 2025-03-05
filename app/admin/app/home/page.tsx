@@ -13,6 +13,7 @@ import {
   ArrowRight, 
   ShieldCheck 
 } from 'lucide-react';
+import { version } from '@/app/lib/store';
 
 export default function AdminHomePage() {
     return (
@@ -161,7 +162,7 @@ export default function AdminHomePage() {
                             </div>
                             <div className="bg-slate-50 p-3 rounded">
                                 <p className="text-muted-foreground">Version</p>
-                                <p className="text-xl font-medium mt-1">2.50.99</p>
+                                <p className="text-xl font-medium mt-1">{version}</p>
                             </div>
                         </div>
                     </CardContent>

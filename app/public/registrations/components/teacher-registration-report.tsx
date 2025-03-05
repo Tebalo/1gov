@@ -194,7 +194,7 @@ const TeacherRegistrationReport = async () => {
       {/* Data Table Section */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
         <div className='md:p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50'>
-          <ExportButton data={data.data}/>
+          {/* <ExportButton data={data.data}/> */}
         </div>
         <div className="md:p-6">
           <DataTable data={data.data} columns={columns} />

@@ -22,10 +22,11 @@ import { AlertCircle, CheckCircle2, EyeIcon, EyeOffIcon, Loader2 } from "lucide-
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { storeAccessGroups, storeSession } from "../../auth/admin-auth"
+import { adminAuthUrl, AdminDeTokenizeUrl } from "@/app/lib/store"
 
 // Auth endpoints
-const authUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
-const DeTokenizeUrl = "https://gateway-cus-acc.gov.bw/auth/validate-token?token="
+// const authUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
+// const DeTokenizeUrl = "https://gateway-cus-acc.gov.bw/auth/validate-token?token="
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
@@ -110,7 +111,7 @@ export const Admin: React.FC = () => {
     
         const attemptLogin = async (): Promise<any> => {
             try {
-                const response = await axiosInstance.post(authUrl, {
+                const response = await axiosInstance.post(adminAuthUrl, {
                     username: data.username,
                     password: data.password
                 });
@@ -166,7 +167,7 @@ export const Admin: React.FC = () => {
             // Process token
             try {
                 const deTokenizeResponse = await axiosInstance.post(
-                  `${DeTokenizeUrl}${authResponse.access_token}`
+                  `${AdminDeTokenizeUrl}${authResponse.access_token}`
                 );
                 
                 const profile = deTokenizeResponse.data as DecodedToken;

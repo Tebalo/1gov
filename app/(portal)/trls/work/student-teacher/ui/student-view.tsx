@@ -28,7 +28,6 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
 
   const renderPersonalInfo = () => (
     <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Registration Number" value={data.teacher_registrations?.reg_number}/>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="National ID" value={data.bio_datas?.national_id}/>
       <InfoItem label="Date of Birth" value={data.bio_datas?.dob} isDate/>
@@ -43,29 +42,36 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
     </InfoCard>
   );
 
+  const getLicenseStatus = () => {
+    const isManagerApproved = data?.teacher_registrations?.reg_status === 'Manager-Approved';
+    const isEndorsementComplete = data.teacher_registrations?.endorsement_status === 'Endorsement-Complete'
+    const hasPayment = data.teacher_registrations?.payment_amount != null;
+
+    return isManagerApproved && isEndorsementComplete ? 'Valid' : 'Invalid';
+}
+
+const isEndorsementComplete = () => {
+  return data.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
+}
+
   const renderRegistrationInfo = () => (
     <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Registration Status" value={data.teacher_registrations?.reg_status}/>
       <InfoItem label="Endorsement Status" value={data.teacher_registrations?.endorsement_status}/>
-      <InfoItem label="License Status" value={data.teacher_registrations?.license_status}/>
-      <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
-      <InfoItem label="Payment Amount" value={data.teacher_registrations?.payment_amount}/>
-      <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name}/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
       <InfoItem label="Created At" value={data.teacher_registrations?.created_at}/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
       <InfoItem label="Practice Category" value={data.student_preliminary_infos?.practice_category}/>
       <InfoItem label="Sub Category" value={data.student_preliminary_infos?.sub_category}/>
+      {isEndorsementComplete() && <InfoItem label='License Status' value={getLicenseStatus()} isLicenseStatus/>}
     </InfoCard>
   );
 
   const renderPreliminaryInfo = () => (
     <InfoCard title='Preliminary Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Institution Name" value={data.student_preliminary_infos?.institution_name}/>
-      <InfoItem label="Institution Type" value={data.student_preliminary_infos?.institution_type}/>
       <InfoItem label="Citizenry" value={data.student_preliminary_infos?.citizenry}/>
-      <InfoItem label="Study Area" value={data.student_preliminary_infos?.study_area}/>
     </InfoCard>
   );
 
