@@ -1,26 +1,62 @@
 import { InvestigationStatuses } from "./types";
 
-export const apiUrl = 'http://10.0.25.164:8080/trls-80';
-export const invUrl = 'http://10.0.25.164:8084/trls-84';
-export const cpdUrl = 'http://10.0.25.164:8086/trls-86';
-export const appealUrl = 'http://10.0.25.164:8087/trls-87';
-export const renewalUrl = 'http://10.0.25.164:8090/trls-90';
-export const revocationUrl = 'http://10.0.25.164:8097/trls-97';
-export const restorationUrl = 'http://10.0.25.164:8094/trls-94';
-export const deltaCategoryUrl = 'http://10.0.25.164:7071/trls-71';
-export const studentTeacherUrl = 'http://10.0.25.164:7072/trls-72';
+/**
+ * TRLS Base URL
+ */
+const trlsBaseUrl = 'http://10.0.25.164' // Development UAT
+const trlsBaseUrlPROD = 'http://10.0.26.164' // Production
 
-export const licUrl = process.env.NEXT_PUBLIC_LIC_URL ?? 'http://66.179.253.57:8081/api';
+/**
+ * IAM Base URL
+ */
+const iamBaseUrl = 'https://gateway-cus-acc.gov.bw' // Development UAT
+const iamBaseUrlPROD = 'https://gateway-cus.gov.bw' // Production
 
-export const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/v2/auth/login/sms';
-export const emailauthUrl = process.env.NEXT_PUBLIC_EMAIL_AUTH_URL ?? 'https://gateway-cus-acc.gov.bw/auth/login';
-export const iamURL = process.env.NEXT_PUBLIC_IAM_URL ?? 'https://gateway-cus-acc.gov.bw';
-export const otpUrl = process.env.NEXT_PUBLIC_OTP_URL ?? 'https://dev-gateway.example.com/auth/login/sms';
-export const DeTokenizeUrl = process.env.NEXT_PUBLIC_DETOKENIZE_URL ?? 'https://gateway-cus-acc.gov.bw/auth/validate-token?token=';
-export const validateUrl = process.env.NEXT_PUBLIC_VALIDATE_URL ?? 'https://gateway-cus-acc.gov.bw/v2/auth/validate/otp';
-export const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL ?? 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/';
-export const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY ?? 'dev_secret';
-export const version = process.env.NEXT_PUBLIC_VERSION ?? 'v2.50.99';
+/**
+ * CMS Base URL
+ */
+const cmsBaseUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/' // Development UAT
+const cmsBaseUrlPROD = 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/' // Production
+
+/**
+ * TRLS API URLs
+ */
+export const apiUrl = `${trlsBaseUrl}:8080/trls-80`;
+export const invUrl = `${trlsBaseUrl}:8084/trls-84`;
+export const cpdUrl = `${trlsBaseUrl}:8086/trls-86`;
+export const appealUrl = `${trlsBaseUrl}:8087/trls-87`;
+export const renewalUrl =  `${trlsBaseUrl}:8090/trls-90`;
+export const revocationUrl = `${trlsBaseUrl}:8097/trls-97`;
+export const restorationUrl = `${trlsBaseUrl}:8094/trls-94`;
+export const deltaCategoryUrl = `${trlsBaseUrl}:7071/trls-71`;
+export const studentTeacherUrl = `${trlsBaseUrl}:7072/trls-72`;
+
+/**
+ * IAM URLs
+ */ 
+export const DeTokenizeUrl = `${iamBaseUrl}/auth/validate-token?token=`;
+export const validateUrl = `${iamBaseUrl}/v2/auth/validate/otp`;
+export const authUrl = `${iamBaseUrl}/v2/auth/login/sms`;
+export const emailauthUrl = `${iamBaseUrl}/auth/login`;
+export const version = 'v2.50.99';
+
+/**
+ * ADMIN IAM URLs
+ */
+export const adminAuthUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
+export const AdminDeTokenizeUrl = "https://gateway-cus-acc.gov.bw/auth/validate-token?token="
+
+/**
+ * CMS URLs
+ */
+export const cmsUrl = `${cmsBaseUrl}:8080/download/MESD_006_08_001/`;
+
+export const licUrl = 'http://66.179.253.57:8081/api';
+export const iamURL = 'https://gateway-cus-acc.gov.bw';
+export const otpUrl = 'https://dev-gateway.example.com/auth/login/sms';
+
+export const secretKey = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJsLU1xN0RmZ3pmanhWYnYyMk9EdTVySkswakpLNUZxb0Raa3BFLVFraVdZIn0.eyJleHAiOjE3NDExMTQ3NjAsImlhdCI6MTc0MTExMjk2MCwianRpIjoiYThhMzYzNDctZWZlZC00OGQ4LWJkMDktNjMxNzUyZmYwNTBiIiwiaXNzIjoiaHR0cHM6Ly9pYW0tYWNjLmdvdi5idy9yZWFsbXMvY3VzdG9tZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNzFhYjY3YWItZDk3Yi00YmIzLWI0NTEtZGQ5N2ExNzNkMTgzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY3VzdG9tZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjkxZWUxNGM2LWRiMmMtNGVjYi1hNj';
+
 
 export interface StatusTransition {
     [key: string]: {
@@ -354,7 +390,7 @@ const STUDENTTEACHER_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
     'pending-manager-approval': {
         requiredPermission: 'update:registration-pending-manager-approval',
         nextStatus: ['Manager-Approved','Manager-Rejected'],
-        status_label: 'Recommend for endorsement',
+        status_label: 'Approve',
         allowedRoles: ['manager']
     },
     'pending-endorsement': {
@@ -586,7 +622,12 @@ export const ROLES = {
         "view:changeofcategory-pending-assessment",
         "view:changeofcategory-pending-approval",
         "view:changeofcategory-pending-endorsement",
-        
+
+        // Endorsement - Complete
+        "view:changeofcategory-endorsement-complete",
+        "view:renewal-endorsement-complete",
+        'view:registration-endorsement-complete',
+        "view:restoration-endorsement-complete"
     ],
     investigations_officer: [
         "create:complaints",
@@ -746,21 +787,21 @@ export const ROLES = {
         // Change of category
         "update:changeofcategory-pending-endorsement",
         "view:changeofcategory-pending-endorsement",
-        "view:changeofcategory-endorsement-complete",
+        // "view:changeofcategory-endorsement-complete",
 
         // Restoration
         "view:restoration-pending-endorsement",
-        "view:restoration-endorsement-complete",
+        // "view:restoration-endorsement-complete",
         "update:restoration-pending-endorsement",
 
         // Renewal
         "view:renewal-pending-endorsement",
-        "view:renewal-endorsement-complete",
+        // "view:renewal-endorsement-complete",
         "update:renewal-pending-endorsement",
 
         // Registration
         'view:registration-pending-endorsement',
-        'view:registration-endorsement-complete',
+        // 'view:registration-endorsement-complete',
         'update:registration-pending-endorsement',
     ],
 } as const

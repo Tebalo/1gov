@@ -62,7 +62,7 @@ const dummyData: ChangeOfCategoryResponse = {
     "teacher_registrations": {
         "national_id": "436415528",
         "reg_number": "REG2024/001",
-        "reg_status": "Pending-Screening",
+        "reg_status": "Recommended-For-Approval",
         "endorsement_status": "Pending-Endorsement",
         "rejection_reason": null,
         "service_code": "MESD_006_08_054",
@@ -206,7 +206,7 @@ export default function CategoryContent() {
     <Card className="p-4">
       <CategoryViewer 
         data={dummyData}
-        userRole="registration_officer"
+        userRole="manager"
       />
     </Card>
   );

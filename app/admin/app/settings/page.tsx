@@ -25,6 +25,8 @@ import {
   Database
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import ApiEndpointsCard from '../components/admin-urls';
+import { version } from '@/app/lib/store';
 
 export default function AdminSettings() {
     const [emailNotifications, setEmailNotifications] = useState(true);
@@ -89,7 +91,9 @@ export default function AdminSettings() {
                 </TabsList>
                 
                 <TabsContent value="general" className="space-y-6 mt-6">
-                    <Card>
+                    <ApiEndpointsCard/>
+
+                    {/* <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
@@ -151,9 +155,9 @@ export default function AdminSettings() {
                                 </div>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                     
-                    <Card>
+                    {/* <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
@@ -207,7 +211,7 @@ export default function AdminSettings() {
                                 )}
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </TabsContent>
                 
                 <TabsContent value="security" className="space-y-6 mt-6">
@@ -391,7 +395,7 @@ export default function AdminSettings() {
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
                                                 <span className="text-sm text-muted-foreground">Version</span>
-                                                <span className="text-sm font-medium">1.2.4</span>
+                                                <span className="text-sm font-medium">{version}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-sm text-muted-foreground">Last Updated</span>

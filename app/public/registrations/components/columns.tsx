@@ -187,15 +187,15 @@ export const columns: ColumnDef<Registration>[] = [
       if (licenseStatus === 'Valid' && licenseLink) {
         return (
           <div className="flex w-full items-center">
-            <a 
+            {/* <a 
               href={licenseLink} 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center hover:underline"
-            >
+            > */}
               <Badge variant={badgeVariant as any} className="inline-flex items-center space-x-1">
                 <span>{licenseStatus}</span>
-                <svg
+                {/* <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -207,9 +207,9 @@ export const columns: ColumnDef<Registration>[] = [
                 >
                   <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
                   <circle cx="12" cy="12" r="3" />
-                </svg>
+                </svg> */}
               </Badge>
-            </a>
+            {/* </a> */}
           </div>
         )
       }
