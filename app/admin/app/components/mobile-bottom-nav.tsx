@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { AccessGroup } from '@/app/lib/types';
 import { cn } from '@/lib/utils';
+import NavAdmin from './nav-admin';
 
 interface NavItemProps {
   href: string;
@@ -112,6 +113,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             </MobileNavItem>
           )
         ))}
+        {/* Bottom nav section for settings */}
+        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+            <NavAdmin accessProfile={access_profile} />
+        </nav>
       </div>
     </div>
   );

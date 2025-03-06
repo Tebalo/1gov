@@ -92,6 +92,8 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [countdown, setCountdown] = useState(0);
     const router = useRouter();
+
+    const env = process.env.environment;
   
     const [authState, setAuthState] = useState({
       isStoringSession: false,
@@ -304,7 +306,10 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
             
             <div className="text-center space-y-2">
               <p className="text-sm text-gray-600">
-              Enter first 6 digit of your cellphone number registered with 1gov
+              {env == 'production' ? 
+                (<>Enter the OTP code sent to your registered mobile number</>):
+                (<>Enter first 6 digit of your cellphone number registered with 1gov</>)
+                }
               </p>
               {countdown > 0 && (
                 <p className="text-xs text-gray-500 flex items-center justify-center gap-1">

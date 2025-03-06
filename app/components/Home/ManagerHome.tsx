@@ -76,7 +76,7 @@ export const ManagerHome = () => {
       <div className="mb-6">
         <PageTitle Title="TRLS Services Dashboard" />
       </div>
-      <LocationChangeBanner />
+      {/* <LocationChangeBanner /> */}
       {/* Search Section */}
       <div className="mb-8">
         <Card>

@@ -1,41 +1,66 @@
 "use client"
+
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
-  Home, 
   Settings,
-  LayoutDashboard,
-  Briefcase,
-  ClipboardSignature,
-  ClipboardList,
   BarChart3,
-  Building,
+  UserCheck2,
+  Home,
   FolderOpenDot,
+  Building,
+  ClipboardSignature,
+  ClipboardList
 } from 'lucide-react';
-import { NavItem } from '@/app/development/components/nav-item';
-import NavUtils from '@/app/components/NavComponents/NavUtilis';
 import { AccessGroup } from '@/app/lib/types';
+import { cn } from '@/lib/utils';
+import NavUtils from '@/app/components/NavComponents/NavUtilis';
 
-// Define the type for sidebar items
-interface SideBarItem {
-  path: string;
-  icon: React.ReactNode;
-  title: string;
-  roles: string[];
+interface NavItemProps {
+  href: string;
+  isActive?: boolean;
+  label: string;
+  children: React.ReactNode;
 }
 
-interface DesktopNavProps {
-  currentPersona: string
-  access_profile: AccessGroup
+// Mobile navigation item component
+const MobileNavItem: React.FC<NavItemProps> = ({ 
+  href, 
+  isActive = false, 
+  label, 
+  children 
+}) => {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex flex-col items-center justify-center p-2 w-full",
+        isActive 
+          ? "text-primary border-t-2 border-primary" 
+          : "text-gray-500 hover:text-gray-900"
+      )}
+    >
+      <div className="w-6 h-6">{children}</div>
+      <span className="text-xs mt-1">{label}</span>
+    </Link>
+  );
+};
+
+interface MobileBottomNavProps {
+  currentPersona: string;
+  access_profile: AccessGroup;
 }
 
-const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile }) => {
+const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ 
+  currentPersona, 
+  access_profile 
+}) => {
   const currentPath = usePathname();
-  // Define sidebar items
-  const sidebarItems: SideBarItem[] = [
-    { 
+
+  // Define navigation items
+  const navItems = [
+      { 
         path: '/trls/home', 
         icon: <Building size={24} color="#FFFFFF" />, 
         title: 'Home', 
@@ -109,48 +134,31 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <Link
-          href={'/trls/home'}
-          className="group flex h-14 w-14 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-14 md:w-14 md:text-base"
-        >
-          <div className="w-12 h-12 items-center justify-center">
-            <Image
-              src="/botepco.png"
-              alt='Coat-of-arms'
-              width={100}
-              height={100}
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-          <span className="sr-only">TRLS DEV</span>
-        </Link>
-
-        {/* Map through sidebar items */}
-        {sidebarItems.map((item, index) => (
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white z-20 shadow-lg border-t">
+      <div className="flex justify-around">
+        {navItems.map((item, index) => (
           hasAccess(item.roles) && (
-            <NavItem 
+            <MobileNavItem 
               key={index} 
               href={item.path} 
-            //   isActive={isActivePath(item.path)} 
+              isActive={isActivePath(item.path)} 
               label={item.title}
             >
               {React.cloneElement(item.icon as React.ReactElement, { 
-                color: isActivePath(item.path) ? "#000000" : undefined 
+                color: isActivePath(item.path) ? "#0284c7" : undefined,
+                size: 20
               })}
-            </NavItem>
+            </MobileNavItem>
           )
         ))}
-      </nav>
-      
-      {/* Bottom nav section for settings */}
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+        {/* Bottom nav section for settings */}
+        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
           <NavUtils accessProfile={access_profile} />
-      </nav>
-    </aside>
-  );
-}
+        </nav>
+      </div>
 
-export default DesktopNav;
+    </div>
+  );
+};
+
+export default MobileBottomNav;

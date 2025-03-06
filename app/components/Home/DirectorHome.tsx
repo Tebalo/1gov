@@ -94,7 +94,7 @@ export const DirectorHome = () => {
           </CardContent>
         </Card>
       </div>
-      <LocationChangeBanner />
+      {/* <LocationChangeBanner /> */}
       {/* Services Section */}
       <div className="space-y-6">
         <div className="flex items-center space-x-2">

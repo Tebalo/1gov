@@ -5,6 +5,7 @@ import { ExportButton } from './teacher-registration-export';
 import { AlertCircle } from 'lucide-react';
 import { metadata } from '@/app/layout';
 import RefreshButton from './refresh-button';
+import { apiUrl } from '@/app/lib/store';
 
 // async function getRegistrations() {
 //   try {
@@ -46,7 +47,7 @@ async function getRegistrations() {
   try {
     const startTime = Date.now();
     
-    const response = await fetch('http://10.0.25.164:8080/trls-80/teacher_registrations/', {
+    const response = await fetch(`${apiUrl}/teacher_registrations/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -137,7 +138,7 @@ const TeacherRegistrationReport = async () => {
     <div className="teacher-registration-report space-y-6">
       {/* Header Section with improved design */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 md:px-6 py-4 border-b border-gray-200">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 md:px-6 px-2 py-4 border-b border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
             {/* Left side - Title and description */}
             <div className="flex-1">
@@ -156,7 +157,7 @@ const TeacherRegistrationReport = async () => {
                 <RefreshButton />
               </div>
               
-              <div className="bg-white md:px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-600 shadow-sm w-full md:w-auto">
+              <div className="bg-white md:px-4 px-2 py-3 rounded-md border border-gray-200 text-sm text-gray-600 shadow-sm w-full md:w-auto">
                 <div className="flex items-start gap-3 md:justify-end">
                   <div className="mt-0.5">
                     <svg className="h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

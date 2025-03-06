@@ -11,11 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Bell, 
-  Shield, 
-  Moon, 
-  Sun, 
-  Globe, 
+  Shield,  
   Save, 
   RefreshCw, 
   Lock, 
@@ -29,14 +25,16 @@ import ApiEndpointsCard from '../components/admin-urls';
 import { version } from '@/app/lib/store';
 
 export default function AdminSettings() {
-    const [emailNotifications, setEmailNotifications] = useState(true);
-    const [smsNotifications, setSmsNotifications] = useState(false);
-    const [darkMode, setDarkMode] = useState(false);
+    // const [emailNotifications, setEmailNotifications] = useState(true);
+    // const [smsNotifications, setSmsNotifications] = useState(false);
+    // const [darkMode, setDarkMode] = useState(false);
     const [maintenanceMode, setMaintenanceMode] = useState(false);
     const [userRegistration, setUserRegistration] = useState(true);
     const [twoFactorAuth, setTwoFactorAuth] = useState(true);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-    
+    const env = process.env.environment;
+    const last_updated = process.env.last_updated;
+
     const handleSaveSettings = () => {
         // Here you would typically save the settings to your backend
         setShowSuccessMessage(true);
@@ -399,11 +397,11 @@ export default function AdminSettings() {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-sm text-muted-foreground">Last Updated</span>
-                                                <span className="text-sm font-medium">February 20, 2025</span>
+                                                <span className="text-sm font-medium">{last_updated}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-sm text-muted-foreground">Environment</span>
-                                                <span className="text-sm font-medium">Production</span>
+                                                <span className="text-sm font-medium">{env?.toUpperCase()}</span>
                                             </div>
                                         </div>
                                     </div>

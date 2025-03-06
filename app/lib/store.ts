@@ -1,5 +1,9 @@
 import { InvestigationStatuses } from "./types";
-
+/**
+ * Environment variables
+ */
+// const env = 'uat';
+const env = process.env.environment ?? 'uat';
 /**
  * TRLS Base URL
  */
@@ -7,49 +11,62 @@ const trlsBaseUrl = 'http://10.0.25.164' // Development UAT
 const trlsBaseUrlPROD = 'http://10.0.26.164' // Production
 
 /**
- * IAM Base URL
- */
-const iamBaseUrl = 'https://gateway-cus-acc.gov.bw' // Development UAT
-const iamBaseUrlPROD = 'https://gateway-cus.gov.bw' // Production
-
-/**
  * CMS Base URL
  */
 const cmsBaseUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/' // Development UAT
 const cmsBaseUrlPROD = 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/' // Production
 
+const baseURLs = {
+    uat: {
+        trls: 'http://10.0.25.164',
+        iam: 'https://gateway-cus-acc.gov.bw',
+        cms: 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/',
+        iamBaseUrl: 'https://gateway-cus-acc.gov.bw',
+        iamAuthBaseURL: 'https://gateway-cus-acc.gov.bw/v2' 
+    },
+    production: {
+        trls: 'http://10.0.26.164',
+        iam: 'https://gateway-cus.gov.bw',
+        cms: 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/',
+        iamBaseUrl: 'https://gateway-cus.gov.bw',
+        iamAuthBaseURL: 'https://gateway-cus.gov.bw'
+    }
+}
+// const currentBaseURLs = baseURLs[env as 'uat' | 'production'];
+const currentBaseURLs = baseURLs[env as 'uat' | 'production']; // uat or production only
 /**
  * TRLS API URLs
  */
-export const apiUrl = `${trlsBaseUrl}:8080/trls-80`;
-export const invUrl = `${trlsBaseUrl}:8084/trls-84`;
-export const cpdUrl = `${trlsBaseUrl}:8086/trls-86`;
-export const appealUrl = `${trlsBaseUrl}:8087/trls-87`;
-export const renewalUrl =  `${trlsBaseUrl}:8090/trls-90`;
-export const revocationUrl = `${trlsBaseUrl}:8097/trls-97`;
-export const restorationUrl = `${trlsBaseUrl}:8094/trls-94`;
-export const deltaCategoryUrl = `${trlsBaseUrl}:7071/trls-71`;
-export const studentTeacherUrl = `${trlsBaseUrl}:7072/trls-72`;
+export const apiUrl = `${currentBaseURLs.trls}:8080/trls-80`;
+export const invUrl = `${currentBaseURLs.trls}:8084/trls-84`;
+export const cpdUrl = `${currentBaseURLs.trls}:8086/trls-86`;
+export const appealUrl = `${currentBaseURLs.trls}:8087/trls-87`;
+export const renewalUrl =  `${currentBaseURLs.trls}:8090/trls-90`;
+export const revocationUrl = `${currentBaseURLs.trls}:8097/trls-97`;
+export const restorationUrl = `${currentBaseURLs.trls}:8094/trls-94`;
+export const deltaCategoryUrl = `${currentBaseURLs.trls}:7071/trls-71`;
+export const studentTeacherUrl = `${currentBaseURLs.trls}:7072/trls-72`;
 
 /**
  * IAM URLs
  */ 
-export const DeTokenizeUrl = `${iamBaseUrl}/auth/validate-token?token=`;
-export const validateUrl = `${iamBaseUrl}/v2/auth/validate/otp`;
-export const authUrl = `${iamBaseUrl}/v2/auth/login/sms`;
-export const emailauthUrl = `${iamBaseUrl}/auth/login`;
+export const DeTokenizeUrl = `${currentBaseURLs.iamBaseUrl}/auth/validate-token?token=`;
+export const validateUrl = `${currentBaseURLs.iamAuthBaseURL}/auth/validate/otp`;
+export const authUrl = `${currentBaseURLs.iamAuthBaseURL}/auth/login/sms`;
+export const emailauthUrl = `${currentBaseURLs.iamBaseUrl}/auth/login`;
+export const iamBaseUrl = currentBaseURLs.iamBaseUrl
 export const version = 'v2.50.99';
 
 /**
  * ADMIN IAM URLs
  */
-export const adminAuthUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
-export const AdminDeTokenizeUrl = "https://gateway-cus-acc.gov.bw/auth/validate-token?token="
+export const adminAuthUrl = `${currentBaseURLs.iamBaseUrl}/auth/login/sms`
+export const AdminDeTokenizeUrl = `${currentBaseURLs.iamBaseUrl}/auth/validate-token?token=`
 
 /**
  * CMS URLs
  */
-export const cmsUrl = `${cmsBaseUrl}:8080/download/MESD_006_08_001/`;
+export const cmsUrl = `${currentBaseURLs.cms}:8080/download/MESD_006_08_001/`;
 
 export const licUrl = 'http://66.179.253.57:8081/api';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';

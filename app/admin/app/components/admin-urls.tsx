@@ -7,17 +7,10 @@ import {
     CardContent 
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { 
-    Select, 
-    SelectContent, 
-    SelectItem, 
-    SelectTrigger, 
-    SelectValue 
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Globe, Server, Shield, Database } from "lucide-react";
-import { adminAuthUrl, AdminDeTokenizeUrl, apiUrl, appealUrl, cpdUrl, deltaCategoryUrl, invUrl, renewalUrl, restorationUrl, revocationUrl, studentTeacherUrl } from '@/app/lib/store';
+import { adminAuthUrl, AdminDeTokenizeUrl, apiUrl, appealUrl, authUrl, cmsUrl, cpdUrl, deltaCategoryUrl, DeTokenizeUrl, emailauthUrl, iamBaseUrl, invUrl, renewalUrl, restorationUrl, revocationUrl, studentTeacherUrl, validateUrl } from '@/app/lib/store';
 
 const ApiEndpointsCard = () => {
     const [environment, setEnvironment] = useState<"development" | "production">("development");
@@ -53,17 +46,18 @@ const ApiEndpointsCard = () => {
             { name: "Student Teacher API", url: `${studentTeacherUrl}` }
         ],
         iam: [
-            { name: "DeTokenize API", url: `${currentBaseUrls.iam}/auth/validate-token?token=` },
-            { name: "Validate OTP API", url: `${currentBaseUrls.iam}/v2/auth/validate/otp` },
-            { name: "SMS Auth API", url: `${currentBaseUrls.iam}/v2/auth/login/sms` },
-            { name: "Email Auth API", url: `${currentBaseUrls.iam}/auth/login` }
+            { name: "DeTokenize API", url: `${DeTokenizeUrl}` },
+            { name: "Validate OTP API", url: `${validateUrl}` },
+            { name: "SMS Auth API", url: `${authUrl}` },
+            { name: "Email Auth API", url: `${emailauthUrl}` }
         ],
         admin: [
+            { name: "BASE URL", url: `${iamBaseUrl}` },
             { name: "SMS Auth API", url: `${adminAuthUrl}`},
             { name: "DeTokenize API", url: `${AdminDeTokenizeUrl}` }
         ],
         cms: [
-            { name: "CMS API", url: `${currentBaseUrls.cms}` }
+            { name: "CMS API", url: `${cmsUrl}` }
         ]
     };
 
@@ -89,6 +83,7 @@ const ApiEndpointsCard = () => {
                             <Database className="h-4 w-4 text-green-500" />
                             <Switch 
                                 checked={environment === "production"}
+                                disabled
                                 onCheckedChange={(checked) => setEnvironment(checked ? "production" : "development")}
                             />
                             <Globe className="h-4 w-4 text-blue-500" />

@@ -76,7 +76,7 @@ export const RegistrationOfficerHome = () => {
       <div className="mb-6">
         <PageTitle Title="Registration Services Dashboard" />
       </div>
-      <LocationChangeBanner />
+      {/* <LocationChangeBanner /> */}
       {/* Search Section */}
       <div className="mb-8">
         <Card>
