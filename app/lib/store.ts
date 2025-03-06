@@ -3,7 +3,7 @@ import { InvestigationStatuses } from "./types";
  * Environment variables
  */
 // const env = 'uat';
-const env = process.env.environment;
+const env = process.env.environment ?? 'uat';
 /**
  * TRLS Base URL
  */
