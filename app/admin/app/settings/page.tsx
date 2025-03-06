@@ -36,7 +36,8 @@ export default function AdminSettings() {
     const [userRegistration, setUserRegistration] = useState(true);
     const [twoFactorAuth, setTwoFactorAuth] = useState(true);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-    
+    const env = process.env.NODE_ENV || 'development';
+
     const handleSaveSettings = () => {
         // Here you would typically save the settings to your backend
         setShowSuccessMessage(true);
@@ -403,7 +404,7 @@ export default function AdminSettings() {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-sm text-muted-foreground">Environment</span>
-                                                <span className="text-sm font-medium">Production</span>
+                                                <span className="text-sm font-medium">{env}</span>
                                             </div>
                                         </div>
                                     </div>

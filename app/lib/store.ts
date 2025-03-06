@@ -1,5 +1,8 @@
 import { InvestigationStatuses } from "./types";
-
+/**
+ * Environment variables
+ */
+const env = process.env.NODE_ENV || 'development';
 /**
  * TRLS Base URL
  */
