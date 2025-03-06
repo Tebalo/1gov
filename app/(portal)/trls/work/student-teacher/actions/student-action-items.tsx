@@ -108,6 +108,7 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
           title: "Success",
           description: `Status updated to: ${status}`
         });
+        router.push('/trls/work')
       }
     } catch (error) {
       // showError('Failed to update status');
@@ -115,6 +116,7 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
         title: "Success",
         description: `Status updated to: ${status}`
       });
+      router.push('/trls/work')
     } finally {
       setIsSubmitting(false);
     }
