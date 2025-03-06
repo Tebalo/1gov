@@ -1,6 +1,7 @@
 module.exports = {
     env: {
       customKey: 'my-value',
-      environment: "development",
+      environment: process.env.environment,
+      last_updated: process.env.last_updated,
     },
   }

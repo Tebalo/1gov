@@ -8,6 +8,7 @@ import { toast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Check, X } from 'lucide-react'
+import { iamBaseUrl } from '@/app/lib/store'
 
 const ROLE_CATEGORIES = {
   Registration: [
@@ -106,7 +107,7 @@ export default function RoleAssignment() {
   
     setRolesDeleting(true)
     try {
-    const response = await fetch(`https://gateway-cus-acc.gov.bw/roles/users?username=${username}`, {
+    const response = await fetch(`${iamBaseUrl}/roles/users?username=${username}`, {
         method: 'DELETE',
         headers: {
         'Content-Type': 'application/json'
@@ -144,7 +145,7 @@ export default function RoleAssignment() {
 
     setLoading(true)
     try {
-      const response = await fetch(`https://gateway-cus-acc.gov.bw/roles/users?username=${username}`, {
+      const response = await fetch(`${iamBaseUrl}/roles/users?username=${username}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -23,6 +23,7 @@ import { getSession, logout, updateAccessGroup } from "@/app/auth/auth";
 import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
 import { portalNames } from '@/app/lib/store';
+import { Badge } from '@/components/ui/badge';
 
 interface NavUtilsProps {
   accessProfile: AccessGroup | null;
@@ -36,6 +37,7 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
   const [isPortalSwitchDialogOpen, setIsPortalSwitchDialogOpen] = useState(false);
   const [selectedPortal, setSelectedPortal] = useState<string | null>(null);
   const [isSwitchingPortal, setIsSwitchingPortal] = useState(false);
+  const env = process.env.environment;
 
   const handleLogout = async () => {
     try {
@@ -73,7 +75,7 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
         <PopoverTrigger asChild>
           <Button variant="ghost" className="h-14 w-14 p-0 flex flex-col items-center justify-center gap-1">
             <Avatar className="h-6 w-6">
-              <AvatarImage src="/avatars/01.png" alt="Avatar" />
+              <AvatarImage src="/avatars/011.png" alt="Avatar" />
               <AvatarFallback>{accessProfile?.username[0]}</AvatarFallback>
             </Avatar>
             <span className="text-[10px] text-center font-medium text-muted-foreground">Profile</span>
@@ -81,17 +83,23 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
         </PopoverTrigger>
         <PopoverContent className="w-48" side='right' align="start">
           <div className="grid gap-2">
+
             {accessProfile && (
               <div className="px-2 py-1.5 mb-1">
                 <p className="text-sm font-medium truncate">{accessProfile.username}</p>
                 <p className="text-xs text-muted-foreground truncate">
                   {accessProfile.current && portalNames[accessProfile.current]}
                 </p>
+                <div className='flex items-end gap-1 justify-end'>
+                  <Badge variant={env?.toLowerCase() === 'uat' ? 'default' : env?.toLowerCase() === 'production' ? 'destructive' : 'outline'}>
+                    {env?.toUpperCase()}
+                  </Badge>
+                </div>
               </div>
             )}
             <Separator />
             <div className="grid gap-1">
-              <Link href="/development/profile" className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent">
+              <Link href="#" className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent">
                 <User className="h-4 w-4" />
                 <span>Profile</span>
               </Link>

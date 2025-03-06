@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import DesktopNav from "./desktop-sidebar";
 import { AccessGroup, Session } from "@/app/lib/types";
 import { getAccessGroups, getRole } from "@/app/auth/auth";
+import MobileBottomNav from "./mobile-bottom-nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,7 +49,7 @@ export default async function DashboardLayout({
       {access_profile && <DesktopNav currentPersona={access_profile.current || ''} access_profile={access_profile} />}
       
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden pl-16 sm:pl-16"> {/* Added padding-left to account for sidebar width */}
+      <div className="flex-1 flex flex-col overflow-hidden md:pl-16"> {/* Added padding-left to account for sidebar width */}
         {/* Uncomment when Appbar is ready */}
         {/* <Appbar /> */}
         
@@ -74,6 +75,13 @@ export default async function DashboardLayout({
           <Toaster />
         </main>
       </div>
+        {/* Mobile Bottom Navigation */}
+        {access_profile && (
+        <MobileBottomNav 
+          currentPersona={access_profile.current || ''} 
+          access_profile={access_profile} 
+        />
+      )}
     </div>
   );
 }

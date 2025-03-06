@@ -22,6 +22,7 @@ import { AccessGroup } from '@/app/lib/types';
 import { ChevronRight, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
 import { portalNames } from '@/app/lib/store';
 import { logout, updateAccessGroup } from '../../auth/admin-auth';
+import { Badge } from '@/components/ui/badge';
 
 interface NavUtilsProps {
   accessProfile: AccessGroup | null;
@@ -35,7 +36,8 @@ const NavAdmin: React.FC<NavUtilsProps> = ({ accessProfile }) => {
   const [isPortalSwitchDialogOpen, setIsPortalSwitchDialogOpen] = useState(false);
   const [selectedPortal, setSelectedPortal] = useState<string | null>(null);
   const [isSwitchingPortal, setIsSwitchingPortal] = useState(false);
-
+  const env = process.env.environment;
+  
   const handleLogout = async () => {
     try {
       setIsLogOut(true);
@@ -86,6 +88,11 @@ const NavAdmin: React.FC<NavUtilsProps> = ({ accessProfile }) => {
                 <p className="text-xs text-muted-foreground truncate">
                   {accessProfile.current && portalNames[accessProfile.current]}
                 </p>
+                <div className='flex items-end gap-1 justify-end'>
+                  <Badge variant={env?.toLowerCase() === 'uat' ? 'default' : env?.toLowerCase() === 'production' ? 'destructive' : 'outline'}>
+                    {env?.toUpperCase()}
+                  </Badge>
+                </div>
               </div>
             )}
             <Separator />
