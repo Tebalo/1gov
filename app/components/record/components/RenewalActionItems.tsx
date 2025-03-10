@@ -27,6 +27,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
 import ActivityModal from '../ActivityModal'
 import { getAuthData } from '@/app/welcome/components/email-login'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -41,6 +42,17 @@ interface FlowActionConfig {
   status_label: string;
   isAllowedRole: boolean;
 }
+
+type StatusType = 
+| 'PENDING-CUSTOMER-ACTION'
+| 'PENDING-SCREENING'
+| 'PENDING-ASSESSMENT'
+| 'MANAGER-REJECTED'
+| 'MANAGER-APPROVED'
+| 'RECOMMENDED-FOR-APPROVAL'
+| 'RECOMMENDED-FOR-REJECTION'
+| 'PENDING-ENDORSEMENT'
+| 'ENDORSEMENT-COMPLETE';
 
 type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | null;
 
@@ -145,6 +157,20 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
 
   // Render submit dialog content based on status count
   const renderSubmitContent = () => {
+    const getStatusDescription = (status: StatusType): string => {
+      const descriptions: Record<StatusType, string> = {
+        'PENDING-CUSTOMER-ACTION': 'Customer needs to provide additional information',
+        'PENDING-ASSESSMENT': 'Pass screening',
+        'PENDING-SCREENING': 'Pass screening',
+        'MANAGER-REJECTED': 'Reject and send notification to customer',
+        'MANAGER-APPROVED': 'Approve and send notification to customer',
+        'RECOMMENDED-FOR-APPROVAL': 'Recommend for approval',
+        'RECOMMENDED-FOR-REJECTION': 'Recommend for rejection',
+        'PENDING-ENDORSEMENT': 'Submit for endorsement',
+        'ENDORSEMENT-COMPLETE': 'Close and send notification to customer',
+      };
+      return descriptions[status];
+    };
     if (hasSingleStatus && availableStatuses[0]) {
       return (
         <AlertDialogContent className="sm:max-w-[500px]">
@@ -190,7 +216,7 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle>{status_label}</DialogTitle>
-          <DialogDescription>Select the next step for this record</DialogDescription>
+          <DialogDescription>Select Next Processing Step</DialogDescription>
         </DialogHeader>
         {error && (
           <div className="p-4 rounded-md bg-red-50">
@@ -202,24 +228,23 @@ const RenewalActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
         )}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Allocate</Label>
-            <Select
-              value={selectedStatus}
+            <RadioGroup 
+              value={selectedStatus} 
               onValueChange={setSelectedStatus}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select next step" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {availableStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace(/-/g, ' ').toLocaleLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              {availableStatuses.map((status) => (
+                <>
+                  <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100 cursor-pointer">
+                    <RadioGroupItem value={status} id={status} />
+                    <div>
+                      <Label htmlFor={status}>{status.replace(/-/g, ' ').toWellFormed()}</Label>
+                      <p className="text-xs text-gray-500">{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</p>
+                    </div>     
+                  </div>
+                  
+                </>
+              ))}
+            </RadioGroup>
           </div>
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={closeDialog}>
