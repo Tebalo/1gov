@@ -211,7 +211,7 @@ const CategoryActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRol
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle>{status_label}</DialogTitle>
-          <DialogDescription>Select the next step for this record</DialogDescription>
+          <DialogDescription>Select Next Processing Step</DialogDescription>
         </DialogHeader>
         {error && (
           <div className="p-4 rounded-md bg-red-50">

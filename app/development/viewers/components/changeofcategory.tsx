@@ -60,7 +60,7 @@ const dummyData: ChangeOfCategoryResponse = {
     "teacher_registrations": {
         "national_id": "436415528",
         "reg_number": "REG2024/001",
-        "reg_status": "Manager-Approved",
+        "reg_status": "Pending-Assessment",
         "endorsement_status": "Pending-Endorsement",
         "rejection_reason": null,
         "service_code": "MESD_006_08_054",

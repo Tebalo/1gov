@@ -11,6 +11,7 @@ import RestorationContent from "./components/restoration";
 import CreateCasePage from "@/app/(portal)/trls/work/investigation/create/page";
 import InvestigationContent from "./components/investigation";
 import RegistrationContent from "./components/registration";
+import StudentContent from "./components/studentteacher";
 
 export default function Page() {
     const [activeSection, setActiveSection] = useState('renewal');
@@ -58,6 +59,12 @@ export default function Page() {
             label: 'Registration View',
             icon: <UserPlus className="h-4 w-4" />,
             component: <RegistrationContent />
+        },
+        {
+            id: 'student',
+            label: 'Student View',
+            icon: <UserPlus className="h-4 w-4" />,
+            component: <StudentContent />
         }
     ];
 
