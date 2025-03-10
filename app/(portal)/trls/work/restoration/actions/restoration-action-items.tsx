@@ -217,7 +217,7 @@ const RestorationActionButtons: React.FC<ActionButtonsProps> = ({ recordId, user
                   <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100 cursor-pointer">
                     <RadioGroupItem value={status} id={status} />
                     <div>
-                      <Label htmlFor={status}>{status.replace(/-/g, ' ').toWellFormed()}</Label>
+                      <Label htmlFor={status}>{status.replace(/-/g, ' ').toLocaleUpperCase()}</Label>
                       <p className="text-xs text-gray-500">{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</p>
                     </div>     
                   </div>
