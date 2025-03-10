@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, FileText, Save, Send, UserPlus2, SendIcon, PlusCircle, FileCheck2, ChevronDownIcon, X, AlertTriangle, InfoIcon, Loader2 } from 'lucide-react'
+import { Send, UserPlus2, ChevronDownIcon, X, AlertTriangle, Loader2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,8 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateChangeOfCategoryStatus, updateRevocationStatus } from '@/app/lib/actions'
+
+import { updateChangeOfCategoryStatus} from '@/app/lib/actions'
 import { useRouter } from 'next/navigation'
 import {
   AlertDialog,
@@ -27,6 +27,8 @@ import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
 import ActivityModal from '@/app/components/record/ActivityModal'
 import { getAuthData } from '@/app/welcome/components/email-login'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { StatusType } from '../types/changeofcategory-type'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -150,6 +152,20 @@ const CategoryActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRol
 
   // Render submit dialog content based on status count
   const renderSubmitContent = () => {
+    const getStatusDescription = (status: StatusType): string => {
+      const descriptions: Record<StatusType, string> = {
+        'PENDING-CUSTOMER-ACTION': 'Customer needs to provide additional information',
+        'PENDING-ASSESSMENT': 'Pass screening',
+        'PENDING-SCREENING': 'Pass screening',
+        'MANAGER-REJECTED': 'Reject and send notification to customer',
+        'MANAGER-APPROVED': 'Approve and send notification to customer',
+        'RECOMMENDED-FOR-APPROVAL': 'Recommend for approval',
+        'RECOMMENDED-FOR-REJECTION': 'Recommend for rejection',
+        'PENDING-ENDORSEMENT': 'Submit for endorsement',
+        'ENDORSEMENT-COMPLETE': 'Close and send notification to customer',
+      };
+      return descriptions[status];
+    };
     if (hasSingleStatus && availableStatuses[0]) {
       return (
         <AlertDialogContent className="sm:max-w-[500px]">
@@ -207,24 +223,23 @@ const CategoryActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRol
         )}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Allocate</Label>
-            <Select
-              value={selectedStatus}
+            <RadioGroup 
+              value={selectedStatus} 
               onValueChange={setSelectedStatus}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select next step" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {availableStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace(/-/g, ' ').toLocaleLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              {availableStatuses.map((status) => (
+                <>
+                  <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100 cursor-pointer">
+                    <RadioGroupItem value={status} id={status} />
+                    <div>
+                      <Label htmlFor={status}>{status.replace(/-/g, ' ').toWellFormed()}</Label>
+                      <p className="text-xs text-gray-500">{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</p>
+                    </div>     
+                  </div>
+                  
+                </>
+              ))}
+            </RadioGroup>
           </div>
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={closeDialog}>
