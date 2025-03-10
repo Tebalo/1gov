@@ -1,3 +1,10 @@
+export type StatusType = 
+| 'PENDING-CUSTOMER-ACTION'
+| 'PENDING-ASSESSMENT'
+| 'PENDING-SCREENING'
+| 'PENDING-APPROVAL'
+| 'PENDING-ENDORSEMENT'
+| 'ENDORSED';
 
 interface profile {
     id: number ,
