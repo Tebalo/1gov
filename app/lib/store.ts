@@ -547,6 +547,7 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
 export type Role = keyof typeof ROLES
 type Permission = (typeof ROLES)[Role][number]
 export const ROLES = {
+    guest: [],
     default:[
         "create:complaints",
         "create:tipoffs",

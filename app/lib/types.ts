@@ -335,59 +335,60 @@ export interface ActivityObject{
 }
 
 interface cpd_activity {
-  id: number;
-  user_id: string;
-  cumulative_points: string;
-  cpd_number: string;
-  reg_status: string;
-  sla: string;
-  cpd_activity: string;
-  other: string;
-  activity_name: string;
-  cpd_points: string;
-  cpd_activity_description: string;
-  service_provider: string;
-  duration: string;
-  declaration: string;
-  profile_data_consent: number;
-  created_at: string;
-  updated_at: string;
+  id?: number | null;
+  user_id?: string | null;
+  cumulative_points?: string | null;
+  cpd_number?: string | null;
+  reg_status?: string | null;
+  cpd_activity?: string | null;
+  other?: string | null;
+  other_1?: string | null;
+  activity_name?: string | null;
+  application_id?: string | null;
+  cpd_points?: string | null;
+  cpd_activity_description?: string | null;
+  service_provider?: string | null;
+  duration?: string | null;
+  declaration?: string | null;
+  profile_data_consent?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 interface cpd_profile {
-  id: number;
-  cpd_number: string;
-  first_name: string;
-  middle_name: string;
-  surname: string;
-  created_at: string;
-  updated_at: string;
+  id?: number | null;
+  cpd_number?: string | null;
+  first_name?: string | null;
+  middle_name?: string | null;
+  surname?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 interface service {
-  id: number;
-  cpd_number: string;
-  service_id: string;
-  service_name: string;
-  service_version: string;
-  created_at: string;
-  updated_at: string;
+  id?: number | null;
+  cpd_number?: string | null;
+  service_id?: string | null;
+  service_name?: string | null;
+  service_version?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 interface attachment {
-  id: 2,
-  cpd_number: string;
-  cpd_evidence_key: string | null;
-  other_attachments_key: string | null;
-  created_at: string;
-  updated_at: string;
+  id?: number | null,
+  cpd_number?: string | null;
+  cpd_evidence_key?: string | null;
+  other_attachments_key?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 interface CPD {
-  cpd_activity: cpd_activity;
-  profile: cpd_profile;
-  service: service;
-  attachment: attachment;
+  cpd_activity?: cpd_activity;
+  profile?: cpd_profile;
+  service?: service;
+  attachment?: attachment;
 }
 
 export interface CPDResponseGet{
@@ -486,31 +487,34 @@ export interface appeal {
 }
 
 interface profile {
-  user_id: string;
-  appeals_number: string;
-  first_name: string;
-  middle_name: string;
-  surname: string;
-  primary_email: string;
-  primary_postal: string;
-  created_at: string;
-  updated_at: string;
+  id?: number | null;
+  user_id?: string | null;
+  appeals_number?: string | null;
+  first_name?: string | null;
+  middle_name?: string | null;
+  surname?: string | null;
+  primary_email?: string | null;
+  primary_postal?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 interface appeals_application {
-      id: number;
-      user_id: string;
-      application: string;
-      appeals_number: string;
-      reg_status: string;
-      sla: string;
-      appeal_decision: string;
-      appeal_reason: string;
-      supporting_document_key: string;
-      declaration: string;
-      profile_data_consent: number;
-      created_at: string;
-      updated_at: string;
+      id?: number | null;
+      user_id?: string | null;
+      application_id?: string | null;
+      application?: string | null;
+      appeals_number?: string | null;
+      reg_status?: string | null;
+      sla?: string | null;
+      other?: string | null;
+      appeal_decision?: string | null;
+      appeal_reason?: string | null;
+      supporting_document_key?: string | null;
+      declaration?: string | null;
+      profile_data_consent?: number | null;
+      created_at?: string | null;
+      updated_at?: string | null;
 }
 
 interface bio_datas {
