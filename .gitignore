@@ -26,15 +26,15 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+# .env*.local
 
 package-lock.json
 
 # Environment variables
-.env
-.env.development
-.env.qa
-.env.production
+# .env
+# .env.development
+# .env.qa
+# .env.production
 
 # vercel
 .vercel
