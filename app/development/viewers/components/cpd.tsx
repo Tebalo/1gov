@@ -8,46 +8,25 @@ import CPDViewer from '@/app/components/record/CPDViewer';
 
 const dummyData: CPDResponseGet = {
     code: 200,
-    data: {
-            "cpd_activity": {
-                "id": 1,
-                "user_id": "769717905",
-                "cpd_number": "CPD2025-03-00001",
-                "cumulative_points": "60",
-                "reg_status": "PENDING-SCREENING",
-                "cpd_activity": "eLearning",
-                "other": "Course",
-                "other_1": "University of Botswana",
-                "activity_name": "Course",
-                "application_id": "2cf5da6a-3210-429c-b819-1236bcb8d840",
-                "cpd_points": "60",
-                "cpd_activity_description": "Nice course",
-                "service_provider": "Other",
-                "duration": "01/01/2025 - 02/01/2025",
-                "declaration": null,
-                "profile_data_consent": null,
-                "created_at": "2025-03-12T19:10:29.000000Z",
-                "updated_at": "2025-03-12T19:10:29.000000Z"
-            },
-            "profile": {
-                "id": 1,
-                "cpd_number": "CPD2025-03-00001",
-                "first_name": "garenosi",
-                "middle_name": null,
-                "surname": "motlalepuo",
-                "created_at": "2025-03-12T19:10:29.000000Z",
-                "updated_at": "2025-03-12T19:10:29.000000Z"
-            },
-            "service": {},
-            "attachment": {
-                "id": 1,
-                "cpd_number": "CPD2025-03-00001",
-                "cpd_evidence_key": null,
-                "other_attachments_key": null,
-                "created_at": "2025-03-12T19:10:29.000000Z",
-                "updated_at": "2025-03-12T19:10:29.000000Z"
-            }
-    }
+    data:{
+      "cpd_activity":{
+        "id":4,
+        "user_id":"512927017",
+        "cpd_number":"CPD2025-03-00004",
+        "cumulative_points":"155",
+        "reg_status":"PENDING-SCREENING",
+        "cpd_activity":"eLearning",
+        "other":null,
+        "other_1":null,"activity_name":"Maths","application_id":"0cacb8ee-978f-4e86-a8d0-6ebd4f1e83c6","cpd_points":"60","cpd_activity_description":"MAthematics","service_provider":"UNIVERSITY OF BOTSWANA","duration":"10\/03\/2025 - 10\/03\/2025","declaration":"1","profile_data_consent":1,"created_at":"2025-03-13T15:19:24.000000Z","updated_at":"2025-03-13T15:19:24.000000Z"},"profile":{"id":4,"cpd_number":"CPD2025-03-00004","first_name":"selele","middle_name":"naledi","surname":"kotu","created_at":"2025-03-13T15:19:24.000000Z","updated_at":"2025-03-13T15:19:24.000000Z"
+
+        },"service":{},
+        "attachment":{
+          "id":4,
+          "cpd_number":"CPD2025-03-00004",
+          "cpd_evidence_key":"http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_052/bb541e9e-dfec-4c08-bb56-92127e0523af",
+          "other_attachments_key":null,
+          "created_at":"2025-03-13T15:19:24.000000Z","updated_at":"2025-03-13T15:19:24.000000Z"
+        }}
 };
 
 export default function CPD() {
