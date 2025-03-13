@@ -3,11 +3,10 @@ import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import { LoadingSkeleton } from "@/app/components/LoadingSkeleton";
 import { Toaster } from "@/components/ui/toaster";
-import DevSidebar from "./components/DevSidebar";
 import Link from "next/link";
 import Image from 'next/image';
 import { NavItem } from "./components/nav-item";
-import { Home, Settings, SprayCanIcon, UserCheck2, Warehouse, WindIcon } from "lucide-react";
+import { BriefcaseBusiness, Hammer, Home, Settings } from "lucide-react";
 import { SearchInput } from "./components/search";
 import { User } from "./components/user";
 
@@ -86,12 +85,12 @@ function DesktopNav() {
         </NavItem> */}
 
         
-        <NavItem href="/development/components" label="Interface">
-          <SprayCanIcon className="h-9 w-9 rounded-lg"/>
+        <NavItem href="/development/components" label="Queues">
+          <Hammer className="h-9 w-9 rounded-lg"/>
         </NavItem>
 
-        <NavItem href="/development/viewers" label="Views">
-          <WindIcon className="h-9 w-9 rounded-lg"/>
+        <NavItem href="/development/viewers" label="Cases">
+          <BriefcaseBusiness className="h-9 w-9 rounded-lg"/>
         </NavItem>
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
