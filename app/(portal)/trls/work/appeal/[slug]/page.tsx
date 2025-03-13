@@ -2,7 +2,6 @@ import { getRole } from "@/app/auth/auth";
 import {  getAppealByNumber, getCPDByNumber, } from "@/app/lib/actions";
 import Link from "next/link";
 import { RefreshCw, AlertCircle } from "lucide-react";
-import CPDViewer from "@/app/components/record/CPDViewer";
 import { Role } from "@/app/lib/store";
 import AppealViewer from "@/app/components/record/AppealViewer";
 
@@ -13,7 +12,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   try {
     response = await getAppealByNumber(id);
-    const rawRole = await getRole() ?? 'default'; // type assertion
+    const rawRole = await getRole() ?? 'guest'; // type assertion
     const userRole = rawRole.toLowerCase() as Lowercase<Role>;
     
     return (

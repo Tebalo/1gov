@@ -19,7 +19,7 @@ const AppealViewer: React.FC<AppealViewerProps> = ({ data, userRole }) => {
     </div>
   );
 
-  const fullName = `${data.profile?.first_name} ${data.profile?.middle_name ? data.profile.middle_name + ' ' : ''}${data.profile?.surname}`;
+  const fullName = `${data?.profile?.first_name ?? 'N/A'} ${data?.profile?.middle_name ? data?.profile.middle_name + ' ' : ''}${data?.profile?.surname ?? 'N/A'}`;
 
   const handleOpenDocument = (key: string | null) => {
     if (key) {
@@ -29,20 +29,21 @@ const AppealViewer: React.FC<AppealViewerProps> = ({ data, userRole }) => {
 
   const renderProfileInfo = () => (
     <InfoCard title='Profile Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Appeals Number" value={data.profile?.appeals_number}/>
+      <InfoItem label="Appeals Number" value={data?.profile?.appeals_number}/>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="Email" value={data.profile?.primary_email}/>
-      <InfoItem label="Postal Address" value={data.profile?.primary_postal}/>
+      <InfoItem label="Postal Address" value={data?.profile?.primary_postal}/>
     </InfoCard>
   );
 
   const renderAppealInfo = () => (
     <InfoCard title='Appeal Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Application ID" value={data.appeals_application?.application}/>
-      <InfoItem label="Registration Status" value={data.appeals_application?.reg_status}/>
-      <InfoItem label="Appeal Decision" value={data.appeals_application?.appeal_decision}/>
-      <InfoItem label="SLA" value={data.appeals_application?.sla}/>
-      <InfoItem label="Appeal Reason" value={data.appeals_application?.appeal_reason}/>
+      <InfoItem label="Application ID" value={data?.appeals_application?.application}/>
+      <InfoItem label="Registration Status" value={data?.appeals_application?.reg_status}/>
+      <InfoItem label="Appeal Decision" value={data?.appeals_application?.appeal_decision}/>
+      <InfoItem label="SLA" value={data?.appeals_application?.sla}/>
+      <InfoItem label="Appeal Reason" value={data?.appeals_application?.appeal_reason}/>
+      <InfoItem label="Other Appeal Reason" value={data?.appeals_application?.other}/>
     </InfoCard>
   );
 
@@ -50,24 +51,24 @@ const AppealViewer: React.FC<AppealViewerProps> = ({ data, userRole }) => {
     <InfoCard title='Dates Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
       <InfoItem 
         label="Created At" 
-        value={data.appeals_application?.created_at ? new Date(data.appeals_application.created_at).toLocaleString() : 'N/A'}
+        value={data?.appeals_application?.created_at ? new Date(data?.appeals_application?.created_at).toLocaleString() : 'N/A'}
       />
       <InfoItem 
         label="Updated At" 
-        value={data.appeals_application?.updated_at ? new Date(data.appeals_application.updated_at).toLocaleString() : 'N/A'}
+        value={data?.appeals_application?.updated_at ? new Date(data?.appeals_application?.updated_at).toLocaleString() : 'N/A'}
       />
     </InfoCard>
   );
 
   const renderDocuments = () => (
     <InfoCard title='Supporting Documents' icon={<File className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="" value={data.appeals_application?.supporting_document_key}/>
+      <InfoItem label="" value={data?.appeals_application?.supporting_document_key}/>
     </InfoCard>
   );
 
-  if (!data || !data.profile || !data.appeals_application) {
-    return <div>No data available</div>;
-  }
+  // if (!data || !data.profile || !data?.appeals_application) {
+  //   return <div>No data available</div>;
+  // }
 
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
@@ -77,9 +78,9 @@ const AppealViewer: React.FC<AppealViewerProps> = ({ data, userRole }) => {
             Appeal Details
           </h1>
           <AppealsActionButtons 
-            recordId={data.profile.appeals_number} 
+            recordId={data?.profile?.appeals_number ?? ''} 
             userRole={userRole} 
-            current_status={data.appeals_application.reg_status}
+            current_status={data?.appeals_application?.reg_status ?? ''}
           />
         </div>
         <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>

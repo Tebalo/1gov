@@ -47,15 +47,6 @@ export const ChangeOfCategoryColumns: ColumnDef<ChangeOfCategory>[] = [
     },
   },
   {
-    accessorKey: "reg_number",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Registration Number" />
-    ),
-    cell: ({ row }) => <div className="w-[120px]">{row.getValue("reg_number")}</div>,
-    enableSorting: true,
-    enableHiding: false,
-  },
-  {
     accessorKey: "registration_type",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Registration Type" />
@@ -71,11 +62,7 @@ export const ChangeOfCategoryColumns: ColumnDef<ChangeOfCategory>[] = [
     ),
     cell: ({ row }) => (
       <div className="w-[150px]">
-        <Badge variant={
-          row.getValue("reg_status") === "Approved" ? "default" :
-          row.getValue("reg_status") === "Rejected" ? "destructive" :
-          "secondary"
-        }>
+        <Badge variant="secondary">
           {row.getValue("reg_status")}
         </Badge>
       </div>

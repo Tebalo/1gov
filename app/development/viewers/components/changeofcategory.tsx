@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
-import RenewalViewer from '@/app/components/record/RenewalViewer';
 import { ChangeOfCategoryResponse } from '@/app/(portal)/trls/work/changeofcategory/types/changeofcategory-type';
 import CategoryViewer from '@/app/(portal)/trls/work/changeofcategory/ui/category-view';
 
@@ -62,7 +60,7 @@ const dummyData: ChangeOfCategoryResponse = {
     "teacher_registrations": {
         "national_id": "436415528",
         "reg_number": "REG2024/001",
-        "reg_status": "Recommended-For-Approval",
+        "reg_status": "Pending-Assessment",
         "endorsement_status": "Pending-Endorsement",
         "rejection_reason": null,
         "service_code": "MESD_006_08_054",
@@ -206,7 +204,7 @@ export default function CategoryContent() {
     <Card className="p-4">
       <CategoryViewer 
         data={dummyData}
-        userRole="manager"
+        userRole="snr_registration_officer"
       />
     </Card>
   );

@@ -1,3 +1,14 @@
+export type StatusType = 
+| 'PENDING-CUSTOMER-ACTION'
+| 'PENDING-SCREENING'
+| 'PENDING-ASSESSMENT'
+| 'MANAGER-REJECTED'
+| 'MANAGER-APPROVED'
+| 'RECOMMENDED-FOR-APPROVAL'
+| 'RECOMMENDED-FOR-REJECTION'
+| 'PENDING-ENDORSEMENT'
+| 'ENDORSEMENT-COMPLETE';
+
 interface bio_datas {
   id: number | null;
   national_id: string | null;

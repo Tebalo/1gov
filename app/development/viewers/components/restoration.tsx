@@ -14,7 +14,7 @@ const dummyData: RestorationResponse = {
     "teacher_registrations": {
         "national_id": "120014929",
         "reg_number": "$2y$10$ngnNlmiD",
-        "reg_status": "Revoked",
+        "reg_status": "Recommended-For-Approval",
         "support_documents": null,
         "reason": null,
         "endorsement_status": "Endorsement-Complete",
@@ -118,19 +118,6 @@ const dummyData: RestorationResponse = {
         "created_at": "2025-01-14 05:48:59",
         "updated_at": "2025-01-14 05:48:59"
     }
-//     "categories": {
-//       "id": 1,
-//       "national_id": "436415528",
-//       "registration_number": "C102",
-//       "current_membership": "Pre-Primary",
-//       "desired_membership": "Primary",
-//       "change_reason": "relocation",
-//       "employment_contract": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_051/6c2e29e6-d36d-45b2-9d17-b83089b8f348",
-//       "teaching_certificate": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_051/32c65058-71fe-4a0e-8d1d-d382f999a960",
-//       "cpd_transcript": "http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_051/2826a670-2004-4969-89df-0be44916644d",
-//       "created_at": "2024-12-23 13:54:36",
-//       "updated_at": "2024-12-23 13:54:36"
-//   }
 };
 
 export default function RestorationContent() {
@@ -152,7 +139,7 @@ export default function RestorationContent() {
     <Card className="p-4">
       <RestorationViewer 
         data={dummyData}
-        userRole="registration_officer"
+        userRole="manager"
       />
     </Card>
   );

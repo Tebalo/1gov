@@ -21,7 +21,7 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
     </div>
   );
 
-  const fullName = `${data.data?.profile.first_name} ${data.data?.profile.middle_name ? data.data.profile.middle_name + ' ' : ''}${data.data?.profile.surname}`;
+  const fullName = `${data.data?.profile?.first_name ?? 'N/A'} ${data.data?.profile?.middle_name ? data.data?.profile?.middle_name + ' ' : ''}${data.data?.profile?.surname ?? ''}`;
 
   const handleOpenEvidence = (key: string | null) => {
     if (key) {
@@ -31,38 +31,38 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
 
   const renderProfileInfo = () => (
     <InfoCard title='Profile Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="CPD Number" value={data.data?.profile.cpd_number}/>
+      <InfoItem label="CPD Number" value={data.data?.profile?.cpd_number ?? ''}/>
       <InfoItem label="Full Name" value={fullName}/>
-      <InfoItem label="Registration Status" value={data.data?.cpd_activity.reg_status}/>
+      <InfoItem label="Registration Status" value={data.data?.cpd_activity?.reg_status ?? ''}/>
     </InfoCard>
   );
 
   const renderActivityInfo = () => (
     <InfoCard title='CPD Activity Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Activity Type" value={data.data?.cpd_activity.cpd_activity}/>
-      <InfoItem label="CPD Points" value={data.data?.cpd_activity.cpd_points}/>
-      <InfoItem label="Cumulative Points" value={data.data?.cpd_activity.cumulative_points}/>
-      <InfoItem label="Activity Name" value={data.data?.cpd_activity.activity_name}/>
-      <InfoItem label="Service Provider" value={data.data?.cpd_activity.service_provider}/>
-      <InfoItem label="Duration" value={data.data?.cpd_activity.duration}/>
-      <InfoItem label="Other" value={data.data?.cpd_activity.other}/>
-      <InfoItem label="SLA" value={data.data?.cpd_activity.sla}/>
-      <InfoItem label="Description" value={data.data?.cpd_activity.cpd_activity_description}/>
+      <InfoItem label="Activity Type" value={data.data?.cpd_activity?.cpd_activity}/>
+      <InfoItem label="CPD Points" value={data.data?.cpd_activity?.cpd_points}/>
+      <InfoItem label="Cumulative Points" value={data.data?.cpd_activity?.cumulative_points}/>
+      <InfoItem label="Activity Name" value={data.data?.cpd_activity?.activity_name}/>
+      <InfoItem label="Service Provider" value={data.data?.cpd_activity?.service_provider}/>
+      <InfoItem label="Other Service Provider" value={data.data?.cpd_activity?.other_1}/>
+      <InfoItem label="Duration" value={data.data?.cpd_activity?.duration}/>
+      <InfoItem label="Other" value={data.data?.cpd_activity?.other}/>
+      <InfoItem label="Description" value={data.data?.cpd_activity?.cpd_activity_description}/>
     </InfoCard>
   );
 
   const renderServiceInfo = () => (
     <InfoCard title='Service Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
-      <InfoItem label="Service Name" value={data.data?.service.service_name}/>
-      <InfoItem label="Service ID" value={data.data?.service.service_id}/>
-      <InfoItem label="Service Version" value={data.data?.service.service_version}/>
+      <InfoItem label="Service Name" value={data.data?.service?.service_name}/>
+      <InfoItem label="Service ID" value={data.data?.service?.service_id}/>
+      <InfoItem label="Service Version" value={data.data?.service?.service_version}/>
       <InfoItem 
         label="Created At" 
-        value={data.data?.service.created_at ? new Date(data.data.service.created_at).toLocaleString() : 'N/A'}
+        value={data.data?.service?.created_at ? new Date(data.data.service.created_at).toLocaleString() : 'N/A'}
         />
       <InfoItem 
         label="Updated At" 
-        value={data.data?.service.updated_at ? new Date(data.data.service.updated_at).toLocaleString() : 'N/A'}
+        value={data.data?.service?.updated_at ? new Date(data.data.service.updated_at).toLocaleString() : 'N/A'}
         />
     </InfoCard>
   );
@@ -71,8 +71,8 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
     <InfoCard title='Attachments' icon={<File className="w-6 h-6 text-blue-500"/>}>
       <div className="space-y-4">
         <button
-          onClick={() => handleOpenEvidence(data.data?.attachment.cpd_evidence_key ?? null)}
-          disabled={!data.data?.attachment.cpd_evidence_key}
+          onClick={() => handleOpenEvidence(data.data?.attachment?.cpd_evidence_key ?? null)}
+          disabled={!data.data?.attachment?.cpd_evidence_key}
           className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex items-center space-x-2">
@@ -82,8 +82,8 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
         </button>
         
         <button
-          onClick={() => handleOpenEvidence(data.data?.attachment.other_attachments_key ?? null)}
-          disabled={!data.data?.attachment.other_attachments_key}
+          onClick={() => handleOpenEvidence(data.data?.attachment?.other_attachments_key ?? null)}
+          disabled={!data.data?.attachment?.other_attachments_key}
           className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex items-center space-x-2">
@@ -107,9 +107,9 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
             CPD Activity Details
           </h1>
           <CPDActionButtons 
-              recordId={data.data.profile.cpd_number  ?? ''} 
+              recordId={data.data.profile?.cpd_number  ?? ''} 
               userRole={userRole} 
-              current_status={data.data.cpd_activity.reg_status ?? ''}
+              current_status={data.data.cpd_activity?.reg_status ?? ''}
             />
         </div>
         <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>

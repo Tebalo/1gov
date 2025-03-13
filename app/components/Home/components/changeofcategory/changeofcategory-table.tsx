@@ -46,6 +46,7 @@ const processApiResponse = (data: any[]): ChangeOfCategory[] => {
     return data.map(item => ({
           national_id: item.national_id || '',
           reg_number: item.reg_number || '',
+          reg_status: item.reg_status || '',
           endorsement_status: item.endorsement_status || '',
           rejection_reason: item.rejection_reason || '',
           service_code: item.service_code || '',

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PageTitle } from "@/app/components/PageTitle";
 import { Card } from "@/components/ui/card";
-import { FileText, RefreshCcw, FileCog, RotateCcw, Search, FileSearch, UserPlus } from 'lucide-react';
+import { FileText, RefreshCcw, FileCog, RotateCcw, Search, FileSearch, UserPlus, Hammer, Book } from 'lucide-react';
 import RenewalContent from "./components/renewal";
 import RevocationContent from "./components/revocation";
 import CategoryContent from "./components/changeofcategory";
@@ -11,6 +11,9 @@ import RestorationContent from "./components/restoration";
 import CreateCasePage from "@/app/(portal)/trls/work/investigation/create/page";
 import InvestigationContent from "./components/investigation";
 import RegistrationContent from "./components/registration";
+import StudentContent from "./components/studentteacher";
+import CPD from "./components/cpd";
+import Appeal from "./components/appeal";
 
 export default function Page() {
     const [activeSection, setActiveSection] = useState('renewal');
@@ -58,6 +61,24 @@ export default function Page() {
             label: 'Registration View',
             icon: <UserPlus className="h-4 w-4" />,
             component: <RegistrationContent />
+        },
+        {
+            id: 'student',
+            label: 'Student View',
+            icon: <UserPlus className="h-4 w-4" />,
+            component: <StudentContent />
+        },
+        {
+            id: 'CPD',
+            label: 'CPD View',
+            icon: <Book className="h-4 w-4" />,
+            component: <CPD />
+        },
+        {
+            id: 'Appeal',
+            label: 'Appeal View',
+            icon: <Hammer className="h-4 w-4" />,
+            component: <Appeal />
         }
     ];
 

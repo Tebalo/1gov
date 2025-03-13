@@ -26,6 +26,8 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
 import ActivityModal from '@/app/components/record/ActivityModal'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { StatusType } from '../types/revocation-type'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -96,14 +98,14 @@ const RevocationActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userR
         closeDialog();
         toast({
           title: "Success",
-          description: `Status updated to: ${status}`
+          description: `Case successfully updated to ${status}`
         });
         router.push('/trls/work')
       } else {
-        showError(result.message || 'Failed to update status');
+        showError('Unable to update case status. Please try again or contact support if the problem persists.');
       }
     } catch (error) {
-      showError('Failed to update status');
+      showError('Unable to update case status. Please try again or contact support if the problem persists.');
     } finally {
       setIsSubmitting(false);
     }
@@ -135,13 +137,26 @@ const RevocationActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userR
 
   // Render submit dialog content based on status count
   const renderSubmitContent = () => {
+
+    const getStatusDescription = (status: StatusType): string => {
+      const descriptions: Record<StatusType, string> = {
+        'PENDING-CUSTOMER-ACTION': 'Customer needs to provide additional information',
+        'PENDING-ASSESSMENT': 'Assign to evaluation team for assessment',
+        'PENDING-SCREENING': 'Assign to screening team for screening',
+        'PENDING-APPROVAL': 'Submit for approval',
+        'PENDING-ENDORSEMENT': 'Submit for endorsement',
+        'ENDORSED': 'Case processing complete'
+      };
+      return descriptions[status];
+    };
+
     if (hasSingleStatus && availableStatuses[0]) {
       return (
         <AlertDialogContent className="sm:max-w-[500px]">
           <AlertDialogHeader>
             <AlertDialogTitle>{status_label}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will update the status to <span className="font-medium text-green-600">{availableStatuses[0]}</span>
+              This will set the case status to <span className="font-medium text-green-600">{availableStatuses[0]}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           {error && (
@@ -180,36 +195,36 @@ const RevocationActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userR
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle>{status_label}</DialogTitle>
-          <DialogDescription>Select the next step for this record</DialogDescription>
+          <DialogDescription>Select Next Processing Step</DialogDescription>
         </DialogHeader>
         {error && (
           <div className="p-4 rounded-md bg-red-50">
             <div className="flex">
               <AlertTriangle className="h-5 w-5 text-red-400" />
-              <p className="ml-3 text-sm text-red-800">{error}</p>
+              <p className="ml-3 text-xs text-red-800">{error}</p>
             </div>
           </div>
         )}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Allocate</Label>
-            <Select
-              value={selectedStatus}
+            {/* <Label>Allocation</Label> */}
+            <RadioGroup 
+              value={selectedStatus} 
               onValueChange={setSelectedStatus}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select next step" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {availableStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace(/-/g, ' ').toLocaleLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              {availableStatuses.map((status) => (
+                <>
+                  <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100 cursor-pointer">
+                    <RadioGroupItem value={status} id={status} />
+                    <div>
+                      <Label htmlFor={status}>{status.replace(/-/g, ' ').toLocaleUpperCase()}</Label>
+                      <p className="text-xs text-gray-500">{getStatusDescription(status as StatusType)}</p>
+                    </div>     
+                  </div>
+                  
+                </>
+              ))}
+            </RadioGroup>
           </div>
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={closeDialog}>

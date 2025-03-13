@@ -2,6 +2,7 @@ import { z } from "zod"
 export const changeOfCategorySchema = z.object({
   national_id: z.string().nullable(),
   reg_number: z.string().nullable(),
+  reg_status: z.string().nullable(),
   endorsement_status: z.string().nullable(),
   rejection_reason: z.string().nullable(),
   service_code: z.string().nullable(),

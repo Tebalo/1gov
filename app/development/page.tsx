@@ -45,12 +45,12 @@ const DevelopmentStudio = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const services = [
-    {
-      title: "Access Control",
-      description: "Manage access control settings",
-      icon: <FileText className="w-6 h-6 text-blue-500" />,
-      href: "/development/accesscontrol"
-    },
+    // {
+    //   title: "Access Control",
+    //   description: "Manage access control settings",
+    //   icon: <FileText className="w-6 h-6 text-blue-500" />,
+    //   href: "/development/accesscontrol"
+    // },
     {
       title: "Interface Components",
       description: "Build and test components",
