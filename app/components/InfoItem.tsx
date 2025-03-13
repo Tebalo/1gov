@@ -16,6 +16,7 @@ interface InfoItemProps {
   isPersonalInfo?: boolean; 
   isSLA?: boolean;
   isDate?: boolean;
+  isAttachment?: boolean
 }
 
 const PDFViewer: React.FC<{ url: string }> = ({ url }) => {
@@ -51,6 +52,7 @@ const InfoItem: React.FC<InfoItemProps> = ({
   isPersonalInfo = false,
   isLicenseStatus = false, 
   isSLA = false,
+  isAttachment = false,
   isDate=false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -186,32 +188,23 @@ function getRelativeTime(updateTime: string) {
           <Shield className="h-4 w-4 mr-2" />
           <span className="italic">Anonymous</span>
         </div>
-      ) : isPDFLink ? (
+      ) : isPDFLink || isAttachment ? (
         <div className="flex items-center mt-1">
           
-          <Button 
+          {value ? (<Button 
             onClick={handleOpenPDF} 
             variant="link" 
             className="text-blue-500 hover:underline mr-2 p-0">
             <FaFilePdf className="text-red-500 mr-2 h-5 w-5" />
             Open
-          </Button>
-          {/* <a 
-            href={value} 
-            download 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-green-500 hover:underline"
-          >
-            Download
-          </a> */}
+          </Button>):(<p className='font-medium mt-1'>N/A</p>)}
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-4xl">
               <DialogHeader>
                 <DialogTitle>Document Viewer</DialogTitle>
               </DialogHeader>
               <div className="mt-2 h-[85vh]">
-                <PDFViewer url={value} />
+                {value ? (<PDFViewer url={value} />):(<p>No document available</p>)}
               </div>
             </DialogContent>
           </Dialog>

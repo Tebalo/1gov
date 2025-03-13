@@ -70,27 +70,8 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
   const renderAttachments = () => (
     <InfoCard title='Attachments' icon={<File className="w-6 h-6 text-blue-500"/>}>
       <div className="space-y-4">
-        <button
-          onClick={() => handleOpenEvidence(data.data?.attachment?.cpd_evidence_key ?? null)}
-          disabled={!data.data?.attachment?.cpd_evidence_key}
-          className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <div className="flex items-center space-x-2">
-            <File className="h-4 w-4"/>
-            <span>CPD Evidence</span>
-          </div>
-        </button>
-        
-        <button
-          onClick={() => handleOpenEvidence(data.data?.attachment?.other_attachments_key ?? null)}
-          disabled={!data.data?.attachment?.other_attachments_key}
-          className="w-full text-left px-4 py-2 rounded border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <div className="flex items-center space-x-2">
-            <File className="h-4 w-4"/>
-            <span>Other Attachments</span>
-          </div>
-        </button>
+        <InfoItem label="QPD Evidence Key" value={data.data?.attachment?.cpd_evidence_key} isAttachment/>
+        <InfoItem label="Other Documents" value={data.data?.attachment?.other_attachments_key} isAttachment/>
       </div>
     </InfoCard>
   );

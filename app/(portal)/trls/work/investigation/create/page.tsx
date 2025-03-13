@@ -49,7 +49,7 @@ interface Offender {
   sex: string;
   nationality: string;
   dob: string;
-  age: number;
+  age: number | null;
   contact_number: string;
   id_passport_number: string;
   address: string;
@@ -98,7 +98,7 @@ const initialState: InvestigationRecord = {
     sex: '',
     nationality: '',
     dob: '',
-    age: 0,
+    age: null,
     contact_number: '',
     id_passport_number: '',
     address: '',
@@ -488,7 +488,7 @@ export default function CreateCasePage() {
                 type="text"
                 id="offender.age"
                 name="offender.age"
-                value={caseDetails?.offender.age}
+                value={caseDetails?.offender?.age ?? ''}
                 onChange={handleInputChange}
               />
             </div>
