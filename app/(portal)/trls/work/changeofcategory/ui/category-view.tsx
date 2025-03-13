@@ -167,6 +167,7 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
 
   const renderBackgroundChecks = () => (
     <InfoCard title='Background Checks' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={1}>
+      {data?.background_checks && data?.background_checks?.length > 0 ? (
       <Table>
         <TableHeader>
           <TableRow>
@@ -187,6 +188,11 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
           ))}
         </TableBody>
       </Table>
+      ) : (
+        <div className="flex items-center justify-center p-4 text-muted-foreground">
+          No background checks data available
+        </div>
+      )}
     </InfoCard>
   );
 

@@ -188,15 +188,15 @@ function getRelativeTime(updateTime: string) {
         </div>
       ) : isPDFLink ? (
         <div className="flex items-center mt-1">
-          <FaFilePdf className="text-red-500 mr-2" />
+          
           <Button 
             onClick={handleOpenPDF} 
             variant="link" 
-            className="text-blue-500 hover:underline mr-2 p-0"
-          >
-            View
+            className="text-blue-500 hover:underline mr-2 p-0">
+            <FaFilePdf className="text-red-500 mr-2 h-5 w-5" />
+            Open
           </Button>
-          <a 
+          {/* <a 
             href={value} 
             download 
             target="_blank" 
@@ -204,7 +204,7 @@ function getRelativeTime(updateTime: string) {
             className="text-green-500 hover:underline"
           >
             Download
-          </a>
+          </a> */}
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-4xl">
               <DialogHeader>
