@@ -16,8 +16,6 @@ import {
 } from "@/components/ui/tabs";
 import { Email } from "./components/email-login";
 import { OneGovID } from "./components/one-gov";
-import Logo from '@/public/trsl logo.jpg';
-import MainIcon from '@/public/main-icon.png';
 import { version } from "../lib/store";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
@@ -72,7 +70,7 @@ export default function Welcome() {
       <footer className="relative z-10 mt-auto">
         <div className="flex flex-col items-center mb-4">
           <Button variant="secondary" className="mb-2" asChild>
-            <Link href="/development" target="_blank" rel="noopener noreferrer">
+            <Link href="#" target="_blank" rel="noopener noreferrer" aria-disabled>
               Get In Touch
             </Link>
           </Button>

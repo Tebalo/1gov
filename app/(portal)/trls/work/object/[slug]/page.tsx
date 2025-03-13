@@ -1,6 +1,4 @@
 import { getRole } from "@/app/auth/auth";
-import { ApplicationForTeacherRegistration } from "@/app/components/record/AppForTeacherRegistration";
-import TeacherRegistrationView from "@/app/components/record/RecordViewer";
 import TeacherRegistrationViewer from "@/app/components/record/RecordViewer2.0";
 import { getRegById } from "@/app/lib/actions";
 import { AlertCircle, RefreshCw } from "lucide-react";

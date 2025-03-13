@@ -1,5 +1,5 @@
 'use client'
-import React, { ReactNode, useState } from 'react';
+import React, { useState } from 'react';
 import { FaExclamationTriangle, FaCheckCircle, FaFilePdf } from 'react-icons/fa';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -16,12 +16,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 
-import { Info, FileCheck, FileText, File, Briefcase, School, AlertTriangle, UserCircle, GraduationCap } from 'lucide-react'
+import { Info, FileCheck,  File, Briefcase, School, AlertTriangle, UserCircle, GraduationCap } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '../InfoCard';
 import InfoItem from '../InfoItem';
@@ -29,100 +26,100 @@ import { getAuthData } from '@/app/welcome/components/email-login';
 
 
 interface TeacherRegistration {
-    national_id: string | null;
-    reg_number: string | null;
-    reg_status: string | null;
-    endorsement_status: string;
-    rejection_reason: string | null;
-    service_code: string | null;
-    payment_ref: string | null;
-    payment_amount: string | null;
-    payment_name: string | null;
-    application_id: string | null;
-    license_link: string | null;
-    education_bg_checks: string | null;
-    flags_no: string | null;
-    institution_verification: string | null;
-    course_verification: string | null;
-    license_status: string | null;
-    pending_customer_action: string | null;
-    registration_type: string | null;
-    created_at: string | null;
-    updated_at: string | null;
+    national_id?: string | null;
+    reg_number?: string | null;
+    reg_status?: string | null;
+    endorsement_status?: string;
+    rejection_reason?: string | null;
+    service_code?: string | null;
+    payment_ref?: string | null;
+    payment_amount?: string | null;
+    payment_name?: string | null;
+    application_id?: string | null;
+    license_link?: string | null;
+    education_bg_checks?: string | null;
+    flags_no?: string | null;
+    institution_verification?: string | null;
+    course_verification?: string | null;
+    license_status?: string | null;
+    pending_customer_action?: string | null;
+    registration_type?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
 }
   
 interface TeacherPreliminaryInfo {
-    id: number | null;
-    national_id: string | null;
-    citizen_status: string | null;
-    work_status: string | null;
-    practice_category: string | null;
-    sub_category: string | null;
-    created_at: string | null;
-    updated_at: string | null;
-    minor_subjects: string | null;
-    major_subjects: string | null;
+    id?: number | null;
+    national_id?: string | null;
+    citizen_status?: string | null;
+    work_status?: string | null;
+    practice_category?: string | null;
+    sub_category?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    minor_subjects?: string | null;
+    major_subjects?: string | null;
 }
   
 interface EduProQualification {
-    id: number | null;
-    national_id: string | null;
-    level: string | null;
-    qualification: string | null;
-    institution: string | null;
-    attachments: string | null;
-    qualification_year: string | null;
-    minor_subjects: string | null;
-    major_subjects: string | null;
-    created_at: string | null;
-    updated_at: string | null;
+    id?: number | null;
+    national_id?: string | null;
+    level?: string | null;
+    qualification?: string | null;
+    institution?: string | null;
+    attachments?: string | null;
+    qualification_year?: string | null;
+    minor_subjects?: string | null;
+    major_subjects?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
 }
   
 interface BioData {
-    id: number | null;
-    national_id: string | null;
-    surname: string | null;
-    forenames: string | null;
-    dob: string | null;
-    pob: string | null;
-    gender: string | null;
-    nationality: string | null;
-    postal_address: string | null;
-    physical_address: string | null;
-    email: string | null;
-    mobile: string;
-    marital_status: string | null;
-    next_of_kin_name: string | null;
-    next_of_kin_relation: string | null;
-    next_of_kin_contact: string | null;
-    disability: string | null;
-    disability_description: string | null;
-    created_at: string | null;
-    updated_at: string | null;
+    id?: number | null;
+    national_id?: string | null;
+    surname?: string | null;
+    forenames?: string | null;
+    dob?: string | null;
+    pob?: string | null;
+    gender?: string | null;
+    nationality?: string | null;
+    postal_address?: string | null;
+    physical_address?: string | null;
+    email?: string | null;
+    mobile?: string;
+    marital_status?: string | null;
+    next_of_kin_name?: string | null;
+    next_of_kin_relation?: string | null;
+    next_of_kin_contact?: string | null;
+    disability?: string | null;
+    disability_description?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
 }
   
 interface Declaration {
-    id: number | null;
-    national_id: string | null;
-    agreement: string | null;
-    signature: string | null;
-    created_at: string | null;
-    updated_at: string | null;
+    id?: number | null;
+    national_id?: string | null;
+    agreement?: string | null;
+    signature?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
 }
   
 interface OffenceConviction {
-    id: number | null;
-    national_id: string | null;
-    student_related_offence: string | null;
-    student_related_offence_details: string | null;
-    drug_related_offence: string | null;
-    drug_related_offence_details: string | null;
-    license_flag: string | null;
-    license_flag_details: string | null;
-    misconduct_flag: string | null;
-    misconduct_flag_details: string | null;
-    created_at: string | null;
-    updated_at: string | null;
+    id?: number | null;
+    national_id?: string | null;
+    student_related_offence?: string | null;
+    student_related_offence_details?: string | null;
+    drug_related_offence?: string | null;
+    drug_related_offence_details?: string | null;
+    license_flag?: string | null;
+    license_flag_details?: string | null;
+    misconduct_flag?: string | null;
+    misconduct_flag_details?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
 }
 
 interface EmploymentDetail {
@@ -140,22 +137,22 @@ interface EmploymentDetail {
 }
 
 interface BackgroundChecks{
-      id: number | null,
-      national_id: string | null,
-      name: string | null,
-      description: string | null,
-      checked_by: string | null,
-      created_at: string | null,
-      updated_at: string | null
+      id?: number | null,
+      national_id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      checked_by?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null
 }
 
 interface Attachment {
-    national_id: string | null;
-    national_id_copy: string | null;
-    qualification_copy: string | null;
-    proof_of_payment: string | null;
-    created_at: string | null
-    updated_at: string | null;
+    national_id?: string | null;
+    national_id_copy?: string | null;
+    qualification_copy?: string | null;
+    proof_of_payment?: string | null;
+    created_at?: string | null
+    updated_at?: string | null;
 }
   
 export interface TeacherRegistrationData {
@@ -375,13 +372,6 @@ interface TeacherRegistrationViewProps {
       }
     };
   
-    const renderSection = (title: string, content: React.ReactNode) => (
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-        {content}
-      </div>
-    );
-
     const renderPersonalInfo = () => (
       <InfoCard title='Personal Information' icon={<UserCircle className="w-6 h-6 text-blue-500"/>}>
         <InfoItem label="Name" value={`${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`} />
@@ -812,275 +802,4 @@ interface TeacherRegistrationViewProps {
     );
   };
   
-  
-  const DocumentItem: React.FC<{ label: string; url: string | null; onView: (url: string) => void }> = ({ label, url, onView }) => (
-    <div className="flex items-center mb-2">
-      <FaFilePdf className="text-red-500 mr-2" />
-      <span className="font-medium mr-2">{label}:</span>
-      {url ? (
-        <>
-          <button onClick={() => onView(url)} className="text-blue-500 hover:underline mr-2">View</button>
-          <a href={url} download className="text-green-500 hover:underline">Download</a>
-        </>
-      ) : (
-        <span className="text-gray-500">Not provided</span>
-      )}
-    </div>
-  );
-  
-  const OffenceItem: React.FC<{label: string; value: string; details: string | null; onView?: (url: string) => void}> = ({ label, value, details, onView }) => {
-    const isDocument = details?.startsWith('http');
-  
-    return (
-      <div className="mb-4">
-        <h4 className="text-lg font-medium">{label}</h4>
-        <p className={`text-lg ${value === 'Yes' ? 'text-red-600' : 'text-green-600'}`}>
-          {value === 'Yes' ? <FaExclamationTriangle className="inline mr-2" /> : <FaCheckCircle className="inline mr-2" />}
-          {value}
-        </p>
-        {value === 'Yes' && details && (
-          isDocument ? (
-            <div className="flex items-center mt-2">
-              <FaFilePdf className="text-red-500 mr-2" />
-              <span className="font-medium mr-2">Supporting Document:</span>
-              <button onClick={() => onView && onView(details)} className="text-blue-500 hover:underline mr-2">View</button>
-              <a href={details} download className="text-green-500 hover:underline">Download</a>
-            </div>
-          ) : (
-            <p className="mt-2">{details}</p>
-          )
-        )}
-      </div>
-    );
-  };
-  
-  
-  const renderPersonalInfo = (data: TeacherRegistrationData) => (
-    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
-      <InfoItem label="Name" value={`${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`} />
-      {data?.bio_datas?.national_id && <InfoItem label="National ID" value={data.bio_datas.national_id} />}
-      {data?.bio_datas?.dob && <InfoItem label="Date of Birth" value={new Date(data.bio_datas.dob).toLocaleDateString()} />}
-      {data?.bio_datas?.gender && <InfoItem label="Gender" value={data.bio_datas.gender} />}
-      {data?.bio_datas?.nationality && <InfoItem label="Nationality" value={data.bio_datas.nationality} />}
-      {data?.bio_datas?.email && <InfoItem label="Email" value={data.bio_datas.email} />}
-      {data?.bio_datas?.mobile && <InfoItem label="Mobile" value={data.bio_datas.mobile} />}
-      {data?.bio_datas?.postal_address && <InfoItem label="Postal Address" value={data.bio_datas.postal_address} />}
-    </div>
-  );
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "UTC"
-};
-
-function ConvertTime(time: string){
-    return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
-}
-
-export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toISOString(); // or any other consistent format
-}
-
-function getRelativeTime(updateTime: string) {
-    const now = new Date();
-    const updated = new Date(updateTime);
-    const diffSeconds = Math.floor((now.getTime() - updated.getTime()) / 1000);
-    
-    if (diffSeconds < 60) {
-        return "Updated seconds ago";
-    } else if (diffSeconds < 3600) {
-        const minutes = Math.floor(diffSeconds / 60);
-        return `Updated ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (diffSeconds < 86400) {
-        const hours = Math.floor(diffSeconds / 3600);
-        return `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (diffSeconds < 604800) {
-        const days = Math.floor(diffSeconds / 86400);
-        if (days === 1) {
-            return "Updated a day ago";
-        } else {
-            return `Updated ${days} days ago`;
-        }
-    } else if (diffSeconds < 2592000) {
-        const weeks = Math.floor(diffSeconds / 604800);
-        if (weeks === 1) {
-            return "Updated a week ago";
-        } else {
-            return `Updated ${weeks} weeks ago`;
-        }
-    } else if (diffSeconds < 31536000) {
-        const months = Math.floor(diffSeconds / 2592000);
-        if (months === 1) {
-            return "Updated a month ago";
-        } else {
-            return `Updated ${months} months ago`;
-        }
-    } else {
-        const years = Math.floor(diffSeconds / 31536000);
-        if (years === 1) {
-            return "Updated a year ago";
-        } else {
-            return `Updated ${years} years ago`;
-        }
-    }
-  }
-
-  function getSLAStatus(createdAt: string) {
-    const created = new Date(createdAt);
-    const today = new Date();
-    const diffTime = today.getTime() - created.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const remainingDays = 30 - diffDays;
-
-    let badgeColor = "bg-green-100 text-green-800";
-    let displayText = `${remainingDays} days left`;
-
-    if (remainingDays <= 5 && remainingDays > 0) {
-        badgeColor = "bg-yellow-100 text-yellow-800";
-    } else if (remainingDays <= 0) {
-        badgeColor = "bg-red-100 text-red-800";
-        const overdueDays = Math.abs(remainingDays);
-        displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
-    }
-
-    return { badgeColor, displayText };
-}
-
-  const renderCaseDetails = (data: TeacherRegistrationData) => (
-    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
-      {data?.teacher_registrations?.registration_type && <InfoItem label="Registration Type" value={`${data.teacher_registrations.registration_type}`} />}
-      <InfoItem label="Application ID" value={`59c0f722-5c06-46ab-9875-430bd3a236ca`} />
-      {data?.teacher_registrations?.reg_status && <InfoItem label="Registration Status" value={`${data.teacher_registrations.reg_status}`} />}
-      {data?.teacher_registrations?.endorsement_status && <InfoItem label="Endorsement Status" value={`${data.teacher_registrations.endorsement_status}`} />}
-      {data.teacher_registrations?.payment_name && <InfoItem label="Payment Name" value={`${data.teacher_registrations.payment_name}`} />}
-      {data?.teacher_registrations?.payment_ref && <InfoItem label="Payment Ref" value={`${data.teacher_registrations.payment_ref}`} />}
-      {data?.teacher_registrations?.flags_no && <InfoItem label="Flags" value={`${data.teacher_registrations.flags_no}`} />}
-      {data?.teacher_registrations?.institution_verification && <InfoItem label="Institution" value={`${data.teacher_registrations.institution_verification}`} />}
-      {data?.teacher_registrations?.course_verification && <InfoItem label="Course" value={`${data.teacher_registrations.course_verification}`} />}
-      <div className="flex justify-start space-x-2 items-center">
-          <Label className="font-semibold text-gray-700">SLA Status:</Label>
-          {data?.teacher_registrations?.updated_at &&  <Badge className={`${getSLAStatus(data.teacher_registrations.updated_at).badgeColor} font-semibold px-3 py-1`}>
-              {getSLAStatus(data?.teacher_registrations?.updated_at).displayText}
-          </Badge>}
-      </div>
-      {data?.teacher_registrations?.created_at && <InfoItem label="Created" value={new Date(data.teacher_registrations.created_at).toLocaleString()} />}
-      {data?.teacher_registrations?.updated_at && <InfoItem label="Updated" value={getRelativeTime(data.teacher_registrations.updated_at)} />}
-    </div>
-  );
-  
-  const renderQualifications = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <div>
-      {data?.other_qualifications?.map((qual, index) => (
-        <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
-          <h4 className="text-lg font-medium">{qual.qualification}</h4>
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            {qual.level && <InfoItem label="Level" value={qual.level} />}
-            {qual.institution && <InfoItem label="Institution" value={qual.institution} /> && <InfoItem label="Institution" value={qual.institution} />}
-            {qual.qualification_year && <InfoItem label="Year" value={qual.qualification_year} />}
-            {qual.major_subjects && <InfoItem label="Major Subjects" value={qual.major_subjects} />}
-            <DocumentItem label="Qualification Attachment" url={qual.attachments} onView={onView} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-
-  const renderMandatoryQualifications = (qual: TeacherRegistrationData, onView: (url: string) => void) => (
-    <div  className="mb-4 p-4 bg-gray-100 rounded-lg">
-      <h4 className="text-lg font-medium">{qual?.edu_pro_qualifications?.qualification}</h4>
-      <div className="grid grid-cols-2 gap-2 mt-2">
-        {qual?.edu_pro_qualifications?.level && <InfoItem label="Level" value={qual.edu_pro_qualifications.level} />}
-        {qual?.edu_pro_qualifications?.institution && <InfoItem label="Institution" value={qual.edu_pro_qualifications.institution} /> && <InfoItem label="Institution" value={qual.edu_pro_qualifications.institution} />}
-        {qual?.edu_pro_qualifications?.qualification_year && <InfoItem label="Year" value={qual.edu_pro_qualifications.qualification_year} />}
-        {qual?.edu_pro_qualifications?.major_subjects && <InfoItem label="Major Subjects" value={qual.edu_pro_qualifications.major_subjects} />}
-        {qual?.edu_pro_qualifications?.attachments && <DocumentItem label="Qualification Attachment" url={qual.edu_pro_qualifications.attachments} onView={onView} />}
-      </div>
-  </div>
-  )
-  
-  const renderEmployment = (data: TeacherRegistrationData) => (
-    <div className="grid grid-cols-2 bg-gray-100 rounded-lg p-4 gap-4">
-      {data?.employment_details?.current_institution && <InfoItem label="Current Institution" value={data.employment_details.current_institution} />}
-      {data?.employment_details?.institution_type && <InfoItem label="Institution Type" value={data.employment_details.institution_type} />}
-      {data?.employment_details?.region && <InfoItem label="Region" value={data?.employment_details?.region} />}
-      {data?.employment_details?.district && <InfoItem label="District" value={data.employment_details.district} />}
-      {data?.employment_details?.city_or_town && <InfoItem label="City/Town" value={data.employment_details.city_or_town} />}
-      {data?.employment_details?.experience_years && <InfoItem label="Years of Experience" value={data.employment_details.experience_years.toString()} />}
-    </div>
-  );
-  const renderBackgroundChecks = (data: TeacherRegistrationData) => (
-    <div>
-      {data?.background_checks?.map((background, index) => (
-        <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
-          <h4 className="text-lg font-medium">{background.name}</h4>
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            <div className='col-span-2'>{background.description && <InfoItem label="Description" value={background.description} />}</div>
-            {background.checked_by && <InfoItem label="Check By" value={background.checked_by} />}
-            {background.created_at && <InfoItem label="Created" value={new Date(background.created_at).toLocaleString()} />}
-            {background.updated_at && <InfoItem label="Updated" value={getRelativeTime(background.updated_at)} />}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-  
-  
-  // const renderDocuments = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-  //   <div className='bg-gray-100 rounded-lg p-4'>
-  //     {data.attachments?.national_id_copy && <DocumentItem label="National ID Copy" url={data.attachments.national_id_copy} onView={onView} />}
-  //     {data?.attachments?.qualification_copy && <DocumentItem label="Qualification Copy" url={data.attachments.qualification_copy} onView={onView} />}
-  //     {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-approved' && <DocumentItem label="License" url={data.teacher_registrations.license_link} onView={onView} />}
-  //     {data?.teacher_registrations?.reg_status && data?.teacher_registrations?.endorsement_status.toLocaleLowerCase() == 'endorsement-complete' && data?.teacher_registrations?.reg_status.toLocaleLowerCase() == 'manager-rejected' && <DocumentItem label="Notice" url={data.teacher_registrations.license_link} onView={onView} />}
-  //   </div>
-  // );
-  
-  const renderOffences = (data: TeacherRegistrationData, onView: (url: string) => void) => (
-    <div className='bg-gray-100 rounded-lg p-4'>
-      {data?.offence_convictions?.student_related_offence  &&  <OffenceItem 
-        label="Student Related Offence" 
-        value={data.offence_convictions.student_related_offence} 
-        details={data.offence_convictions.student_related_offence_details}
-      />}
-      {data?.offence_convictions?.drug_related_offence && <OffenceItem 
-        label="Drug Related Offence" 
-        value={data.offence_convictions.drug_related_offence} 
-        details={data.offence_convictions.drug_related_offence_details}
-      />}
-      {data?.offence_convictions?.license_flag && <OffenceItem 
-        label="License Flag" 
-        value={data.offence_convictions.license_flag} 
-        details={data.offence_convictions.license_flag_details}
-        onView={onView}
-      />}
-      {data?.offence_convictions?.misconduct_flag && <OffenceItem 
-        label="Misconduct Flag" 
-        value={data.offence_convictions.misconduct_flag} 
-        details={data.offence_convictions.misconduct_flag_details}
-        onView={onView}
-      />}
-    </div>
-  );
-  
-  const renderDeclaration = (data: TeacherRegistrationData) => (
-    <div className="p-4 bg-gray-100 rounded-lg">
-      <p className="text-lg">
-        {data?.declarations?.agreement === 'Yes' 
-          ? <span className="text-green-600"><FaCheckCircle className="inline mr-2" />Applicant has agreed to the declaration.</span>
-          : <span className="text-red-600"><FaExclamationTriangle className="inline mr-2" />Applicant has not agreed to the declaration.</span>
-        }
-      </p>
-    </div>
-  );
-  
-  export default TeacherRegistrationViewer;
-
-function useEffect(arg0: () => void, arg1: never[]) {
-  throw new Error('Function not implemented.');
-}
+export default TeacherRegistrationViewer;
