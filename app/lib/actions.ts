@@ -957,14 +957,16 @@ export async function updateStudentTeacherStatus(
   try {
     // Prepare query parameters
     const params = new URLSearchParams();
+    let baseURL = `${studentTeacherUrl}/student-teacher/`;
     if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
       params.append('endorsement_status', status);
+      baseURL = `${restorationUrl}/student-endorsement/`
     } else {
       params.append('reg_status', status);
     }
  
     const response = await fetch(
-      `${studentTeacherUrl}/student-teacher/${ID}?${params.toString()}`,
+      `${baseURL}${ID}?${params.toString()}`,
       {
         method: 'PUT',
         headers: {
