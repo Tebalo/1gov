@@ -465,7 +465,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
       </DialogContent>
     );
   };
-  
+  const preliminary_investigation_statuses = ['INCOMING','UNDER-REVIEW','ASSESSMENT']
 
   return (
     <>
@@ -503,7 +503,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
                 'green'
               )}
               <Separator/>
-              {renderActionButton(
+              {preliminary_investigation_statuses.includes(current_status) && renderActionButton(
                 PlusCircle,
                 'Add Preliminary Report',
                 () => setActiveDialog('report'),

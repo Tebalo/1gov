@@ -861,8 +861,8 @@ export const portalNames: { [key: string]: string } = {
     // Appeals team portal items
     'APPEALS_OFFICER':'Appeals Officer Portal',
     'SENIOR_APPEALS_OFFICER':'Senior Appeals Officer Portal',
-    'APPEALS_MANAGER':'Appeals Manager Officer Portal',
-    'APPEALS_DIRECTOR':'Appeals Director Officer Portal'
+    'APPEALS_MANAGER':'Appeals Manager Portal',
+    'APPEALS_DIRECTOR':'Appeals Director Portal'
 };
 
 // legacy code

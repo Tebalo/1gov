@@ -87,7 +87,7 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
             {accessProfile && (
               <div className="px-2 py-1.5 mb-1">
                 <p className="text-sm font-medium truncate">{accessProfile.username}</p>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-muted-foreground truncate text-wrap">
                   {accessProfile.current && portalNames[accessProfile.current]}
                 </p>
                 <div className='flex items-end gap-1 justify-end'>

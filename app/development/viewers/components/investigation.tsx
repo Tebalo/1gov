@@ -14,7 +14,7 @@ const dummyData: InvestigationResponse = {
           "crime_location": "Gabane",
           "inquiry_number": "INQ2025-01-00006",
           "nature_of_crime": "Theft",
-          "reg_status": "ASSESSMENT",
+          "reg_status": "RECOMMEND-FOR-DISCIPLINARY",
           "case_number": "CS2025-01-00001",
           "date": "2025-01-13",
           "time": null,

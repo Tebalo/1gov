@@ -121,7 +121,7 @@ interface InvestigationViewProps {
   );
 
   const renderOffenderInfo = (data: Investigation) => (
-    <InfoCard title='Offender Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Defaulter Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
       <InfoItem label="Name" value={data.offender.name}/>
       <InfoItem label="Sex" value={data.offender.sex}/>
       <InfoItem label="Nationality" value={data.offender.nationality}/>
