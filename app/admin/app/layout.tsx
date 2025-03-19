@@ -52,7 +52,7 @@ export default async function DashboardLayout({
         {/* Uncomment when Appbar is ready */}
         {/* <Appbar /> */}
         
-        <main className="flex-1 overflow-auto p-4 pb-16 md:pb-4"> {/* Added bottom padding for mobile nav */}
+        <main className="flex-1 overflow-auto md:p-4 p-1 pb-16 md:pb-4"> {/* Added bottom padding for mobile nav */}
           {/* Background Image Container */}
           {/* Mobile Top Navigation Bar - Optional for breadcrumbs or title */}
           <div className="md:hidden fixed top-0 left-0 right-0 bg-white z-20 shadow-md">
@@ -81,7 +81,7 @@ export default async function DashboardLayout({
             />
           </div>
           
-          <div className="container mx-auto max-w-7xl bg-white/95 relative z-10 mt-16 md:mt-0"> {/* Added top margin for mobile header */}
+          <div className="container md:mx-auto md:max-w-7xl bg-white/95 relative z-10 mt-16 md:mt-0"> {/* Added top margin for mobile header */}
             <Suspense fallback={<LoadingSkeleton />}>
               {children}
             </Suspense>

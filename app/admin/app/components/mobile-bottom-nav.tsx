@@ -12,6 +12,7 @@ import {
 import { AccessGroup } from '@/app/lib/types';
 import { cn } from '@/lib/utils';
 import NavAdmin from './nav-admin';
+import { FaDocker } from 'react-icons/fa';
 
 interface NavItemProps {
   href: string;
@@ -66,6 +67,12 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       path: '/admin/app/roles', 
       icon: <UserCheck2 size={24} />, 
       title: 'Users', 
+      roles: ['ADMIN'] 
+    },
+    { 
+      path: '/admin/app/docker-images', 
+      icon: <FaDocker size={24} color="#FFFFFF" />, 
+      title: 'Services', 
       roles: ['ADMIN'] 
     },
     { 
