@@ -12,6 +12,7 @@ import {
 import { NavItem } from '@/app/development/components/nav-item';
 import { AccessGroup } from '@/app/lib/types';
 import NavAdmin from './nav-admin';
+import { FaDocker } from 'react-icons/fa';
 
 // Define the type for sidebar items
 interface SideBarItem {
@@ -42,6 +43,12 @@ const AdminNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile })
         icon: <UserCheck2 size={24} color="#FFFFFF" />, 
         title: 'Users', 
         roles: ['ADMIN'] 
+    },
+    { 
+      path: '/admin/app/docker-images', 
+      icon: <FaDocker size={24} color="#FFFFFF" />, 
+      title: 'Services', 
+      roles: ['ADMIN'] 
     },
     { 
         path: '/admin/app/reports', 
@@ -102,7 +109,7 @@ const AdminNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile })
               label={item.title}
             >
               {React.cloneElement(item.icon as React.ReactElement, { 
-                color: isActivePath(item.path) ? "#000000" : undefined 
+                color: isActivePath(item.path) ? "#0284c7" : undefined 
               })}
             </NavItem>
           )
