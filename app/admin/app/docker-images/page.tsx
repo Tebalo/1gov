@@ -10,7 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 
@@ -60,7 +68,8 @@ export default function DockerContainersPage() {
     containers.forEach(container => {
       if (container.Status) {
         // Extract the first part of the status (e.g. "Up" from "Up 2 days")
-        const statusPrefix = container.Status.split(' ')[0];
+        // const statusPrefix = container.Status.split(' ')[0];
+        const statusPrefix = container.Status;
         statusSet.add(statusPrefix);
       }
     });
@@ -83,7 +92,7 @@ export default function DockerContainersPage() {
       }
       
       // Filter by status prefix
-      if (statusFilter && !container.Status.startsWith(statusFilter)) {
+      if (statusFilter && !container.Status.toLowerCase().includes(statusFilter.toLowerCase())) {
         return false;
       }
       
@@ -278,7 +287,7 @@ export default function DockerContainersPage() {
 
               {/* Status Filter */}
               <div className="space-y-1">
-                <Label>Status</Label>
+                <Label>Duration</Label>
                 <Popover open={openStatusDropdown} onOpenChange={setOpenStatusDropdown}>
                   <PopoverTrigger asChild>
                     <Button
@@ -286,7 +295,6 @@ export default function DockerContainersPage() {
                       role="combobox"
                       aria-expanded={openStatusDropdown}
                       className="w-full justify-between"
-                      disabled
                     >
                       {statusFilter || "Select status..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -411,6 +419,21 @@ export default function DockerContainersPage() {
                   <Button variant="outline" size="sm" className="text-blue-600">
                     Details
                   </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="text-gray-600">
+                        Logs
+                      </Button> 
+                    </DialogTrigger>
+                    <DialogContent className="w-64">
+                      <DialogHeader>
+                        <DialogTitle>Container logs</DialogTitle>
+                      </DialogHeader>
+                      <DialogDescription>
+                        See container logs here
+                      </DialogDescription>
+                    </DialogContent>
+                  </Dialog>
                   <div className="space-x-2">
                     <Button variant="outline" size="sm" className="text-yellow-600">
                       Restart
