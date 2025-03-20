@@ -34,19 +34,6 @@ export const RenewalColumns: ColumnDef<Renewal>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "reg_number",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Registration Number" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex space-x-2">
-          <Badge variant="outline">{row.getValue("reg_number")}</Badge>
-        </div>
-      )
-    },
-  },
-  {
     accessorKey: "national_id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="National ID" />

@@ -70,7 +70,7 @@ const CPDViewer: React.FC<CPDViewerProps> = ({ data, userRole }) => {
   const renderAttachments = () => (
     <InfoCard title='Attachments' icon={<File className="w-6 h-6 text-blue-500"/>}>
       <div className="space-y-4">
-        <InfoItem label="QPD Evidence Key" value={data.data?.attachment?.cpd_evidence_key} isAttachment/>
+        <InfoItem label="CPD Evidence Key" value={data.data?.attachment?.cpd_evidence_key} isAttachment/>
         <InfoItem label="Other Documents" value={data.data?.attachment?.other_attachments_key} isAttachment/>
       </div>
     </InfoCard>

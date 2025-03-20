@@ -21,6 +21,7 @@ Libraries and Components
 17. RECHARTS: https://recharts.org/en-US/examples
 18. Radix icons: https://www.radix-ui.com/icons
 19. https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/s
+20. https://macdonaldchika.medium.com/how-to-install-tls-ssl-on-docker-nginx-container-with-lets-encrypt-5bd3bad1fd48
 
 TODO:
 1. Setup Themes: https://www.youtube.com/watch?v=l93uukpAoxE
