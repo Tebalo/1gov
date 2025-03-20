@@ -289,13 +289,13 @@ const APPEAL_FLOW: Record<string, FlowAction> = {
     'recommend-for-approval': {
         requiredPermission: 'update:appeal-recommed-for-approval',
         nextStatus: ['APPROVAL'],
-        status_label: 'Approve',
+        status_label: 'Endorse',
         allowedRoles: ['appeals_director']
     },
     'recommend-for-rejection': {
         requiredPermission: 'update:appeal-recommed-for-rejection',
         nextStatus: ['REJECTION'],
-        status_label: 'Rejection',
+        status_label: 'Endorse',
         allowedRoles: ['appeals_director']
     },
     'recommend-for-investigation': {
@@ -645,7 +645,11 @@ export const ROLES = {
         "view:changeofcategory-endorsement-complete",
         "view:renewal-endorsement-complete",
         'view:registration-endorsement-complete',
-        "view:restoration-endorsement-complete"
+        "view:restoration-endorsement-complete",
+
+        "view:renewal-pending-screening",
+        "view:renewal-pending-assessment",
+        'view:renewal-recommended-for-approval',
     ],
     investigations_officer: [
         "create:complaints",

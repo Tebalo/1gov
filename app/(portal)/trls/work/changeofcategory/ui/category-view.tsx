@@ -204,34 +204,34 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
     </InfoCard>
   );
 
-  if (!data || !data.bio_datas || !data.teacher_registrations) {
-    return (
-      <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-4">
-          <Alert variant="default" className="border-2">
-              <AlertCircle className="h-5 w-5" />
-              <AlertTitle>Information Not Found</AlertTitle>
-              <AlertDescription>
-                  The requested information could not be retrieved. This may be due to:
-                  <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                      <li>Incomplete data synchronization from 1Gov system</li>
-                  </ul>
-                  Please contact your system administrator for assistance.
-              </AlertDescription>
-          </Alert>
-          <div className="flex justify-center">
-              <Button 
-                  onClick={() => window.location.reload()}
-                  className="gap-2"
-              >
-                  <RefreshCcw className="h-4 w-4" />
-                  Refresh
-              </Button>
-          </div>
-      </div>
-    </div>
-    )
-  }
+  // if (!data || !data.bio_datas || !data.teacher_registrations) {
+  //   return (
+  //     <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+  //     <div className="max-w-md w-full space-y-4">
+  //         <Alert variant="default" className="border-2">
+  //             <AlertCircle className="h-5 w-5" />
+  //             <AlertTitle>Information Not Found</AlertTitle>
+  //             <AlertDescription>
+  //                 The requested information could not be retrieved. This may be due to:
+  //                 <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+  //                     <li>Incomplete data synchronization from 1Gov system</li>
+  //                 </ul>
+  //                 Please contact your system administrator for assistance.
+  //             </AlertDescription>
+  //         </Alert>
+  //         <div className="flex justify-center">
+  //             <Button 
+  //                 onClick={() => window.location.reload()}
+  //                 className="gap-2"
+  //             >
+  //                 <RefreshCcw className="h-4 w-4" />
+  //                 Refresh
+  //             </Button>
+  //         </div>
+  //     </div>
+  //   </div>
+  //   )
+  // }
 
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
@@ -241,9 +241,9 @@ const CategoryViewer: React.FC<CategoryViewerProps> = ({ data, userRole }) => {
             Change of Membership Request
           </h1>
           <CategoryActionButtons 
-            recordId={data.teacher_registrations.national_id ?? ''} 
+            recordId={data?.teacher_registrations?.national_id ?? ''} 
             userRole={userRole} 
-            current_status={data.teacher_registrations.reg_status ?? ''}
+            current_status={data?.teacher_registrations?.reg_status ?? ''}
           />
         </div>
         <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
