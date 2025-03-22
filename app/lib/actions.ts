@@ -960,7 +960,7 @@ export async function updateStudentTeacherStatus(
     let baseURL = `${studentTeacherUrl}/student-teacher/`;
     if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
       params.append('endorsement_status', status);
-      baseURL = `${restorationUrl}/student-endorsement/`
+      baseURL = `${renewalUrl}/student-endorsement/`
     } else {
       params.append('reg_status', status);
     }
