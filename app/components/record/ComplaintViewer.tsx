@@ -51,7 +51,7 @@ interface InvestigationViewProps {
         <div className="mb-4 flex-shrink-0 shadow-md">
           <div className='flex justify-between'>
             <h1 className="text-3xl font-bold text-gray-800">
-              Complaint Details
+              Complaint Case
             </h1>
             <ActionButtons 
               recordId={data?.complaint?.inquiry_number  ?? ''} 
