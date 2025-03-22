@@ -15,11 +15,11 @@ import { RegistrationOfficerHome } from "@/app/components/Home/RegistrationOffic
 import { SnrLicenseOfficerHome } from "@/app/components/Home/SnrLicenseOfficerHome";
 import { SnrRegistrationOfficerHome } from "@/app/components/Home/SnrRegistrationOfficerHome";
 import { TeacherHome } from "@/app/components/Home/TeacherHome";
-import { CPDROLES } from "@/app/lib/store";
+import { CPDROLES, Role } from "@/app/lib/store";
 import { redirect } from "next/navigation";
 
 export default async function Home(){
-    const userRole = await getRole()
+    const userRole = await getRole() as Role;
 
     if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
         return <TeacherHome/>

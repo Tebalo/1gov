@@ -726,12 +726,20 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, curre
       </Dialog>
 
       {/* Activity Modal */}
-      {activeDialog === 'activity' && (
-        <ActivityModal 
-          onClose={() => closeDialog()} 
-          recordId={recordId}
-        />
-      )}
+      <Dialog open={activeDialog === 'activity'} onOpenChange={() => closeDialog()}>
+        <DialogContent className="sm:max-w-[500px] md:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>Update Investigation Details</DialogTitle>
+            <DialogDescription>
+              Update the investigation details below.
+            </DialogDescription>
+          </DialogHeader>
+          <ActivityModal 
+            onClose={() => closeDialog()} 
+            recordId={recordId}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
