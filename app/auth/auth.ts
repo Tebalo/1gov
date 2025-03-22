@@ -1,5 +1,5 @@
 'use server'
-
+// Todo: Move to actions/auth
 import { SignJWT, errors, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
@@ -62,72 +62,6 @@ async function fetchWithErrorHandling(url: string, options: RequestInit, timeout
 }
 
 const TOKEN_REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
-
-async function fetchWithErrorHandlingAndTokenRefresh(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<any> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    // Check and refresh token if needed
-    const session = await getSession();
-    if (session && session.auth) {
-      const currentTime = Math.floor(Date.now() / 1000);
-      const decodedToken = await decryptAccessToken(session.auth);
-      
-      if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
-        console.log("Token close to expiry, attempting refresh");
-        const refreshSuccessful = await refreshToken();
-        if (!refreshSuccessful) {
-          throw new Error('Failed to refresh token');
-        }
-      }
-    }
-
-    // Get the latest session after potential refresh
-    const updatedSession = await getSession();
-    if (updatedSession && updatedSession.auth) {
-      const headers = new Headers(options.headers || {});
-      headers.set('Authorization', `Bearer ${updatedSession.auth.access_token}`);
-      options = { ...options, headers };
-    }
-
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        // Token might have expired right after refresh, try refreshing one more time
-        console.log("Received 401, attempting one more token refresh");
-        const refreshSuccessful = await refreshToken();
-        if (refreshSuccessful) {
-          // Retry the request with the new token
-          const finalSession = await getSession();
-          if (finalSession && finalSession.auth) {
-            const headers = new Headers(options.headers || {});
-            headers.set('Authorization', `Bearer ${finalSession.auth.access_token}`);
-            const retryResponse = await fetch(url, { ...options, headers, signal: controller.signal });
-            if (retryResponse.ok) {
-              return await retryResponse.json();
-            }
-          }
-        }
-      }
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    if (error) {
-      throw new Error(`Request timed out after ${timeoutMs}ms`);
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
 
 export async function encrypt(payload: any): Promise<string> {
   return new SignJWT(payload)
@@ -265,7 +199,14 @@ export async function refreshToken(): Promise<boolean> {
   const session = await getSession();
   if (!session || !session.auth.refresh_token) return false;
 
-  return refreshTokenAction(session.auth.refresh_token);
+  try {
+    // Your existing refreshTokenAction
+    const refreshSuccessful = await refreshTokenAction(session.auth.refresh_token);
+    return refreshSuccessful;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return false;
+  }
 }
 
 // const TOKEN_REFRESH_THRESHOLD = 29 * 60; // 5 minutes in seconds
@@ -331,7 +272,7 @@ function findFirstValidPersona(personas: string[], userRoles: string[]): string 
   throw new Error('No valid persona found in user roles');
 }
 
-export async function storeAccessGroups(decodedToken: DecodedToken){
+export async function storeAccessGroups(decodedToken: DecodedToken):Promise<string | null> {
   try{
     const expires = new Date(Date.now() + 30 * 60 * 1000);
     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
@@ -347,8 +288,10 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
 
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
+    return currentPersona
   } catch(error){
     throw error;
+    return null
   }
 }
 

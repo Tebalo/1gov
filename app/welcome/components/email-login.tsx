@@ -92,9 +92,9 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [countdown, setCountdown] = useState(0);
     const router = useRouter();
-
+    const [defaultRole, setDefaultRole] = useState<string | null>(null)
     const env = process.env.environment;
-  
+    let role;
     const [authState, setAuthState] = useState({
       isStoringSession: false,
       isDecryptingSession: false,
@@ -162,14 +162,24 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
   
         try {
           const profile = await attemptDeTokenize();
-          await storeAccessGroups(profile);
+          role = await storeAccessGroups(profile);
 
-          setAuthState({
-            isStoringSession: false,
-            isDecryptingSession: false,
-            isRedirecting: true
-          });
-  
+          setDefaultRole(role)
+
+          if(defaultRole==null){
+            setErrorMessage('Your account is incomplete, missing required permissions. Contact TRLS Admin for support')
+            setAuthState({
+              isStoringSession: false,
+              isDecryptingSession: false,
+              isRedirecting: false
+            });
+          } else {
+            setAuthState({
+              isStoringSession: false,
+              isDecryptingSession: false,
+              isRedirecting: true
+            });
+         }
           router.push('/trls/home');
         } catch (error) {
           if (axios.isAxiosError(error)) {
@@ -256,7 +266,7 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
         ? "Saving session..."
         : isDecryptingSession
           ? "Decrypting access token..."
-          : "Redirecting to the home page...";
+          : "Logging is as "+defaultRole;
   
       return <LoadingState message={message} />;
     }
