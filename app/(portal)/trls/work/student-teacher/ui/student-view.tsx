@@ -29,7 +29,7 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
   };
 
   const renderPersonalInfo = () => (
-    <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="National ID" value={data?.bio_datas?.national_id}/>
       <InfoItem label="Date of Birth" value={data?.bio_datas?.dob} isDate/>
@@ -50,14 +50,14 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
     const hasPayment = data?.teacher_registrations?.payment_amount != null;
 
     return isManagerApproved && isEndorsementComplete ? 'Valid' : 'Invalid';
-}
+  }
 
-const isEndorsementComplete = () => {
-  return data?.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
-}
+  const isEndorsementComplete = () => {
+    return data?.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
+  }
 
   const renderRegistrationInfo = () => (
-    <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Registration Status" value={data?.teacher_registrations?.reg_status}/>
       <InfoItem label="Endorsement Status" value={data?.teacher_registrations?.endorsement_status}/>
       <InfoItem label="Registration Type" value={data?.teacher_registrations?.registration_type}/>
@@ -113,7 +113,7 @@ const isEndorsementComplete = () => {
   );
 
   const renderOffenceConvictions = () => (
-    <InfoCard title='Offence & Convictions' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Offence & Convictions' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Student Related Offence" value={data?.offence_convictions?.student_related_offence}/>
       <InfoItem label="Details" value={data?.offence_convictions?.student_related_offence_details}/>
       <InfoItem label="Drug Related Offence" value={data?.offence_convictions?.drug_related_offence}/>
