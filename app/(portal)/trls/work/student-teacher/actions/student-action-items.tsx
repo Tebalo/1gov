@@ -44,7 +44,7 @@ interface FlowActionConfig {
   isAllowedRole: boolean;
 }
 
-type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | null;
+type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | 'audit-trail' | null;
 
 const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
@@ -270,7 +270,7 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
     <>
       <Button 
         onClick={() => setActiveDialog('actions')}
-        className="bg-blue-500 hover:bg-blue-600 text-white flex items-center space-x-2"
+        className="flex items-center space-x-2"
       >
         <span>Actions</span>
         <ChevronDownIcon className="h-4 w-4" />

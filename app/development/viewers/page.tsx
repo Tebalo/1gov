@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PageTitle } from "@/app/components/PageTitle";
 import { Card } from "@/components/ui/card";
-import { FileText, RefreshCcw, FileCog, RotateCcw, Search, FileSearch, UserPlus, Hammer, Book } from 'lucide-react';
+import { FileText, RefreshCcw, FileCog, RotateCcw, Search, FileSearch, UserPlus, Hammer, Book, TestTube } from 'lucide-react';
 import RenewalContent from "./components/renewal";
 import RevocationContent from "./components/revocation";
 import CategoryContent from "./components/changeofcategory";
@@ -14,6 +14,7 @@ import RegistrationContent from "./components/registration";
 import StudentContent from "./components/studentteacher";
 import CPD from "./components/cpd";
 import Appeal from "./components/appeal";
+import { CaseDetailPage } from "./components/audit-trail";
 
 export default function Page() {
     const [activeSection, setActiveSection] = useState('renewal');
@@ -79,7 +80,14 @@ export default function Page() {
             label: 'Appeal View',
             icon: <Hammer className="h-4 w-4" />,
             component: <Appeal />
+        },
+        {
+            id: 'Audit Trail',
+            label: 'Audit Trail',
+            icon: <TestTube className="h-4 w-4" />,
+            component: <CaseDetailPage />
         }
+        
     ];
 
     const handleSectionChange = (id: string) => {

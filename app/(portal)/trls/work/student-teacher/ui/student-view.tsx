@@ -1,20 +1,21 @@
 'use client'
 import React from 'react';
-import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle, GraduationCap, Tags, RefreshCcw, AlertCircle, StopCircle, FileWarning } from 'lucide-react'
+import { Info, FileCheck, FileText, File, AlertTriangle, GraduationCap, FileWarning } from 'lucide-react'
 import { Role } from '@/app/lib/store';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '@/app/components/InfoCard';
 import InfoItem from '@/app/components/InfoItem';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { StudentTeacherResponse } from '../types/student-type';
 import StudentTeacherActionButtons from '../actions/student-action-items';
-import Link from 'next/link';
+import AuditTrail from '@/components/case/audit-trail';
+
 
 interface StudentViewerProps {
   data: StudentTeacherResponse;
   userRole: Role;
 }
+
 
 const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) => {
   const renderSection = (content: React.ReactNode) => (
@@ -70,7 +71,7 @@ const isEndorsementComplete = () => {
   );
 
   const renderPreliminaryInfo = () => (
-    <InfoCard title='Preliminary Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Preliminary Information' icon={<FileText className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Institution Name" value={data?.student_preliminary_infos?.institution_name}/>
       <InfoItem label="Citizenry" value={data?.student_preliminary_infos?.citizenry}/>
     </InfoCard>
@@ -156,7 +157,7 @@ const isEndorsementComplete = () => {
   );
 
   const renderDocuments = () => (
-    <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={3}>
+    <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="National ID Copy" value={data?.attachments?.national_id_copy}/>
       <InfoItem label="Attachment Letter" value={data?.attachments?.attachment_letter} />
     </InfoCard>
@@ -198,7 +199,7 @@ const isEndorsementComplete = () => {
   //     </div>
   //   )
   // }
-
+  const caseId = '1001';
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
       <div className="mb-4 flex-shrink-0 shadow-md p-2">
@@ -206,21 +207,25 @@ const isEndorsementComplete = () => {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Student-Teacher Registration
           </h1>
-          {data?.teacher_registrations?.national_id ? (
-            <StudentTeacherActionButtons 
-              recordId={data?.teacher_registrations?.national_id ?? ''} 
-              userRole={userRole}
-              current_status={data?.teacher_registrations?.reg_status ?? ''}
-            />
-          ) : (
-            <Button
-              variant="link"
-              className="text-red-500 hover:underline p-0 flex items-center"
-            >
-              <FileWarning className="h-5 w-5 sm:h-6 sm:w-6 text-red-500 flex-shrink-0"/>
-              <span className="text-wrap px-2 italic text-base sm:text-lg">Missing required data. Contact support!</span>
-            </Button>
-          )}
+          <div className='grid md:grid-cols-2 grid-cols-1 gap-2'>
+            <AuditTrail caseId={caseId}/>
+
+            {data?.teacher_registrations?.national_id ? (
+              <StudentTeacherActionButtons 
+                recordId={data?.teacher_registrations?.national_id ?? ''} 
+                userRole={userRole}
+                current_status={data?.teacher_registrations?.reg_status ?? ''}
+              />
+            ) : (
+              <Button
+                variant="link"
+                className="text-red-500 hover:underline p-0 flex items-center"
+              >
+                <FileWarning className="h-5 w-5 sm:h-6 sm:w-6 text-red-500 flex-shrink-0"/>
+                <span className="text-wrap px-2 italic text-base sm:text-lg">Missing required data. Contact support!</span>
+              </Button>
+            )}
+          </div>
         </div>
         <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
       </div>
