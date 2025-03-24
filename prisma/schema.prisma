@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      =  env("DATABASE_URL")
+}
+
+// AuditTrail model - stores all actions across different case types
+model AuditTrail {
+  id            String   @id @default(cuid())
+  timestamp     DateTime @default(now())
+  action        String   // e.g., "status_change", "comment_added", "viewed", etc.
+  
+  // User information
+  userId        String
+  userName      String
+  userRole      String?
+  
+  // Case information
+  caseId        String   // External system's case ID or reference
+  caseType      String   // e.g., "student-teacher", "investigation", "appeal", etc.
+  
+  // Details of the action
+  field         String?  // The field that was changed, if applicable
+  oldValue      String?  // Previous value, if applicable
+  newValue      String?  // New value, if applicable
+  description   String?  // Human-readable description of the action
+  metadata      String?  // JSON string for additional data
+  
+  @@index([caseId, caseType])
+  @@index([timestamp])
+  @@index([action])
+  @@index([userId])
+}
+
+// Comments model - for case discussions
+model Comment {
+  id          String   @id @default(cuid())
+  content     String
+  createdAt   DateTime @default(now())
+  
+  // User information
+  userId      String
+  userName    String
+  userRole    String?
+  
+  // Case information
+  caseId      String
+  caseType    String
+  
+  @@index([caseId, caseType])
+}

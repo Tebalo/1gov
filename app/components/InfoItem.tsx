@@ -220,11 +220,11 @@ function getRelativeTime(updateTime: string) {
       ): isLicenseStatus ? (
         <div>{value && 
           <Badge className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 hover:bg-slate-300`}>
-              {value || '---'}
+              {value || '--'}
           </Badge>}
         </div>
       ):(
-        <p className="font-medium mt-1">{value || '---'}</p>
+        <p className="font-medium mt-1">{value || '--'}</p>
       )}
     </div>
   );
