@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { User, Clock, AlertCircle, ChevronDown, ChevronUp, Filter } from 'lucide-react';
