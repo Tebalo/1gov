@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auditTrailService } from '@/lib/audit-trail-service';
-export const runtime = 'edge';
+// export const runtime = 'edge';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
