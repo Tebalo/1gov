@@ -197,7 +197,7 @@ function getRelativeTime(updateTime: string) {
             className="text-blue-500 hover:underline mr-2 p-0">
             <FaFilePdf className="text-red-500 mr-2 h-5 w-5" />
             Open
-          </Button>):(<p className='font-medium mt-1'>N/A</p>)}
+          </Button>):(<p className='font-medium mt-1'>---</p>)}
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-4xl">
               <DialogHeader>
@@ -220,11 +220,11 @@ function getRelativeTime(updateTime: string) {
       ): isLicenseStatus ? (
         <div>{value && 
           <Badge className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 hover:bg-slate-300`}>
-              {value || 'N/A'}
+              {value || '--'}
           </Badge>}
         </div>
       ):(
-        <p className="font-medium mt-1">{value || 'N/A'}</p>
+        <p className="font-medium mt-1">{value || '--'}</p>
       )}
     </div>
   );

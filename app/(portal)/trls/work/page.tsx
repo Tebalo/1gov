@@ -28,7 +28,7 @@ import {  Role } from "@/app/lib/store";
 import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
 export default async function Work(){
-    const userRole = await getRole() as Role;
+    const userRole = await getRole()  as Role;
 
     if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
         return <TeacherHome/>
@@ -42,7 +42,7 @@ export default async function Work(){
         return <InvestigationsManagerWork/>
     }else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <RegistrationWorkPage userRole={"snr_registration_officer"}/>
-    } else if(userRole.toUpperCase() === 'MANAGER'){
+    } else if(userRole?.toUpperCase() === 'MANAGER'){
         return <RegistrationWorkPage userRole={"manager"}/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_DIRECTOR'){
         return <InvestigationsDirectorWork/>
@@ -50,19 +50,19 @@ export default async function Work(){
         return <InvestigationsOfficerWork/>
     }else if(userRole?.toUpperCase() === 'DIRECTOR'){
         return <RegistrationWorkPage userRole={"director"}/>
-    } else if(userRole.toUpperCase() === 'TEACHER_DEVELOPMENT_MANAGER'){
+    } else if(userRole?.toUpperCase() === 'TEACHER_DEVELOPMENT_MANAGER'){
         return <CPDWorkPage userRole={"teacher_development_manager"}/>
-    }else if(userRole.toUpperCase() === 'TEACHER_DEVELOPMENT_OFFICER'){
+    }else if(userRole?.toUpperCase() === 'TEACHER_DEVELOPMENT_OFFICER'){
         return <CPDWorkPage userRole={"teacher_development_officer"}/>
-    }else if(userRole.toUpperCase() === 'SENIOR_DEVELOPMENT_OFFICER'){
+    }else if(userRole?.toUpperCase() === 'SENIOR_DEVELOPMENT_OFFICER'){
         return <CPDWorkPage userRole={"senior_development_officer"}/>
-    }else if(userRole.toUpperCase() === 'APPEALS_OFFICER'){
+    }else if(userRole?.toUpperCase() === 'APPEALS_OFFICER'){
         return <AppealsWorkPage userRole={"appeals_officer"}/>
-    }else if(userRole.toUpperCase() === 'SENIOR_APPEALS_OFFICER'){
+    }else if(userRole?.toUpperCase() === 'SENIOR_APPEALS_OFFICER'){
         return <AppealsWorkPage userRole={"senior_appeals_officer"}/>
-    }else if(userRole.toUpperCase() === 'APPEALS_MANAGER'){
+    }else if(userRole?.toUpperCase() === 'APPEALS_MANAGER'){
         return <AppealsWorkPage userRole={"appeals_manager"}/>
-    }else if(userRole.toUpperCase() === 'APPEALS_DIRECTOR'){
+    }else if(userRole?.toUpperCase() === 'APPEALS_DIRECTOR'){
         return <AppealsWorkPage userRole={"appeals_director"}/>
     }else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarWork/>
