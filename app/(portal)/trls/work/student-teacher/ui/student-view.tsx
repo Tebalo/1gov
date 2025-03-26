@@ -205,14 +205,17 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
   // }
   const caseId = data?.teacher_registrations?.national_id ?? '';
   return (
-    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+    <div className="container mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="mb-4 flex-shrink-0 shadow-md p-2">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Student-Teacher Registration
           </h1>
           <div className='grid md:grid-cols-2 grid-cols-1 gap-2'>
-            <AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''}/>
+            <AuditTrail 
+              caseId={data?.teacher_registrations?.national_id ?? ''}
+              caseType='student-teacher'
+            />
 
             {data?.teacher_registrations?.national_id ? (
               <StudentTeacherActionButtons 

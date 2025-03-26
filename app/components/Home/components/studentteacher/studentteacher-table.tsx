@@ -102,7 +102,7 @@ export const StudentTeacherTable: React.FC<WorkProps> = ({status, userRole}) => 
     }, [status]);
 
     // If data fetching failed, show error state
-    if (!response) {
+    if (error) {
         return (
         <div className="">  
             <div className="rounded-lg bg-white p-6 shadow-sm">

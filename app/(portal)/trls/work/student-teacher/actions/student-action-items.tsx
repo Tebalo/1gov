@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Edit, FileText, Save, Send, UserPlus2, SendIcon, PlusCircle, FileCheck2, ChevronDownIcon, X, AlertTriangle, InfoIcon, Loader2, MessageCircleMore } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
@@ -30,6 +30,10 @@ import { getAuthData } from '@/app/welcome/components/email-login'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { StatusType } from '../types/student-type'
 import { AddComment } from '@/components/case/add-comment'
+import { getAccessGroups } from '@/app/auth/auth'
+import { UserInfo, auditTrailService } from '@/lib/audit-trail-service'
+import { useAuditTrail } from '@/lib/hooks/useAuditTrail'
+import { useComments } from '@/lib/hooks/useComments'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -56,7 +60,7 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
     investigation_details: '',
     investigation_outcome: ''
   });
-  
+  const { logStatusChange } = useAuditTrail();
   const router = useRouter();
   const { toast } = useToast();
   
@@ -74,7 +78,30 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
   const hasSingleStatus = Array.isArray(nextStatus) && nextStatus.length === 1;
   const hasMultipleStatuses = Array.isArray(nextStatus) && nextStatus.length > 1;
   const availableStatuses = nextStatus || [];
+  const [currentUser, setCurrentUser] = useState<UserInfo>({
+    name: '',
+    role: '',
+    id: '',
+  });
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const profile = await getAccessGroups();
+        if (profile && profile.current) { 
+            setCurrentUser(prev => ({
+            ...prev,
+            name: profile.username || '',
+            role: profile.current.toLowerCase() || '',
+            id: profile.userid || '',
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
 
+    initializeUser();
+  }, []);
   // Helper functions
   const closeDialog = () => {
     setActiveDialog(null);
@@ -99,6 +126,22 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
       const bearerToken = authData?.access_token;
       const result = await updateStudentTeacherStatus(recordId, status, bearerToken);
       if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
+        try {
+          // Log the status change to the audit trail - make sure to await this
+          await logStatusChange(
+            recordId,           // Case ID
+            'student-teacher',  // Case type
+            currentUser,        // User info
+            current_status,     // Old status
+            status,             // New status
+            `Status changed from ${current_status} to ${status}` // Description
+          );
+          
+          console.log('Status change logged successfully');
+        } catch (auditError) {
+          // Log the error but don't fail the whole operation
+          console.error('Failed to log status change to audit trail:', auditError);
+        }
         closeDialog();
         toast({
           title: "Success",
@@ -295,13 +338,6 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
                   'blue'
                 )
               )}
-              
-              { renderActionButton(
-                MessageCircleMore,
-                'Add Comment',
-                () => setActiveDialog('comment'),
-                'green'
-              )}
             </div>
           </div>
         </DialogContent>
@@ -318,14 +354,6 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
             {renderSubmitContent()}
           </Dialog>
         )
-      )}
-
-      {/* Activity Modal */}
-      {activeDialog === 'activity' && (
-        <ActivityModal 
-          onClose={() => closeDialog()} 
-          recordId={recordId}
-        />
       )}
     </>
   );
