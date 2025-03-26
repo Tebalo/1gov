@@ -1,4 +1,3 @@
-'use client'
 import React from 'react';
 import { Info, FileCheck, FileText, File, AlertTriangle, GraduationCap, FileWarning, MessageCircleDashedIcon } from 'lucide-react'
 import { Role } from '@/app/lib/store';
