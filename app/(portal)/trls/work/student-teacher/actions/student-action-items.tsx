@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Edit, FileText, Save, Send, UserPlus2, SendIcon, PlusCircle, FileCheck2, ChevronDownIcon, X, AlertTriangle, InfoIcon, Loader2 } from 'lucide-react'
+import { Edit, FileText, Save, Send, UserPlus2, SendIcon, PlusCircle, FileCheck2, ChevronDownIcon, X, AlertTriangle, InfoIcon, Loader2, MessageCircleMore } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -29,6 +29,7 @@ import ActivityModal from '@/app/components/record/ActivityModal'
 import { getAuthData } from '@/app/welcome/components/email-login'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { StatusType } from '../types/student-type'
+import { AddComment } from '@/components/case/add-comment'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -44,7 +45,7 @@ interface FlowActionConfig {
   isAllowedRole: boolean;
 }
 
-type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | 'audit-trail' | null;
+type DialogType = 'actions' | 'report' | 'status' | 'submit' | 'activity' | 'audit-trail' | 'comment' | null;
 
 const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole, current_status }) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
@@ -295,12 +296,12 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
                 )
               )}
               
-              {/* { renderActionButton(
-                PlusCircle,
-                'Add Activity',
-                () => setActiveDialog('activity'),
+              { renderActionButton(
+                MessageCircleMore,
+                'Add Comment',
+                () => setActiveDialog('comment'),
                 'green'
-              )} */}
+              )}
             </div>
           </div>
         </DialogContent>

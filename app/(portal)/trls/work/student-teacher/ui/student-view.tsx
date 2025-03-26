@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { Info, FileCheck, FileText, File, AlertTriangle, GraduationCap, FileWarning } from 'lucide-react'
+import { Info, FileCheck, FileText, File, AlertTriangle, GraduationCap, FileWarning, MessageCircleDashedIcon } from 'lucide-react'
 import { Role } from '@/app/lib/store';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '@/app/components/InfoCard';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { StudentTeacherResponse } from '../types/student-type';
 import StudentTeacherActionButtons from '../actions/student-action-items';
 import AuditTrail from '@/components/case/audit-trail';
+import { CommentSection } from '@/components/case/add-comment';
 
 
 interface StudentViewerProps {
@@ -24,9 +25,6 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
 
   const fullName = `${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`;
 
-  const handleOpenDocument = (key: string | null) => {
-    if (key) window.open(key, '_blank');
-  };
 
   const renderPersonalInfo = () => (
     <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>} columns={2}>
@@ -164,12 +162,19 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
   );
 
   const renderDeclarations = () => (
-    <InfoCard title='Declarations' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Declarations' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={1}>
       <InfoItem label="Agreement" value={data?.declarations?.agreement}/>
       <InfoItem label="Signature" value={data?.declarations?.signature}/>
       <InfoItem label="Date" value={data?.declarations?.created_at}/>
     </InfoCard>
   );
+
+  const renderComments = () => (
+    <CommentSection
+      caseId={caseId}
+      caseType={'student-teacher'}
+    />
+  )
 
   // if (!data || !data?.bio_datas || !data?.teacher_registrations) {
   //   return (
@@ -199,7 +204,7 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
   //     </div>
   //   )
   // }
-  const caseId = '1001';
+  const caseId = data?.teacher_registrations?.national_id ?? '';
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
       <div className="mb-4 flex-shrink-0 shadow-md p-2">
@@ -208,7 +213,7 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
             Student-Teacher Registration
           </h1>
           <div className='grid md:grid-cols-2 grid-cols-1 gap-2'>
-            <AuditTrail caseId={caseId}/>
+            <AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''}/>
 
             {data?.teacher_registrations?.national_id ? (
               <StudentTeacherActionButtons 
@@ -240,6 +245,8 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
           {renderSection(renderBackgroundChecks())}
           {renderSection(renderDocuments())}
           {renderSection(renderDeclarations())}
+          {renderSection(renderComments())}
+          
         </div>
       </div>
     </div>
