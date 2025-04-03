@@ -110,15 +110,18 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
   );
 
   const renderOffenceConvictions = () => (
-    <InfoCard title='Offence & Convictions' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={2}>
+    <InfoCard title='Offence & Convictions' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={3}>
       <InfoItem label="Student Related Offence" value={data?.offence_convictions?.student_related_offence}/>
       <InfoItem label="Details" value={data?.offence_convictions?.student_related_offence_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.student_related_offence_attachments} isAttachment/>
       <InfoItem label="Drug Related Offence" value={data?.offence_convictions?.drug_related_offence}/>
       <InfoItem label="Details" value={data?.offence_convictions?.drug_related_offence_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.drug_related_offence_attachments} isAttachment/>
       <InfoItem label="License Flag" value={data?.offence_convictions?.license_flag}/>
-      <InfoItem label="Details" value={data?.offence_convictions?.license_flag_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.license_flag_details} isAttachment/>
+      <InfoItem label="" value={''}/>
       <InfoItem label="Misconduct Flag" value={data?.offence_convictions?.misconduct_flag}/>
-      <InfoItem label="Details" value={data?.offence_convictions?.misconduct_flag_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.misconduct_flag_details} isAttachment/> 
     </InfoCard>
   );
 
