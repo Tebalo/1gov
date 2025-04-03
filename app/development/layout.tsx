@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import Image from 'next/image';
 import { NavItem } from "./components/nav-item";
-import { BriefcaseBusiness, Hammer, Home, Settings } from "lucide-react";
+import { BriefcaseBusiness, Hammer, Home, Search, Settings } from "lucide-react";
 import { SearchInput } from "./components/search";
 import { User } from "./components/user";
 
@@ -41,10 +41,10 @@ export default function DashboardLayout({
         <div className="flex relative z-10 h-screen overflow-hidden">
           <DesktopNav/>
           <div className="flex flex-col flex-grow relative md:pl-16">
-            <header className="flex h-16 items-center gap-4 border-b bg-white/95 backdrop-blur-sm px-6">
+            {/* <header className="flex h-16 items-center gap-4 border-b bg-white/95 backdrop-blur-sm px-6">
               <SearchInput/>
               <User/>
-            </header>
+            </header> */}
             <main className="flex-grow overflow-auto p-4">
               <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
             </main>
@@ -75,6 +75,10 @@ function DesktopNav() {
          </div>
          <span className="sr-only">TRLS DEV</span>
         </Link>
+
+        <NavItem href="/development/search" label="Search">
+          <Search className="h-9 w-9"/>
+        </NavItem>
 
         <NavItem href="/development" label="Home">
           <Home className="h-9 w-9"/>
