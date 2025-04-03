@@ -89,9 +89,9 @@ export default function Page() {
 
     return (
         <div className="min-h-screen overflow-auto pb-8">
-            <div className="mb-4 md:mb-2 z-20">
+            {/* <div className="mb-4 md:mb-2 z-20">
                 <PageTitle Title="SERVICE CASE UI TESTING USING DUMMY DATA"/>
-            </div>
+            </div> */}
             
             {/* Mobile Menu Toggle */}
             <div className="md:hidden mb-4">
