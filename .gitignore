@@ -38,6 +38,10 @@ package-lock.json
 # .env.qa
 # .env.production
 
+# Development Code
+/development
+/app/development
+
 # vercel
 .vercel
 
