@@ -1,6 +1,6 @@
+"use client"
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -10,16 +10,16 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
 import { deleteCase } from '../connect-REST/api';
+import { useState } from 'react';
 
 const FormSchema = z.object({
     caseNumber: z.string().min(1, { message: "Case number is required" }),
-    // caseType: z.string().min(1, { message: "Case type is required" }),
-    // productionLevel: z.string().min(1, { message: "Production level is required" })
     caseType: z.enum(["student-teacher", "teacher"], { errorMap: () => ({ message: "Case type is required" }) }),
     productionLevel: z.enum(["uat", "production"], { errorMap: () => ({ message: "Production level is required" }) })
 });
 
 export default function CaseDelete() {
+    const [isDeleting, setIsDeleting] = useState(false);
     const  form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -29,6 +29,7 @@ export default function CaseDelete() {
         }
     });
     async function onsubmit(data: z.infer<typeof FormSchema>) {
+        setIsDeleting(true);
         try{
             const response = await deleteCase(data.caseNumber, data.caseType, data.productionLevel);
             console.log(response);
@@ -61,7 +62,10 @@ export default function CaseDelete() {
                 duration: 2000,
                 variant: "destructive"
             })
+        } finally {
+            setIsDeleting(false);
         }
+        form.reset();
     }
 
     return(
@@ -85,7 +89,10 @@ export default function CaseDelete() {
                 <span className="ml-2 font-semibold">Danger Zone</span>
             </div>
             <p className="text-sm text-muted-foreground mt-1 text-red-500">
-            Delete a case number from the system. This action is irreversible.
+            Delete a case record from the system. 
+            </p>
+            <p className="text-sm text-muted-foreground mt-1 text-red-500">
+                This action is irreversible. Please be certain that you want to delete this case.
             </p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onsubmit)} className='flex flex-col gap-4'>
@@ -96,7 +103,7 @@ export default function CaseDelete() {
                             name="caseNumber"
                             render={({ field }) => (
                                 <FormItem className="space-y-3">
-                                    <FormLabel>Enter Case number</FormLabel>
+                                    <FormLabel>Case number</FormLabel>
                                     <FormControl>
                                         <Input
                                         id="caseNumber"
@@ -182,7 +189,12 @@ export default function CaseDelete() {
                             type="submit" 
                             variant={'outline'} 
                             className='text-red-600 hover:text-red-700 border-2 border-red-500 w-full bold'>
-                                Delete
+                            disabled={isDeleting}
+                            {isDeleting ? (
+                                <span className="animate-pulse">Deleting...</span>
+                            ) : (
+                                <span>Delete</span>
+                            )}
                             </Button>
                         </div>
                     </div>  
