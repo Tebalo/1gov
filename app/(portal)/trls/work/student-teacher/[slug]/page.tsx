@@ -12,7 +12,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   try {
     response = await getStudentTeacherById(id);
-    const rawRole = await getRole() ?? 'default'; // type assertion
+    const rawRole = await getRole() as Role; // type assertion
     const userRole = rawRole.toLowerCase() as Lowercase<Role>;
 
     return (

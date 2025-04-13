@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PageTitle } from "@/app/components/PageTitle";
 import { Card } from "@/components/ui/card";
-import { FileText, RefreshCcw, FileCog, RotateCcw, Search, FileSearch, UserPlus, Hammer, Book } from 'lucide-react';
+import { FileText, RefreshCcw, FileCog, RotateCcw, Search, FileSearch, UserPlus, Hammer, Book, TestTube } from 'lucide-react';
 import RenewalContent from "./components/renewal";
 import RevocationContent from "./components/revocation";
 import CategoryContent from "./components/changeofcategory";
@@ -79,7 +79,7 @@ export default function Page() {
             label: 'Appeal View',
             icon: <Hammer className="h-4 w-4" />,
             component: <Appeal />
-        }
+        }        
     ];
 
     const handleSectionChange = (id: string) => {
@@ -90,7 +90,7 @@ export default function Page() {
     return (
         <div className="min-h-screen overflow-auto pb-8">
             {/* <div className="mb-4 md:mb-2 z-20">
-                <PageTitle Title="RECORD UI TESTING USING DUMMY DATA"/>
+                <PageTitle Title="SERVICE CASE UI TESTING USING DUMMY DATA"/>
             </div> */}
             
             {/* Mobile Menu Toggle */}

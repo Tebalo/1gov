@@ -106,9 +106,9 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl h-[72vh] overflow-y-auto">
-      <div className="mb-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Submit Activity</h1>
+      <div className="bg-slate-50 rounded-lg shadow-lg p-6 w-full max-w-3xl h-[72vh] overflow-y-auto">
+        <div className="mb-4 flex justify-between items-center">
+            <h1 className="text-2xl font-bold">New Activity</h1>
             <div>      
                 <Button type="button" variant="ghost" onClick={onClose}>
                     Cancel
@@ -169,7 +169,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
           </InfoCard>
 
           {/* Activity Details */}
-          <InfoCardTwo title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>}>
+          <InfoCard title="Activity Information" icon={<Info className="w-6 h-6 text-blue-500"/>} columns={1}>
             <div>
               <label htmlFor="activities" className="block text-sm font-medium text-gray-700">Activities</label>
               <Textarea
@@ -194,10 +194,10 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
-          </InfoCardTwo>
+          </InfoCard>
 
           {/* Record Information */}
-          <InfoCardTwo title="Record Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+          <InfoCard title="Record Information" icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
             <div>
               <label htmlFor="record_type" className="block text-sm font-medium text-gray-700">Record Type</label>
               <Select value={activityDetails.record_type} onValueChange={handleSelectChange('record_type')}>
@@ -225,7 +225,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({ onClose, recordId }) => {
                 disabled
               />
             </div>
-          </InfoCardTwo>
+          </InfoCard>
         </form>
       </div>
       </div>

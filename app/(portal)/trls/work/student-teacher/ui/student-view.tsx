@@ -1,20 +1,21 @@
-'use client'
 import React from 'react';
-import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle, GraduationCap, Tags, RefreshCcw, AlertCircle, StopCircle, FileWarning } from 'lucide-react'
+import { Info, FileCheck, FileText, File, AlertTriangle, GraduationCap, FileWarning, MessageCircleDashedIcon } from 'lucide-react'
 import { Role } from '@/app/lib/store';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '@/app/components/InfoCard';
 import InfoItem from '@/app/components/InfoItem';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { StudentTeacherResponse } from '../types/student-type';
 import StudentTeacherActionButtons from '../actions/student-action-items';
-import Link from 'next/link';
+import AuditTrail from '@/components/case/audit-trail';
+import { CommentSection } from '@/components/case/add-comment';
+
 
 interface StudentViewerProps {
   data: StudentTeacherResponse;
   userRole: Role;
 }
+
 
 const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) => {
   const renderSection = (content: React.ReactNode) => (
@@ -23,12 +24,9 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
 
   const fullName = `${data?.bio_datas?.forenames} ${data?.bio_datas?.surname}`;
 
-  const handleOpenDocument = (key: string | null) => {
-    if (key) window.open(key, '_blank');
-  };
 
   const renderPersonalInfo = () => (
-    <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="National ID" value={data?.bio_datas?.national_id}/>
       <InfoItem label="Date of Birth" value={data?.bio_datas?.dob} isDate/>
@@ -49,14 +47,14 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
     const hasPayment = data?.teacher_registrations?.payment_amount != null;
 
     return isManagerApproved && isEndorsementComplete ? 'Valid' : 'Invalid';
-}
+  }
 
-const isEndorsementComplete = () => {
-  return data?.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
-}
+  const isEndorsementComplete = () => {
+    return data?.teacher_registrations?.endorsement_status === 'Endorsement-Complete';
+  }
 
   const renderRegistrationInfo = () => (
-    <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Registration Status" value={data?.teacher_registrations?.reg_status}/>
       <InfoItem label="Endorsement Status" value={data?.teacher_registrations?.endorsement_status}/>
       <InfoItem label="Registration Type" value={data?.teacher_registrations?.registration_type}/>
@@ -70,7 +68,7 @@ const isEndorsementComplete = () => {
   );
 
   const renderPreliminaryInfo = () => (
-    <InfoCard title='Preliminary Information' icon={<FileText className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Preliminary Information' icon={<FileText className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Institution Name" value={data?.student_preliminary_infos?.institution_name}/>
       <InfoItem label="Citizenry" value={data?.student_preliminary_infos?.citizenry}/>
     </InfoCard>
@@ -112,15 +110,18 @@ const isEndorsementComplete = () => {
   );
 
   const renderOffenceConvictions = () => (
-    <InfoCard title='Offence & Convictions' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Offence & Convictions' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={3}>
       <InfoItem label="Student Related Offence" value={data?.offence_convictions?.student_related_offence}/>
       <InfoItem label="Details" value={data?.offence_convictions?.student_related_offence_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.student_related_offence_attachments} isAttachment/>
       <InfoItem label="Drug Related Offence" value={data?.offence_convictions?.drug_related_offence}/>
       <InfoItem label="Details" value={data?.offence_convictions?.drug_related_offence_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.drug_related_offence_attachments} isAttachment/>
       <InfoItem label="License Flag" value={data?.offence_convictions?.license_flag}/>
-      <InfoItem label="Details" value={data?.offence_convictions?.license_flag_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.license_flag_details} isAttachment/>
+      <InfoItem label="" value={''}/>
       <InfoItem label="Misconduct Flag" value={data?.offence_convictions?.misconduct_flag}/>
-      <InfoItem label="Details" value={data?.offence_convictions?.misconduct_flag_details}/>
+      <InfoItem label="Supporting Document" value={data?.offence_convictions?.misconduct_flag_details} isAttachment/> 
     </InfoCard>
   );
 
@@ -156,19 +157,26 @@ const isEndorsementComplete = () => {
   );
 
   const renderDocuments = () => (
-    <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={3}>
+    <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="National ID Copy" value={data?.attachments?.national_id_copy}/>
       <InfoItem label="Attachment Letter" value={data?.attachments?.attachment_letter} />
     </InfoCard>
   );
 
   const renderDeclarations = () => (
-    <InfoCard title='Declarations' icon={<FileCheck className="w-6 h-6 text-blue-500"/>}>
+    <InfoCard title='Declarations' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={1}>
       <InfoItem label="Agreement" value={data?.declarations?.agreement}/>
       <InfoItem label="Signature" value={data?.declarations?.signature}/>
       <InfoItem label="Date" value={data?.declarations?.created_at}/>
     </InfoCard>
   );
+
+  const renderComments = () => (
+    <CommentSection
+      caseId={caseId}
+      caseType={'student-teacher'}
+    />
+  )
 
   // if (!data || !data?.bio_datas || !data?.teacher_registrations) {
   //   return (
@@ -198,29 +206,36 @@ const isEndorsementComplete = () => {
   //     </div>
   //   )
   // }
-
+  const caseId = data?.teacher_registrations?.national_id ?? '';
   return (
-    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+    <div className="container mx-auto px-4 py-4 h-screen flex flex-col">
       <div className="mb-4 flex-shrink-0 shadow-md p-2">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Student-Teacher Registration
           </h1>
-          {data?.teacher_registrations?.national_id ? (
-            <StudentTeacherActionButtons 
-              recordId={data?.teacher_registrations?.national_id ?? ''} 
-              userRole={userRole}
-              current_status={data?.teacher_registrations?.reg_status ?? ''}
+          <div className='grid md:grid-cols-2 grid-cols-1 gap-2'>
+            <AuditTrail 
+              caseId={data?.teacher_registrations?.national_id ?? ''}
+              caseType='student-teacher'
             />
-          ) : (
-            <Button
-              variant="link"
-              className="text-red-500 hover:underline p-0 flex items-center"
-            >
-              <FileWarning className="h-5 w-5 sm:h-6 sm:w-6 text-red-500 flex-shrink-0"/>
-              <span className="text-wrap px-2 italic text-base sm:text-lg">Missing required data. Contact support!</span>
-            </Button>
-          )}
+
+            {data?.teacher_registrations?.national_id ? (
+              <StudentTeacherActionButtons 
+                recordId={data?.teacher_registrations?.national_id ?? ''} 
+                userRole={userRole}
+                current_status={data?.teacher_registrations?.reg_status ?? ''}
+              />
+            ) : (
+              <Button
+                variant="link"
+                className="text-red-500 hover:underline p-0 flex items-center"
+              >
+                <FileWarning className="h-5 w-5 sm:h-6 sm:w-6 text-red-500 flex-shrink-0"/>
+                <span className="text-wrap px-2 italic text-base sm:text-lg">Missing required data. Contact support!</span>
+              </Button>
+            )}
+          </div>
         </div>
         <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
       </div>
@@ -235,6 +250,8 @@ const isEndorsementComplete = () => {
           {renderSection(renderBackgroundChecks())}
           {renderSection(renderDocuments())}
           {renderSection(renderDeclarations())}
+          {renderSection(renderComments())}
+          
         </div>
       </div>
     </div>

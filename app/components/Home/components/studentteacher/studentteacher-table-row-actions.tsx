@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { Row } from "@tanstack/react-table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -10,6 +10,9 @@ import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHea
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { FileText, AlertTriangle, Calendar, Scale, CheckCircle, Shield,  Building2, GraduationCap as Course } from "lucide-react"
+import { getAccessGroups } from '@/app/auth/auth';
+import { UserInfo } from '@/lib/audit-trail-service';
+import { useAuditTrail } from '@/lib/hooks/useAuditTrail';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -155,7 +158,9 @@ export function StudentTeacherTableRowActions<TData>({
 }: DataTableRowActionsProps<TData>) {
   const router = useRouter()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  
+  const { 
+    logCaseViewed
+  } = useAuditTrail();
   const record = row.original as {
     national_id: string;
     reg_number: string;
@@ -180,8 +185,33 @@ export function StudentTeacherTableRowActions<TData>({
     created_at: string;
     updated_at: string;
   }
+  const [currentUser, setCurrentUser] = useState<UserInfo>({
+    name: '',
+    role: '',
+    id: '',
+  });
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const profile = await getAccessGroups();
+        if (profile && profile.current) {  // Add null check
+            setCurrentUser(prev => ({
+            ...prev,
+            name: profile.username || '',
+            role: profile.current.toLowerCase() || '',
+            id: profile.userid || '',
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
 
-  function handleOpen() {
+    initializeUser();
+  }, []);
+
+  async function handleOpen() {
+    await logCaseViewed(record.national_id, 'student-teacher', currentUser);
     router.push(`/trls/work/student-teacher/${record.national_id}`)
   }
 

@@ -6,12 +6,12 @@ import TableLoadingSkeleton from "../../../TableLoadingSkeleton";
 import { StudentTeacher } from "./schema/studenteacher";
 import { studentteacher } from "./types/studentteacher";
 import { StudentTeacherColumns } from "./studentteacher-columns";
+import { AlertCircle } from "lucide-react";
 
 interface WorkProps {
     status: string;
     userRole: string;
 }
-
 
 // Updated utility function to safely handle null values and prevent recursion
 const replaceNullWithEmptyString = (data: any): any => {
@@ -85,6 +85,7 @@ export const StudentTeacherTable: React.FC<WorkProps> = ({status, userRole}) => 
             } else {
                 console.warn('Invalid or empty data received from API');
                 setResponse(null);
+                setError('Invalid or empty data received from API Cause: Connect Timeout Error');
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -100,11 +101,28 @@ export const StudentTeacherTable: React.FC<WorkProps> = ({status, userRole}) => 
         getList(status || '');
     }, [status]);
 
+    // If data fetching failed, show error state
     if (error) {
         return (
-            <div className="p-4 text-red-500">
-                Error loading data: {error}
+        <div className="">  
+            <div className="rounded-lg bg-white p-6 shadow-sm">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="rounded-full bg-red-50 p-3 mb-4">
+                    <AlertCircle className="h-10 w-10 text-red-500" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">Data Connection Error</h2>
+                <p className="text-gray-500 max-w-md mb-6">
+                    Failed to connect to the data component. Please try again later or contact support if the issue persists.
+                </p>
+                <p className="text-sm text-gray-400 mb-6 flex">
+                    Error details: <p className="text-red-400 italic">{error}</p>
+                </p>
+                <div className="flex items-center justify-end">
+                    {/* <RefreshButton /> */}
+                </div>
             </div>
+            </div>
+        </div>
         );
     }
 
