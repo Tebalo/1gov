@@ -1,0 +1,193 @@
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import { useForm } from 'react-hook-form';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { toast } from '@/components/ui/use-toast';
+import { deleteCase } from '../connect-REST/api';
+
+const FormSchema = z.object({
+    caseNumber: z.string().min(1, { message: "Case number is required" }),
+    // caseType: z.string().min(1, { message: "Case type is required" }),
+    // productionLevel: z.string().min(1, { message: "Production level is required" })
+    caseType: z.enum(["student-teacher", "teacher"], { errorMap: () => ({ message: "Case type is required" }) }),
+    productionLevel: z.enum(["uat", "production"], { errorMap: () => ({ message: "Production level is required" }) })
+});
+
+export default function CaseDelete() {
+    const  form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            caseNumber: "",
+            // caseType: "student-teacher",
+            // productionLevel: "uat"
+        }
+    });
+    async function onsubmit(data: z.infer<typeof FormSchema>) {
+        try{
+            const response = await deleteCase(data.caseNumber, data.caseType, data.productionLevel);
+            console.log(response);
+            if(response == 200 || response == 201){
+                toast({
+                    title: "Case deleted successfully",
+                    description: `Case number ${data.caseNumber} has been deleted successfully.`,
+                    duration: 2000,
+                    variant: "default"
+                })
+            }else if(response == 404 || response == 400){
+                toast({
+                    title: "Case not found",
+                    description: `Case number ${data.caseNumber} not found.`,
+                    duration: 2000,
+                    variant: "destructive"
+                })
+            }else if(response == 500 || response == null){
+                toast({
+                    title: "Server error",
+                    description: `Internal server error. Please try again later.`,
+                    duration: 2000,
+                    variant: "destructive"
+                })
+            }
+        } catch (error) {
+            toast({
+                title: "Error deleting case",
+                description: `An error occurred while deleting the case. Please try again later.`,
+                duration: 2000,
+                variant: "destructive"
+            })
+        }
+    }
+
+    return(
+        <Card className='border border-red-500 shadow-md p-4'>
+            {/* Danger icon */}
+            <div className="flex items-center text-red-500 mb-4">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                >
+                    <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+                    />
+                </svg>
+                <span className="ml-2 font-semibold">Danger Zone</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1 text-red-500">
+            Delete a case number from the system. This action is irreversible.
+            </p>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onsubmit)} className='flex flex-col gap-4'>
+                    <div className='space-y-4'>
+                        <div>
+                            <FormField
+                            control={form.control}
+                            name="caseNumber"
+                            render={({ field }) => (
+                                <FormItem className="space-y-3">
+                                    <FormLabel>Enter Case number</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                        id="caseNumber"
+                                        placeholder="Enter case number"
+                                        value={field.value}
+                                        onChange={(e) => field.onChange(e.target.value)}
+                                        className="mt-2 w-full md:max-w-md border-red-400 focus:border-red-500 focus:ring-red-500"
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                            />
+                        </div>
+                        <Separator/>
+                        <div className='flex flex-col sm:flex-row gap-3 w-full'>
+                            <div className='border-r-2 pr-3'>
+                                <FormField
+                                    control={form.control}
+                                    name="caseType"
+                                    render={({field}) => (
+                                        <FormItem className='space-y-3'>
+                                            <FormLabel>Case type</FormLabel>
+                                            <FormControl>
+                                                <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    className="flex items-center space-x-2">
+                                                    <FormItem className='flex items-center space-x-3 space-y-0'>
+                                                        <FormControl>
+                                                            <RadioGroupItem value="student-teacher"/>
+                                                        </FormControl>
+                                                        <FormLabel>Student-Teacher</FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className='flex items-center space-x-3 space-y-0'>
+                                                        <FormControl>
+                                                            <RadioGroupItem value="teacher"/>
+                                                        </FormControl>
+                                                        <FormLabel>Teacher</FormLabel>
+                                                    </FormItem>
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className='border-r-2 pr-3'>
+                                <FormField
+                                    control={form.control}
+                                    name="productionLevel"
+                                    render={({field}) => (
+                                        <FormItem className='space-y-3'>
+                                            <FormLabel>Environment</FormLabel>
+                                            <FormControl>
+                                                <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    className="flex items-center space-x-2">
+                                                    <FormItem className='flex items-center space-x-3 space-y-0'>
+                                                        <FormControl>
+                                                            <RadioGroupItem value="uat"/>
+                                                        </FormControl>
+                                                        <FormLabel>UAT</FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className='flex items-center space-x-3 space-y-0'>
+                                                        <FormControl>
+                                                            <RadioGroupItem value="production" className='border-red-500 text-red-500'/>
+                                                        </FormControl>
+                                                        <FormLabel className='text-red-500'>Production</FormLabel>
+                                                    </FormItem>
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>                
+                        </div>
+                        <Separator/>
+                        <div className='flex flex-col sm:flex-row gap-3 w-full'>
+                            <Button 
+                            type="submit" 
+                            variant={'outline'} 
+                            className='text-red-600 hover:text-red-700 border-2 border-red-500 w-full bold'>
+                                Delete
+                            </Button>
+                        </div>
+                    </div>  
+                </form>
+            </Form>
+        </Card>
+    )
+}
