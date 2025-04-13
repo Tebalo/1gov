@@ -1,23 +1,34 @@
 "use client"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Search, Sparkles } from 'lucide-react';
+import { Delete, Search, Sparkles, Trash, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
+
+interface Result{
+    id: string,
+    case_type: string,
+    status: string
+}
 
 const SearchPage: React.FC = () => {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<string[]>([]);
+    const [results, setResults] = useState<Result[]>([]);
 
     const handleSearch = async () => {
         // Simulate a search operation
-        const mockResults = ['Result 1', 'Result 2', 'Result 3'].filter((item) =>
-            item.toLowerCase().includes(query.toLowerCase())
-        );
-        setResults(mockResults);
+        // const mockResults = ['Result 1', 'Result 2', 'Result 3'].filter((item) =>
+        //     item.toLowerCase().includes(query.toLowerCase())
+        // );
+        // setResults(mockResults);
     };
+    const response = [{id:'',case_type:'',status:''}, {id:'',case_type:'',status:''}, {id:'',case_type:'',status:''}]
+    const search = async () => {
+
+    }
 
     return (
         <div className='bg-white p-10 space-y-10'>
@@ -142,9 +153,25 @@ const SearchPage: React.FC = () => {
                         </AccordionItem>
                     </Accordion>
                 </div>
-                <div className='flex-1 w-72 flex items-center space-x-2 justify-center'>
+                {/* <div className='flex-1 w-72 flex items-center space-x-2 justify-center'>
                     <Sparkles/>
                     <h5>No results</h5>
+                </div> */}
+                <div className='flex-1 w-72'>
+                    <div className='flex items-center space-x-2 justify-between bg-gray-100 p-4 rounded-md'>
+                            <div className='flex-col items-start justify-start'>
+                                <div className='flex justify-start items-start'>
+                                    <p className=''>RVC-202301</p>
+                                </div>
+                                <div className='flex justify-between items-between space-x-2'>
+                                    <p className='text-blue-500'>PENDING-CUSTOMER-ACTION</p>
+                                </div>
+                                <div className='flex justify-between items-between space-x-2 bg-purple-400 rounded-md p-2'>
+                                    <p className='text-purple-600'>PENDING-CUSTOMER-ACTION</p>
+                                </div>
+                            </div>
+                        <Trash className='text-red-500 hover:cursor-pointer' />
+                    </div>
                 </div>
             </div>
         </div>

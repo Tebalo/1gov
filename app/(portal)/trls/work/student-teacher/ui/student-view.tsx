@@ -29,7 +29,7 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
     <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Full Name" value={fullName}/>
       <InfoItem label="National ID" value={data?.bio_datas?.national_id}/>
-      <InfoItem label="Date of Birth" value={data?.bio_datas?.dob} isDate/>
+      <InfoItem label="Date of Birth" value={data?.bio_datas?.dob}/>
       <InfoItem label="Gender" value={data?.bio_datas?.gender}/>
       <InfoItem label="Email" value={data?.bio_datas?.email}/>
       <InfoItem label="Mobile" value={data?.bio_datas?.mobile}/>
