@@ -23,6 +23,10 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import ApiEndpointsCard from '../components/admin-urls';
 import { version } from '@/app/lib/store';
+import { toast } from "@/components/ui/use-toast"
+import { deleteCase } from './connect-REST/api';
+import CaseDelete from './delete-case/case-delete';
+
 
 export default function AdminSettings() {
     // const [emailNotifications, setEmailNotifications] = useState(true);
@@ -44,6 +48,32 @@ export default function AdminSettings() {
             setShowSuccessMessage(false);
         }, 3000);
     };
+
+    const [loadingRoles, setDeleteLoading] = useState(false)
+    const [caseNumber, setCaseNumber] = useState("")
+
+    const handleDelete = async () => {
+
+        try {
+            const response = await deleteCase(caseNumber, "case", "production")
+            setDeleteLoading(true)
+        
+            if (response!=200) throw new Error('Failed to assign roles')
+        
+            toast({
+                title: "Success",
+                description: "Roles deleted successfully",
+            })
+        } catch (error) {
+        toast({
+            title: "Error",
+            description: "Failed to delete roles. Please try again.",
+            variant: "destructive"
+        })
+        } finally {
+         // setRolesDeleting(false)
+        }
+      }
 
     return (
         <div className="space-y-6 md:p-6">
@@ -90,126 +120,7 @@ export default function AdminSettings() {
                 
                 <TabsContent value="general" className="space-y-6 mt-6">
                     <ApiEndpointsCard/>
-
-                    {/* <Card>
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle className="text-xl">Appearance</CardTitle>
-                                    <CardDescription>Customize how the system looks</CardDescription>
-                                </div>
-                                <Sun className="h-5 w-5 text-amber-500" />
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium">Dark Mode</p>
-                                        <p className="text-sm text-muted-foreground">Toggle dark mode appearance</p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Sun className="h-4 w-4 text-amber-500" />
-                                        <Switch 
-                                            checked={darkMode}
-                                            onCheckedChange={setDarkMode}
-                                        />
-                                        <Moon className="h-4 w-4 text-slate-700" />
-                                    </div>
-                                </div>
-                                
-                                <Separator />
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <Label htmlFor="language">System Language</Label>
-                                        <Select defaultValue="en">
-                                            <SelectTrigger id="language" className="mt-1">
-                                                <SelectValue placeholder="Select language" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="en">English</SelectItem>
-                                                <SelectItem value="fr">French</SelectItem>
-                                                <SelectItem value="es">Spanish</SelectItem>
-                                                <SelectItem value="de">German</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    
-                                    <div>
-                                        <Label htmlFor="timezone">Timezone</Label>
-                                        <Select defaultValue="utc">
-                                            <SelectTrigger id="timezone" className="mt-1">
-                                                <SelectValue placeholder="Select timezone" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="utc">UTC</SelectItem>
-                                                <SelectItem value="est">Eastern Time (ET)</SelectItem>
-                                                <SelectItem value="pst">Pacific Time (PT)</SelectItem>
-                                                <SelectItem value="cet">Central European Time (CET)</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card> */}
-                    
-                    {/* <Card>
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle className="text-xl">Notifications</CardTitle>
-                                    <CardDescription>Manage your notification preferences</CardDescription>
-                                </div>
-                                <Bell className="h-5 w-5 text-blue-500" />
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium">Email Notifications</p>
-                                        <p className="text-sm text-muted-foreground">Receive email notifications for important updates</p>
-                                    </div>
-                                    <Switch 
-                                        checked={emailNotifications}
-                                        onCheckedChange={setEmailNotifications}
-                                    />
-                                </div>
-                                
-                                <Separator />
-                                
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium">SMS Notifications</p>
-                                        <p className="text-sm text-muted-foreground">Receive text messages for critical alerts</p>
-                                    </div>
-                                    <Switch 
-                                        checked={smsNotifications}
-                                        onCheckedChange={setSmsNotifications}
-                                    />
-                                </div>
-                                
-                                <Separator />
-                                
-                                {emailNotifications && (
-                                    <div>
-                                        <Label htmlFor="email">Notification Email</Label>
-                                        <Input 
-                                            id="email" 
-                                            type="email" 
-                                            placeholder="admin@example.com" 
-                                            className="mt-1"
-                                        />
-                                        <p className="text-sm text-muted-foreground mt-1">
-                                            System notifications will be sent to this email address
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card> */}
+                    <CaseDelete/>
                 </TabsContent>
                 
                 <TabsContent value="security" className="space-y-6 mt-6">
