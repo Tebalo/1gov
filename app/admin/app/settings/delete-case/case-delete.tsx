@@ -188,8 +188,8 @@ export default function CaseDelete() {
                             <Button 
                             type="submit" 
                             variant={'outline'} 
-                            className='text-red-600 hover:text-red-700 border-2 border-red-500 w-full bold'>
                             disabled={isDeleting}
+                            className='text-red-600 hover:text-red-700 border-2 border-red-500 w-full bold'>
                             {isDeleting ? (
                                 <span className="animate-pulse">Deleting...</span>
                             ) : (
