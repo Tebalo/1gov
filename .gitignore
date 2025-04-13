@@ -26,7 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-# .env*.local
+.env*.local
+*.db
+audit-trail.db
 
 package-lock.json
 
@@ -35,6 +37,10 @@ package-lock.json
 # .env.development
 # .env.qa
 # .env.production
+
+# Development Code
+/development
+/app/development
 
 # vercel
 .vercel
