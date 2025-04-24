@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import LogsUI from './ui/logs-ui';
 
 
 export default function DockerContainersPage() {
@@ -425,12 +426,13 @@ export default function DockerContainersPage() {
                         Logs
                       </Button> 
                     </DialogTrigger>
-                    <DialogContent className="w-64">
-                      <DialogHeader>
-                        <DialogTitle>Container logs</DialogTitle>
-                      </DialogHeader>
+                    <DialogContent className="w-full max-w-3xl">
+                      {/* <DialogHeader>
+                        <DialogTitle>Logs</DialogTitle>
+                      </DialogHeader> */}
                       <DialogDescription>
-                        See container logs here
+                        <LogsUI containerName={formatContainerName(container.Names[0])} />
+                        {/*  */}
                       </DialogDescription>
                     </DialogContent>
                   </Dialog>

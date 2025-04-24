@@ -9,13 +9,12 @@ import { invUrl } from "@/app/lib/store";
  * @returns Promise with an array of DockerContainer objects
  */
 export async function fetchContainerLogs(
-  baseUrl: string = `${invUrl}`,
+  // baseUrl: string = `${invUrl}`,
   containerName: string
-): Promise<LogArray> {
+): Promise<string> {
   try {
     // Construct URL with query parameters
-    const url = `${baseUrl}/containers/${containerName}/logs`;
-    
+    const url = `${invUrl}/containers/${containerName}/logs`;
     // Fetch data from API
     const response = await fetch(url, {
       method: 'GET',
@@ -24,17 +23,15 @@ export async function fetchContainerLogs(
         // Add any required authentication headers here if needed
       },
     });
-    console.log('response', response);
     // Check if the request was successful
     if (!response.ok) {
       throw new Error(`Error fetching Docker containers: ${response.status} ${response.statusText}`);
     }
 
     // Parse the JSON response
-    const data = await response.json();
-    
+    const data = await response.text();
     // Type assertion to ensure the response matches our interface
-    return data as LogArray;
+    return data as string;
   } catch (error) {
     console.error('Failed to fetch Docker containers:', error);
     throw error;
