@@ -390,6 +390,34 @@ const CHANGEOFCATEGORY_FLOW: Record<string, FlowAction> = { // Registration: Gez
     },
 } as const;
 
+const TEACHER_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
+    'pending-screening': {
+        requiredPermission: 'update:changeofcategory-pending-screening',
+        nextStatus: ['Pending-Assessment','Pending-Customer-Action'],
+        message: 'This action will...',
+        status_label: 'Pass screening',
+        allowedRoles: ['registration_officer']
+    },
+    'pending-assessment': {
+        requiredPermission: 'update:changeofcategory-pending-assessment',
+        nextStatus: ['Recommended-For-Approval','Recommended-For-Rejection'],
+        status_label: 'Pass assessment',
+        allowedRoles: ['snr_registration_officer']
+    },
+    'pending-manager-approval': {
+        requiredPermission: 'update:changeofcategory-pending-manager-approval',
+        nextStatus: ['Manager-Approved','Manager-Rejected'],
+        status_label: 'Recommend for endorsement',
+        allowedRoles: ['manager']
+    },
+    'pending-endorsement': {
+        requiredPermission: 'update:changeofcategory-pending-endorsement',
+        nextStatus: ['Endorsement-Complete'],
+        status_label: 'Endorse',
+        allowedRoles: ['director']
+    },
+} as const;
+
 const STUDENTTEACHER_FLOW: Record<string, FlowAction> = { // Registration: Gezzy
     'pending-screening': {
         requiredPermission: 'update:registration-pending-screening',
@@ -474,6 +502,10 @@ export function getChangeOfCategoryFlowAction(status: string): FlowAction | unde
     return CHANGEOFCATEGORY_FLOW[status];
 }
 
+export function getTeacherFlowAction(status: string): FlowAction | undefined {
+    return TEACHER_FLOW[status];
+}
+
 export function getStudentTeacherFlowAction(status: string): FlowAction | undefined {
     return STUDENTTEACHER_FLOW[status];
 }
@@ -516,6 +548,13 @@ export function getFlowActionUserDetails(user: Role, status: string, flow: strin
             status="pending-endorsement"
         }
         flowaction = getChangeOfCategoryFlowAction(status.toLowerCase());
+    } else if(flow == 'teacher'){
+        if(status.toLowerCase()==='recommended-for-approval' || status.toLowerCase()==='recommended-for-rejection'){
+            status="pending-manager-approval"
+        }else if(status.toLowerCase()==='manager-approved' || status.toLowerCase()==='manager-rejected'){
+            status="pending-endorsement"
+        }
+        flowaction = getTeacherFlowAction(status.toLowerCase());
     } else if(flow === 'restoration'){
         if(status.toLowerCase()==='recommended-for-approval' || status.toLowerCase()==='recommended-for-rejection'){
             status="pending-manager-approval"

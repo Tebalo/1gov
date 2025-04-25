@@ -86,99 +86,35 @@ const InfoItem: React.FC<InfoItemProps> = ({
     label==="Passport" 
   );
 
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "UTC"
-};
+function getSLAStatus(createdAt: string) {
+  const created = new Date(createdAt);
+  const today = new Date();
+  const diffTime = today.getTime() - created.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const remainingDays = 30 - diffDays;
 
-function ConvertTime(time: string){
-    return new Intl.DateTimeFormat("en-US", options).format(new Date(time))
-}
+  let badgeColor = "bg-green-100 text-green-800";
+  let displayText = `${remainingDays} days left`;
 
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toISOString(); // or any other consistent format
-}
-
-function getRelativeTime(updateTime: string) {
-    const now = new Date();
-    const updated = new Date(updateTime);
-    const diffSeconds = Math.floor((now.getTime() - updated.getTime()) / 1000);
-    
-    if (diffSeconds < 60) {
-        return "Updated seconds ago";
-    } else if (diffSeconds < 3600) {
-        const minutes = Math.floor(diffSeconds / 60);
-        return `Updated ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (diffSeconds < 86400) {
-        const hours = Math.floor(diffSeconds / 3600);
-        return `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (diffSeconds < 604800) {
-        const days = Math.floor(diffSeconds / 86400);
-        if (days === 1) {
-            return "Updated a day ago";
-        } else {
-            return `Updated ${days} days ago`;
-        }
-    } else if (diffSeconds < 2592000) {
-        const weeks = Math.floor(diffSeconds / 604800);
-        if (weeks === 1) {
-            return "Updated a week ago";
-        } else {
-            return `Updated ${weeks} weeks ago`;
-        }
-    } else if (diffSeconds < 31536000) {
-        const months = Math.floor(diffSeconds / 2592000);
-        if (months === 1) {
-            return "Updated a month ago";
-        } else {
-            return `Updated ${months} months ago`;
-        }
-    } else {
-        const years = Math.floor(diffSeconds / 31536000);
-        if (years === 1) {
-            return "Updated a year ago";
-        } else {
-            return `Updated ${years} years ago`;
-        }
-    }
-  }
-
-  function getSLAStatus(createdAt: string) {
-    const created = new Date(createdAt);
-    const today = new Date();
-    const diffTime = today.getTime() - created.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const remainingDays = 30 - diffDays;
-
-    let badgeColor = "bg-green-100 text-green-800";
-    let displayText = `${remainingDays} days left`;
-
-    if (remainingDays <= 5 && remainingDays > 0) {
-        badgeColor = "bg-yellow-100 text-yellow-800";
-    } else if (remainingDays <= 0) {
-        badgeColor = "bg-red-100 text-red-800";
-        const overdueDays = Math.abs(remainingDays);
-        displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
-    }
-
-    return { badgeColor, displayText };
-  }
-
-  function getLicenseStatus(reg_status: string){
-    let badgeColor = "bg-green-100 text-green-800";
-
-    if(reg_status == 'Invalid'){
+  if (remainingDays <= 5 && remainingDays > 0) {
+      badgeColor = "bg-yellow-100 text-yellow-800";
+  } else if (remainingDays <= 0) {
       badgeColor = "bg-red-100 text-red-800";
-    }
-    return {badgeColor};
+      const overdueDays = Math.abs(remainingDays);
+      displayText = `Overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
   }
+
+  return { badgeColor, displayText };
+}
+
+function getLicenseStatus(reg_status: string){
+  let badgeColor = "bg-green-100 text-green-800";
+
+  if(reg_status == 'Invalid'){
+    badgeColor = "bg-red-100 text-red-800";
+  }
+  return {badgeColor};
+}
 
   return (
     <div>
@@ -216,7 +152,7 @@ function getRelativeTime(updateTime: string) {
           </Badge>}
         </div>
       ): isDate ? (
-        <p>{value ? new Date(value).toLocaleDateString(): ''}</p>
+        <p>{value ? new Date(value).toLocaleDateString().toString(): ''}</p>
       ): isLicenseStatus ? (
         <div>{value && 
           <Badge className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 hover:bg-slate-300`}>

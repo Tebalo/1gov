@@ -4,7 +4,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { AlertCircle, Loader2, MessageCircleDashed, MessageCircleDashedIcon, PlusCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, Loader2, MessageCircleDashed, MessageCircleDashedIcon, MessageCircleIcon, PlusCircle, RefreshCw } from "lucide-react";
 import { format, formatDistanceToNow } from 'date-fns';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { UserInfo } from '@/lib/audit-trail-service';
@@ -270,7 +270,7 @@ export function CommentSection({
         <div className='flex justify-between'>
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
-              <MessageCircleDashed />
+              <MessageCircleIcon />
             </div>
             <div>
               <h2 className="font-semibold text-lg text-foreground">
