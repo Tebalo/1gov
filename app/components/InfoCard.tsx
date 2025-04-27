@@ -32,7 +32,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-200">
+    <Card className="hover:shadow-md transition-shadow duration-200 border-cyan-500">
       <CardHeader className="border-b">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">

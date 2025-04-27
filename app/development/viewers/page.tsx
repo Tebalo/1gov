@@ -16,7 +16,7 @@ import CPD from "./components/cpd";
 import Appeal from "./components/appeal";
 
 export default function Page() {
-    const [activeSection, setActiveSection] = useState('renewal');
+    const [activeSection, setActiveSection] = useState('registration');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const menuItems = [

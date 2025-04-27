@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
-import { UpdateStatus, updateChangeOfCategoryStatus} from '@/app/lib/actions'
 import { useRouter } from 'next/navigation'
 import {
   AlertDialog,
@@ -29,6 +28,7 @@ import ActivityModal from '@/app/components/record/ActivityModal'
 import { getAuthData } from '@/app/welcome/components/email-login'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { StatusType } from '../types/teacher-type'
+import { updateTeacherStatus } from '../api/update-status'
 
 interface ActionButtonsProps {
   recordId: string;
@@ -96,8 +96,9 @@ const TeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
     try {
       const authData = getAuthData();
       const bearerToken = authData?.access_token;
-      const result = await UpdateStatus(recordId, status, bearerToken || '');
-      if (result === 200 || result === 201 || result === 504 || result === 500) {
+      const items = []
+      const result = await updateTeacherStatus(recordId, status, bearerToken || '');
+      if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
         closeDialog();
         toast({
           title: "Success",
@@ -236,7 +237,6 @@ const TeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
                       <p className="text-xs text-gray-500">{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</p>
                     </div>     
                   </div>
-                  
                 </>
               ))}
             </RadioGroup>
@@ -271,7 +271,8 @@ const TeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
     <>
       <Button 
         onClick={() => setActiveDialog('actions')}
-        className="text-white flex items-center space-x-2 bg-primary hover:bg-primary/80 rounded-md px-4 py-2.5 transition-colors"
+        className="text-black flex items-center space-x-2 "
+        variant={"secondary"}
       >
         <span>Actions</span>
         <ChevronDownIcon className="h-4 w-4" />

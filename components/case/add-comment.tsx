@@ -265,7 +265,7 @@ export function CommentSection({
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-200">
+    <Card className="hover:shadow-md transition-shadow duration-200 border-cyan-500">
       <CardHeader className="border-b bg-gray-50/50">
         <div className='flex justify-between'>
           <div className="flex items-center gap-3">

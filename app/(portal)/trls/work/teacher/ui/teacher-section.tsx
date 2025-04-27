@@ -1,17 +1,15 @@
 'use client'
 import React from 'react';
-import { Info, FileCheck, FileText, ArrowLeft, File, Briefcase, School, AlertTriangle, GraduationCap, Tags, RefreshCcw, AlertCircle  } from 'lucide-react'
+import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap} from 'lucide-react'
 import { Role } from '@/app/lib/store';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import CategoryActionButtons from '../actions/teacher-action-items';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '@/app/components/InfoCard';
 import InfoItem from '@/app/components/InfoItem';
 import { TeacherResponse } from '../types/teacher-type';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import TeacherActionButtons from '../actions/teacher-action-items';
 import AuditTrail from '@/components/case/audit-trail';
 import { CommentSection } from '@/components/case/add-comment';
+import CaseHeader from '@/components/case/case-header';
+import TeacherActions from '../actions/action-section';
 
 interface TeacherViewerProps {
   data: TeacherResponse;
@@ -205,68 +203,22 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
     />
   )
 
-  // if (!data || !data.bio_datas || !data.teacher_registrations) {
-  //   return (
-  //     <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
-  //     <div className="max-w-md w-full space-y-4">
-  //         <Alert variant="default" className="border-2">
-  //             <AlertCircle className="h-5 w-5" />
-  //             <AlertTitle>Information Not Found</AlertTitle>
-  //             <AlertDescription>
-  //                 The requested information could not be retrieved. This may be due to:
-  //                 <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-  //                     <li>Incomplete data synchronization from 1Gov system</li>
-  //                 </ul>
-  //                 Please contact your system administrator for assistance.
-  //             </AlertDescription>
-  //         </Alert>
-  //         <div className="flex justify-center">
-  //             <Button 
-  //                 onClick={() => window.location.reload()}
-  //                 className="gap-2"
-  //             >
-  //                 <RefreshCcw className="h-4 w-4" />
-  //                 Refresh
-  //             </Button>
-  //         </div>
-  //     </div>
-  //   </div>
-  //   )
-  // }
-
+  
   return (
     <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
-      <div className="mb-4 flex-shrink-0">
-        <div className='md:flex justify-between'>
-          <div className=''>
-            <h1 className="text-2xl font-bold text-gray-800">
-              TR-{data?.teacher_registrations?.national_id ?? ''}
-            </h1>
-            <p className="text-sky-500 text-sm">
-            Teacher Registration Request
-            </p>
-            <div className='md:flex items-center space-x-2'>
-              <div className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>
-                <Tags className="w-4 h-4 text-gray-500" />
-                <p className='text-purple-500 font-semibold text-sm'>{data?.teacher_registrations?.reg_status ?? ''}</p>
-              </div>
-              <span className='text-sm text-gray-500'>Created by {fullName} on {data?.teacher_registrations?.created_at ? new Date(data?.teacher_registrations?.created_at).toLocaleDateString().toString(): ''}</span>
-            </div>         
-          </div>
-          <div className='items-center space-y-2'>
-            <TeacherActionButtons 
-              recordId={data?.teacher_registrations?.national_id ?? ''} 
-              userRole={userRole} 
-              current_status={data?.teacher_registrations?.reg_status ?? ''}
-            />
-            <AuditTrail 
-              caseId={data?.teacher_registrations?.national_id ?? ''}
-              caseType='teacher'
-            />
-          </div>
-        </div>
-        <div className="mt-2 h-1 w-full bg-blue-400 rounded-full"></div>
-      </div>
+
+      <CaseHeader 
+        caseId={'TR-'+data?.teacher_registrations?.national_id ?? ''} 
+        caseTitle={'Teacher Registration Request'} 
+        caseStatus={data?.teacher_registrations?.reg_status ?? ''} 
+        caseType={'Teacher Registration'} 
+        caseCreatedDate={data?.teacher_registrations?.created_at ?? ''} 
+        caseCreatedBy={fullName} 
+        caseAssignedTo={''} 
+        actions={<TeacherActions recordId={data?.teacher_registrations?.national_id ?? ''} userRole={userRole} current_status={data?.teacher_registrations?.reg_status ?? ''}/>} 
+        auditTrail={<AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''}caseType='teacher'/>} 
+        icon={<GraduationCap className='h-16 w-16 bg-blue-50 rounded-lg p-2 text-sky-600'/>}        
+      />
       
       <div className='flex-grow overflow-y-auto'>
         <div className='space-y-8 pr-4'>
