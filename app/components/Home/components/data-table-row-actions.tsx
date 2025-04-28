@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { Row } from "@tanstack/react-table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { regSchema } from "../data/schema"
 import { RecordDetailsDialog } from './RecordDetailsDialog';
+import { useAuditTrail } from '@/lib/hooks/useAuditTrail';
+import { UserInfo } from '@/lib/audit-trail-service';
+import { getAccessGroups } from '@/app/auth/auth';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -20,14 +23,38 @@ export function DataTableRowActions<TData>({
 }: DataTableRowActionsProps<TData>) {
   const record = regSchema.parse(row.original)
   const router = useRouter();
+  const { 
+    logCaseViewed
+  } = useAuditTrail();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserInfo>({
+    name: '',
+    role: '',
+    id: '',
+  });
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const profile = await getAccessGroups();
+        if (profile && profile.current) {  // Add null check
+            setCurrentUser(prev => ({
+            ...prev,
+            name: profile.username || '',
+            role: profile.current.toLowerCase() || '',
+            id: profile.userid || '',
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
 
-  function handleOpen() {
-    if (record.registration_type === 'Teacher') {
-      router.push(`/trls/work/object/${record.national_id}`);
-    } else if (record.registration_type === 'Student-Teacher') {
-      router.push(`/trls/work/student/${record.national_id}`);
-    }
+    initializeUser();
+  }, []);
+
+  async function handleOpen() {
+    await logCaseViewed(record.national_id, 'teacher', currentUser);
+    router.push(`/trls/work/teacher/${record.national_id}`);
   }
 
   return (

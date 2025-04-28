@@ -293,7 +293,10 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
   return (
     <Sheet onOpenChange={(isOpen) => { if (isOpen) handleSheetOpen(); }}>
       <SheetTrigger asChild>
-        <Button variant="outline">Audit Trail</Button>
+        <Button variant="outline">
+          <Clock className="mr-2" size={16} />
+          Audit Trail
+        </Button>
       </SheetTrigger>
       <SheetContent>
         <div className="h-full flex flex-col">

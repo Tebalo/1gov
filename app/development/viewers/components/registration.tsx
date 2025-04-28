@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { RefreshCw } from 'lucide-react';
-import TeacherRegistrationViewer, { TeacherRegistrationData } from '@/app/components/record/RecordViewer2.0';
+import { TeacherResponse } from '@/app/(portal)/trls/work/teacher/types/teacher-type';
+import TeacherRegistrationViewer from '@/app/(portal)/trls/work/teacher/ui/teacher-section';
 
-const data: TeacherRegistrationData = {
+const data: TeacherResponse = {
   "background_checks": [
     {
         "id": 1,
@@ -57,8 +58,8 @@ const data: TeacherRegistrationData = {
   "teacher_registrations": {
       "national_id": "436415528",
       "reg_number": "REG2024/001",
-      "reg_status": "Manager-Approved",
-      "endorsement_status": "Endorsement-Complete",
+      "reg_status": "Pending-Screening",
+      "endorsement_status": "Pending-Endorsement",
       "rejection_reason": null,
       "service_code": "MESD_006_08_054",
       "payment_ref": "PAY123456",
@@ -192,7 +193,7 @@ export default function RegistrationContent() {
     <Card className="p-4">
       <TeacherRegistrationViewer 
         data={data}
-        userRole="license_officer"
+        userRole="registration_officer"
       />
     </Card>
   );
