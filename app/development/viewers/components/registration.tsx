@@ -7,6 +7,8 @@ import { TeacherResponse } from '@/app/(portal)/trls/work/teacher/types/teacher-
 import TeacherRegistrationViewer from '@/app/(portal)/trls/work/teacher/ui/teacher-section';
 
 const data: TeacherResponse = {
+  "code": 200,
+  "message": "Success",
   "background_checks": [],
   "other_qualifications": [],
   "teacher_registrations": {
