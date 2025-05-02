@@ -57,6 +57,7 @@ import { endorsement_status } from "../components/Home/data/data";
 import { InvestigationResponseList } from "../components/Home/components/investigations-table";
 import { StudentTeacherListResponse } from "../components/Home/components/studentteacher/types/studentteacher";
 import { StudentTeacherResponse } from "../(portal)/trls/work/student-teacher/types/student-type";
+import { TeacherResponse } from "../(portal)/trls/work/teacher/types/teacher-type";
 //import { DecodedToken } from '@/types'; // Adjust import path as needed
 
 const TOKEN_REFRESH_THRESHOLD = 300; // 5 minutes in seconds
@@ -953,9 +954,28 @@ export async function updateChangeOfCategoryStatus(
 export async function updateStudentTeacherStatus(
   ID: string, 
   status: string,
+  items?: (string | undefined)[],
   bearer?: string
  ): Promise<{code: number; message: string}> {
   try {
+    if(status === 'Pending-Customer-Action'){
+      // Return to customer 
+      const res = await fetch(
+        `${studentTeacherUrl}/customer-action/${ID}?reg_status=${status}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearer}`
+          },
+          body: JSON.stringify({
+            reg_status: status,
+            items
+          })
+        }
+      );
+      return {code: res.status, message: 'Success'};
+    }
     // Prepare query parameters
     const params = new URLSearchParams();
     let baseURL = `${studentTeacherUrl}/student-teacher/`;
@@ -3105,6 +3125,68 @@ export async function getStudentTeacherById(Id: string): Promise<StudentTeacherR
   }
 }
 
+export async function getTeacherRegistrationById(Id: string): Promise<TeacherResponse> {
+  try {
+    const response = await fetch(`${apiUrl}/teacher_registrations/${Id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any auth headers if needed
+      },
+      cache: 'no-store', // Using no-store instead of no-cache (they're equivalent in Next.js)
+      // next: {
+      //   tags: ['teacher-registration'], // Optional: for revalidation
+      // }
+    });
+
+    // Get the raw response text first
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: 'success',
+      teacher_registrations: result?.teacher_registrations,
+      bio_datas: result?.bio_datas,
+      teacher_preliminary_infos: result?.teacher_preliminary_infos,
+      employment_details: result?.employment_details,
+      edu_pro_qualifications: result?.edu_pro_qualifications,
+      other_qualifications: result?.other_qualifications,
+      background_checks: result?.background_checks,
+      attachments: result?.attachments,
+    };
+
+  } catch (error) {
+    console.error('Error fetching registration by ID:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+      message: error instanceof Error ? error.message : 'Failed to fetch registration. Please try again'
+    };
+  }
+}
+
 export async function getRestorationByIdv1(Id: string): Promise<RestorationResponse> {
   try {
     const response = await fetchWithAuth4(`${restorationUrl}/license-restoration/${Id}`, { cache: 'no-cache' });
@@ -3330,6 +3412,82 @@ export async function GetReports() {
   );
   return res.json();
  }
+
+ export async function GetStudentReports() {
+  const res = await fetch(
+    `${studentTeacherUrl}/StatisticalReports/`,
+    {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }
+  );
+  return res.json();
+ }
+
+ // Cache storage
+let cache = {
+  data: null,
+  timestamp: 0
+};
+
+// Cache duration in milliseconds (e.g., 5 minutes = 300000 ms)
+const CACHE_DURATION = 300000; // 5 minutes
+
+
+export async function GetStudentStats() {
+  try {
+    // Make the fetch request
+    const response = await fetch(
+      `${studentTeacherUrl}/Status-Statistics/`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store' // Disable caching to ensure fresh data
+      }
+    );
+
+    // Check if the request was successful
+    if (!response.ok) {
+      // If the response is not OK, throw an error with the status
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    // Clone the response before using it
+    const responseClone = response.clone();
+    
+    // Try to parse as JSON
+    try {
+      const data = await response.json();
+      return data;
+    } catch (parseError) {
+      // If JSON parsing fails, try to get text content for debugging
+      console.error('Failed to parse JSON:', parseError);
+      const textContent = await responseClone.text();
+      console.log('Response text content:', textContent);
+      throw new Error('Invalid JSON response from server');
+    }
+  } catch (error) {
+    // Log the error and return a default object to prevent UI errors
+    console.error('Error fetching student stats:', error);
+    
+    // Return a default object with zero values instead of null
+    // This prevents UI errors when trying to access properties
+    return {
+      allTeacherRegistrationsCount: 0,
+      screeningCount: 0,
+      assessmentCount: 0,
+      customerActionCount: 0,
+      approvalRecommendationCount: 0,
+      approvalCount: 0,
+      managerApprovedCount: 0,
+      managerRejectedCount: 0,
+      endorsementRecommendationCount: 0,
+      endorsementCompleteCount: 0,
+      pendingEndorsementCount: 0,
+      notPendingEndorsementCount: 0
+    };
+  }
+}
  
  export async function getMonthlyTeacherRegistrations() {
   const res = await fetch(

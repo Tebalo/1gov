@@ -104,7 +104,7 @@ const TeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
           title: "Success",
           description: `Status updated to: ${status}`
         });
-        router.push('/trls/work')
+        router.push('/trls/registration')
       } else {
         // showError(result.message || 'Failed to update status');
         closeDialog();
@@ -112,7 +112,7 @@ const TeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, userRole
           title: "Success",
           description: `Status updated to: ${status}`
         });
-        router.push('/trls/work')
+        router.push('/trls/registration')
       }
     } catch (error) {
       // showError('Failed to update status');

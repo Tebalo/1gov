@@ -15,6 +15,7 @@ interface TeacherRegistration {
     reg_status?: string | null;
     endorsement_status?: string;
     rejection_reason?: string | null;
+    submission_id: string | null;
     service_code?: string | null;
     payment_ref?: string | null;
     payment_amount?: string | null;
@@ -96,6 +97,8 @@ interface OffenceConviction {
     national_id?: string | null;
     student_related_offence?: string | null;
     student_related_offence_details?: string | null;
+    student_related_offence_attachments?: string | null;
+    drug_related_offence_attachments?: string | null;
     drug_related_offence?: string | null;
     drug_related_offence_details?: string | null;
     license_flag?: string | null;
@@ -109,8 +112,8 @@ interface OffenceConviction {
 interface EmploymentDetail {
     id: number | null;
     national_id: string | null;
-    experience_years: number | null;
-    experience_months: number | null;
+    experience_years: string | null;
+    experience_months?: number | null;
     current_institution: string | null;
     institution_type: string | null;
     region: string | null;
@@ -134,12 +137,15 @@ interface Attachment {
     national_id?: string | null;
     national_id_copy?: string | null;
     qualification_copy?: string | null;
+    work_permit?: string | null;
     proof_of_payment?: string | null;
     created_at?: string | null
     updated_at?: string | null;
 }
 
 export interface TeacherResponse {
+    code: number;
+    message: string;
     teacher_registrations?: TeacherRegistration;
     teacher_preliminary_infos?: TeacherPreliminaryInfo;
     edu_pro_qualifications?: EduProQualification;

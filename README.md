@@ -1,3 +1,14 @@
+DONE (2025/05/02)
+1. Added return to customer for student teacher registration.
+2. Updated student teacher case header look and feel.
+3. Added student teacher public reports for license validation.
+4. Added student teacher reports for teacher registration roles.
+5. Teacher registration connection error fixed.
+6. Teacher registration use context null error fix work in progress.
+
+
+
+
 1. Multistep form: https://www.youtube.com/watch?v=lW_0InDuejU - https://github1s.com/HamedBahram/next-multistep-form/blob/main/components/form.tsx
 2. Regions: https://botswana.places-in-the-world.com/regions.html
 3. Shadcn UI: https://ui.shadcn.com/
@@ -46,3 +57,4 @@ Erros and Resolutions
 1. https://github.com/shadcn-ui/ui/issues/800: My mistake was that my editor auto imported Form component from react-hook-form when it should have been imported from @/components/ui/form. Hope this helps somebody.
 2. Hydration error is a result of local storage, because the render tree between pre-render(SSR/SSG) and the first render in browser is different: https://nextjs.org/docs/messages/react-hydration-error
 3. Installation for WSL: https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-wsl
+

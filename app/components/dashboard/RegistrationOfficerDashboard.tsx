@@ -4,6 +4,8 @@ import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
 import { RegistrationStats } from "./components/RegistrationStats ";
 import TeacherStatusLineChart from "./components/line-chart";
 import TeacherRegistrationReport from "@/app/public/registrations/components/teacher-registration-report";
+import StudentTeacherRegistrationReport from "@/app/public/registrations/components/student-teacher-registration-report";
+import { StudentRegistrationCard } from "./components/StudentsRegistrationStatsCard";
 
 export const RegistrationOfficerDashboard = () => {
     return (
@@ -30,7 +32,13 @@ export const RegistrationOfficerDashboard = () => {
                                 value="reports"
                                 className="text-sm font-medium transition-colors"
                             >
-                                Reports
+                                Teacher Reports
+                            </TabsTrigger>
+                            <TabsTrigger 
+                                value="student-reports"
+                                className="text-sm font-medium transition-colors"
+                            >
+                                Student Reports
                             </TabsTrigger>
                         </TabsList>
                         
@@ -47,7 +55,13 @@ export const RegistrationOfficerDashboard = () => {
                         </TabsContent>
                         <TabsContent value="reports">
                             <TeacherRegistrationReport/>
-                        </TabsContent>                    
+                        </TabsContent>   
+                        <TabsContent value="student-reports">
+                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">        
+                                <div className="col-span-3"><StudentTeacherRegistrationReport /></div>
+                                <div><StudentRegistrationCard/></div>
+                            </div>
+                        </TabsContent>              
                     </Tabs>
                 </div>
             </div>

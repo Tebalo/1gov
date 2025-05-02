@@ -124,7 +124,8 @@ const StudentTeacherActionButtons: React.FC<ActionButtonsProps> = ({ recordId, u
     try {
       const authData = getAuthData();
       const bearerToken = authData?.access_token;
-      const result = await updateStudentTeacherStatus(recordId, status, bearerToken);
+      const items = ['']
+      const result = await updateStudentTeacherStatus(recordId, status, items, bearerToken);
       if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
         try {
           // Log the status change to the audit trail - make sure to await this
