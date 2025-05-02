@@ -141,10 +141,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
         const bearerToken = authData?.access_token;
         const status = values.status as StatusType;
         const items = values.items as string[];
-        console.log('Selected status:', status);
-        console.log('Selected items:', values.items);
-        console.log('Token', bearerToken);
-        console.log('Item', items);
+
         const result = await updateStudentTeacherStatus(recordId, status, items, bearerToken);
         if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
           try {
@@ -180,7 +177,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
         // showError('Failed to update status');
         toast({
           title: "Success",
-          description: `Status updated to: ${status}`
+          description: `Status updated to: ${values.status as StatusType}`
         });
         router.push('/trls/work')
       } finally {
