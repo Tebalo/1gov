@@ -1,7 +1,7 @@
 "use server"
-import { apiUrl } from "@/app/lib/store";
+import { apiUrl, studentTeacherUrl } from "@/app/lib/store";
 
-export async function updateTeacherStatus(
+export async function updateStatus(
     id: string, 
     status: string,
     rejection_reason?: string,
@@ -12,7 +12,7 @@ export async function updateTeacherStatus(
       if(status === 'Pending-Customer-Action'){
         // Return to customer 
         const res = await fetch(
-          `${apiUrl}/customer-action/${id}?reg_status=${status}`,
+          `${studentTeacherUrl}/customer-action/${id}?reg_status=${status}`,
           {
             method: 'POST',
             headers: {
@@ -36,7 +36,7 @@ export async function updateTeacherStatus(
         }
     
         const response = await fetch(
-          `${apiUrl}/teacher_registrations/${id}?reg_status=${status}&rejection_reason=${rejection_reason}`,
+          `${studentTeacherUrl}/teacher_registrations/${id}?reg_status=${status}&rejection_reason=${rejection_reason}`,
           {
             method: 'PUT',
             headers: {

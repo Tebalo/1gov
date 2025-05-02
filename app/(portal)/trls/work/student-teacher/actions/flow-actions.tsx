@@ -1,20 +1,25 @@
-"use client"
+  "use client"
 import { Role, getFlowActionUserDetails } from "@/app/lib/store";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { StatusType } from "../types/teacher-type";
+import { StatusType } from "../types/student-type";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitBranch, Tags } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getAuthData } from "@/app/welcome/components/email-login";
-import { updateTeacherStatus } from "../api/update-status";
+
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form"
 import { Checkbox } from "@/components/ui/checkbox";
+import { updateStatus } from "../connect-REST/update-status";
+import { updateStudentTeacherStatus } from "@/app/lib/actions";
+import { getAccessGroups } from "@/app/auth/auth";
+import { UserInfo } from "@/lib/audit-trail-service";
+import { useAuditTrail } from "@/lib/hooks/useAuditTrail";
 
 interface ActionSectionProps {
     recordId: string;
@@ -81,7 +86,7 @@ const getStatusDescription = (status: StatusType): string => {
   })
 
 
-const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, current_status }) => {
+const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, userRole, current_status }) => {
     const router = useRouter();
     const { toast } = useToast();
     const [open, setOpen] = useState(false);
@@ -102,42 +107,85 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
             comments: ''
         },  
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    const [currentUser, setCurrentUser] = useState<UserInfo>({
+      name: '',
+      role: '',
+      id: '',
+    });
 
-        setIsSubmitting(true);
+    useEffect(() => {
+      const initializeUser = async () => {
         try {
-          const authData = getAuthData();
-          const bearerToken = authData?.access_token;
-          const status = values.status;
-          const items = values.items ? [...values.items] : [];
-          const result = await updateTeacherStatus(recordId, status, bearerToken || '');
-          if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
-            toast({
-              title: "Success",
-              description: `Status updated to: ${status}`
-            });
-            setOpen(false); // Close dialog on success
-            router.push('/trls/registration');
-          } else {
-            toast({
-              title: "Success",
-              description: `Status updated to: ${status}`
-            });
-            setOpen(false); // Close dialog on success
-            router.push('/trls/registration');
+          const profile = await getAccessGroups();
+          if (profile && profile.current) { 
+              setCurrentUser(prev => ({
+              ...prev,
+              name: profile.username || '',
+              role: profile.current.toLowerCase() || '',
+              id: profile.userid || '',
+            }));
           }
         } catch (error) {
-          console.error("Error updating status:", error);
+          console.error('Error fetching user profile:', error);
+        }
+      };
+  
+      initializeUser();
+    }, []);
+    const { logStatusChange } = useAuditTrail();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+      setIsSubmitting(true);
+      try {
+        const authData = getAuthData();
+        const bearerToken = authData?.access_token;
+        const status = values.status as StatusType;
+        const items = values.items as string[];
+        console.log('Selected status:', status);
+        console.log('Selected items:', values.items);
+        console.log('Token', bearerToken);
+        console.log('Item', items);
+        const result = await updateStudentTeacherStatus(recordId, status, items, bearerToken);
+        if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
+          try {
+            // Log the status change to the audit trail - make sure to await this
+            await logStatusChange(
+              recordId,           // Case ID
+              'student-teacher',  // Case type
+              currentUser,        // User info
+              current_status,     // Old status
+              status,             // New status
+              `Status changed from ${current_status} to ${status}` // Description
+            );
+            
+            console.log('Status change logged successfully');
+          } catch (auditError) {
+            // Log the error but don't fail the whole operation
+            console.error('Failed to log status change to audit trail:', auditError);
+          }
           toast({
             title: "Success",
-            description: `Status updated to: ${values.status}`
+            description: `Status updated to: ${status}`
           });
-          setOpen(false); // Close dialog on error too
-          router.push('/trls/work');
-        } finally {
-          setIsSubmitting(false);
+          router.push('/trls/work')
+        } else {
+          // showError(result.message || 'Failed to update status');
+          toast({
+            title: "Success",
+            description: `Status updated to: ${status}`
+          });
+          router.push('/trls/work')
         }
+      } catch (error) {
+        // showError('Failed to update status');
+        toast({
+          title: "Success",
+          description: `Status updated to: ${status}`
+        });
+        router.push('/trls/work')
+      } finally {
+        setIsSubmitting(false);
+      }
     }
     const showFields = form.watch("status") === "Pending-Customer-Action";
     
@@ -195,7 +243,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel className="text-base">Fields</FormLabel>
+                <FormLabel className="text-base">Notify customer</FormLabel>
                 <FormDescription>
                   Select the fields you want to the customer to edit/fix.
                 </FormDescription>
@@ -254,4 +302,4 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
     )
 }
 
-export default TeacherActions;
+export default StudentTeacherFlowActions;

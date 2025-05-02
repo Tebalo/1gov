@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FaFilePdf } from 'react-icons/fa';
 import { RefreshCw, Shield } from 'lucide-react'; // Add Shield icon for anonymous data
-import { Badge } from '@/components/ui/badge';
-import { Value } from '@radix-ui/react-select';
+
 
 interface InfoItemProps {
   label: string;
@@ -147,17 +146,17 @@ function getLicenseStatus(reg_status: string){
         </div>
       ) : isSLA ? (
         <div>{value && 
-          <Badge className={`${getSLAStatus(value).badgeColor} font-semibold px-3 py-1 hover:bg-slate-300`}>
+          <div className={`${getSLAStatus(value).badgeColor} font-semibold px-3 py-1 w-fit hover:bg-slate-300`}>
               {getSLAStatus(value).displayText}
-          </Badge>}
+          </div>}
         </div>
       ): isDate ? (
         <p>{value ? new Date(value).toLocaleDateString().toString(): ''}</p>
       ): isLicenseStatus ? (
         <div>{value && 
-          <Badge className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 hover:bg-slate-300`}>
+          <div className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 w-fit hover:bg-slate-300`}>
               {value || '--'}
-          </Badge>}
+          </div>}
         </div>
       ):(
         <p className="font-medium mt-1">{value || '--'}</p>

@@ -22,6 +22,31 @@ interface Props {
 
 // Define available tables and their required permissions
 const AVAILABLE_TABLES = {
+  'Student Pending Screening': { // Student - Gezzy - REG OFFICER
+    requiredPermission: 'view:registration-pending-screening' as const,
+    status: 'Pending-Screening',
+    component: StudentTeacherTable
+  },
+  'Student Pending Assessment': { // Student - GEZZY - SNR REG OFFICER
+    requiredPermission: 'view:registration-pending-assessment' as const,
+    status: 'Pending-Assessment',
+    component: StudentTeacherTable
+  },
+  'Student Pending Manager Approval': { // Student -GEZZY - MANAGER
+    requiredPermission: 'view:registration-pending-manager-approval' as const,
+    status: 'Pending-Manager-Approval',
+    component: StudentTeacherTable
+  },
+  'Student Pending-Endorsement': { // Student - GEZZY - DIRECTOR
+    requiredPermission: 'view:registration-pending-endorsement' as const,
+    status: 'Pending-Endorsement',
+    component: StudentTeacherTable
+  },
+  'Student Endorsement Complete': { // Student - GEZZY - DIRECTOR
+    requiredPermission: 'view:registration-endorsement-complete' as const,
+    status: 'Endorsement-Complete',
+    component: StudentTeacherTable
+  },
   'Investigation Incoming': { // Investigation
     requiredPermission: 'view:complaints-incoming' as const,
     status: 'INCOMING',
@@ -227,32 +252,6 @@ const AVAILABLE_TABLES = {
     requiredPermission: 'view:restoration-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: RestorationTable
-  },
-
-  'Student Pending Screening': { // Student - Gezzy - REG OFFICER
-    requiredPermission: 'view:registration-pending-screening' as const,
-    status: 'Pending-Screening',
-    component: StudentTeacherTable
-  },
-  'Student Pending Assessment': { // Student - GEZZY - SNR REG OFFICER
-    requiredPermission: 'view:registration-pending-assessment' as const,
-    status: 'Pending-Assessment',
-    component: StudentTeacherTable
-  },
-  'Student Pending Manager Approval': { // Student -GEZZY - MANAGER
-    requiredPermission: 'view:registration-pending-manager-approval' as const,
-    status: 'Pending-Manager-Approval',
-    component: StudentTeacherTable
-  },
-  'Student Pending-Endorsement': { // Student - GEZZY - DIRECTOR
-    requiredPermission: 'view:registration-pending-endorsement' as const,
-    status: 'Pending-Endorsement',
-    component: StudentTeacherTable
-  },
-  'Student Endorsement Complete': { // Student - GEZZY - DIRECTOR
-    requiredPermission: 'view:registration-endorsement-complete' as const,
-    status: 'Endorsement-Complete',
-    component: StudentTeacherTable
   },
 } as const; 
 

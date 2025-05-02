@@ -1,4 +1,4 @@
-'use client'
+
 import React from 'react';
 import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap} from 'lucide-react'
 import { Role } from '@/app/lib/store';
@@ -10,6 +10,7 @@ import AuditTrail from '@/components/case/audit-trail';
 import { CommentSection } from '@/components/case/add-comment';
 import CaseHeader from '@/components/case/case-header';
 import TeacherActions from '../actions/action-section';
+
 
 interface TeacherViewerProps {
   data: TeacherResponse;
@@ -105,7 +106,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
               <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
               <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
               <TableCell>
-                <TableCell><InfoItem label="" value={data.edu_pro_qualifications.attachments ?? ''}/></TableCell>
+                <InfoItem label="" value={data.edu_pro_qualifications.attachments ?? ''}/>
               </TableCell>
             </TableRow>
           </TableBody>
@@ -205,8 +206,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
 
   
   return (
-    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
-
+    <div className="container mx-auto px-4 h-screen flex flex-col">
       <CaseHeader 
         caseId={'TR-'+data?.teacher_registrations?.national_id ?? ''} 
         caseTitle={'Teacher Registration Request'} 
@@ -216,12 +216,12 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
         caseCreatedBy={fullName} 
         caseAssignedTo={''} 
         actions={<TeacherActions recordId={data?.teacher_registrations?.national_id ?? ''} userRole={userRole} current_status={data?.teacher_registrations?.reg_status ?? ''}/>} 
-        auditTrail={<AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''}caseType='teacher'/>} 
+        auditTrail={<AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''} caseType='teacher'/>} 
         icon={<GraduationCap className='h-16 w-16 bg-blue-50 rounded-lg p-2 text-sky-600'/>}        
       />
       
       <div className='flex-grow overflow-y-auto'>
-        <div className='space-y-8 pr-4'>
+        <div className='space-y-4 pr-4'>
           {renderSection(renderPersonalInfo())}
           {renderSection(renderRegistrationInfo())}
           {renderSection(renderEmploymentInfo())}
