@@ -76,6 +76,20 @@ export const auditTrailService = {
     });
   },
 
+  // Get latest status change
+  getLatestStatusChange: async (caseId: string, caseType: string) => {
+    return prisma.auditTrail.findFirst({
+      where: {
+        caseId,
+        caseType,
+        action: 'status_change',
+      },
+      orderBy: {
+        timestamp: 'desc',
+      },
+    });
+  },  
+
   // Log priority change
   logPriorityChange: async (
     caseId: string,

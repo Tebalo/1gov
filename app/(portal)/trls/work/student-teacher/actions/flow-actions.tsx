@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GitBranch, Tags } from "lucide-react";
+import { AlertCircle, GitBranch, Tags, Terminal } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getAuthData } from "@/app/welcome/components/email-login";
 
@@ -18,8 +18,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { updateStatus } from "../connect-REST/update-status";
 import { updateStudentTeacherStatus } from "@/app/lib/actions";
 import { getAccessGroups } from "@/app/auth/auth";
-import { UserInfo } from "@/lib/audit-trail-service";
+import { AuditActionType, UserInfo } from "@/lib/audit-trail-service";
 import { useAuditTrail } from "@/lib/hooks/useAuditTrail";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ActionSectionProps {
     recordId: string;
@@ -33,6 +34,22 @@ interface FlowActionConfig {
     message?: string;
     status_label: string;
     isAllowedRole: boolean;
+}
+
+interface AuditTrailEntry {
+  id: string;
+  timestamp: string;  
+  action: AuditActionType;
+  userId: string;
+  userName: string;
+  userRole?: string;
+  caseId: string;
+  caseType: string;
+  field?: string;
+  oldValue?: string;
+  newValue?: string;
+  description?: string;
+  metadata?: string;  // API returns metadata as JSON string
 }
 
 const getStatusDescription = (status: StatusType): string => {
@@ -132,54 +149,77 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
   
       initializeUser();
     }, []);
-    const { logStatusChange } = useAuditTrail();
+    const { logStatusChange, getLatestStatusChange  } = useAuditTrail();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [auditEntries, setAuditEntries] = useState<AuditTrailEntry | null>();
+    const [error, setError] = useState<string | null>(null);
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
       setIsSubmitting(true);
-      try {
-        const authData = getAuthData();
-        const bearerToken = authData?.access_token;
-        const status = values.status as StatusType;
-        const items = values.items as string[];
+      try{
+        const latestStatusChange = await getLatestStatusChange(recordId, 'student-teacher');
+        setAuditEntries(latestStatusChange);
 
-        const result = await updateStudentTeacherStatus(recordId, status, items, bearerToken);
-        if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
-          try {
-            // Log the status change to the audit trail - make sure to await this
-            await logStatusChange(
-              recordId,           // Case ID
-              'student-teacher',  // Case type
-              currentUser,        // User info
-              current_status,     // Old status
-              status,             // New status
-              `Status changed from ${current_status} to ${status}` // Description
-            );
-            
-            console.log('Status change logged successfully');
-          } catch (auditError) {
-            // Log the error but don't fail the whole operation
-            console.error('Failed to log status change to audit trail:', auditError);
-          }
+        if(current_status.toUpperCase() == latestStatusChange?.oldValue?.toUpperCase()){
+          setError(`Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`);
           toast({
-            title: "Success",
-            description: `Status updated to: ${status}`
+            title: "Error",
+            variant: "destructive",
+            description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
           });
-          router.push('/trls/work')
-        } else {
-          // showError(result.message || 'Failed to update status');
-          toast({
-            title: "Success",
-            description: `Status updated to: ${status}`
-          });
-          router.push('/trls/work')
+          return;
         }
-      } catch (error) {
-        // showError('Failed to update status');
-        toast({
-          title: "Success",
-          description: `Status updated to: ${values.status as StatusType}`
-        });
-        router.push('/trls/work')
+        if(!error){
+          try {
+            const authData = getAuthData();
+            const bearerToken = authData?.access_token;
+            const status = values.status as StatusType;
+            const items = values.items as string[];
+  
+            const result = await updateStudentTeacherStatus(recordId, status, items, bearerToken);
+            if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
+              try {
+                // Log the status change to the audit trail - make sure to await this
+                await logStatusChange(
+                  recordId,           // Case ID
+                  'student-teacher',  // Case type
+                  currentUser,        // User info
+                  current_status,     // Old status
+                  status,             // New status
+                  `Status changed from ${current_status} to ${status}` // Description
+                );
+                
+                console.log('Status change logged successfully');
+              } catch (auditError) {
+                // Log the error but don't fail the whole operation
+                console.error('Failed to log status change to audit trail:', auditError);
+              }
+              toast({
+                title: "Success",
+                description: `Status updated to: ${status}`
+              });
+              router.push('/trls/work')
+            } else {
+              // showError(result.message || 'Failed to update status');
+              toast({
+                title: "Success",
+                description: `Status updated to: ${status}`
+              });
+              router.push('/trls/work')
+            }
+          } catch (error) {
+            // showError('Failed to update status');
+            toast({
+              title: "Success",
+              description: `Status updated to: ${values.status as StatusType}`
+            });
+            router.push('/trls/work')
+          } finally {
+            setIsSubmitting(false);
+          }
+        }
+      }catch(error){
+        console.error('Error fetching user profile:', error);
       } finally {
         setIsSubmitting(false);
       }
@@ -201,8 +241,15 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                         <DialogDescription>
                             Make status updates to the case here. Click submit when you&#39;re done.
                         </DialogDescription>
+                        {error && <Alert variant={"destructive"}  className="mb-4">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertTitle>Heads up!</AlertTitle>
+                          <AlertDescription>
+                           {error}
+                          </AlertDescription>
+                        </Alert>}
                     </DialogHeader>
-                    <Form {...form}>
+                    {!error && <Form {...form}>
                         <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <FormField
                                 control={form.control}
@@ -234,54 +281,54 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                                     </FormItem>
                                 )}
                             />
-        {showFields && <FormField
-          control={form.control}
-          name="items"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel className="text-base">Notify customer</FormLabel>
-                <FormDescription>
-                  Select the fields you want to the customer to edit/fix.
-                </FormDescription>
-              </div>
-              {items.map((item) => (
-                <FormField
-                  key={item.id}
-                  control={form.control}
-                  name="items"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className="flex flex-row items-start space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...(field.value ?? []), item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  )
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    )
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
-        />}
+                            {showFields && <FormField
+                              control={form.control}
+                              name="items"
+                              render={() => (
+                                <FormItem>
+                                  <div className="mb-4">
+                                    <FormLabel className="text-base">Notify customer</FormLabel>
+                                    <FormDescription>
+                                      Select the fields you want to the customer to edit/fix.
+                                    </FormDescription>
+                                  </div>
+                                  {items.map((item) => (
+                                    <FormField
+                                      key={item.id}
+                                      control={form.control}
+                                      name="items"
+                                      render={({ field }) => {
+                                        return (
+                                          <FormItem
+                                            key={item.id}
+                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                          >
+                                            <FormControl>
+                                              <Checkbox
+                                                checked={field.value?.includes(item.id)}
+                                                onCheckedChange={(checked) => {
+                                                  return checked
+                                                    ? field.onChange([...(field.value ?? []), item.id])
+                                                    : field.onChange(
+                                                        field.value?.filter(
+                                                          (value) => value !== item.id
+                                                        )
+                                                      )
+                                                }}
+                                              />
+                                            </FormControl>
+                                            <FormLabel className="text-sm font-normal">
+                                              {item.label}
+                                            </FormLabel>
+                                          </FormItem>
+                                        )
+                                      }}
+                                    />
+                                  ))}
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />}
                             <DialogFooter>
                                 <Button 
                                     type="submit" 
@@ -292,7 +339,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                                 </Button>
                             </DialogFooter>
                         </form> 
-                    </Form>
+                    </Form>}
                 </DialogContent>
             </Dialog>
         </div>
