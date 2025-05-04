@@ -133,6 +133,19 @@ export function useAuditTrail() {
     });
   };
 
+  // Get lastest status change
+  const getLatestStatusChange = async (
+    caseId: string,
+    caseType: string
+  ): Promise<AuditTrailEntry | null> => {
+    const auditTrail = await fetchAuditTrail(caseId, caseType, {
+      action: 'status_change',
+      sortOrder: 'newest',
+      limit: 1,
+    });
+    return auditTrail.length > 0 ? auditTrail[0] : null;
+  };
+
   // Log priority change
   const logPriorityChange = async (
     caseId: string,
@@ -185,5 +198,6 @@ export function useAuditTrail() {
     logPriorityChange,
     logSLAUpdate,
     logCaseViewed,
+    getLatestStatusChange
   };
 }
