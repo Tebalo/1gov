@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FaFilePdf } from 'react-icons/fa';
 import { RefreshCw, Shield } from 'lucide-react'; // Add Shield icon for anonymous data
+import Link from 'next/link';
 
 
 interface InfoItemProps {
@@ -136,7 +137,14 @@ function getLicenseStatus(reg_status: string){
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-4xl">
               <DialogHeader>
-                <DialogTitle>Document Viewer</DialogTitle>
+                <div className='flex justify-between pr-5'>
+                  <DialogTitle>Document Viewer</DialogTitle>
+                  <Link
+                  href={value || ''}
+                  className='text-sky-600 italic underline'
+                  rel='_blank'
+                  >Download</Link>
+                </div>
               </DialogHeader>
               <div className="mt-2 h-[85vh]">
                 {value ? (<PDFViewer url={value} />):(<p>No document available</p>)}
@@ -151,7 +159,8 @@ function getLicenseStatus(reg_status: string){
           </div>}
         </div>
       ): isDate ? (
-        <p>{value ? new Date(value).toLocaleDateString().toString(): ''}</p>
+        // <p>{value ? new Date(value).toLocaleDateString().toString(): ''}</p>
+        <p>{value ? new Date(value).toISOString().split('T')[0] : ''}</p>
       ): isLicenseStatus ? (
         <div>{value && 
           <div className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 w-fit hover:bg-slate-300`}>

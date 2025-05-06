@@ -16,11 +16,13 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form"
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateStatus } from "../connect-REST/update-status";
-import { updateStudentTeacherStatus } from "@/app/lib/actions";
+import { revalidate, updateStudentTeacherStatus } from "@/app/lib/actions";
 import { getAccessGroups } from "@/app/auth/auth";
 import { AuditActionType, UserInfo } from "@/lib/audit-trail-service";
 import { useAuditTrail } from "@/lib/hooks/useAuditTrail";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { revalidatePath } from "next/cache";
+import ProgressIndicator from "./progress-indicator";
 
 interface ActionSectionProps {
     recordId: string;
@@ -57,8 +59,8 @@ const getStatusDescription = (status: StatusType): string => {
       'PENDING-CUSTOMER-ACTION': 'Customer needs to provide additional information',
       'PENDING-ASSESSMENT': 'Pass screening',
       'PENDING-SCREENING': 'Pass screening',
-      'MANAGER-REJECTED': 'Reject and send notification to customer',
-      'MANAGER-APPROVED': 'Approve and send notification to customer',
+      'MANAGER-REJECTED': 'Reject',
+      'MANAGER-APPROVED': 'Approve',
       'RECOMMENDED-FOR-APPROVAL': 'Recommend for approval',
       'RECOMMENDED-FOR-REJECTION': 'Recommend for rejection',
       'PENDING-ENDORSEMENT': 'Submit for endorsement',
@@ -68,14 +70,9 @@ const getStatusDescription = (status: StatusType): string => {
   };
   
   const items = [
-    { id: "national_id_copy", label: "National ID copy" },
-    { id: "qualification_copy", label: "BQA Evaluation Report copy" },
-    { id: "qualifications", label: "Other Qualification's" },
+    { id: "attachment_letter", label: "Attachment letter" },
     { id: "student_related_offence_attachments", label: "Student related offence copy" },
     { id: "drug_related_offence_attachments", label: "Drug related offence copy" },
-    { id: "proof_of_payment", label: "Proof of payment" },
-    { id: "attachments", label: "Mandatory qualification's attachment" },
-    { id: "work_permit", label: "Work permit" },
   ] as const;
 
   const formSchema = z.object({
@@ -153,21 +150,24 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [auditEntries, setAuditEntries] = useState<AuditTrailEntry | null>();
     const [error, setError] = useState<string | null>(null);
+    const [progress, setProgress] = useState<string | null>(null);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
       setIsSubmitting(true);
       try{
         const latestStatusChange = await getLatestStatusChange(recordId, 'student-teacher');
         setAuditEntries(latestStatusChange);
-
+        setProgress('Validating status change...');
         if(current_status.toUpperCase() == latestStatusChange?.oldValue?.toUpperCase()){
-          setError(`Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`);
-          toast({
-            title: "Error",
-            variant: "destructive",
-            description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
-          });
-          return;
+          if (latestStatusChange?.newValue?.toUpperCase() !== 'Pending-Customer-Action') {          
+            setError(`Status has already been changed by ${latestStatusChange?.userName.toUpperCase()}. Please refresh the record to see the latest updates.`);
+            toast({
+              title: "Error",
+              variant: "destructive",
+              description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
+            });
+            // return; // Uncomment this line to stop the submission if the status has already been changed
+          }
         }
         if(!error){
           try {
@@ -198,6 +198,8 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                 title: "Success",
                 description: `Status updated to: ${status}`
               });
+
+              revalidatePath('/trls/work')  
               router.push('/trls/work')
             } else {
               // showError(result.message || 'Failed to update status');
@@ -205,6 +207,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                 title: "Success",
                 description: `Status updated to: ${status}`
               });
+              revalidatePath('/trls/work')  
               router.push('/trls/work')
             }
           } catch (error) {
@@ -213,6 +216,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
               title: "Success",
               description: `Status updated to: ${values.status as StatusType}`
             });
+            revalidatePath('/trls/work')  
             router.push('/trls/work')
           } finally {
             setIsSubmitting(false);
@@ -249,7 +253,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                           </AlertDescription>
                         </Alert>}
                     </DialogHeader>
-                    {!error && <Form {...form}>
+                    <Form {...form}>
                         <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <FormField
                                 control={form.control}
@@ -329,6 +333,12 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                                 </FormItem>
                               )}
                             />}
+                            {isSubmitting && (
+                                <ProgressIndicator 
+                                  isLoading={isSubmitting} 
+                                  totalDuration={60000} // 1 minute in milliseconds
+                                />
+                              )}
                             <DialogFooter>
                                 <Button 
                                     type="submit" 
@@ -339,7 +349,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                                 </Button>
                             </DialogFooter>
                         </form> 
-                    </Form>}
+                    </Form>
                 </DialogContent>
             </Dialog>
         </div>

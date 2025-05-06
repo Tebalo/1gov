@@ -19,7 +19,7 @@ const FormSchema = z.object({
     productionLevel: z.enum(["uat", "production"], { errorMap: () => ({ message: "Production level is required" }) })
 });
 
-export default function CaseDelete() {
+export default function CaseHistoryDelete() {
     const [isDeleting, setIsDeleting] = useState(false);
     const  form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -32,35 +32,20 @@ export default function CaseDelete() {
     const { deleteAuditEntries } = useAuditTrail();
     async function onsubmit(data: z.infer<typeof FormSchema>) {
         setIsDeleting(true);
+        
         try{
-            const response = await deleteCase(data.caseNumber, data.caseType, data.productionLevel);
-            
-            if(response == 200 || response == 201){
-                await deleteAuditEntries(data.caseNumber, data.caseType);
-                toast({
-                    title: "Case deleted successfully",
-                    description: `Case number ${data.caseNumber} has been deleted successfully.`,
-                    duration: 2000,
-                    variant: "default"
-                })
-            }else if(response == 404 || response == 400){
-                toast({
-                    title: "Case not found",
-                    description: `Case number ${data.caseNumber} not found.`,
-                    duration: 2000,
-                    variant: "destructive"
-                })
-            }else if(response == 500 || response == null){
-                toast({
-                    title: "Server error",
-                    description: `Internal server error. Please try again later.`,
-                    duration: 2000,
-                    variant: "destructive"
-                })
-            }
+            const response = await deleteAuditEntries(data.caseNumber, data.caseType);;
+    
+            toast({
+                title: "Case history deleted successfully",
+                description: `Case number ${data.caseNumber} history has been deleted successfully.`,
+                duration: 2000,
+                variant: "default"
+            })
+            form.reset();
         } catch (error) {
             toast({
-                title: "Error deleting case",
+                title: "Error deleting case history",
                 description: `An error occurred while deleting the case. Please try again later.`,
                 duration: 2000,
                 variant: "destructive"
@@ -92,10 +77,10 @@ export default function CaseDelete() {
                 <span className="ml-2 font-semibold">Danger Zone</span>
             </div>
             <p className="text-sm text-muted-foreground mt-1 text-red-500">
-            Delete a case record from the system. 
+            Delete a case record history from the system. 
             </p>
             <p className="text-sm text-muted-foreground mt-1 text-red-500">
-                This action is irreversible. Please be certain that you want to delete this case.
+                This action is irreversible. Please be certain that you want to delete this case history.
             </p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onsubmit)} className='flex flex-col gap-4'>
