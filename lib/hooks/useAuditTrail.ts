@@ -146,6 +146,36 @@ export function useAuditTrail() {
     return auditTrail.length > 0 ? auditTrail[0] : null;
   };
 
+  // delete audit all entries by caseId and caseType
+  const deleteAuditEntries = async (
+    caseId: string,
+    caseType: string
+  ): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/audit-trail/${caseId}/${caseType}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete audit entries');
+      }
+      
+      return true;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Log priority change
   const logPriorityChange = async (
     caseId: string,
@@ -194,6 +224,7 @@ export function useAuditTrail() {
     error,
     fetchAuditTrail,
     addAuditEntry,
+    deleteAuditEntries,
     logStatusChange,
     logPriorityChange,
     logSLAUpdate,

@@ -114,6 +114,16 @@ export const auditTrailService = {
     });
   },
 
+  // Delete audit entries by caseId and caseType
+  deleteAuditTrail: async (caseId: string, caseType: string) => {
+    return prisma.auditTrail.deleteMany({
+      where: {
+        caseId,
+        caseType
+      },
+    });
+  },
+
   // Log SLA update
   logSLAUpdate: async (
     caseId: string,

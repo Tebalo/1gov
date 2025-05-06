@@ -28,3 +28,23 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { caseId: string; caseType: string } }
+) {
+  try {
+    const { caseId, caseType } = params;
+    
+    // Delete all audit trail entries for this case
+    const result = await auditTrailService.deleteAuditTrail(caseId, caseType);
+    
+    return NextResponse.json({ success: true, deletedCount: result.count });
+  } catch (error) {
+    console.error('Error deleting audit trail:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete audit trail' },
+      { status: 500 }
+    );
+  }
+}

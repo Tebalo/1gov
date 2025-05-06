@@ -26,6 +26,7 @@ import { version } from '@/app/lib/store';
 import { toast } from "@/components/ui/use-toast"
 import { deleteCase } from './connect-REST/api';
 import CaseDelete from './delete-case/case-delete';
+import CaseHistoryDelete from './delete-case/case-history-delete';
 
 
 export default function AdminSettings() {
@@ -119,8 +120,8 @@ export default function AdminSettings() {
                 </TabsList>
                 
                 <TabsContent value="general" className="space-y-6 mt-6">
-                    <ApiEndpointsCard/>
                     <CaseDelete/>
+                    <CaseHistoryDelete/>
                 </TabsContent>
                 
                 <TabsContent value="security" className="space-y-6 mt-6">
@@ -138,7 +139,7 @@ export default function AdminSettings() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="font-medium">Two-Factor Authentication</p>
-                                    <p className="text-sm text-muted-foreground">Require 2FA for all admin accounts</p>
+                                    <p className="text-sm text-muted-foreground">Require 2FA for all accounts</p>
                                 </div>
                                 <Switch 
                                     checked={twoFactorAuth}
@@ -226,7 +227,8 @@ export default function AdminSettings() {
                 </TabsContent>
                 
                 <TabsContent value="system" className="space-y-6 mt-6">
-                    <Card>
+                    <ApiEndpointsCard/>
+                    {/* <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
@@ -325,7 +327,7 @@ export default function AdminSettings() {
                                 Reset to Defaults
                             </Button>
                         </CardFooter>
-                    </Card>
+                    </Card> */}
                 </TabsContent>
             </Tabs>
         </div>
