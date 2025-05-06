@@ -73,6 +73,8 @@ const getStatusDescription = (status: StatusType): string => {
     { id: "attachment_letter", label: "Attachment letter" },
     { id: "student_related_offence_attachments", label: "Student related offence copy" },
     { id: "drug_related_offence_attachments", label: "Drug related offence copy" },
+    { id: "license_flag_details", label: "License flag attachment" },
+    { id: "misconduct_flag_details", label: "Misconduct flag attachment" },
   ] as const;
 
   const formSchema = z.object({
