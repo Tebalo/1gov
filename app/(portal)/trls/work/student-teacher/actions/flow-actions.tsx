@@ -190,8 +190,6 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                   status,             // New status
                   `Status changed from ${current_status} to ${status}` // Description
                 );
-                
-                console.log('Status change logged successfully');
               } catch (auditError) {
                 // Log the error but don't fail the whole operation
                 console.error('Failed to log status change to audit trail:', auditError);
@@ -200,8 +198,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                 title: "Success",
                 description: `Status updated to: ${status}`
               });
-
-              revalidatePath('/trls/work')  
+ 
               router.push('/trls/work')
             } else {
               // showError(result.message || 'Failed to update status');
@@ -218,7 +215,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
               title: "Success",
               description: `Status updated to: ${values.status as StatusType}`
             });
-            revalidatePath('/trls/work')  
+
             router.push('/trls/work')
           } finally {
             setIsSubmitting(false);
@@ -227,6 +224,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
       }catch(error){
         console.error('Error fetching user profile:', error);
       } finally {
+        router.push('/trls/work')
         setIsSubmitting(false);
       }
     }
