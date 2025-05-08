@@ -177,22 +177,15 @@ export const columns: ColumnDef<Registration>[] = [
     cell: ({ row }) => {
       const isManagerApproved = row.original.reg_status === 'Manager-Approved';
       const isEndorsementComplete = row.original.endorsement_status === 'Endorsement-Complete';
-      const hasPayment = row.original.payment_amount != null;
       const licenseLink = row.original.license_link;
       
-      const licenseStatus = isManagerApproved && isEndorsementComplete && hasPayment ? 'Valid' : 'Invalid';
+      const licenseStatus = isManagerApproved && isEndorsementComplete ? 'Valid' : 'Invalid';
       const badgeVariant = licenseStatus === 'Valid' ? 'default' : 'destructive';
       
       // If license is valid and has a link
       if (licenseStatus === 'Valid' && licenseLink) {
         return (
           <div className="flex w-full items-center">
-            {/* <a 
-              href={licenseLink} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center hover:underline"
-            > */}
               <Badge variant={badgeVariant as any} className="inline-flex items-center space-x-1">
                 <span>{licenseStatus}</span>
                 {/* <svg
@@ -209,7 +202,6 @@ export const columns: ColumnDef<Registration>[] = [
                   <circle cx="12" cy="12" r="3" />
                 </svg> */}
               </Badge>
-            {/* </a> */}
           </div>
         )
       }
