@@ -168,7 +168,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
               variant: "destructive",
               description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
             });
-            // return; // Uncomment this line to stop the submission if the status has already been changed
+            return; // Uncomment this line to stop the submission if the status has already been changed
           }
         }
         if(!error){
