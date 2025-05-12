@@ -161,7 +161,7 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
         setAuditEntries(latestStatusChange);
         setProgress('Validating status change...');
         if(current_status.toUpperCase() == latestStatusChange?.oldValue?.toUpperCase()){
-          if (latestStatusChange?.newValue?.toUpperCase() !== 'Pending-Customer-Action') {          
+          if (latestStatusChange?.newValue?.toUpperCase() !== 'PENDING-CUSTOMER-ACTION') {      
             setError(`Status has already been changed by ${latestStatusChange?.userName.toUpperCase()}. Please refresh the record to see the latest updates.`);
             toast({
               title: "Error",
