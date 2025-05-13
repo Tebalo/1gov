@@ -118,14 +118,14 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
               description: `Status updated to: ${status}`
             });
             setOpen(false); // Close dialog on success
-            router.push('/trls/registration');
+            router.push('/trls/work');
           } else {
             toast({
               title: "Success",
               description: `Status updated to: ${status}`
             });
             setOpen(false); // Close dialog on success
-            router.push('/trls/registration');
+            router.push('/trls/work');
           }
         } catch (error) {
           console.error("Error updating status:", error);
