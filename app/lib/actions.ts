@@ -58,6 +58,7 @@ import { InvestigationResponseList } from "../components/Home/components/investi
 import { StudentTeacherListResponse } from "../components/Home/components/studentteacher/types/studentteacher";
 import { StudentTeacherResponse } from "../(portal)/trls/work/student-teacher/types/student-type";
 import { TeacherResponse } from "../(portal)/trls/work/teacher/types/teacher-type";
+import { TeacherListResponse } from "../components/Home/components/teacher/types/teacher";
 //import { DecodedToken } from '@/types'; // Adjust import path as needed
 
 const TOKEN_REFRESH_THRESHOLD = 300; // 5 minutes in seconds
@@ -1989,6 +1990,59 @@ export async function getStudentTeacherList(status: string, count: number): Prom
       param_key='endorsement_status';
     }
     const response = await fetch(`${studentTeacherUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    cache:'no-cache'
+    });
+    const responseText = await response.text();
+    if (!response.ok) {
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      } catch (parseError) {
+        errorMessage = `HTTP error! status: ${response.status}. Raw response: ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result;
+    if (responseText) {
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
+      }
+    } else {
+      result = { message: 'Success', code: response.status, data: null };
+    }
+
+    return {
+      code: response.status,
+      message: "success",
+      data: result
+    };
+
+  } catch (error) {
+    console.error('Error passing json:', error);
+    return {
+      code: error instanceof Error && 'status' in error ? (error as any).status : 500,
+    };
+  }
+}
+
+export async function getTeacherList(status: string, count: number): Promise<TeacherListResponse> {
+
+  try {
+    let param_key='reg_status';
+    if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
+      param_key='endorsement_status';
+    }
+    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

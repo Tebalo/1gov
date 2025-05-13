@@ -53,12 +53,6 @@ export const RegistrationOfficerHome = () => {
       href: "/trls/work"
     },
     {
-      title: "Registration",
-      description: "Registration requests",
-      icon: <ClipboardSignature className="w-6 h-6 text-blue-500" />,
-      href: "/trls/registration"
-    },
-    {
       title: "Reports",
       description: "View and generate",
       icon: <BarChart3 className="w-6 h-6 text-blue-500" />,

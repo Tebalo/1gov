@@ -88,18 +88,18 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         title: 'Work', 
         roles: ['*'] 
     },
-    { 
-        path: '/trls/registration', 
-        icon: <ClipboardSignature size={24} color="#FFFFFF" />, 
-        title: 'Teacher', 
-        roles: [
-            'REGISTRATION_OFFICER', 
-            'SNR_REGISTRATION_OFFICER', 
-            'MANAGER', 
-            'DIRECTOR', 
-            'REGISTRAR'
-        ] 
-    },
+    // { 
+    //     path: '/trls/registration', 
+    //     icon: <ClipboardSignature size={24} color="#FFFFFF" />, 
+    //     title: 'Teacher', 
+    //     roles: [
+    //         'REGISTRATION_OFFICER', 
+    //         'SNR_REGISTRATION_OFFICER', 
+    //         'MANAGER', 
+    //         'DIRECTOR', 
+    //         'REGISTRAR'
+    //     ] 
+    // },
     { 
         path: '/trls/activity', 
         icon: <ClipboardList size={24} color="#FFFFFF" />, 

@@ -15,6 +15,7 @@ import RenewalTable from "../renewal/renewal-table";
 import ChangeOfCategoryTable from "../changeofcategory/changeofcategory-table";
 import RestorationTable from "../restoration/restoration-table";
 import { StudentTeacherTable } from "../studentteacher/studentteacher-table";
+import TeacherTable from "../teacher/teacher-table";
 
 interface Props {
   userRole: Role;
@@ -237,20 +238,45 @@ const AVAILABLE_TABLES = {
     status: 'Pending-Assessment',
     component: StudentTeacherTable
   },
-  'Student Pending Manager Approval': { // Student -GEZZY - MANAGER
+  'Student Pending Manager Approval': { // Student - MANAGER
     requiredPermission: 'view:registration-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: StudentTeacherTable
   },
-  'Student Pending-Endorsement': { // Student - GEZZY - DIRECTOR
+  'Student Pending-Endorsement': { // Student - DIRECTOR
     requiredPermission: 'view:registration-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: StudentTeacherTable
   },
-  'Student Endorsement Complete': { // Student - GEZZY - DIRECTOR
+  'Student Endorsement Complete': { // Student - DIRECTOR
     requiredPermission: 'view:registration-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: StudentTeacherTable
+  },
+  'Teacher Pending Screening': { // Teacher - REG OFFICER
+    requiredPermission: 'view:registration-pending-screening' as const,
+    status: 'Pending-Screening',
+    component: TeacherTable
+  },
+  'Teacher Pending Assessment': { // Teacher - SNR REG OFFICER
+    requiredPermission: 'view:registration-pending-assessment' as const,
+    status: 'Pending-Assessment',
+    component: TeacherTable
+  },
+  'Teacher Pending Manager Approval': { // Teacher - MANAGER
+    requiredPermission: 'view:registration-pending-manager-approval' as const,
+    status: 'Pending-Manager-Approval',
+    component: TeacherTable
+  },
+  'Teacher Pending-Endorsement': { // Teacher - DIRECTOR
+    requiredPermission: 'view:registration-pending-endorsement' as const,
+    status: 'Pending-Endorsement',
+    component: TeacherTable
+  },
+  'Teacher Endorsement Complete': { // Teacher - DIRECTOR
+    requiredPermission: 'view:registration-endorsement-complete' as const,
+    status: 'Endorsement-Complete',
+    component: TeacherTable
   },
 } as const; 
 
