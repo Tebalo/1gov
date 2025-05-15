@@ -51,7 +51,6 @@ export async function updateTeacherStatus(
             }
           }
         );
-        console.log('Response:', response); // Log the response for debugging
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
