@@ -8,6 +8,7 @@ export async function updateTeacherStatus(
     items?: (string | undefined)[],
     bearer?: string
    ): Promise<{code: number; message: string}> {
+    console.log(bearer)
     try {
       if(status === 'Pending-Customer-Action'){
         // Return to customer 
@@ -50,7 +51,6 @@ export async function updateTeacherStatus(
             }
           }
         );
-        console.log('Response:', response); // Log the response for debugging
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

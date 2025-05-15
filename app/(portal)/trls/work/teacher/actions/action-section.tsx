@@ -108,10 +108,11 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
         setIsSubmitting(true);
         try {
           const authData = getAuthData();
-          const bearerToken = authData?.access_token;
+          const bearer = authData?.access_token;
           const status = values.status;
           const items = values.items ? [...values.items] : [];
-          const result = await updateTeacherStatus(recordId, status, bearerToken || '');
+          const rejection_reason = values.comments || '';
+          const result = await updateTeacherStatus(recordId, status, rejection_reason, items, bearer || '');
           if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
             toast({
               title: "Success",
