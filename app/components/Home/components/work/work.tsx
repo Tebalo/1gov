@@ -1,5 +1,6 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "@/app/components/dashboard/search";
@@ -21,287 +22,379 @@ interface Props {
   userRole: Role;
 }
 
+// Custom hook for safe localStorage access with SSR support
+const useLocalStorage = (key: string, defaultValue: string) => {
+  const [storedValue, setStoredValue] = useState<string>(defaultValue);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        setStoredValue(item);
+      }
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error);
+    }
+  }, [key]);
+
+  const setValue = (value: string) => {
+    try {
+      setStoredValue(value);
+      if (isClient) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch (error) {
+      console.warn(`Error setting localStorage key "${key}":`, error);
+    }
+  };
+
+  return [storedValue, setValue, isClient] as const;
+};
+
 // Define available tables and their required permissions
 const AVAILABLE_TABLES = {
-  'Investigation Incoming': { // Investigation
+  'Investigation Incoming': {
     requiredPermission: 'view:complaints-incoming' as const,
     status: 'INCOMING',
     component: InvestigationsTable
   },
-  'Investigation Under Review': { // Investigation
+  'Investigation Under Review': {
     requiredPermission: 'view:complaints-review' as const,
     status: 'UNDER-REVIEW',
     component: InvestigationsTable
   },
-  'Investigation Assessment': { // Investigation
+  'Investigation Assessment': {
     requiredPermission: 'view:complaints-assessment' as const,
     status: 'ASSESSMENT',
     component: InvestigationsTable
   },
-  'Tip Offs': { // Tipoffs
+  'Tip Offs': {
     requiredPermission: 'view:tipoffs' as const,
     status: 'INCOMING',
     component: TipOffsTable
   },
-  'Investigation Ongoing': { // Investigation
+  'Investigation Ongoing': {
     requiredPermission: 'view:complaints-ongoing-investigation' as const,
     status: 'ONGOING-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Investigation Ongoing Disciplinary': { // Investigation
+  'Investigation Ongoing Disciplinary': {
     requiredPermission: 'view:complaints-ongoing-disciplinary' as const,
     status: 'ONGOING-DISCIPLINARY',
     component: InvestigationsTable
   },
-  'Investigation Completed': { // Investigation
+  'Investigation Completed': {
     requiredPermission: 'view:complaints-investigation-complete' as const,
     status: 'INVESTIGATION-COMPLETE',
     component: InvestigationsTable
   },
-  'Investigation External-Review Recommended': { // Investigation
+  'Investigation External-Review Recommended': {
     requiredPermission: 'view:complaints-recommend-for-external-investigation' as const,
     status: 'RECOMMEND-FOR-EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Investigation Disciplinary Recommended': { // Investigation
+  'Investigation Disciplinary Recommended': {
     requiredPermission: 'view:complaints-recommend-for-disciplinary' as const,
     status: 'RECOMMEND-FOR-DISCIPLINARY',
     component: InvestigationsTable
   },
-  'Investigation Closure Recommended': { // Investigation
+  'Investigation Closure Recommended': {
     requiredPermission: 'view:complaints-recommend-for-closure' as const,
     status: 'RECOMMEND-FOR-CLOSURE',
     component: InvestigationsTable
   },
-  'Investigation RE-Investigation Recommended': { // Investigation
+  'Investigation RE-Investigation Recommended': {
     requiredPermission: 'view:complaints-recommend-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Investigation External-Review': { // Investigation
+  'Investigation External-Review': {
     requiredPermission: 'view:complaints-external-investigation' as const,
     status: 'EXTERNAL-INVESTIGATION',
     component: InvestigationsTable
   },
-  'Investigation Closed Cases': { // Investigation
+  'Investigation Closed Cases': {
     requiredPermission: 'view:complaints-closed' as const,
     status: 'CASE-CLOSED',
     component: InvestigationsTable
   },
-  'CPD Pending Screening': { // CPD
+  'CPD Pending Screening': {
     requiredPermission: 'view:cpd-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: CPDTable
   },
-  'CPD Pending Verification': { // CPD
+  'CPD Pending Verification': {
     requiredPermission: 'view:cpd-pending-verification' as const,
     status: 'PENDING-VERIFICATION',
     component: CPDTable
   },
-  'CPD Recommeded for Approval': { // CPD
+  'CPD Recommeded for Approval': {
     requiredPermission: 'view:cpd-recommed-for-approval' as const,
     status: 'RECOMMEND-FOR-APPROVAL',
     component: CPDTable
   },
-  'Appeal Pending Screening': { // Appeals
+  'Appeal Pending Screening': {
     requiredPermission: 'view:appeal-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: AppealsTable
   },
-  'Appeal Pending Assessment': { // Appeals
+  'Appeal Pending Assessment': {
     requiredPermission: 'view:appeal-pending-assessment' as const,
     status: 'PENDING-ASSESSMENT',
     component: AppealsTable
   },
-  'Appeal Pending Approval': { // Appeals
+  'Appeal Pending Approval': {
     requiredPermission: 'view:appeal-pending-approval' as const,
     status: 'PENDING-APPROVAL',
     component: AppealsTable
   },
-  'Appeal Recommended for Approval': { // Appeals
+  'Appeal Recommended for Approval': {
     requiredPermission: 'view:appeal-recommed-for-approval' as const,
     status: 'RECOMMEND-FOR-APPROVAL',
     component: AppealsTable
   },
-  'Appeal Recommended for Rejection': { // Appeals
+  'Appeal Recommended for Rejection': {
     requiredPermission: 'view:appeal-recommed-for-rejection' as const,
     status: 'RECOMMEND-FOR-REJECTION',
     component: AppealsTable
   },
-  'Appeal Recommended for Investigation': { // Appeals
+  'Appeal Recommended for Investigation': {
     requiredPermission: 'view:appeal-recommed-for-investigation' as const,
     status: 'RECOMMEND-FOR-INVESTIGATION',
     component: AppealsTable
   },
-  'Revocation Pending Screening': { // Revocation
+  'Revocation Pending Screening': {
     requiredPermission: 'view:revocation-pending-screening' as const,
     status: 'PENDING-SCREENING',
     component: RevocationTable
   },
-  'Revocation Pending Assessment': { // Revocation
+  'Revocation Pending Assessment': {
     requiredPermission: 'view:revocation-pending-assessment' as const,
     status: 'PENDING-ASSESSMENT',
     component: RevocationTable
   },
-  'Revocation Pending Approval': { // Revocation
+  'Revocation Pending Approval': {
     requiredPermission: 'view:revocation-pending-approval' as const,
     status: 'PENDING-APPROVAL',
     component: RevocationTable
   },
-  'Revocation Pending Endorsement': { // Revocation
+  'Revocation Pending Endorsement': {
     requiredPermission: 'view:revocation-pending-endorsement' as const,
     status: 'PENDING-ENDORSEMENT',
     component: RevocationTable
   },
-  'Renewal Pending Screening': { // Renewal - License officer
+  'Renewal Pending Screening': {
     requiredPermission: 'view:renewal-pending-screening' as const,
     status: 'Pending-Screening',
     component: RenewalTable
   },
-  'Renewal Pending Assessment': { // Renewal - Snr License Officer
+  'Renewal Pending Assessment': {
     requiredPermission: 'view:renewal-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: RenewalTable
   },
-  'Renewal Pending Manager Approval': { // Renewal - License Manager
+  'Renewal Pending Manager Approval': {
     requiredPermission: 'view:renewal-recommended-for-approval' as const,
     status: 'Pending-Manager-Approval',
     component: RenewalTable
   },
-  'Renewal Pending Endorsement': { // Renewal - Director
+  'Renewal Pending Endorsement': {
     requiredPermission: 'view:renewal-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: RenewalTable
   },
-  'Renewal Endorsement Complete': { // Renewal - Director
+  'Renewal Endorsement Complete': {
     requiredPermission: 'view:renewal-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: RenewalTable
   },
-  'Category Pending Screening': { // Change of category - Gezzy - REG OFFICER
+  'Category Pending Screening': {
     requiredPermission: 'view:changeofcategory-pending-screening' as const,
     status: 'Pending-Screening',
     component: ChangeOfCategoryTable
   },
-  'Category Pending Assessment': { // Change of category - Gezzy - SNR REG OFFICER
+  'Category Pending Assessment': {
     requiredPermission: 'view:changeofcategory-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: ChangeOfCategoryTable
   },
-  'Category Pending Manager Approval': { // Change of category - Gezzy - Manager
+  'Category Pending Manager Approval': {
     requiredPermission: 'view:changeofcategory-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: ChangeOfCategoryTable
   },
-  'Category Pending Endorsement': { // Change of category - Gezzy - Director
+  'Category Pending Endorsement': {
     requiredPermission: 'view:changeofcategory-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: ChangeOfCategoryTable
   },
-  'Category Endorsement Complete': { // Change of category - Gezzy - Director
+  'Category Endorsement Complete': {
     requiredPermission: 'view:changeofcategory-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: ChangeOfCategoryTable
   },
-  'Restoration Pending Screening': { // Restoration - Gezzy - REG OFFICER
+  'Restoration Pending Screening': {
     requiredPermission: 'view:restoration-pending-screening' as const,
     status: 'Pending-Screening',
     component: RestorationTable
   },
-  'Restoration Pending Assessment': { // Restoration - GEZZY - SNR REG OFFICER
+  'Restoration Pending Assessment': {
     requiredPermission: 'view:restoration-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: RestorationTable
   },
-  'Restoration Pending Manager Approval': { // Restoration -GEZZY - MANAGER
+  'Restoration Pending Manager Approval': {
     requiredPermission: 'view:restoration-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: RestorationTable
   },
-  'Restoration Pending-Endorsement': { // Restoration - GEZZY - DIRECTOR
+  'Restoration Pending-Endorsement': {
     requiredPermission: 'view:restoration-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: RestorationTable
   },
-  'Restoration Endorsement Complete': { // Restoration - GEZZY - DIRECTOR
+  'Restoration Endorsement Complete': {
     requiredPermission: 'view:restoration-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: RestorationTable
   },
-  'Student Pending Screening': { // Student - Gezzy - REG OFFICER
+  'Student Pending Screening': {
     requiredPermission: 'view:registration-pending-screening' as const,
     status: 'Pending-Screening',
     component: StudentTeacherTable
   },
-  'Student Pending Assessment': { // Student - GEZZY - SNR REG OFFICER
+  'Student Pending Assessment': {
     requiredPermission: 'view:registration-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: StudentTeacherTable
   },
-  'Student Pending Manager Approval': { // Student - MANAGER
+  'Student Pending Manager Approval': {
     requiredPermission: 'view:registration-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: StudentTeacherTable
   },
-  'Student Pending-Endorsement': { // Student - DIRECTOR
+  'Student Pending-Endorsement': {
     requiredPermission: 'view:registration-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: StudentTeacherTable
   },
-  'Student Endorsement Complete': { // Student - DIRECTOR
+  'Student Endorsement Complete': {
     requiredPermission: 'view:registration-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: StudentTeacherTable
   },
-  'Teacher Pending Screening': { // Teacher - REG OFFICER
+  'Teacher Pending Screening': {
     requiredPermission: 'view:registration-pending-screening' as const,
     status: 'Pending-Screening',
     component: TeacherTable
   },
-  'Teacher Pending Assessment': { // Teacher - SNR REG OFFICER
+  'Teacher Pending Assessment': {
     requiredPermission: 'view:registration-pending-assessment' as const,
     status: 'Pending-Assessment',
     component: TeacherTable
   },
-  'Teacher Pending Manager Approval': { // Teacher - MANAGER
+  'Teacher Pending Manager Approval': {
     requiredPermission: 'view:registration-pending-manager-approval' as const,
     status: 'Pending-Manager-Approval',
     component: TeacherTable
   },
-  'Teacher Pending-Endorsement': { // Teacher - DIRECTOR
+  'Teacher Pending-Endorsement': {
     requiredPermission: 'view:registration-pending-endorsement' as const,
     status: 'Pending-Endorsement',
     component: TeacherTable
   },
-  'Teacher Endorsement Complete': { // Teacher - DIRECTOR
+  'Teacher Endorsement Complete': {
     requiredPermission: 'view:registration-endorsement-complete' as const,
     status: 'Endorsement-Complete',
     component: TeacherTable
   },
-} as const; 
+} as const;
 
 export const Work = ({ userRole }: Props) => {
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const availableTables = Object.entries(AVAILABLE_TABLES).filter(([_, config]) => 
     hasPermission(userRole, config.requiredPermission)
   );
 
   const defaultTable = availableTables.length > 0 ? availableTables[0][0] : '';
-  const [selectedTable, setSelectedTable] = useState(defaultTable);
-  const [refreshKey, setRefreshKey] = useState(0); // Add a key state to force table refresh
-
-
-  const handleSelectChange = (newValue: string) => {
-    setSelectedTable(newValue);
-
-    // Increment refresh key to force table reload
-    setRefreshKey(prev => prev + 1);
+  
+  // Use localStorage hook for fallback storage
+  const [lastSelectedTable, setLastSelectedTable, isClient] = useLocalStorage('selectedWorkTable', defaultTable);
+  
+  // Priority-based table selection logic
+  const getInitialTable = (): string => {
+    // 1. First priority: URL parameter (highest priority - shareable, bookmarkable)
+    const tableFromUrl = searchParams.get('table');
+    if (tableFromUrl && availableTables.some(([name]) => name === tableFromUrl)) {
+      return tableFromUrl;
+    }
+    
+    // 2. Second priority: localStorage (user's last selection)
+    if (isClient && lastSelectedTable && availableTables.some(([name]) => name === lastSelectedTable)) {
+      return lastSelectedTable;
+    }
+    
+    // 3. Third priority: First available table (fallback)
+    return defaultTable;
   };
 
+  const [selectedTable, setSelectedTable] = useState(getInitialTable);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Update initial table when client loads or available tables change
+  useEffect(() => {
+    const initialTable = getInitialTable();
+    if (initialTable !== selectedTable) {
+      setSelectedTable(initialTable);
+      setRefreshKey(prev => prev + 1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isClient, lastSelectedTable, availableTables]);
+
+  // Handle table selection changes
+  const handleSelectChange = (newValue: string) => {
+    setSelectedTable(newValue);
+    setRefreshKey(prev => prev + 1);
+    
+    // Update localStorage for future visits
+    setLastSelectedTable(newValue);
+    
+    // Update URL params for shareability (but don't override manual URL changes)
+    const currentUrlTable = searchParams.get('table');
+    if (currentUrlTable !== newValue) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('table', newValue);
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  };
+
+  // Sync with URL parameter changes (e.g., browser back/forward, direct URL access)
+  useEffect(() => {
+    const tableFromUrl = searchParams.get('table');
+    
+    if (tableFromUrl) {
+      // If URL has a valid table parameter, use it
+      if (availableTables.some(([name]) => name === tableFromUrl)) {
+        if (tableFromUrl !== selectedTable) {
+          setSelectedTable(tableFromUrl);
+          setLastSelectedTable(tableFromUrl); // Also update localStorage
+          setRefreshKey(prev => prev + 1);
+        }
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, availableTables]);
+
   const renderTable = () => {
-    if(!selectedTable) return null;
+    if (!selectedTable) return null;
 
     const config = AVAILABLE_TABLES[selectedTable as keyof typeof AVAILABLE_TABLES];
+    if (!config) return null;
+    
     const TableComponent = config.component;
 
     return (
@@ -310,12 +403,12 @@ export const Work = ({ userRole }: Props) => {
         status={config.status}
         userRole={userRole}
       />
-    )
+    );
   };
 
   return (
     <>
-      <div className="bg-white p-4 rounded-lg shadow-sm border mb-2">
+      <div className="bg-white w-full p-4 rounded-lg shadow-sm border mb-2">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {/* Left Section - Select and Filters */}
           <div className="space-y-2">
@@ -367,9 +460,9 @@ export const Work = ({ userRole }: Props) => {
 
         {/* Search Bar */}
         {hasPermission(userRole, 'view:search-registration') && (
-        <div className="mt-4 md:mt-6">
-          <Search />
-        </div>
+          <div className="mt-4 md:mt-6">
+            <Search />
+          </div>
         )}
       </div>
       

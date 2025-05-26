@@ -68,7 +68,7 @@ export const ManagerHome = () => {
   return (
     <div className="min-h-screen">
       <div className="mb-6">
-        <PageTitle Title="TRLS Services Dashboard" />
+        <PageTitle Title="Home" />
       </div>
       {/* <LocationChangeBanner /> */}
       {/* Search Section */}
