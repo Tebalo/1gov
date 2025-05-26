@@ -67,7 +67,7 @@ export default async function DashboardLayout({
             {/* Overlay for better readability */}
             {/* <div className="absolute inset-0 bg-sky-400/55"/> */}
           </div>
-          <div className="container mx-auto py-10 max-w-7xl bg-white/95 relative z-10">
+          <div className="container mx-auto pt-10 max-w-full max-h-fit bg-white/95 relative z-10">
             <Suspense fallback={<LoadingSkeleton />}>
               {children}
             </Suspense>

@@ -68,7 +68,7 @@ export const SnrRegistrationOfficerHome = () => {
   return (
     <div className="min-h-screen">
       <div className="mb-6">
-        <PageTitle Title="Registration Services Dashboard" />
+        <PageTitle Title="Home" />
       </div>
       {/* <LocationChangeBanner /> */}
       {/* Search Section */}

@@ -68,7 +68,7 @@ export const RegistrarHome = () => {
   return (
     <div className="min-h-screen">
       <div className="mb-6">
-        <PageTitle Title="Investigation Services Dashboard" />
+        <PageTitle Title="Home" />
       </div>
       <LocationChangeBanner />
       {/* Search Section */}

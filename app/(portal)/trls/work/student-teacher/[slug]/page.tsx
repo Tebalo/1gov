@@ -16,12 +16,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
     const userRole = rawRole.toLowerCase() as Lowercase<Role>;
 
     return (
-      <main className="h-full">
+      <main className="h-full max-w-full">
         <div className="flex flex-row h-full gap-0">
           {response.code==200 ? (
             <>{userRole && <StudentTeacherViewer data={response} userRole={userRole}/>}</>
           ) : (
-            <div className="flex h-[80vh] items-center justify-center w-full">
+            <div className="flex h-[80vh] items-center justify-center max-w-full">
               <div className="text-center px-4">
                 <div className="mb-6 flex justify-center">
                 <RefreshCw className="h-16 w-16 text-gray-400" />
@@ -74,3 +74,4 @@ export default async function Page({ params }: { params: { slug: string } }) {
     );
   }
 }
+

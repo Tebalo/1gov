@@ -8,13 +8,14 @@ import { useState } from "react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GitBranch, Tags } from "lucide-react";
+import { AlertCircle, GitBranch, Tags } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getAuthData } from "@/app/welcome/components/email-login";
 import { updateTeacherStatus } from "../api/update-status";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form"
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ActionSectionProps {
     recordId: string;
@@ -152,103 +153,117 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Flow Action</DialogTitle>
-                        <DialogDescription>
-                            Make status updates to the case here. Click submit when you&#39;re done.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <Form {...form}>
-                        <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="status"
-                                render={({ field }) => (
-                                    <FormItem className="space-y-3">
-                                        <FormLabel>Choose action to proceed</FormLabel>
-                                        <FormControl>
-                                            <RadioGroup 
-                                                onValueChange={field.onChange}
-                                                value={field.value} 
-                                                className="flex flex-col space-y-1"
-                                            >
-                                                {nextStatus?.map((status) => (
-                                                    <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100">
-                                                        <RadioGroupItem value={status} id={status} />
-                                                        <div>
-                                                            <FormLabel className="cursor-pointer" htmlFor={status}>{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</FormLabel>
-                                                            <FormDescription className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>   
-                                                                <Tags className="w-4 h-4 text-gray-500" />
-                                                                <p className='text-purple-500 font-semibold text-sm'>{status.replace(/-/g, ' ')}  </p> 
-                                                            </FormDescription>
-                                                        </div>     
-                                                    </div>
-                                                ))}
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <FormMessage />
+                    {hasPermission ? (
+                      <>
+                        <DialogHeader>
+                            <DialogTitle>Flow Action</DialogTitle>
+                            <DialogDescription>
+                                Make status updates to the case here. Click submit when you&#39;re done.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Form {...form}>
+                            <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem className="space-y-3">
+                                            <FormLabel>Choose action to proceed</FormLabel>
+                                            <FormControl>
+                                                <RadioGroup 
+                                                    onValueChange={field.onChange}
+                                                    value={field.value} 
+                                                    className="flex flex-col space-y-1"
+                                                >
+                                                    {nextStatus?.map((status) => (
+                                                        <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100">
+                                                            <RadioGroupItem value={status} id={status} />
+                                                            <div>
+                                                                <FormLabel className="cursor-pointer" htmlFor={status}>{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</FormLabel>
+                                                                <FormDescription className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>   
+                                                                    <Tags className="w-4 h-4 text-gray-500" />
+                                                                    <p className='text-purple-500 font-semibold text-sm'>{status.replace(/-/g, ' ')}  </p> 
+                                                                </FormDescription>
+                                                            </div>     
+                                                        </div>
+                                                    ))}
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                {showFields && <FormField
+                                  control={form.control}
+                                  name="items"
+                                  render={() => (
+                                    <FormItem>
+                                      <div className="mb-4">
+                                        <FormLabel className="text-base">Fields</FormLabel>
+                                        <FormDescription>
+                                          Select the fields you want to the customer to edit/fix.
+                                        </FormDescription>
+                                      </div>
+                                      {items.map((item) => (
+                                        <FormField
+                                          key={item.id}
+                                          control={form.control}
+                                          name="items"
+                                          render={({ field }) => {
+                                            return (
+                                              <FormItem
+                                                key={item.id}
+                                                className="flex flex-row items-start space-x-3 space-y-0"
+                                              >
+                                                <FormControl>
+                                                  <Checkbox
+                                                    checked={field.value?.includes(item.id)}
+                                                    onCheckedChange={(checked) => {
+                                                      return checked
+                                                        ? field.onChange([...(field.value ?? []), item.id])
+                                                        : field.onChange(
+                                                            field.value?.filter(
+                                                              (value) => value !== item.id
+                                                            )
+                                                          )
+                                                    }}
+                                                  />
+                                                </FormControl>
+                                                <FormLabel className="text-sm font-normal">
+                                                  {item.label}
+                                                </FormLabel>
+                                              </FormItem>
+                                            )
+                                          }}
+                                        />
+                                      ))}
+                                      <FormMessage />
                                     </FormItem>
-                                )}
-                            />
-        {showFields && <FormField
-          control={form.control}
-          name="items"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel className="text-base">Fields</FormLabel>
-                <FormDescription>
-                  Select the fields you want to the customer to edit/fix.
-                </FormDescription>
-              </div>
-              {items.map((item) => (
-                <FormField
-                  key={item.id}
-                  control={form.control}
-                  name="items"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className="flex flex-row items-start space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...(field.value ?? []), item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  )
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    )
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
-        />}
-                            <DialogFooter>
-                                <Button 
-                                    type="submit" 
-                                    className="w-full" 
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                                </Button>
-                            </DialogFooter>
-                        </form> 
-                    </Form>
+                                  )}
+                                />}
+                                <DialogFooter>
+                                    <Button 
+                                        type="submit" 
+                                        className="w-full" 
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                                    </Button>
+                                </DialogFooter>
+                            </form> 
+                        </Form>
+                      </>
+                    ):(
+                    <>
+                      <Alert variant="destructive" className="my-4">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Heads up!</AlertTitle>
+                        <AlertDescription>
+                          {message || 'You do not have permission to perform this action.'}
+                        </AlertDescription>
+                      </Alert>
+                    </>)}
+
                 </DialogContent>
             </Dialog>
         </div>

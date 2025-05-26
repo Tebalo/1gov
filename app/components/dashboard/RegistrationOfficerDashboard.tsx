@@ -11,7 +11,7 @@ export const RegistrationOfficerDashboard = () => {
     return (
         <div className="h-screen overflow-y-auto bg-background">
             <div className="sticky top-0 z-10 bg-background p-6 border-b">
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto max-w-full">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <PageTitle Title="Dashboard"/>
                     </div>
@@ -19,7 +19,7 @@ export const RegistrationOfficerDashboard = () => {
             </div>
 
             <div className="p-6">
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto max-w-full">
                     <Tabs defaultValue="overview" className="w-full">
                         <TabsList className="w-full sm:w-auto bg-muted/20 p-1 sticky top-24 z-10">
                             <TabsTrigger 
