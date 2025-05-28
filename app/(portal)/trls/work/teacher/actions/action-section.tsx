@@ -259,7 +259,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Heads up!</AlertTitle>
                         <AlertDescription>
-                          {message || 'You do not have permission to perform this action.'}
+                          {"It looks like you don't have the necessary permissions to move this case forward or change its status. If you think this might be a mistake, reach out to your administrator who can help resolve this."}
                         </AlertDescription>
                       </Alert>
                     </>)}
