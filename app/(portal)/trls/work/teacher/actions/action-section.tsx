@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form"
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import ProgressIndicator from "../../student-teacher/actions/progress-indicator";
 
 interface ActionSectionProps {
     recordId: string;
@@ -104,9 +105,11 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
         },  
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [progress, setProgress] = useState<string | null>(null);
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
         setIsSubmitting(true);
+        setProgress("Submitting your request...");
         try {
           const authData = getAuthData();
           const bearer = authData?.access_token;
@@ -241,6 +244,12 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                                     </FormItem>
                                   )}
                                 />}
+                                {isSubmitting && (
+                                  <ProgressIndicator 
+                                    isLoading={isSubmitting} 
+                                    totalDuration={60000} // 1 minute in milliseconds
+                                  />
+                                )}
                                 <DialogFooter>
                                     <Button 
                                         type="submit" 

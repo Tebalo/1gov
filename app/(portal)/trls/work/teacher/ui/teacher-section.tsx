@@ -72,6 +72,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
 
   const renderEmploymentInfo = () => (
     <InfoCard title='Employment Information' icon={<Briefcase className="w-6 h-6 text-blue-500"/>} columns={2}>
+      <InfoItem label="Employment Status" value={data.teacher_registrations?.work_status}/>
       <InfoItem label="Current Institution" value={data.employment_details?.current_institution}/>
       <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>
       <InfoItem label="Region" value={data.employment_details?.region}/>
