@@ -78,7 +78,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
     { 
         path: '/trls/activity', 
         icon: <ClipboardList size={24} color="#FFFFFF" />, 
-        title: 'My Activities', 
+        title: 'Activities', 
         roles: [
             'INVESTIGATIONS_OFFICER', 
             'SENIOR_INVESTIGATIONS_OFFICER', 
