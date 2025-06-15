@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { StatusType } from "../types/teacher-type";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,9 @@ import { useForm } from "react-hook-form"
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import ProgressIndicator from "../../student-teacher/actions/progress-indicator";
+import { useAuditTrail } from "@/lib/hooks/useAuditTrail";
+import { AuditActionType, UserInfo } from "@/lib/audit-trail-service";
+import { getAccessGroups } from "@/app/auth/auth";
 
 interface ActionSectionProps {
     recordId: string;
@@ -82,6 +85,21 @@ const getStatusDescription = (status: StatusType): string => {
     comments: z.string().optional(),
   })
 
+  interface AuditTrailEntry {
+    id: string;
+    timestamp: string;  
+    action: AuditActionType;
+    userId: string;
+    userName: string;
+    userRole?: string;
+    caseId: string;
+    caseType: string;
+    field?: string;
+    oldValue?: string;
+    newValue?: string;
+    description?: string;
+    metadata?: string;  // API returns metadata as JSON string
+  }
 
 const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, current_status }) => {
     const router = useRouter();
@@ -106,11 +124,53 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [progress, setProgress] = useState<string | null>(null);
+    const { logStatusChange, getLatestStatusChange  } = useAuditTrail();
+    const [currentUser, setCurrentUser] = useState<UserInfo>({
+      name: '',
+      role: '',
+      id: '',
+    });
+    const [auditEntries, setAuditEntries] = useState<AuditTrailEntry | null>();
+    useEffect(() => {
+      const initializeUser = async () => {
+        try {
+          const profile = await getAccessGroups();
+          if (profile && profile.current) { 
+              setCurrentUser(prev => ({
+              ...prev,
+              name: profile.username || '',
+              role: profile.current.toLowerCase() || '',
+              id: profile.userid || '',
+            }));
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        }
+      };
+  
+      initializeUser();
+    }, []);
+    const [error, setError] = useState<string | null>(null);
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
         setIsSubmitting(true);
         setProgress("Submitting your request...");
         try {
+          const latestStatusChange = await getLatestStatusChange(recordId, 'teacher');
+          setAuditEntries(latestStatusChange);
+                  if(current_status.toUpperCase() == latestStatusChange?.oldValue?.toUpperCase()){
+          if (latestStatusChange?.newValue?.toUpperCase() !== 'PENDING-CUSTOMER-ACTION') {      
+            setError(`Status has already been changed by ${latestStatusChange?.userName.toUpperCase()}. Please refresh the record to see the latest updates.`);
+            toast({
+              title: "Error",
+              variant: "destructive",
+              description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
+            });
+            return; // Uncomment this line to stop the submission if the status has already been changed
+          }
+        }
+        if(!error){
           const authData = getAuthData();
           const bearer = authData?.access_token;
           const status = values.status;
@@ -122,9 +182,25 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
               title: "Success",
               description: `Status updated to: ${status}`
             });
+            await logStatusChange(
+              recordId,           // Case ID
+              'teacher',  // Case type
+              currentUser,        // User info
+              current_status,     // Old status
+              status,             // New status
+              `Status changed from ${current_status} to ${status}` // Description
+            )
             setOpen(false); // Close dialog on success
             router.push('/trls/work');
           } else {
+            await logStatusChange(
+              recordId,           // Case ID
+              'teacher',  // Case type
+              currentUser,        // User info
+              current_status,     // Old status
+              status,             // New status
+              `Status changed from ${current_status} to ${status}` // Description
+            )
             toast({
               title: "Success",
               description: `Status updated to: ${status}`
@@ -132,6 +208,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
             setOpen(false); // Close dialog on success
             router.push('/trls/work');
           }
+        }
         } catch (error) {
           console.error("Error updating status:", error);
           toast({
@@ -156,7 +233,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
-                    {hasPermission ? (
+                    {hasPermission && isAllowedRole && nextStatus && nextStatus.length > 0 ? (
                       <>
                         <DialogHeader>
                             <DialogTitle>Flow Action</DialogTitle>
@@ -272,7 +349,6 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                         </AlertDescription>
                       </Alert>
                     </>)}
-
                 </DialogContent>
             </Dialog>
         </div>

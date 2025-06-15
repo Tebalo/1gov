@@ -7,8 +7,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { NavItem } from "./components/nav-item";
 import { BriefcaseBusiness, Hammer, Home, Search, Settings } from "lucide-react";
-import { SearchInput } from "./components/search";
-import { User } from "./components/user";
+import AppBar from "./components/appbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,10 +40,7 @@ export default function DashboardLayout({
         <div className="flex relative z-10 h-screen overflow-hidden">
           <DesktopNav/>
           <div className="flex flex-col flex-grow relative md:pl-16">
-            {/* <header className="flex h-16 items-center gap-4 border-b bg-white/95 backdrop-blur-sm px-6">
-              <SearchInput/>
-              <User/>
-            </header> */}
+            <AppBar/>
             <main className="flex-grow overflow-auto p-4">
               <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
             </main>
