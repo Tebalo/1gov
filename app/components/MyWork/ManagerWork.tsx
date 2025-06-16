@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 export const ManagerWork = async () => {
     return(
         <>
-          <div className="overflow-auto h-screen rounded-lg">
+          <div className="overflow-auto h-[calc(100vh-4rem-2.5rem)] rounded-lg">
             <div className="mb-5">
                 <PageTitle Title="Teacher Registration"/>
             </div>

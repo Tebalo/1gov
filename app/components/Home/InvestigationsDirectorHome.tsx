@@ -71,7 +71,7 @@ export const InvestigationsDirectorHome = () => {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="h-[calc(100vh-4rem-2.5rem)]">
       <div className="mb-6">
         <PageTitle Title="Investigation Services Dashboard" />
       </div>

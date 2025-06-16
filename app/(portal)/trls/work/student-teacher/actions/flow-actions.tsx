@@ -198,9 +198,17 @@ const StudentTeacherFlowActions: React.FC<ActionSectionProps> = ({ recordId, use
                 title: "Success",
                 description: `Status updated to: ${status}`
               });
- 
+
               router.push('/trls/work')
             } else {
+                await logStatusChange(
+                  recordId,           // Case ID
+                  'student-teacher',  // Case type
+                  currentUser,        // User info
+                  current_status,     // Old status
+                  status,             // New status
+                  `Status changed from ${current_status} to ${status}` // Description
+                );
               // showError(result.message || 'Failed to update status');
               toast({
                 title: "Success",

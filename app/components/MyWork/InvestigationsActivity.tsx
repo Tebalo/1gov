@@ -31,7 +31,7 @@ export const InvestigationsActivity = ({ userRole, userid }: Props) => {
   }
     
   return (
-    <>
+    <div className="h-[calc(100vh-4rem-4rem)]">
       <div className="flex flex-col gap-4 pb-5 md:grid md:grid-cols-2">
         <div className="space-y-4 md:space-y-0">
           <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
@@ -66,6 +66,6 @@ export const InvestigationsActivity = ({ userRole, userid }: Props) => {
       </div>
       
       {renderTable()}
-    </>
+    </div>
   )
 }
