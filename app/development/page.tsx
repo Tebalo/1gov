@@ -7,6 +7,10 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { PageTitle } from "../components/PageTitle";
 import { LoadingSkeleton } from "../components/LoadingSkeleton";
+import { TeacherRegistrationService } from "../components/teacher-form";
+import { ServiceListWrapper } from "../components/ServiceListWrapper";
+import Form from "../components/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ServiceCardProps {
   title: string;
@@ -86,12 +90,15 @@ const DevelopmentStudio = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+            <TeacherRegistrationService/>
+            <Suspense fallback={<LoadingSkeleton/>}>
+              <ServiceListWrapper/>
+            </Suspense>
           </CardContent>
-        </Card>
+      </Card>
       </div>
-
       {/* Services Section */}
-      <div className="space-y-6 bg-white p-2 rounded-md">
+      {/* <div className="space-y-6 bg-white p-2 rounded-md">
         <div className="flex items-center space-x-2">
           <Layout className="w-6 h-6 text-blue-500" />
           <h2 className="text-xl font-semibold text-gray-900">
@@ -119,15 +126,23 @@ const DevelopmentStudio = () => {
             </Card>
           )}
         </Suspense>
-      </div>
+      </div> */}
     </div>
   );
 };
 
 export default function Page() {
     return (
-        <>
-            <DevelopmentStudio/>
-        </>
+        // <>
+        //     <DevelopmentStudio/>
+        // </>
+        <ScrollArea className="h-[calc(100vh-4rem-2.5rem)]">
+      <section className='py-2'>
+        
+          <div className='container'>
+              <Form />
+          </div>
+        
+      </section></ScrollArea>
     )
 }

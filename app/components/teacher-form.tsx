@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Form from "./form"
 
 export function TeacherRegistrationService() {
   return (
@@ -20,6 +21,7 @@ export function TeacherRegistrationService() {
           <Button variant="outline">Application for Teacher Registration</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
+          
           {/* <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -48,3 +50,5 @@ export function TeacherRegistrationService() {
     </Dialog>
   )
 }
+
+

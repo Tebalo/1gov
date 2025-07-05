@@ -41,7 +41,7 @@ export default function DashboardLayout({
           <DesktopNav/>
           <div className="flex flex-col flex-grow relative md:pl-16">
             <AppBar/>
-            <main className="flex-grow overflow-auto p-4">
+            <main className="flex-grow overflow-auto p-4 bg-white dark:bg-gray-900">
               <Suspense fallback={<LoadingSkeleton/>}>{children}</Suspense>
             </main>
             <Toaster />
