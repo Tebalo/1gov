@@ -8,7 +8,7 @@ import DesktopNav from "./desktop-sidebar";
 import { AccessGroup, Session } from "@/app/lib/types";
 import { getAccessGroups, getRole } from "@/app/auth/auth";
 import MobileBottomNav from "./mobile-bottom-nav";
-import Appbar from "@/app/development/components/appbar";
+import Appbar from "@/app/components/appbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
