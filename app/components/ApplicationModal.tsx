@@ -57,7 +57,7 @@ const ApplicationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
           <div className="relative md:h-full md:w-full ">
             <div className="relative bg-slate-200 shadow-2xl w-[calc(100%-0rem)] md:w-auto md:h-auto h-screen mx-auto rounded-lg flex">
-                <CaseDetails/>
+                {/* <CaseDetails/> */}
                 <div className="rounded-lg py-2 px-5 my-2 mr-2 shadow-lg w-full bg-white">
                   <div className="mx-0">
                     <div className="flex">

@@ -1,5 +1,6 @@
 import { Tags } from "lucide-react";
 import { Card, CardHeader } from "../ui/card";
+import { Button } from "../ui/button";
 
 interface CaseHeaderProps {
     caseId: string;
@@ -45,6 +46,10 @@ const CaseHeader: React.FC<CaseHeaderProps> = ({
                             </div>
                             <div className="md:block hidden">                                
                                 <span className='text-sm text-gray-500'>Created by {caseCreatedBy} on {caseCreatedDate ? new Date(caseCreatedDate).toLocaleDateString().toString(): ''}</span>
+                            </div>
+                            <div className="md:block hidden">                                
+                                <span className='text-sm text-gray-500'>The record is currently locked by Bopaki Tebalo</span>
+                                <Button variant={'link'}>Release Lock</Button>
                             </div>
                         </div>
                     </div>
