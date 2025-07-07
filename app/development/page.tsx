@@ -136,13 +136,14 @@ export default function Page() {
         // <>
         //     <DevelopmentStudio/>
         // </>
-        <ScrollArea className="h-[calc(100vh-4rem-2.5rem)]">
+        // <ScrollArea className="h-[calc(100vh-4rem-2.5rem)]">
       <section className='py-2'>
         
           <div className='container'>
               <Form />
           </div>
         
-      </section></ScrollArea>
+      </section>
+      // </ScrollArea>
     )
 }
