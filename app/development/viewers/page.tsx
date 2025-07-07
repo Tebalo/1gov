@@ -14,7 +14,7 @@ import RegistrationContent from "./components/registration";
 import StudentContent from "./components/studentteacher";
 import CPD from "./components/cpd";
 import Appeal from "./components/appeal";
-import CasePage from "./components/caselock";
+// import CasePage from "./components/caselock";
 
 export default function Page() {
     const [activeSection, setActiveSection] = useState('registration');
@@ -81,14 +81,14 @@ export default function Page() {
             icon: <Hammer className="h-4 w-4" />,
             component: <Appeal />
         },
-        {
-            id: 'CaseLock',
-            label: 'Case Lock View',
-            icon: <Lock className="h-4 w-4" />,
-            component: <CasePage params={{
-                caseId: "TR-1234567890",
-            }} />
-        }           
+        // {
+        //     id: 'CaseLock',
+        //     label: 'Case Lock View',
+        //     icon: <Lock className="h-4 w-4" />,
+        //     component: <CasePage params={{
+        //         caseId: "TR-1234567890",
+        //     }} />
+        // }           
     ];
 
     const handleSectionChange = (id: string) => {
