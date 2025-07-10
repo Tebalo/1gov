@@ -216,155 +216,302 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Additional Qualifications</CardTitle>
-            <CardDescription>
+      <CardHeader className="p-4 sm:p-6">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg sm:text-xl text-gray-900">
+              Additional Qualifications
+            </CardTitle>
+            <CardDescription className="mt-1 text-sm sm:text-base text-gray-600 pr-4 sm:pr-0">
               Add any additional qualifications, certifications, or training you have completed.
             </CardDescription>
           </div>
+          
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => openDialog()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Qualification
+              <Button 
+                onClick={() => openDialog()}
+                className="w-full sm:w-auto h-11 sm:h-10 flex items-center justify-center gap-2 text-base sm:text-sm font-medium"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="sm:hidden">Add New Qualification</span>
+                <span className="hidden sm:inline">Add Qualification</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>
+            
+            <DialogContent className="mx-4 sm:mx-0 sm:max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogHeader className="pb-4">
+                <DialogTitle className="text-lg sm:text-xl">
                   {editingQualification ? 'Edit Qualification' : 'Add New Qualification'}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-sm sm:text-base text-gray-600">
                   Enter the details of your qualification and upload the certificate.
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="qualification">Qualification Name *</Label>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="qualification" className="text-sm font-medium text-gray-700">
+                    Qualification Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="qualification"
                     value={formData.alt_qualification}
                     onChange={(e) => handleInputChange('alt_qualification', e.target.value)}
                     placeholder="e.g., Bachelor of Science in Education"
-                    className={formErrors.alt_qualification ? 'border-red-500' : ''}
+                    className={`h-11 text-base ${formErrors.alt_qualification ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                   />
                   {formErrors.alt_qualification && (
-                    <p className="text-sm text-red-500 mt-1">{formErrors.alt_qualification}</p>
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="text-xs">⚠</span>
+                      {formErrors.alt_qualification}
+                    </p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="year">Year Completed *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="year" className="text-sm font-medium text-gray-700">
+                    Year Completed <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="year"
                     type="number"
+                    inputMode="numeric"
                     min="1950"
                     max={new Date().getFullYear()}
                     value={formData.alt_qualification_year}
                     onChange={(e) => handleInputChange('alt_qualification_year', e.target.value)}
                     placeholder="e.g., 2020"
-                    className={formErrors.alt_qualification_year ? 'border-red-500' : ''}
+                    className={`h-11 text-base ${formErrors.alt_qualification_year ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
                   />
                   {formErrors.alt_qualification_year && (
-                    <p className="text-sm text-red-500 mt-1">{formErrors.alt_qualification_year}</p>
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="text-xs">⚠</span>
+                      {formErrors.alt_qualification_year}
+                    </p>
                   )}
                 </div>
 
-                <SimpleFileUpload
-                  name="qualification_cert"
-                  label="Qualification Certificate *"
-                  value={formData.alt_attachments}
-                  onChange={handleAttachmentChange}
-                  error={formErrors.alt_attachments}
-                />
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Qualification Certificate <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-400 transition-colors">
+                    <SimpleFileUpload
+                      name="qualification_cert"
+                      label="Qualification Certificate"
+                      value={formData.alt_attachments}
+                      onChange={handleAttachmentChange}
+                      error={formErrors.alt_attachments}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={closeDialog}>
+              <DialogFooter className="pt-6 flex flex-col-reverse sm:flex-row gap-3 sm:gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={closeDialog}
+                  className="w-full sm:w-auto h-11 sm:h-10 text-base sm:text-sm"
+                >
                   Cancel
                 </Button>
-                <Button type="button" onClick={handleSave}>
+                <Button 
+                  type="button" 
+                  onClick={handleSave}
+                  className="w-full sm:w-auto h-11 sm:h-10 text-base sm:text-sm font-medium"
+                >
                   {editingQualification ? 'Update' : 'Add'} Qualification
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
+        
+        {/* Mobile progress indicator */}
+        <div className="block sm:hidden mt-4 pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <span>Step 4: Qualifications</span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Optional Section
+            </span>
+          </div>
+        </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="p-4 sm:p-6">
         {qualifications.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No additional qualifications added yet.</p>
-            <p className="text-sm">Click &quot;Add Qualification&quot; to get started.</p>
+          <div className="text-center py-8 sm:py-12 text-gray-500">
+            <FileText className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-gray-300" />
+            <p className="text-base sm:text-lg font-medium mb-2">No additional qualifications added yet.</p>
+            <p className="text-sm text-gray-400">Click &quot;Add Qualification&quot; to get started.</p>
           </div>
         ) : (
-          <div className="rounded-md border overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Year</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Certificate</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 w-[100px]">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {qualifications.map((qualification) => (
-                  <tr key={qualification.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                      {qualification.alt_qualification}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{qualification.alt_qualification_year}</td>
-                    <td className="px-4 py-3 text-sm">
+          <>
+            {/* Desktop Table View - Hidden on mobile */}
+            <div className="hidden md:block rounded-md border overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Year</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Certificate</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 w-[100px]">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {qualifications.map((qualification) => (
+                    <tr key={qualification.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        {qualification.alt_qualification}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{qualification.alt_qualification_year}</td>
+                      <td className="px-4 py-3 text-sm">
+                        {qualification.alt_attachments ? (
+                          <div className="flex items-center space-x-2">
+                            <FileText className="h-4 w-4 text-green-600" />
+                            <span className="text-sm">
+                              {qualification.alt_attachments['original-name']}
+                            </span>
+                            <Badge variant="secondary" className="text-xs">
+                              {qualification.alt_attachments.extension.toUpperCase()}
+                            </Badge>
+                          </div>
+                        ) : (
+                          <span className="text-red-500 text-sm">No certificate</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openDialog(qualification)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(qualification.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View - Hidden on desktop */}
+            <div className="md:hidden space-y-4">
+              {qualifications.map((qualification, index) => (
+                <div 
+                  key={qualification.id} 
+                  className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  {/* Header with qualification name and actions */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-gray-900 truncate">
+                        {qualification.alt_qualification}
+                      </h3>
+                      <div className="flex items-center mt-1 text-xs text-gray-500">
+                        <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                          #{index + 1}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex space-x-1 ml-3">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openDialog(qualification)}
+                        className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <Edit className="h-4 w-4" />
+                        <span className="sr-only">Edit qualification</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(qualification.id)}
+                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete qualification</span>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Qualification details */}
+                  <div className="space-y-3">
+                    {/* Year */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                        Year Completed
+                      </span>
+                      <span className="text-sm font-medium text-gray-900">
+                        {qualification.alt_qualification_year}
+                      </span>
+                    </div>
+
+                    {/* Certificate Status */}
+                    <div className="border-t border-gray-100 pt-3">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-2">
+                        Certificate
+                      </span>
                       {qualification.alt_attachments ? (
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4 text-green-600" />
-                          <span className="text-sm">
-                            {qualification.alt_attachments['original-name']}
-                          </span>
-                          <Badge variant="secondary" className="text-xs">
-                            {qualification.alt_attachments.extension.toUpperCase()}
-                          </Badge>
+                        <div className="flex items-center space-x-2 p-2 bg-green-50 rounded-md border border-green-200">
+                          <FileText className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-green-800 truncate">
+                              {qualification.alt_attachments['original-name']}
+                            </p>
+                            <div className="flex items-center mt-1">
+                              <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                                {qualification.alt_attachments.extension.toUpperCase()}
+                              </Badge>
+                            </div>
+                          </div>
                         </div>
                       ) : (
-                        <span className="text-red-500 text-sm">No certificate</span>
+                        <div className="flex items-center space-x-2 p-2 bg-red-50 rounded-md border border-red-200">
+                          <div className="h-4 w-4 rounded-full bg-red-500 flex-shrink-0"></div>
+                          <span className="text-sm font-medium text-red-700">
+                            No certificate uploaded
+                          </span>
+                        </div>
                       )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openDialog(qualification)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(qualification.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Summary for mobile */}
+            <div className="md:hidden mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-blue-800">
+                  Total Qualifications
+                </span>
+                <span className="text-lg font-bold text-blue-900">
+                  {qualifications.length}
+                </span>
+              </div>
+            </div>
+          </>
         )}
 
         {error && (
           <Alert variant="destructive" className="mt-4">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="text-sm">{error}</AlertDescription>
           </Alert>
         )}
       </CardContent>

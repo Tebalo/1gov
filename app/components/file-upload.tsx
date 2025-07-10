@@ -100,8 +100,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
       }, 200)
 
       // Upload file
-      const response = await fetch('https://gateway-cus.gov.bw/document/upload/MESD_006_28_001', {
+      const response = await fetch('https://gateway-cus-acc.gov.bw/document/upload/MESD_006_28_001', {
         method: 'POST',
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'PostmanRuntime/7.44.1',
+        },
         body: formData,
       })
 
