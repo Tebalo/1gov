@@ -209,16 +209,17 @@ export default function Form() {
 <section className='bg-gray-50 p-2 min-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
         {/* Left Sidebar - Header */}
-        <div className='w-80 flex-shrink-0'>
+        <div className='w-80 flex-shrink-0 md:block hidden'>
           <div className='sticky top-4'>
             <TeacherRegistrationHeader />
           </div>
         </div>
 
+
         {/* Main Content */}
         <div className='flex-1 bg-white rounded-lg shadow-lg'>
           {/* Progress Steps */}
-          <nav aria-label='Progress' className='p-6 border-b'>
+          <nav aria-label='Progress' className='p-6 border-b md:block hidden'>
             <ol role='list' className='space-y-4 md:flex md:space-x-8 md:space-y-0'>
               {steps.map((step, index) => (
                 <li key={step.name} className='md:flex-1'>
@@ -252,7 +253,16 @@ export default function Form() {
             </ol>
           </nav>
 
-          <ScrollArea className='h-[500px] p-4'>
+          {/* Mobile Header */}
+          <div className='md:hidden block w-full mb-4'>
+            <div className='bg-white shadow-sm border-b p-4'>
+              <h1 className='text-lg font-semibold text-gray-900'>
+                Teacher Registration
+              </h1>
+              <p className='text-sm text-gray-600'>Complete your application</p>
+            </div>
+          </div>
+          <ScrollArea className='md:h-[500px] p-4'>
             <form onSubmit={handleSubmit(processForm)}>
               {/* Step 1: Personal Information */}
               {currentStep === 0 && (
@@ -268,161 +278,190 @@ export default function Form() {
                         Please provide your personal details for identification purposes.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className='space-y-6'>
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
-                          <Label htmlFor='first_name'>First Name *</Label>
+                    <CardContent className='space-y-4 sm:space-y-6 p-4 sm:p-6'>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>  
+                        {/* First Name */}
+                        <div className="space-y-2">
+                          <Label htmlFor='first_name' className="text-sm font-medium text-gray-700">
+                            First Name <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             id='first_name'
                             {...register('first_name')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your first name"
                           />
                           {errors.first_name && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.first_name.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.first_name.message}
+                            </p>
                           )}
                         </div>
 
-                        <div>
-                          <Label htmlFor='last_name'>Last Name *</Label>
+                        {/* Last Name */}
+                        <div className="space-y-2">
+                          <Label htmlFor='last_name' className="text-sm font-medium text-gray-700">
+                            Last Name <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             id='last_name'
                             {...register('last_name')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your last name"
                           />
                           {errors.last_name && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.last_name.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.last_name.message}
+                            </p>
                           )}
                         </div>
 
-                        {/* <div>
-                          <Label htmlFor='surname'>Surname *</Label>
-                          <Input
-                            id='surname'
-                            {...register('surname')}
-                            className='mt-1'
-                          />
-                          {errors.surname && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.surname.message}</p>
-                          )}
-                        </div> */}
-
-                        <div>
-                          <Label htmlFor='middle_name'>Middle Name</Label>
+                        {/* Middle Name - Full width on mobile */}
+                        <div className="space-y-2 sm:col-span-1">
+                          <Label htmlFor='middle_name' className="text-sm font-medium text-gray-700">
+                            Middle Name <span className="text-gray-400 text-xs">(Optional)</span>
+                          </Label>
                           <Input
                             id='middle_name'
                             {...register('middle_name')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your middle name"
                           />
                         </div>
 
-                        <div>
-                          <Label htmlFor='username'>National Id *</Label>
+                        {/* National ID */}
+                        <div className="space-y-2">
+                          <Label htmlFor='username' className="text-sm font-medium text-gray-700">
+                            National ID <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             id='username'
                             {...register('username')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your national ID number"
+                            inputMode="numeric"
                           />
                           {errors.username && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.username.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.username.message}
+                            </p>
                           )}
                         </div>
 
-                        {/* <div>
-                          <Label htmlFor='primary_email'>Email Address *</Label>
-                          <Input
-                            id='primary_email'
-                            type='email'
-                            {...register('primary_email')}
-                            className='mt-1'
-                          />
-                          {errors.primary_email && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
-                          )}
-                        </div> */}
-
-                        <div>
-                          <Label htmlFor='date_of_birth'>Date of Birth *</Label>
+                        {/* Date of Birth - Full width on mobile for better date picker */}
+                        <div className="space-y-2 col-span-1 sm:col-span-1">
+                          <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
+                            Date of Birth <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             id='date_of_birth'
                             type='date'
                             {...register('date_of_birth')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                           />
                           {errors.date_of_birth && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.date_of_birth.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.date_of_birth.message}
+                            </p>
                           )}
                         </div>
 
-                        <div>
-                          <Label htmlFor='gender'>Gender *</Label>
+                        {/* Gender */}
+                        <div className="space-y-2">
+                          <Label htmlFor='gender' className="text-sm font-medium text-gray-700">
+                            Gender <span className="text-red-500">*</span>
+                          </Label>
                           <Select onValueChange={(value) => setValue('gender', value)}>
-                            <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select gender' />
+                            <SelectTrigger className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                              <SelectValue placeholder='Select your gender' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='male'>Male</SelectItem>
-                              <SelectItem value='female'>Female</SelectItem>
-                              <SelectItem value='other'>Other</SelectItem>
+                              <SelectItem value='male' className="h-11 text-base">Male</SelectItem>
+                              <SelectItem value='female' className="h-11 text-base">Female</SelectItem>
+                              <SelectItem value='other' className="h-11 text-base">Other</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.gender && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.gender.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.gender.message}
+                            </p>
                           )}
                         </div>
 
-                        {/* <div>
-                          <Label htmlFor='marital_status'>Marital Status *</Label>
-                          <Select onValueChange={(value) => setValue('marital_status', value)}>
-                            <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select marital status' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='single'>Single</SelectItem>
-                              <SelectItem value='married'>Married</SelectItem>
-                              <SelectItem value='divorced'>Divorced</SelectItem>
-                              <SelectItem value='widowed'>Widowed</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.marital_status && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.marital_status.message}</p>
-                          )}
-                        </div> */}
-
-                        <div>
-                          <Label htmlFor='citizenship'>Citizenship *</Label>
+                        {/* Citizenship */}
+                        <div className="space-y-2">
+                          <Label htmlFor='citizenship' className="text-sm font-medium text-gray-700">
+                            Citizenship <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             id='citizenship'
                             {...register('citizenship')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your citizenship"
                           />
                           {errors.citizenship && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.citizenship.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.citizenship.message}
+                            </p>
                           )}
                         </div>
 
-                        <div>
-                          <Label htmlFor='nationality'>Nationality *</Label>
+                        {/* Nationality */}
+                        <div className="space-y-2">
+                          <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
+                            Nationality <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             id='nationality'
                             {...register('nationality')}
-                            className='mt-1'
+                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your nationality"
                           />
                           {errors.nationality && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.nationality.message}</p>
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.nationality.message}
+                            </p>
                           )}
                         </div>
-                        <div className='col-span-2'>
-                          <FileUpload
-                            name="national_id_copy"
-                            label="National ID Copy"
-                            description="Upload a clear copy of your National ID"
-                            acceptedTypes=".pdf,.jpg,.jpeg,.png"
-                            maxSize={5}
-                            required={true}
-                            value={nationalIdDoc}
-                            onChange={setNationalIdDoc}
-                            error={errors.national_id_copy?.message}
-                          />
+
+                        {/* File Upload - Full width */}
+                        <div className='col-span-1 sm:col-span-2 mt-4'>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-700">
+                              National ID Copy <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-400 transition-colors">
+                              <FileUpload
+                                name="national_id_copy"
+                                label="National ID Copy"
+                                description="Upload a clear copy of your National ID (PDF, JPG, PNG up to 5MB)"
+                                acceptedTypes=".pdf,.jpg,.jpeg,.png"
+                                maxSize={5}
+                                required={true}
+                                value={nationalIdDoc}
+                                onChange={setNationalIdDoc}
+                                error={errors.national_id_copy?.message}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Progress indicator for mobile */}
+                      <div className="block sm:hidden mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Step 1 of 6</span>
+                          <span>Personal Information</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '16.67%'}}></div>
                         </div>
                       </div>
                     </CardContent>
@@ -445,43 +484,59 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
-                      <div>
-                        <Label htmlFor='primary_phone'>Primary Phone *</Label>
-                        <Input
-                          id='primary_phone'
-                          type='tel'
-                          {...register('primary_phone')}
-                          className='mt-1'
-                        />
-                        {errors.primary_phone && (
-                          <p className='text-sm text-red-500 mt-1'>{errors.primary_phone.message}</p>
-                        )}
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                        {/* Primary Phone */}
+                        <div className='space-y-2'>
+                          <Label htmlFor='primary_phone'>Primary Phone *</Label>
+                          <Input
+                            id='primary_phone'
+                            type='tel'
+                            {...register('primary_phone')}
+                            className='mt-1'
+                          />
+                          {errors.primary_phone && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.primary_phone.message}</p>
+                          )}
+                        </div>
+
+                        {/* Primary Physical */} 
+                        <div className='space-y-2'>
+                          <Label htmlFor='primary_physical'>Physical Address *</Label>
+                          <Textarea
+                            id='primary_physical'
+                            {...register('primary_physical')}
+                            className='mt-1'
+                            rows={3}
+                          />
+                          {errors.primary_physical && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.primary_physical.message}</p>
+                          )}
+                        </div>
+                        
+                        {/* Primary Postal */}
+                        <div className='space-y-2'>
+                          <Label htmlFor='primary_postal'>Postal Address *</Label>
+                          <Textarea
+                            id='primary_postal'
+                            {...register('primary_postal')}
+                            className='mt-1'
+                            rows={3}
+                          />
+                          {errors.primary_postal && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.primary_postal.message}</p>
+                          )}
+                        </div>
                       </div>
 
-                      <div>
-                        <Label htmlFor='primary_physical'>Physical Address *</Label>
-                        <Textarea
-                          id='primary_physical'
-                          {...register('primary_physical')}
-                          className='mt-1'
-                          rows={3}
-                        />
-                        {errors.primary_physical && (
-                          <p className='text-sm text-red-500 mt-1'>{errors.primary_physical.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <Label htmlFor='primary_postal'>Postal Address *</Label>
-                        <Textarea
-                          id='primary_postal'
-                          {...register('primary_postal')}
-                          className='mt-1'
-                          rows={3}
-                        />
-                        {errors.primary_postal && (
-                          <p className='text-sm text-red-500 mt-1'>{errors.primary_postal.message}</p>
-                        )}
+                      {/* Progress indicator for mobile */}
+                      <div className="block sm:hidden mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Step 2 of 6</span>
+                          <span>Contact Information</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '33.33%'}}></div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -504,6 +559,26 @@ export default function Form() {
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        {/* Employment Status */}
+                        <div>
+                          <Label htmlFor='practice_category'>Employment Status *</Label>
+                          <Select onValueChange={(value) => setValue('practice_category', value)}>
+                            <SelectTrigger className='mt-1'>
+                              <SelectValue placeholder='Select practice category' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='education'>Education</SelectItem>
+                              <SelectItem value='healthcare'>Healthcare</SelectItem>
+                              <SelectItem value='legal'>Legal</SelectItem>
+                              <SelectItem value='engineering'>Engineering</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {errors.practice_category && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.practice_category.message}</p>
+                          )}
+                        </div>
+                        
+                        {/* Practice Category */}
                         <div>
                           <Label htmlFor='practice_category'>Practice Category *</Label>
                           <Select onValueChange={(value) => setValue('practice_category', value)}>
@@ -624,6 +699,17 @@ export default function Form() {
                           )}
                         </div>
                       </div>
+
+                      {/* Progress indicator for mobile */}
+                      <div className="block sm:hidden mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Step 3 of 6</span>
+                          <span>Professional Details</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '50%'}}></div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -703,25 +789,22 @@ export default function Form() {
                           )}
                         </div>
                       </div>
-
-                      {/* <div>
-                        <Label htmlFor='qualifications'>Additional Qualifications *</Label>
-                        <Textarea
-                          id='qualifications'
-                          {...register('qualifications')}
-                          className='mt-1'
-                          rows={4}
-                          placeholder='List any additional qualifications, certifications, or training...'
-                        />
-                        {errors.qualifications && (
-                          <p className='text-sm text-red-500 mt-1'>{errors.qualifications.message}</p>
-                        )}
-                      </div> */}
                       <div>
                           <QualificationsTable
                             qualifications={qualifications}
                             onChange={setQualifications}
                           />
+                      </div>
+
+                      {/* Progress indicator for mobile */}
+                      <div className="block sm:hidden mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Step 4 of 6</span>
+                          <span>Qualifications</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '66.67%'}}></div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -936,6 +1019,17 @@ export default function Form() {
                           </div>
                         )}
                       </div>
+
+                      {/* Progress indicator for mobile */}
+                      <div className="block sm:hidden mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Step 5 of 6</span>
+                          <span>Background Check</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '83.33%'}}></div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -1027,6 +1121,17 @@ export default function Form() {
                           <p className='text-sm text-red-500'>{errors.profile_data_consent.message}</p>
                         )}
                       </div>
+
+                      {/* Progress indicator for mobile */}
+                      <div className="block sm:hidden mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Step 6 of 6</span>
+                          <span>Review & Complete</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '100%'}}></div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -1034,7 +1139,7 @@ export default function Form() {
             </form>
           
               {/* Navigation */}
-              <div className='p-6 border-t bg-gray-50'>
+              <div className='md:px-6 py-6 border-t bg-gray-50'>
                 <div className='flex justify-between items-center'>
                   <Button
                     type='button'

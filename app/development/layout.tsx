@@ -40,7 +40,7 @@ export default function DashboardLayout({
       <div className="flex relative z-10 h-screen overflow-hidden">
         <DesktopNav/>
         <div className="flex flex-col flex-grow relative md:pl-20">
-          <main className="flex-grow overflow-auto p-6">
+          <main className="flex-grow overflow-auto md:p-6">
             <div className="max-w-full mx-auto">
               <Suspense fallback={<LoadingSkeleton/>}>
                 {children}
