@@ -51,6 +51,7 @@ export function transformFormData(formData: any, profile: Profile): TeacherRegis
     },
     payload: {
       form: {
+        work_status: formData.work_status,
         practice_category: formData.practice_category,
         sub_category: formData.sub_category,
         experience_years: formData.experience_years,

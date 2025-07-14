@@ -1,5 +1,6 @@
 'use client'
 
+import * as React from "react"
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { z } from 'zod'
@@ -21,6 +22,16 @@ import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { set } from 'date-fns'
 import TeacherRegistrationHeader from './Header'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { countryList } from "@/types/countries"
+import { cn } from "@/lib/utils"
+import { subRegionsForSelect } from "@/types/regions"
+import { allPrivateSchoolsForSelect } from "@/types/private_schools"
+import { allPublicSchoolsForSelect } from "@/types/public_junior_schools"
+import { allSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
+import { allBotswanaQualificationsForSelect } from "@/types/qualifications"
 // Add this import:
 // Schema definition matching your external schema
 const documentSchema = z.object({
@@ -38,7 +49,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Personal Information',
-    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'middle_name', 'date_of_birth', 'username', 'gender', 'nationality'] // 'surname',
+    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'middle_name', 'date_of_birth', 'username', 'gender'] // 'surname',
   },
   {
     id: 'Step 2',
@@ -74,6 +85,12 @@ interface UploadResponse {
   key: string
 }
 
+const countries = countryList.map((country) => ({
+  // value: country.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: country,
+  label: country,
+}));
+
 export default function Form() {
   const [previousStep, setPreviousStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
@@ -87,10 +104,12 @@ export default function Form() {
   const [studentRelatedOffenceAttachmentDoc, setStudentRelatedOffenceAttachmentDoc] = useState<UploadResponse | null>(null)
   const [qualifications, setQualifications] = useState<QualificationEntry[]>([])
 
-  const handleQualificationsChange = (newQualifications: QualificationEntry[]) => {
-    setQualifications(newQualifications)
-    console.log('Updated qualifications:', newQualifications)
-  }
+  const [open, setOpen] = React.useState(false)
+  const [countryValue, setCountryValue] = React.useState("")
+  // const handleQualificationsChange = (newQualifications: QualificationEntry[]) => {
+  //   setQualifications(newQualifications)
+  //   console.log('Updated qualifications:', newQualifications)
+  // }
 
   // Convert to API format
   const getAPIFormatQualifications = () => {
@@ -118,55 +137,52 @@ export default function Form() {
   })
 
   const processForm: SubmitHandler<FormInputs> = async (formData) => {
+    if(formData.citizenship === 'citizen'){
+      formData.nationality = 'botswana'
+    }
     console.log('Form submitted successfully:', formData)
     alert('Form submitted successfully!')
       // Extract profile data from form
-  const profile: Profile = {
-    username: formData.username,
-    first_name: formData.first_name,
-    middle_name: formData.middle_name || "",
-    last_name: formData.last_name || "", // Ensure last_name is included
-    surname: formData.surname || formData.last_name,
-    date_of_birth: formData.date_of_birth,
-    citizenship: formData.citizenship,
-    // primary_email: formData.primary_email,
-    primary_phone: formData.primary_phone,
-    primary_physical: formData.primary_physical,
-    primary_postal: formData.primary_postal,
-    gender: formData.gender,
-    nationality: formData.nationality,
-    // marital_status: formData.marital_status
-  }
-
-//   useEffect(() => {
-//   if (nationalIdDoc) {
-//     setValue('national_id_copy', nationalIdDoc)
-//   }
-// }, [nationalIdDoc, setValue])
+    const profile: Profile = {
+      username: formData.username,
+      first_name: formData.first_name,
+      middle_name: formData.middle_name || "",
+      last_name: formData.last_name || "", // Ensure last_name is included
+      surname: formData.surname || formData.last_name,
+      date_of_birth: formData.date_of_birth,
+      citizenship: formData.citizenship,
+      // primary_email: formData.primary_email,
+      primary_phone: formData.primary_phone,
+      primary_physical: formData.primary_physical,
+      primary_postal: formData.primary_postal,
+      gender: formData.gender,
+      nationality: formData.nationality || "", // Ensure
+      // marital_status: formData.marital_status
+    }
   
-  // Process attachments to ensure correct format
-  const processedAttachments = processAttachments(formData)
+    // Process attachments to ensure correct format
+    const processedAttachments = processAttachments(formData)
 
-  const apiQualifications = getAPIFormatQualifications()
+    const apiQualifications = getAPIFormatQualifications()
 
-  const processedFormData = {
-    ...formData,
-    ...processedAttachments,
-    qualifications: apiQualifications, //
-    national_id_copy: nationalIdDoc    //
-  }
+    const processedFormData = {
+      ...formData,
+      ...processedAttachments,
+      qualifications: apiQualifications, //
+      national_id_copy: nationalIdDoc    //
+    }
   
-  // Submit the registration
-  const result = await submitTeacherRegistration(processedFormData, profile)
-  
-  if (result.success) {
-    console.log('Registration successful:', result.application_id)
-    // Handle success (redirect, show success message, etc.)
-  } else {
-    console.error('Registration failed:', result.error)
-    // Handle error (show error message, etc.)
-  }
-    reset()
+    // Submit the registration
+    const result = await submitTeacherRegistration(processedFormData, profile)
+    
+    if (result.success) {
+      console.log('Registration successful:', result.application_id)
+      // Handle success (redirect, show success message, etc.)
+    } else {
+      console.error('Registration failed:', result.error)
+      // Handle error (show error message, etc.)
+    }
+      reset()
   }
 
   type FieldName = keyof FormInputs
@@ -206,7 +222,7 @@ export default function Form() {
   }
 
   return (
-<section className='bg-gray-50 p-2 min-h-screen'>
+    <section className='bg-gray-50 p-2 min-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
         {/* Left Sidebar - Header */}
         <div className='w-80 flex-shrink-0 md:block hidden'>
@@ -398,12 +414,16 @@ export default function Form() {
                           <Label htmlFor='citizenship' className="text-sm font-medium text-gray-700">
                             Citizenship <span className="text-red-500">*</span>
                           </Label>
-                          <Input
-                            id='citizenship'
-                            {...register('citizenship')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                            placeholder="Enter your citizenship"
-                          />
+                          <Select onValueChange={(value) => setValue('citizenship', value)}>
+                            <SelectTrigger className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                              <SelectValue placeholder='Select your citizenship' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='citizen' className="h-11 text-base">Citizen</SelectItem>
+                              <SelectItem value='non-citizen' className="h-11 text-base">Alien</SelectItem>
+                              {/* <SelectItem value='other' className="h-11 text-base">Other</SelectItem> */}
+                            </SelectContent>
+                          </Select>
                           {errors.citizenship && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
                               <span className="text-xs">⚠</span>
@@ -412,24 +432,58 @@ export default function Form() {
                           )}
                         </div>
 
-                        {/* Nationality */}
-                        <div className="space-y-2">
-                          <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
-                            Nationality <span className="text-red-500">*</span>
-                          </Label>
-                          <Input
-                            id='nationality'
-                            {...register('nationality')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                            placeholder="Enter your nationality"
-                          />
-                          {errors.nationality && (
-                            <p className='text-sm text-red-500 flex items-center gap-1'>
-                              <span className="text-xs">⚠</span>
-                              {errors.nationality.message}
-                            </p>
+                        {watch('citizenship') === 'non-citizen' && <div className='space-y-2'>
+                            <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
+                              Nationality <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('nationality') || "Select your nationality"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search nationality..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No nationality found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {countries.map((country) => (
+                                        <CommandItem
+                                          key={country.value}
+                                          value={country.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('nationality', currentValue === watch('nationality') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {country.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('nationality') === country.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.nationality && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.nationality.message}
+                              </p>
                           )}
-                        </div>
+                        </div>}
 
                         {/* File Upload - Full width */}
                         <div className='col-span-1 sm:col-span-2 mt-4'>
@@ -561,20 +615,18 @@ export default function Form() {
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
                         <div>
-                          <Label htmlFor='practice_category'>Employment Status *</Label>
-                          <Select onValueChange={(value) => setValue('practice_category', value)}>
+                          <Label htmlFor='work_status'>Employment Status *</Label>
+                          <Select onValueChange={(value) => setValue('work_status', value)}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select practice category' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='education'>Education</SelectItem>
-                              <SelectItem value='healthcare'>Healthcare</SelectItem>
-                              <SelectItem value='legal'>Legal</SelectItem>
-                              <SelectItem value='engineering'>Engineering</SelectItem>
+                              <SelectItem value='Employed'>Employed</SelectItem>
+                              <SelectItem value='Unemployed'>Unemployed</SelectItem>
                             </SelectContent>
                           </Select>
-                          {errors.practice_category && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.practice_category.message}</p>
+                          {errors.work_status && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.work_status.message}</p>
                           )}
                         </div>
                         
@@ -586,10 +638,9 @@ export default function Form() {
                               <SelectValue placeholder='Select practice category' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='education'>Education</SelectItem>
-                              <SelectItem value='healthcare'>Healthcare</SelectItem>
-                              <SelectItem value='legal'>Legal</SelectItem>
-                              <SelectItem value='engineering'>Engineering</SelectItem>
+                              <SelectItem value='Pre-Primary'>Pre-Primary</SelectItem>
+                              <SelectItem value='Primary'>Primary</SelectItem>
+                              <SelectItem value='Secondary'>Secondary</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.practice_category && (
@@ -597,6 +648,7 @@ export default function Form() {
                           )}
                         </div>
 
+                        { /* Sub Category */}           
                         <div>
                           <Label htmlFor='sub_category'>Sub Category *</Label>
                           <Select onValueChange={(value) => setValue('sub_category', value)}>
@@ -604,31 +656,95 @@ export default function Form() {
                               <SelectValue placeholder='Select sub category' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='primary'>Primary</SelectItem>
-                              <SelectItem value='secondary'>Secondary</SelectItem>
-                              <SelectItem value='tertiary'>Tertiary</SelectItem>
+                              <SelectItem value='Teacher'>Teacher</SelectItem>
+                              <SelectItem value='Teacher Aide'>Teacher Aide</SelectItem>
+                              <SelectItem value='Tutor'>Tutor</SelectItem>
+                              <SelectItem value='Special Education'>Special Education</SelectItem>
+                              <SelectItem value='Educational Support Services'>Educational Support Services</SelectItem>
+                              <SelectItem value='Education Administrator'>Education Administrator</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.sub_category && (
                             <p className='text-sm text-red-500 mt-1'>{errors.sub_category.message}</p>
                           )}
                         </div>
+                        
+                        {/* Region */}
+                        {/* {watch('work_status') === 'Employed' && <div className='space-y-2'>
+                            <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
+                              Nationality <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('nationality') || "Select your nationality"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search region..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No region found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {subRegionsForSelect.map((country) => (
+                                        <CommandItem
+                                          key={country.value}
+                                          value={country.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('district', currentValue === watch('district') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {country.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('district') === country.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.nationality && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.nationality.message}
+                              </p>
+                          )}
+                        </div>} */}
 
+                        {/* Experience Duration */}
                         <div>
-                          <Label htmlFor='experience_years'>Years of Experience *</Label>
-                          <Input
-                            id='experience_years'
-                            type='number'
-                            {...register('experience_years')}
-                            className='mt-1'
-                          />
+                          <Label htmlFor='experience_years'>Experience *</Label>
+                          <Select onValueChange={(value) => setValue('experience_years', value)}>
+                            <SelectTrigger className='mt-1'>
+                              <SelectValue placeholder='Select teaching experience duration' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='Less than a year'>Less than a year</SelectItem>
+                              <SelectItem value='1 to 5 years'>1 to 5 years</SelectItem>
+                              <SelectItem value='6 to 10 years'>6 to 10 years</SelectItem>
+                              <SelectItem value='More than 10 years'>More than 10 years</SelectItem>
+                            </SelectContent>
+                          </Select>
                           {errors.experience_years && (
                             <p className='text-sm text-red-500 mt-1'>{errors.experience_years.message}</p>
                           )}
                         </div>
 
+                        {/* District */}
                         <div>
-                          <Label htmlFor='district'>District *</Label>
+                          <Label htmlFor='district'>Region *</Label>
                           <Select onValueChange={(value) => setValue('district', value)}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select district' />
@@ -646,24 +762,86 @@ export default function Form() {
                           )}
                         </div>
 
+                        {/* Institution Type */}
                         <div>
-                          <Label htmlFor='institution_type'>Institution Type *</Label>
-                          <Select onValueChange={(value) => setValue('institution_type', value)}>
-                            <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select institution type' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='public'>Public</SelectItem>
-                              <SelectItem value='private'>Private</SelectItem>
-                              <SelectItem value='ngo'>NGO</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Label className="text-base font-medium">Institution Type *</Label>
+                          <RadioGroup 
+                            value={watch('institution_type')} 
+                            onValueChange={(value) => setValue('institution_type', value)}
+                            className="mt-3"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="public" id="institution-public" />
+                              <Label htmlFor="institution-public">Public</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="private" id="institution-private" />
+                              <Label htmlFor="institution-private">Private</Label>
+                            </div>
+                          </RadioGroup>
                           {errors.institution_type && (
                             <p className='text-sm text-red-500 mt-1'>{errors.institution_type.message}</p>
                           )}
                         </div>
 
-                        <div>
+
+
+                        {/* Private school */}
+                        {watch('institution_type') === 'private' && <div className='space-y-2'>
+                            <Label htmlFor='private_schools' className="text-sm font-medium text-gray-700">
+                              Private School <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('nationality') || "Select your nationality"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No school found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allPrivateSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.private_schools && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.private_schools.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* School level */}
+                        {watch('institution_type') === 'public' && <div>
                           <Label htmlFor='school_level'>School Level *</Label>
                           <Select onValueChange={(value) => setValue('school_level', value)}>
                             <SelectTrigger className='mt-1'>
@@ -672,32 +850,216 @@ export default function Form() {
                             <SelectContent>
                               <SelectItem value='pre-primary'>Pre-Primary</SelectItem>
                               <SelectItem value='primary'>Primary</SelectItem>
-                              <SelectItem value='secondary'>Secondary</SelectItem>
-                              <SelectItem value='senior'>Senior</SelectItem>
+                              <SelectItem value='junior school'>Junior School</SelectItem>
+                              <SelectItem value='senior school'>Senior Secondary</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.school_level && (
                             <p className='text-sm text-red-500 mt-1'>{errors.school_level.message}</p>
                           )}
-                        </div>
+                        </div>}
 
-                        <div>
-                          <Label htmlFor='level'>Level *</Label>
-                          <Select onValueChange={(value) => setValue('level', value)}>
-                            <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select level' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='entry'>Entry Level</SelectItem>
-                              <SelectItem value='mid'>Mid Level</SelectItem>
-                              <SelectItem value='senior'>Senior Level</SelectItem>
-                              <SelectItem value='executive'>Executive</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.level && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.level.message}</p>
+                        {/* Primary school */}
+                        {watch('school_level') === 'primary' && <div className='space-y-2'>
+                            <Label htmlFor='primary_schools' className="text-sm font-medium text-gray-700">
+                              Primary School <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('primary_schools') || "Select your school"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No school found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allPrivateSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('private_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.primary_schools && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.primary_schools.message}
+                              </p>
                           )}
-                        </div>
+                        </div>}
+
+                        {/* Other Primary Schools */}
+                        {watch('other_primary_schools') === 'Other' && <div>
+                          <Label htmlFor='other_primary_schools'>Other Primary School *</Label>
+                          <Input
+                            id='other_primary_schools'
+                            {...register('other_primary_schools')}
+                            className='mt-1'
+                          />
+                          {errors.other_junior_schools && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.other_junior_schools.message}</p>
+                          )}
+                        </div>}
+
+                        {/* Junior school */}
+                        {watch('school_level') === 'junior school' && <div className='space-y-2'>
+                            <Label htmlFor='junior_schools' className="text-sm font-medium text-gray-700">
+                              Junior School <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('junior_schools') || "Select your school"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No school found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.junior_schools && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.junior_schools.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Other Junior Schools */}
+                        {watch('other_junior_schools') === 'Other' && <div>
+                          <Label htmlFor='other_junior_schools'>Other Junior School *</Label>
+                          <Input
+                            id='other_junior_schools'
+                            {...register('other_junior_schools')}
+                            className='mt-1'
+                          />
+                          {errors.other_junior_schools && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.other_junior_schools.message}</p>
+                          )}
+                        </div>}
+
+                        {/* Senior school */}
+                        {watch('school_level') === 'senior school' && <div className='space-y-2'>
+                            <Label htmlFor='senior_schools' className="text-sm font-medium text-gray-700">
+                              Senior School <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('senior_schools') || "Select your school"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No school found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.senior_schools && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.senior_schools.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Other Senior Schools */}
+                        {watch('senior_schools') === 'Other' && <div>
+                          <Label htmlFor='other_senior_schools'>Other Senior School *</Label>
+                          <Input
+                            id='other_senior_schools'
+                            {...register('other_senior_schools')}
+                            className='mt-1'
+                          />
+                          {errors.other_senior_schools && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.other_senior_schools.message}</p>
+                          )}
+                        </div>}
+
                       </div>
 
                       {/* Progress indicator for mobile */}
@@ -731,6 +1093,365 @@ export default function Form() {
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+
+                        <div>
+                          <Label htmlFor='level'>Teaching Qualification *</Label>
+                          <Select onValueChange={(value) => setValue('level', value)}>
+                            <SelectTrigger className='mt-1'>
+                              <SelectValue placeholder='Select level' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='Diploma'>Diploma</SelectItem>
+                              <SelectItem value='Post-Graduate Diploma'>Post-Graduate Diploma</SelectItem>
+                              <SelectItem value="Bachelor's Degree">Bachelor&apos;s Degree</SelectItem>
+                              <SelectItem value="Bachelor's Degree Honours">Bachelor&apos;s Degree Honours</SelectItem>
+                              <SelectItem value="Master's Degree">Master&apos;s Degree</SelectItem>
+                              <SelectItem value="Doctoral Degree">Doctoral&apos;s Degree</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {errors.level && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.level.message}</p>
+                          )}
+                        </div>
+
+                        {watch('level') === "Other" && <div>
+                          <Label htmlFor='other_qualification'>Other qualification *</Label>
+                          <Input
+                            id='other_qualification'
+                            {...register('other_qualification')}
+                            className='mt-1'
+                          />
+                          {errors.other_qualification && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.other_qualification.message}</p>
+                          )}
+                        </div>}
+
+                        {/* Doctoral Degree */}
+                        {watch('level') === "Doctoral Degree" && <div className='space-y-2'>
+                            <Label htmlFor='qualification_doctoral_degree' className="text-sm font-medium text-gray-700">
+                              Doctoral Degree<span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('qualification_doctoral_degree') || "Select your Degree"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No degree found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('qualification_doctoral_degree', currentValue === watch('qualification_doctoral_degree') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('qualification_doctoral_degree') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.qualification_doctoral_degree && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.qualification_doctoral_degree.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Master's Degree */}
+                        {watch('level') === "Master's Degree" && <div className='space-y-2'>
+                            <Label htmlFor='qualification_masters_degree' className="text-sm font-medium text-gray-700">
+                              Master&apos;s Degree<span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('qualification_masters_degree') || "Select your Degree"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No Master&apos;s Degree found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('qualification_masters_degree', currentValue === watch('qualification_masters_degree') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('qualification_masters_degree') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.qualification_masters_degree && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.qualification_masters_degree.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Bachelor's Degree Honours */}
+                        {watch('level') === "Bachelor's Degree Honours" && <div className='space-y-2'>
+                            <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
+                              Bachelor&apos;s Degree Honours<span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('qualification_degree_honours') || "Select your Degree"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No bachelor&apos;s degree found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('qualification_degree_honours', currentValue === watch('qualification_degree_honours') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('qualification_degree_honours') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.qualification_degree_honours && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.qualification_degree_honours.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Diploma */}
+                        {watch('level') === 'Diploma' && <div className='space-y-2'>
+                            <Label htmlFor='qualification_diploma' className="text-sm font-medium text-gray-700">
+                              Diploma <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('qualification_diploma') || "Select your diploma"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search diploma..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No diploma found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('qualification_diploma', currentValue === watch('qualification_diploma') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('qualification_diploma') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.qualification_diploma && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.qualification_diploma.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Post-Graduate Diploma */}
+                        {watch('level') === 'Post-Graduate Diploma' && <div className='space-y-2'>
+                            <Label htmlFor='qualification_post_grad_diploma' className="text-sm font-medium text-gray-700">
+                              Post-Graduate Diploma <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('qualification_post_grad_diploma') || "Select your diploma"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search post grad diploma..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No post grad diploma found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('qualification_post_grad_diploma', currentValue === watch('qualification_post_grad_diploma') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('qualification_post_grad_diploma') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.qualification_post_grad_diploma && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.qualification_post_grad_diploma.message}
+                              </p>
+                          )}
+                        </div>}
+
+                        {/* Bachelor's Degree */}
+                        {watch('level') === "Bachelor's Degree" && <div className='space-y-2'>
+                            <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
+                              Bachelor&apos;s Degree <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('qualification_degree') || "Select your Bachelor's Degree"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No bachelor&apos;s degree found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('qualification_degree', currentValue === watch('qualification_degree') ? "" : currentValue)
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('qualification_degree') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.qualification_degree && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.qualification_degree.message}
+                              </p>
+                          )}
+                        </div>}
+
+
                         <div>
                           <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
                           <Select onValueChange={(value) => setValue('qualification_certificate', value)}>
