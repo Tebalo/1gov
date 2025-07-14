@@ -50,6 +50,7 @@ export interface Reference {
 }
 
 export interface FormData {
+  work_status: string
   practice_category: string
   sub_category: string
   experience_years: string
