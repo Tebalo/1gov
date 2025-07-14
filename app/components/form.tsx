@@ -59,12 +59,12 @@ const steps = [
   {
     id: 'Step 3',
     name: 'Professional Details',
-    fields: ['practice_category', 'sub_category', 'experience_years', 'district', 'institution_type', 'school_level', 'level']
+    fields: ['practice_category', 'sub_category', 'experience_years', 'district', 'institution_type', 'school_level']
   },
   {
     id: 'Step 4',
     name: 'Qualifications',
-    fields: ['qualification_certificate', 'institution', 'qualification_year', 'major_subjects', 'qualifications']
+    fields: ['qualification_certificate', 'institution', 'qualification_year', 'major_subjects', 'qualifications', 'level']
   },
   {
     id: 'Step 5',
@@ -612,6 +612,15 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
+                      {Object.keys(errors).length > 0 && (
+                        <div className="p-3 bg-red-600 text-white">
+                          {Object.entries(errors).map(([field, error]) => (
+                            <div key={field}>
+                              {error?.message ? `${field}: ${error.message}` : field}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
                         <div>
@@ -799,7 +808,7 @@ export default function Form() {
                                   aria-expanded={open}
                                   className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('nationality') || "Select your nationality"}
+                                  {watch('private_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -887,7 +896,7 @@ export default function Form() {
                                           key={school.value}
                                           value={school.label}
                                           onSelect={(currentValue) => {
-                                            setValue('private_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                            setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
                                             setOpen(false)
                                           }}
                                         >
@@ -1451,7 +1460,7 @@ export default function Form() {
                           )}
                         </div>}
 
-
+{/* 
                         <div>
                           <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
                           <Select onValueChange={(value) => setValue('qualification_certificate', value)}>
@@ -1469,7 +1478,7 @@ export default function Form() {
                           {errors.qualification_certificate && (
                             <p className='text-sm text-red-500 mt-1'>{errors.qualification_certificate.message}</p>
                           )}
-                        </div>
+                        </div> */}
 
                         <div>
                           <Label htmlFor='institution'>Institution *</Label>
