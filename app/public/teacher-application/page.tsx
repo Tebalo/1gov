@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function TeacherApplicationPage() {
   return (
     <ScrollArea className="h-[calc(100vh-2rem)]">
-      <section className='p-2 space-y-6'>
+      <section className='p-2 md:space-y-6'>
         {/* Page Header */}
         {/* <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Teacher Registration System</h1>

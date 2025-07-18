@@ -24,7 +24,7 @@ export default function RootLayout({
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </head>
             <body>
-                <main className='container mx-auto md:py-8 md:px-6'>
+                <main className='md:container md:mx-auto md:py-8 md:px-6'>
                     {/* Background Image Container */}
                     <div className="absolute inset-0 w-full h-full">
                         <Image
@@ -38,7 +38,7 @@ export default function RootLayout({
                         {/* Overlay for better readability */}
                         <div className="absolute inset-0 bg-sky-400/55"/>
                     </div>
-                    <div className='container mx-auto max-w-7xl bg-white/95 relative z-10 mt-16 md:mt-0'>
+                    <div className='md:container md:mx-auto md:max-w-7xl bg-white/95 relative z-10 md:mt-16'>
                         <Suspense fallback={<LoadingSkeleton />}>
                             {children}
                         </Suspense>
@@ -46,7 +46,7 @@ export default function RootLayout({
                 </main>
                 
                 {/* Footer */}
-                <footer className="border-t border-gray-200 bg-gradient-to-b from-gray-300 to-white mt-12">
+                <footer className="hidden md:block border-t border-gray-200 bg-gradient-to-b from-gray-300 to-white mt-12">
                     <div className="container mx-auto px-6 py-8">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div className="flex items-center space-x-3">
