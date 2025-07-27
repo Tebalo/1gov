@@ -65,11 +65,11 @@ export const RegistrationStats = () => {
             value: response?.teacher_registrations_count || "N/A",
             icon: <Users className="h-4 w-4 text-muted-foreground" />
         },
-        {
-            title: "Issued Licenses",
-            value: response?.teacher_registrations_count || "N/A",
-            icon: <GraduationCap className="h-4 w-4 text-muted-foreground" />
-        },
+        // {
+        //     title: "Issued Licenses",
+        //     value: response?. || "N/A",
+        //     icon: <GraduationCap className="h-4 w-4 text-muted-foreground" />
+        // },
         {
             title: "Female Teachers",
             value: response?.females_count || 'N/A',

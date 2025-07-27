@@ -24,8 +24,8 @@ export default async function Home(){
     if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
         return <TeacherHome/>
     } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
-        //return <RegistrationOfficerHome/>
-        return <TeacherHome/>
+        return <RegistrationOfficerHome/>
+        //return <TeacherHome/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerHome/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_MANAGER'){
