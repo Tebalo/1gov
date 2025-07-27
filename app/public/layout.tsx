@@ -23,7 +23,7 @@ export default function RootLayout({
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </head>
-            <body>
+            <body suppressHydrationWarning={true}>
                 <main className='md:container md:mx-auto  md:px-2'>
                     {/* Background Image Container */}
                     <div className="absolute inset-0 w-full h-full">

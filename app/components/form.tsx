@@ -319,7 +319,7 @@ export default function Form() {
                           <Input
                             id='first_name'
                             {...register('first_name')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your first name"
                           />
                           {errors.first_name && (
@@ -338,7 +338,7 @@ export default function Form() {
                           <Input
                             id='last_name'
                             {...register('last_name')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your last name"
                           />
                           {errors.last_name && (
@@ -357,7 +357,7 @@ export default function Form() {
                           <Input
                             id='middle_name'
                             {...register('middle_name')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your middle name"
                           />
                         </div>
@@ -370,7 +370,7 @@ export default function Form() {
                           <Input
                             id='username'
                             {...register('username')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national ID number"
                             inputMode="numeric"
                           />
@@ -391,7 +391,7 @@ export default function Form() {
                             id='date_of_birth'
                             type='date'
                             {...register('date_of_birth')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                           />
                           {errors.date_of_birth && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -407,13 +407,13 @@ export default function Form() {
                             Gender <span className="text-red-500">*</span>
                           </Label>
                           <Select onValueChange={(value) => setValue('gender', value)}>
-                            <SelectTrigger className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                            <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your gender' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='male' className="h-11 text-base">Male</SelectItem>
-                              <SelectItem value='female' className="h-11 text-base">Female</SelectItem>
-                              <SelectItem value='other' className="h-11 text-base">Other</SelectItem>
+                              <SelectItem value='male' className="text-base">Male</SelectItem>
+                              <SelectItem value='female' className="text-base">Female</SelectItem>
+                              <SelectItem value='other' className="text-base">Other</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.gender && (
@@ -433,13 +433,12 @@ export default function Form() {
                             setValue('citizenship', value);
                             setValue('nationality', value === 'citizen' ? 'botswana' : ''); // Reset
                             }}>
-                            <SelectTrigger className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                            <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your citizenship' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='citizen' className="h-11 text-base">Citizen</SelectItem>
-                              <SelectItem value='non-citizen' className="h-11 text-base">Non-Citizen</SelectItem>
-                              {/* <SelectItem value='other' className="h-11 text-base">Other</SelectItem> */}
+                              <SelectItem value='citizen' className="text-base">Citizen</SelectItem>
+                              <SelectItem value='non-citizen' className="text-base">Non-Citizen</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.citizenship && (
@@ -460,7 +459,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={countryOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('nationality') || "Select your nationality"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -468,7 +467,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search nationality..." className="h-9" />
+                                  <CommandInput placeholder="Search nationality..." className="" />
                                   <CommandList>
                                     <CommandEmpty>No nationality found.</CommandEmpty>
                                     <CommandGroup>
@@ -684,7 +683,7 @@ export default function Form() {
                       )}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='work_status'>Employment Status *</Label>
                           <Select onValueChange={(value) => setValue('work_status', value)}>
                             <SelectTrigger className='mt-1'>
@@ -701,7 +700,7 @@ export default function Form() {
                         </div>
                         
                         {/* Practice Category */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='practice_category'>Practice Category *</Label>
                           <Select onValueChange={(value) => setValue('practice_category', value)}>
                             <SelectTrigger className='mt-1'>
@@ -719,7 +718,7 @@ export default function Form() {
                         </div>
 
                         { /* Sub Category */}           
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='sub_category'>Sub Category *</Label>
                           <Select onValueChange={(value) => setValue('sub_category', value)}>
                             <SelectTrigger className='mt-1'>
@@ -741,7 +740,7 @@ export default function Form() {
                         
 
                         {/* Experience Duration */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='experience_years'>Experience *</Label>
                           <Select onValueChange={(value) => setValue('experience_years', value)}>
                             <SelectTrigger className='mt-1'>
@@ -760,7 +759,7 @@ export default function Form() {
                         </div>
 
                         {/* District */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='district'>Region *</Label>
                           <Select onValueChange={(value) => setValue('district', value)}>
                             <SelectTrigger className='mt-1'>
@@ -784,7 +783,7 @@ export default function Form() {
                         </div>
 
                         {/* Institution Type */}
-                        <div>
+                        <div className="space-y-2">
                           <Label className="text-base font-medium">Institution Type *</Label>
                           <RadioGroup 
                             value={watch('institution_type')} 
@@ -825,7 +824,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={privateOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('private_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -833,7 +832,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..."/>
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -869,7 +868,7 @@ export default function Form() {
                         </div>}
 
                         {/* School level */}
-                        {watch('institution_type') === 'public' && <div>
+                        {watch('institution_type') === 'public' && <div className="space-y-2">
                           <Label htmlFor='school_level'>School Level *</Label>
                           <Select onValueChange={(value) => setValue('school_level', value)}>
                             <SelectTrigger className='mt-1'>
@@ -898,7 +897,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={primaryOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('primary_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -906,7 +905,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..."/>
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -942,7 +941,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Primary Schools */}
-                        {watch('other_primary_schools') === 'Other' && <div>
+                        {watch('other_primary_schools') === 'Other' && <div className="space-y-2">
                           <Label htmlFor='other_primary_schools'>Other Primary School *</Label>
                           <Input
                             id='other_primary_schools'
@@ -965,7 +964,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={juniorOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('junior_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -973,7 +972,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..." />
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -1009,7 +1008,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Junior Schools */}
-                        {watch('other_junior_schools') === 'Other' && <div>
+                        {watch('other_junior_schools') === 'Other' && <div className="space-y-2">
                           <Label htmlFor='other_junior_schools'>Other Junior School *</Label>
                           <Input
                             id='other_junior_schools'
@@ -1032,7 +1031,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={seniorOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('senior_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1040,7 +1039,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..."/>
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -1076,7 +1075,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Senior Schools */}
-                        {watch('senior_schools') === 'Other' && <div>
+                        {watch('senior_schools') === 'Other' && <div className="space-y-2">
                           <Label htmlFor='other_senior_schools'>Other Senior School *</Label>
                           <Input
                             id='other_senior_schools'
@@ -1122,7 +1121,7 @@ export default function Form() {
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 
-                        <div>
+                        <div className='space-y-2'>
                           <Label htmlFor='level'>Teaching Qualification Level*</Label>
                           <Select onValueChange={(value) => {
                             setValue('level', value);
@@ -1166,7 +1165,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={doctoralDegreeOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_doctoral_degree') || "Select your Degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1174,7 +1173,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..."/>
                                   <CommandList>
                                     <CommandEmpty>No degree found.</CommandEmpty>
                                     <CommandGroup>
@@ -1220,7 +1219,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={mastersOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_masters_degree') || "Search your master's degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1228,7 +1227,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..."/>
                                   <CommandList>
                                     <CommandEmpty>No Master&apos;s Degree found.</CommandEmpty>
                                     <CommandGroup>
@@ -1274,7 +1273,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={honoursOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_degree_honours') || "Select your Degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1282,7 +1281,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..." />
                                   <CommandList>
                                     <CommandEmpty>No Honour&apos;s degree found.</CommandEmpty>
                                     <CommandGroup>
@@ -1328,7 +1327,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={diplomaOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_diploma') || "Select your diploma"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1336,7 +1335,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search diploma..." className="h-9" />
+                                  <CommandInput placeholder="Search diploma..." />
                                   <CommandList>
                                     <CommandEmpty>No diploma found.</CommandEmpty>
                                     <CommandGroup>
@@ -1382,7 +1381,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={postGradDiplomaOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_post_grad_diploma') || "Select your diploma"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1390,7 +1389,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search post grad diploma..." className="h-9" />
+                                  <CommandInput placeholder="Search post grad diploma..." />
                                   <CommandList>
                                     <CommandEmpty>No post grad diploma found.</CommandEmpty>
                                     <CommandGroup>
@@ -1436,7 +1435,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={degreeOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_degree') || "Select your Bachelor's Degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1444,7 +1443,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..." />
                                   <CommandList>
                                     <CommandEmpty>No bachelor&apos;s degree found.</CommandEmpty>
                                     <CommandGroup>
@@ -1526,7 +1525,7 @@ export default function Form() {
                                   variant="outline"
                                   role="combobox"
                                   aria-expanded={institutionOpen}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('institution') || "Select your institution"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1534,7 +1533,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search institution..." className="h-9" />
+                                  <CommandInput placeholder="Search institution..." />
                                   <CommandList>
                                     <CommandEmpty>No institution found.</CommandEmpty>
                                     <CommandGroup>
@@ -1569,7 +1568,7 @@ export default function Form() {
                           )}
                         </div>
                         {/* Other Institution  */}
-                        {watch('institution') === "Other" && <div>
+                        {watch('institution') === "Other" && <div className='space-y-2'>
                           <Label htmlFor='other_institution'>Institution Name *</Label>
                           <Input
                             id='other_institution'
@@ -1582,7 +1581,7 @@ export default function Form() {
                           )}
                         </div>}
 
-                        <div>
+                        <div className='space-y-2'>
                           <Label htmlFor='qualification_year'>Qualification Year *</Label>
                           <Input
                             id='qualification_year'
@@ -1597,7 +1596,7 @@ export default function Form() {
                           )}
                         </div>
 
-                        <div>
+                        <div className='space-y-2'>
                           <Label htmlFor='subject_specialization'>Subject Specialization *</Label>
                           <Input
                             id='subject_specialization'
@@ -1610,7 +1609,7 @@ export default function Form() {
                         </div>
 
                         {watch('subject_specialization') === "Other" && (
-                          <div>
+                          <div className='space-y-2'>
                             <Label htmlFor='other_subject_specialization'>Other Subject Specialization</Label>
                             <Input
                               id='other_subject_specialization'
