@@ -60,15 +60,15 @@ model Comment {
 }
 
 // Case lock model - to prevent concurrent modifications
-model CaseLock {
-  id          String   @id @default(cuid())
-  caseId      String
-  caseType    String
-  lockedBy    String   // User ID of the person who locked the case
-  lockedAt    DateTime @default(now())
-  expiresAt   DateTime
-  reason      String?
-  metadata    String?  // JSON string for additional data
+// model CaseLock {
+//   id          String   @id @default(cuid())
+//   caseId      String
+//   caseType    String
+//   lockedBy    String   // User ID of the person who locked the case
+//   lockedAt    DateTime @default(now())
+//   expiresAt   DateTime
+//   reason      String?
+//   metadata    String?  // JSON string for additional data
 
-  @@unique([caseId, caseType])
-}
+//   @@unique([caseId, caseType])
+// }
