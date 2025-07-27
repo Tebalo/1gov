@@ -5,11 +5,6 @@ export default function TeacherApplicationPage() {
   return (
     <ScrollArea className="h-[calc(100vh-2rem)]">
       <section className='p-2 md:space-y-6'>
-        {/* Page Header */}
-        {/* <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Teacher Registration System</h1>
-          <p className="text-gray-600">Complete your professional registration and licensing application</p>
-        </div> */}
 
         {/* Main Form Container */}
         <div className='relative'>
@@ -22,10 +17,6 @@ export default function TeacherApplicationPage() {
             <Form />
           </div>
         </div>
-
-        {/* Development Studio Section (Optional) */}
-        {/* Uncomment if you want to show development tools */}
-        {/* <DevelopmentStudio /> */}
       </section>
     </ScrollArea>
   );

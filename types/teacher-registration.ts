@@ -80,10 +80,11 @@ export interface FormData {
   other_institution?: string | null
   qualification_year: string
   attachments: AttachmentObject | {}
-  major_subjects: string
+  subject_specialization: string
+  other_subject_specialization?: string | null
   qualifications: QualificationEntry[] | null
   disability: string
-  disability_description?: string | null
+  disability_description?: string[] | null
   student_related_offence: string
   student_related_offence_details?: string | null
   student_related_offence_attachments: AttachmentObject | {}
