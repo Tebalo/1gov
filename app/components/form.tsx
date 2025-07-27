@@ -1668,7 +1668,7 @@ export default function Form() {
                           value={watch('disability')} 
                           onValueChange={(value) => {
                             setValue('disability', value)
-                            setValue('disability_description', ''); // Reset disability description
+                            setValue('disability_description', undefined); // Reset disability description
                             }}
                           className="mt-3"
                         >

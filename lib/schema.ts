@@ -67,7 +67,7 @@ export const FormDataSchema = z.object({
   qualifications: z.array(QualificationSchema).optional(),
 
   disability: z.string().optional(),
-  disability_description: z.string().optional(),
+  disability_description: z.array(z.string()).optional(),
   student_related_offence: z.string().optional(),
   student_related_offence_details: z.string().optional(),
   student_related_offence_attachments: documentSchema.optional(),
