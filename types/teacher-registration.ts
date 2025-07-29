@@ -42,6 +42,7 @@ export interface Service {
 
 export interface Reference {
   application_id: string
+  submission_id: string
   response_id: string
   status: number
   profile: Profile
@@ -67,6 +68,7 @@ export interface FormData {
   senior_schools?: string | null
   other_senior_schools?: string | null
   level: string
+  major_subjects?: string | null
   qualification_certificate?: string | null
   qualification_post_grad_certificate?: string | null
   qualification_diploma?: string | null
@@ -80,10 +82,11 @@ export interface FormData {
   other_institution?: string | null
   qualification_year: string
   attachments: AttachmentObject | {}
-  major_subjects: string
+  //subject_specialization: string
+  other_subject_specialization?: string | null
   qualifications: QualificationEntry[] | null
   disability: string
-  disability_description?: string | null
+  disability_description?: string | null // merge into a single string
   student_related_offence: string
   student_related_offence_details?: string | null
   student_related_offence_attachments: AttachmentObject | {}

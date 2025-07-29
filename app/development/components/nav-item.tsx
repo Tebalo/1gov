@@ -21,13 +21,13 @@ export function NavItem({ href, label, children }: NavItemProps) {
       className={cn(
         "group relative flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 hover:scale-105",
         isActive 
-          ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25" 
+          ? "bg-gradient-to-br from-blue-500 to-indigo-300 text-white shadow-lg shadow-blue-500/25" 
           : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
       )}
     >
       {/* Active indicator */}
       {isActive && (
-        <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-l-full"></div>
+        <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-400 to-indigo-300 rounded-l-full"></div>
       )}
       
       {/* Icon */}

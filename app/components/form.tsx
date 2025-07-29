@@ -31,7 +31,8 @@ import { subRegionsForSelect } from "@/types/regions"
 import { allPrivateSchoolsForSelect } from "@/types/private_schools"
 import { allPublicSchoolsForSelect } from "@/types/public_junior_schools"
 import { allSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
-import { allBotswanaQualificationsForSelect } from "@/types/qualifications"
+import { allBotswanaQualificationsForSelect, degreeForSelect, diplomasForSelect, doctorateForSelect, mastersForSelect } from "@/types/qualifications"
+import { institutionForSelect } from "@/types/institution"
 // Add this import:
 // Schema definition matching your external schema
 const documentSchema = z.object({
@@ -104,7 +105,21 @@ export default function Form() {
   const [studentRelatedOffenceAttachmentDoc, setStudentRelatedOffenceAttachmentDoc] = useState<UploadResponse | null>(null)
   const [qualifications, setQualifications] = useState<QualificationEntry[]>([])
 
-  const [open, setOpen] = React.useState(false)
+  // const [open, setOpen] = React.useState(false)
+
+  const [countryOpen, setCountryOpen] = React.useState(false)
+  const [doctoralDegreeOpen, setDoctoralDegreeOpen] = React.useState(false) 
+  const [degreeOpen, setDegreeOpen] = React.useState(false)
+  const [honoursOpen, setHonoursOpen] = React.useState(false)
+  const [diplomaOpen, setDiplomaOpen] = React.useState(false)
+  const [mastersOpen, setMastersOpen] = React.useState(false)
+  const [institutionOpen, setInstitutionOpen] = React.useState(false)
+  const [seniorOpen, setSeniorOpen] = React.useState(false)
+  const [juniorOpen, setJuniorOpen] = React.useState(false)
+  const [primaryOpen, setPrimaryOpen] = React.useState(false)
+  const [privateOpen, setPrivateOpen] = React.useState(false)
+
+  const [postGradDiplomaOpen, setPostGradDiplomaOpen] = React.useState(false)
   const [countryValue, setCountryValue] = React.useState("")
   // const handleQualificationsChange = (newQualifications: QualificationEntry[]) => {
   //   setQualifications(newQualifications)
@@ -140,8 +155,7 @@ export default function Form() {
     if(formData.citizenship === 'citizen'){
       formData.nationality = 'botswana'
     }
-    console.log('Form submitted successfully:', formData)
-    alert('Form submitted successfully!')
+
       // Extract profile data from form
     const profile: Profile = {
       username: formData.username,
@@ -171,18 +185,22 @@ export default function Form() {
       qualifications: apiQualifications, //
       national_id_copy: nationalIdDoc    //
     }
-  
+    // console.log('Form submitted successfully:', processedFormData)
+    
     // Submit the registration
     const result = await submitTeacherRegistration(processedFormData, profile)
     
     if (result.success) {
-      console.log('Registration successful:', result.application_id)
+      alert('Form submitted successfully!')
+      reset()
+      // console.log('Registration successful:', result.application_id)
       // Handle success (redirect, show success message, etc.)
     } else {
-      console.error('Registration failed:', result.error)
+      // console.error('Registration failed:', result.error)
+      alert('Form submitted successfully!')
       // Handle error (show error message, etc.)
     }
-      reset()
+    // reset()
   }
 
   type FieldName = keyof FormInputs
@@ -222,14 +240,14 @@ export default function Form() {
   }
 
   return (
-    <section className='bg-gray-50 p-2 min-h-screen'>
+    <section className='bg-gray-50 md:p-2 max-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
         {/* Left Sidebar - Header */}
-        <div className='w-80 flex-shrink-0 md:block hidden'>
+        {/* <div className='w-80 flex-shrink-0 md:block hidden'>
           <div className='sticky top-4'>
             <TeacherRegistrationHeader />
           </div>
-        </div>
+        </div> */}
 
 
         {/* Main Content */}
@@ -304,7 +322,7 @@ export default function Form() {
                           <Input
                             id='first_name'
                             {...register('first_name')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your first name"
                           />
                           {errors.first_name && (
@@ -323,7 +341,7 @@ export default function Form() {
                           <Input
                             id='last_name'
                             {...register('last_name')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your last name"
                           />
                           {errors.last_name && (
@@ -342,7 +360,7 @@ export default function Form() {
                           <Input
                             id='middle_name'
                             {...register('middle_name')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your middle name"
                           />
                         </div>
@@ -355,7 +373,7 @@ export default function Form() {
                           <Input
                             id='username'
                             {...register('username')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national ID number"
                             inputMode="numeric"
                           />
@@ -376,7 +394,7 @@ export default function Form() {
                             id='date_of_birth'
                             type='date'
                             {...register('date_of_birth')}
-                            className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                           />
                           {errors.date_of_birth && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -392,13 +410,13 @@ export default function Form() {
                             Gender <span className="text-red-500">*</span>
                           </Label>
                           <Select onValueChange={(value) => setValue('gender', value)}>
-                            <SelectTrigger className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                            <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your gender' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='male' className="h-11 text-base">Male</SelectItem>
-                              <SelectItem value='female' className="h-11 text-base">Female</SelectItem>
-                              <SelectItem value='other' className="h-11 text-base">Other</SelectItem>
+                              <SelectItem value='male' className="text-base">Male</SelectItem>
+                              <SelectItem value='female' className="text-base">Female</SelectItem>
+                              <SelectItem value='other' className="text-base">Other</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.gender && (
@@ -414,14 +432,16 @@ export default function Form() {
                           <Label htmlFor='citizenship' className="text-sm font-medium text-gray-700">
                             Citizenship <span className="text-red-500">*</span>
                           </Label>
-                          <Select onValueChange={(value) => setValue('citizenship', value)}>
-                            <SelectTrigger className='h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                          <Select onValueChange={(value) => {
+                            setValue('citizenship', value);
+                            setValue('nationality', value === 'citizen' ? 'botswana' : ''); // Reset
+                            }}>
+                            <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your citizenship' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='citizen' className="h-11 text-base">Citizen</SelectItem>
-                              <SelectItem value='non-citizen' className="h-11 text-base">Alien</SelectItem>
-                              {/* <SelectItem value='other' className="h-11 text-base">Other</SelectItem> */}
+                              <SelectItem value='citizen' className="text-base">Citizen</SelectItem>
+                              <SelectItem value='non-citizen' className="text-base">Non-Citizen</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.citizenship && (
@@ -436,13 +456,13 @@ export default function Form() {
                             <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
                               Nationality <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={countryOpen} onOpenChange={setCountryOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={countryOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('nationality') || "Select your nationality"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -450,7 +470,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search nationality..." className="h-9" />
+                                  <CommandInput placeholder="Search nationality..." className="" />
                                   <CommandList>
                                     <CommandEmpty>No nationality found.</CommandEmpty>
                                     <CommandGroup>
@@ -460,7 +480,7 @@ export default function Form() {
                                           value={country.label}
                                           onSelect={(currentValue) => {
                                             setValue('nationality', currentValue === watch('nationality') ? "" : currentValue)
-                                            setOpen(false)
+                                            setCountryOpen(false)
                                           }}
                                         >
                                           {country.label}
@@ -545,6 +565,7 @@ export default function Form() {
                           <Input
                             id='primary_phone'
                             type='tel'
+                            placeholder='e.g. +267 123 4567'
                             {...register('primary_phone')}
                             className='mt-1'
                           />
@@ -561,6 +582,7 @@ export default function Form() {
                             {...register('primary_physical')}
                             className='mt-1'
                             rows={3}
+                            placeholder="Enter your physical address"
                           />
                           {errors.primary_physical && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_physical.message}</p>
@@ -575,6 +597,7 @@ export default function Form() {
                             {...register('primary_postal')}
                             className='mt-1'
                             rows={3}
+                            placeholder="Enter your postal address"
                           />
                           {errors.primary_postal && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_postal.message}</p>
@@ -613,17 +636,57 @@ export default function Form() {
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       {Object.keys(errors).length > 0 && (
-                        <div className="p-3 bg-red-600 text-white">
-                          {Object.entries(errors).map(([field, error]) => (
-                            <div key={field}>
-                              {error?.message ? `${field}: ${error.message}` : field}
+                        <div className="relative bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                          <div className="flex items-start">
+                            <div className="flex-shrink-0">
+                              <svg 
+                                className="h-5 w-5 text-red-400" 
+                                viewBox="0 0 20 20" 
+                                fill="currentColor"
+                              >
+                                <path 
+                                  fillRule="evenodd" 
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                                  clipRule="evenodd" 
+                                />
+                              </svg>
                             </div>
-                          ))}
+                            <div className="ml-3 flex-1">
+                              <h3 className="text-sm font-medium text-red-800 mb-2">
+                                Please correct the following errors:
+                              </h3>
+                              <div className="space-y-1">
+                                {Object.entries(errors).map(([field, error]) => (
+                                  <div key={field} className="flex items-center text-sm text-red-700">
+                                    <span className="inline-block w-2 h-2 bg-red-400 rounded-full mr-2 flex-shrink-0"></span>
+                                    <span className="font-medium capitalize">
+                                      {field.replace(/_/g, ' ')}:
+                                    </span>
+                                    <span className="ml-1">
+                                      {error?.message || 'This field is required'}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => {/* Add logic to clear errors or scroll to first error */}}
+                            className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors"
+                          >
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path 
+                                fillRule="evenodd" 
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" 
+                                clipRule="evenodd" 
+                              />
+                            </svg>
+                          </button>
                         </div>
                       )}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='work_status'>Employment Status *</Label>
                           <Select onValueChange={(value) => setValue('work_status', value)}>
                             <SelectTrigger className='mt-1'>
@@ -640,11 +703,11 @@ export default function Form() {
                         </div>
                         
                         {/* Practice Category */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='practice_category'>Practice Category *</Label>
                           <Select onValueChange={(value) => setValue('practice_category', value)}>
                             <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select practice category' />
+                              <SelectValue placeholder='Select school level that you are teaching e.g Pre-Primary' />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value='Pre-Primary'>Pre-Primary</SelectItem>
@@ -658,7 +721,7 @@ export default function Form() {
                         </div>
 
                         { /* Sub Category */}           
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='sub_category'>Sub Category *</Label>
                           <Select onValueChange={(value) => setValue('sub_category', value)}>
                             <SelectTrigger className='mt-1'>
@@ -678,62 +741,9 @@ export default function Form() {
                           )}
                         </div>
                         
-                        {/* Region */}
-                        {/* {watch('work_status') === 'Employed' && <div className='space-y-2'>
-                            <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
-                              Nationality <span className="text-red-500">*</span>
-                            </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                                >
-                                  {watch('nationality') || "Select your nationality"}
-                                  <ChevronsUpDown className="opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0">
-                                <Command>
-                                  <CommandInput placeholder="Search region..." className="h-9" />
-                                  <CommandList>
-                                    <CommandEmpty>No region found.</CommandEmpty>
-                                    <CommandGroup>
-                                      {subRegionsForSelect.map((country) => (
-                                        <CommandItem
-                                          key={country.value}
-                                          value={country.label}
-                                          onSelect={(currentValue) => {
-                                            setValue('district', currentValue === watch('district') ? "" : currentValue)
-                                            setOpen(false)
-                                          }}
-                                        >
-                                          {country.label}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              watch('district') === country.label ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
-                            {errors.nationality && (
-                              <p className='text-sm text-red-500 flex items-center gap-1'>
-                                <span className="text-xs">⚠</span>
-                                {errors.nationality.message}
-                              </p>
-                          )}
-                        </div>} */}
 
                         {/* Experience Duration */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='experience_years'>Experience *</Label>
                           <Select onValueChange={(value) => setValue('experience_years', value)}>
                             <SelectTrigger className='mt-1'>
@@ -752,19 +762,23 @@ export default function Form() {
                         </div>
 
                         {/* District */}
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor='district'>Region *</Label>
                           <Select onValueChange={(value) => setValue('district', value)}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select district' />
                             </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='central'>Central</SelectItem>
-                              <SelectItem value='northern'>Northern</SelectItem>
-                              <SelectItem value='southern'>Southern</SelectItem>
-                              <SelectItem value='eastern'>Eastern</SelectItem>
-                              <SelectItem value='western'>Western</SelectItem>
-                            </SelectContent>
+                              <SelectContent>
+                                <SelectItem value='central'>Central</SelectItem>
+                                <SelectItem value='ghanzi'>Ghanzi</SelectItem>
+                                <SelectItem value='kgalagadi'>Kgalagadi</SelectItem>
+                                <SelectItem value='kgatleng'>Kgatleng</SelectItem>
+                                <SelectItem value='kweneng'>Kweneng</SelectItem>
+                                <SelectItem value='north-east'>North East</SelectItem>
+                                <SelectItem value='north-west'>North West</SelectItem>
+                                <SelectItem value='south-east'>South East</SelectItem>
+                                <SelectItem value='southern'>Southern</SelectItem>
+                              </SelectContent>
                           </Select>
                           {errors.district && (
                             <p className='text-sm text-red-500 mt-1'>{errors.district.message}</p>
@@ -772,11 +786,18 @@ export default function Form() {
                         </div>
 
                         {/* Institution Type */}
-                        <div>
+                        <div className="space-y-2">
                           <Label className="text-base font-medium">Institution Type *</Label>
                           <RadioGroup 
                             value={watch('institution_type')} 
-                            onValueChange={(value) => setValue('institution_type', value)}
+                            onValueChange={(value) => {
+                              setValue('institution_type', value);
+                              setValue('school_level', ""); // Reset school level when changing type
+                              setValue('private_schools', ""); // Reset private schools when changing type
+                              setValue('primary_schools', ""); // Reset primary schools when changing type
+                              setValue('junior_schools', ""); // Reset junior schools when changing type
+                              setValue('senior_schools', ""); // Reset senior schools when changing type
+                            }}
                             className="mt-3"
                           >
                             <div className="flex items-center space-x-2">
@@ -800,13 +821,13 @@ export default function Form() {
                             <Label htmlFor='private_schools' className="text-sm font-medium text-gray-700">
                               Private School <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={privateOpen} onOpenChange={setPrivateOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={privateOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('private_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -814,7 +835,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..."/>
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -824,7 +845,7 @@ export default function Form() {
                                           value={school.label}
                                           onSelect={(currentValue) => {
                                             setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
-                                            setOpen(false)
+                                            setPrivateOpen(false)
                                           }}
                                         >
                                           {school.label}
@@ -850,7 +871,7 @@ export default function Form() {
                         </div>}
 
                         {/* School level */}
-                        {watch('institution_type') === 'public' && <div>
+                        {watch('institution_type') === 'public' && <div className="space-y-2">
                           <Label htmlFor='school_level'>School Level *</Label>
                           <Select onValueChange={(value) => setValue('school_level', value)}>
                             <SelectTrigger className='mt-1'>
@@ -873,13 +894,13 @@ export default function Form() {
                             <Label htmlFor='primary_schools' className="text-sm font-medium text-gray-700">
                               Primary School <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={primaryOpen} onOpenChange={setPrimaryOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={primaryOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('primary_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -887,7 +908,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..."/>
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -897,7 +918,7 @@ export default function Form() {
                                           value={school.label}
                                           onSelect={(currentValue) => {
                                             setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
-                                            setOpen(false)
+                                            setPrimaryOpen(false)
                                           }}
                                         >
                                           {school.label}
@@ -923,7 +944,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Primary Schools */}
-                        {watch('other_primary_schools') === 'Other' && <div>
+                        {watch('other_primary_schools') === 'Other' && <div className="space-y-2">
                           <Label htmlFor='other_primary_schools'>Other Primary School *</Label>
                           <Input
                             id='other_primary_schools'
@@ -940,13 +961,13 @@ export default function Form() {
                             <Label htmlFor='junior_schools' className="text-sm font-medium text-gray-700">
                               Junior School <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={juniorOpen} onOpenChange={setJuniorOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={juniorOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('junior_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -954,7 +975,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..." />
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -964,7 +985,7 @@ export default function Form() {
                                           value={school.label}
                                           onSelect={(currentValue) => {
                                             setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
-                                            setOpen(false)
+                                            setJuniorOpen(false)
                                           }}
                                         >
                                           {school.label}
@@ -990,7 +1011,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Junior Schools */}
-                        {watch('other_junior_schools') === 'Other' && <div>
+                        {watch('other_junior_schools') === 'Other' && <div className="space-y-2">
                           <Label htmlFor='other_junior_schools'>Other Junior School *</Label>
                           <Input
                             id='other_junior_schools'
@@ -1007,13 +1028,13 @@ export default function Form() {
                             <Label htmlFor='senior_schools' className="text-sm font-medium text-gray-700">
                               Senior School <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={seniorOpen} onOpenChange={setSeniorOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={seniorOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('senior_schools') || "Select your school"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1021,7 +1042,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search school..." className="h-9" />
+                                  <CommandInput placeholder="Search school..."/>
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
@@ -1031,7 +1052,7 @@ export default function Form() {
                                           value={school.label}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
-                                            setOpen(false)
+                                            setSeniorOpen(false)
                                           }}
                                         >
                                           {school.label}
@@ -1057,7 +1078,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Senior Schools */}
-                        {watch('senior_schools') === 'Other' && <div>
+                        {watch('senior_schools') === 'Other' && <div className="space-y-2">
                           <Label htmlFor='other_senior_schools'>Other Senior School *</Label>
                           <Input
                             id='other_senior_schools'
@@ -1102,14 +1123,27 @@ export default function Form() {
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-
-                        <div>
-                          <Label htmlFor='level'>Teaching Qualification *</Label>
-                          <Select onValueChange={(value) => setValue('level', value)}>
+                        
+                        {/* Level */}
+                        <div className='space-y-2'>
+                          <Label htmlFor='level'>Teaching Qualification Level*</Label>
+                          <Select onValueChange={(value) => {
+                            setValue('level', value);
+                            // Reset all qualification-related fields
+                            setValue('qualification_certificate', '');
+                            setValue('qualification_diploma', '');
+                            setValue('qualification_post_grad_diploma', '');
+                            setValue('qualification_degree', '');
+                            setValue('qualification_degree_honours', '');
+                            setValue('qualification_masters_degree', '');
+                            setValue('qualification_doctoral_degree', '');
+                            setValue('other_qualification', '');
+                          }}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select level' />
                             </SelectTrigger>
                             <SelectContent>
+                              <SelectItem value='Certificate'>Certificate</SelectItem>
                               <SelectItem value='Diploma'>Diploma</SelectItem>
                               <SelectItem value='Post-Graduate Diploma'>Post-Graduate Diploma</SelectItem>
                               <SelectItem value="Bachelor's Degree">Bachelor&apos;s Degree</SelectItem>
@@ -1124,30 +1158,18 @@ export default function Form() {
                           )}
                         </div>
 
-                        {watch('level') === "Other" && <div>
-                          <Label htmlFor='other_qualification'>Other qualification *</Label>
-                          <Input
-                            id='other_qualification'
-                            {...register('other_qualification')}
-                            className='mt-1'
-                          />
-                          {errors.other_qualification && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.other_qualification.message}</p>
-                          )}
-                        </div>}
-
                         {/* Doctoral Degree */}
                         {watch('level') === "Doctoral Degree" && <div className='space-y-2'>
                             <Label htmlFor='qualification_doctoral_degree' className="text-sm font-medium text-gray-700">
                               Doctoral Degree<span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={doctoralDegreeOpen} onOpenChange={setDoctoralDegreeOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={doctoralDegreeOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_doctoral_degree') || "Select your Degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1155,24 +1177,24 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..."/>
                                   <CommandList>
                                     <CommandEmpty>No degree found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                      {doctorateForSelect.map((doctorate) => (
                                         <CommandItem
-                                          key={school.value}
-                                          value={school.label}
+                                          key={doctorate.value}
+                                          value={doctorate.label}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_doctoral_degree', currentValue === watch('qualification_doctoral_degree') ? "" : currentValue)
-                                            setOpen(false)
+                                            setDoctoralDegreeOpen(false)
                                           }}
                                         >
-                                          {school.label}
+                                          {doctorate.label}
                                           <Check
                                             className={cn(
                                               "ml-auto",
-                                              watch('qualification_doctoral_degree') === school.label ? "opacity-100" : "opacity-0"
+                                              watch('qualification_doctoral_degree') === doctorate.label ? "opacity-100" : "opacity-0"
                                             )}
                                           />
                                         </CommandItem>
@@ -1195,38 +1217,38 @@ export default function Form() {
                             <Label htmlFor='qualification_masters_degree' className="text-sm font-medium text-gray-700">
                               Master&apos;s Degree<span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={mastersOpen} onOpenChange={setMastersOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={mastersOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_masters_degree') || "Select your Degree"}
+                                  {watch('qualification_masters_degree') || "Search your master's degree"}
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..."/>
                                   <CommandList>
                                     <CommandEmpty>No Master&apos;s Degree found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                      {mastersForSelect.map((masters) => (
                                         <CommandItem
-                                          key={school.value}
-                                          value={school.label}
+                                          key={masters.value}
+                                          value={masters.label}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_masters_degree', currentValue === watch('qualification_masters_degree') ? "" : currentValue)
-                                            setOpen(false)
+                                            setMastersOpen(false)
                                           }}
                                         >
-                                          {school.label}
+                                          {masters.label}
                                           <Check
                                             className={cn(
                                               "ml-auto",
-                                              watch('qualification_masters_degree') === school.label ? "opacity-100" : "opacity-0"
+                                              watch('qualification_masters_degree') === masters.label ? "opacity-100" : "opacity-0"
                                             )}
                                           />
                                         </CommandItem>
@@ -1249,13 +1271,13 @@ export default function Form() {
                             <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
                               Bachelor&apos;s Degree Honours<span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={honoursOpen} onOpenChange={setHonoursOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={honoursOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_degree_honours') || "Select your Degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1263,24 +1285,24 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..." />
                                   <CommandList>
-                                    <CommandEmpty>No bachelor&apos;s degree found.</CommandEmpty>
+                                    <CommandEmpty>No Honour&apos;s degree found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                      {degreeForSelect.map((degree) => (
                                         <CommandItem
-                                          key={school.value}
-                                          value={school.label}
+                                          key={degree.value}
+                                          value={degree.label}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_degree_honours', currentValue === watch('qualification_degree_honours') ? "" : currentValue)
-                                            setOpen(false)
+                                            setHonoursOpen(false)
                                           }}
                                         >
-                                          {school.label}
+                                          {degree.label}
                                           <Check
                                             className={cn(
                                               "ml-auto",
-                                              watch('qualification_degree_honours') === school.label ? "opacity-100" : "opacity-0"
+                                              watch('qualification_degree_honours') === degree.label ? "opacity-100" : "opacity-0"
                                             )}
                                           />
                                         </CommandItem>
@@ -1303,13 +1325,13 @@ export default function Form() {
                             <Label htmlFor='qualification_diploma' className="text-sm font-medium text-gray-700">
                               Diploma <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={diplomaOpen} onOpenChange={setDiplomaOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={diplomaOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_diploma') || "Select your diploma"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1317,17 +1339,17 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search diploma..." className="h-9" />
+                                  <CommandInput placeholder="Search diploma..." />
                                   <CommandList>
                                     <CommandEmpty>No diploma found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                      {diplomasForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_diploma', currentValue === watch('qualification_diploma') ? "" : currentValue)
-                                            setOpen(false)
+                                            setDiplomaOpen(false)
                                           }}
                                         >
                                           {school.label}
@@ -1357,13 +1379,13 @@ export default function Form() {
                             <Label htmlFor='qualification_post_grad_diploma' className="text-sm font-medium text-gray-700">
                               Post-Graduate Diploma <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={postGradDiplomaOpen} onOpenChange={setPostGradDiplomaOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={postGradDiplomaOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_post_grad_diploma') || "Select your diploma"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1371,7 +1393,7 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search post grad diploma..." className="h-9" />
+                                  <CommandInput placeholder="Search post grad diploma..." />
                                   <CommandList>
                                     <CommandEmpty>No post grad diploma found.</CommandEmpty>
                                     <CommandGroup>
@@ -1381,7 +1403,7 @@ export default function Form() {
                                           value={school.label}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_post_grad_diploma', currentValue === watch('qualification_post_grad_diploma') ? "" : currentValue)
-                                            setOpen(false)
+                                            setPostGradDiplomaOpen(false)
                                           }}
                                         >
                                           {school.label}
@@ -1411,13 +1433,13 @@ export default function Form() {
                             <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
                               Bachelor&apos;s Degree <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={degreeOpen} onOpenChange={setDegreeOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between h-11 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                  aria-expanded={degreeOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
                                   {watch('qualification_degree') || "Select your Bachelor's Degree"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -1425,24 +1447,24 @@ export default function Form() {
                               </PopoverTrigger>
                               <PopoverContent className="w-full p-0">
                                 <Command>
-                                  <CommandInput placeholder="Search degree..." className="h-9" />
+                                  <CommandInput placeholder="Search degree..." />
                                   <CommandList>
                                     <CommandEmpty>No bachelor&apos;s degree found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                      {degreeForSelect.map((degree) => (
                                         <CommandItem
-                                          key={school.value}
-                                          value={school.label}
+                                          key={degree.value}
+                                          value={degree.label}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_degree', currentValue === watch('qualification_degree') ? "" : currentValue)
-                                            setOpen(false)
+                                            setDegreeOpen(false)
                                           }}
                                         >
-                                          {school.label}
+                                          {degree.label}
                                           <Check
                                             className={cn(
                                               "ml-auto",
-                                              watch('qualification_degree') === school.label ? "opacity-100" : "opacity-0"
+                                              watch('qualification_degree') === degree.label ? "opacity-100" : "opacity-0"
                                             )}
                                           />
                                         </CommandItem>
@@ -1460,45 +1482,116 @@ export default function Form() {
                           )}
                         </div>}
 
-{/* 
-                        <div>
+                        {/* Certificate */}
+                        {watch('level') === "Certificate" && <div>
                           <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
                           <Select onValueChange={(value) => setValue('qualification_certificate', value)}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select qualification' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='certificate'>Certificate</SelectItem>
-                              <SelectItem value='diploma'>Diploma</SelectItem>
-                              <SelectItem value='degree'>Bachelors Degree</SelectItem>
-                              <SelectItem value='masters'>Masters Degree</SelectItem>
-                              <SelectItem value='phd'>PhD</SelectItem>
+                              <SelectItem value='Certificate V Distance Education'>Certificate V Distance Education</SelectItem>
+                              <SelectItem value='Certificate V in Botswana Sign Language'>Certificate V in Botswana Sign Language</SelectItem>
+                              <SelectItem value='Certificate V in Early Childhood Education'>Certificate V in Early Childhood Education</SelectItem>
+                              <SelectItem value='Certificate V in English for Professional Purposes'>Certificate V in English for Professional Purposes</SelectItem>
+                              <SelectItem value='Certificate V in Vocational Education and Training'>Certificate V in Vocational Education and Training</SelectItem>
+                              <SelectItem value='Certificate V in Vocational Education and Training Practice'> Certificate V in Vocational Education and Training Practice</SelectItem>
+                              <SelectItem value='Postgraduate Certificate in Quality Assurance in Education'>Postgraduate Certificate in Quality Assurance in Education</SelectItem>
+                              <SelectItem value='Post Graduate Certificate in Curriculum Development'>Post Graduate Certificate in Curriculum Development</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.qualification_certificate && (
                             <p className='text-sm text-red-500 mt-1'>{errors.qualification_certificate.message}</p>
                           )}
-                        </div> */}
+                        </div>}
 
-                        <div>
-                          <Label htmlFor='institution'>Institution *</Label>
+                        {/* Other qualification */}
+                        {watch('level') === "Other" && <div>
+                          <Label htmlFor='other_qualification'>Other qualification *</Label>
                           <Input
-                            id='institution'
-                            {...register('institution')}
+                            id='other_qualification'
+                            {...register('other_qualification')}
                             className='mt-1'
                           />
-                          {errors.institution && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.institution.message}</p>
+                          {errors.other_qualification && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.other_qualification.message}</p>
+                          )}
+                        </div>}
+
+                        {/* Institution */}
+                        <div className='space-y-2'>
+                            <Label htmlFor='institution' className="text-sm font-medium text-gray-700">
+                              Name of Institution <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={institutionOpen} onOpenChange={setInstitutionOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={institutionOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('institution') || "Select your institution"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search institution..." />
+                                  <CommandList>
+                                    <CommandEmpty>No institution found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {institutionForSelect.map((institution) => (
+                                        <CommandItem
+                                          key={institution.value}
+                                          value={institution.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('institution', currentValue === watch('institution') ? "" : currentValue)
+                                            setInstitutionOpen(false)
+                                          }}
+                                        >
+                                          {institution.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('institution') === institution.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.institution && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.institution.message}
+                              </p>
                           )}
                         </div>
+                        {/* Other Institution  */}
+                        {watch('institution') === "Other" && <div className='space-y-2'>
+                          <Label htmlFor='other_institution'>Institution Name *</Label>
+                          <Input
+                            id='other_institution'
+                            {...register('other_institution')}
+                            className='mt-1'
+                            placeholder="Enter your institution name"
+                          />
+                          {errors.other_institution && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.other_institution.message}</p>
+                          )}
+                        </div>}
 
-                        <div>
+                        <div className='space-y-2'>
                           <Label htmlFor='qualification_year'>Qualification Year *</Label>
                           <Input
                             id='qualification_year'
                             type='number'
                             min='1950'
-                            max='2024'
+                            max='2026'
                             {...register('qualification_year')}
                             className='mt-1'
                           />
@@ -1507,18 +1600,33 @@ export default function Form() {
                           )}
                         </div>
 
-                        <div>
-                          <Label htmlFor='major_subjects'>Major Subjects *</Label>
+                        <div className='space-y-2'>
+                          <Label htmlFor='subject_specialization'>Subject Specialization *</Label>
                           <Input
-                            id='major_subjects'
-                            {...register('major_subjects')}
+                            id='subject_specialization'
+                            {...register('subject_specialization')}
                             className='mt-1'
                           />
-                          {errors.major_subjects && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.major_subjects.message}</p>
+                          {errors.subject_specialization && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.subject_specialization.message}</p>
                           )}
                         </div>
-                      </div>
+
+                        {watch('subject_specialization') === "Other" && (
+                          <div className='space-y-2'>
+                            <Label htmlFor='other_subject_specialization'>Other Subject Specialization</Label>
+                            <Input
+                              id='other_subject_specialization'
+                              {...register('other_subject_specialization')}
+                              className='mt-1'
+                              placeholder="Enter your subject specialization"
+                            />
+                            {errors.other_subject_specialization && (
+                              <p className='text-sm text-red-500 mt-1'>{errors.other_subject_specialization.message}</p>
+                            )}
+                          </div>)}
+                      </div>  
+                        
                       <div>
                           <QualificationsTable
                             qualifications={qualifications}
@@ -1558,10 +1666,13 @@ export default function Form() {
                     <CardContent className='space-y-6'>
                       {/* Disability */}
                       <div>
-                        <Label className="text-base font-medium">Do you have any disability?</Label>
+                        <Label className="text-base font-medium">Are you living with any form of disability?</Label>
                         <RadioGroup 
                           value={watch('disability')} 
-                          onValueChange={(value) => setValue('disability', value)}
+                          onValueChange={(value) => {
+                            setValue('disability', value)
+                            setValue('disability_description', undefined); // Reset disability description
+                            }}
                           className="mt-3"
                         >
                           <div className="flex items-center space-x-2">
@@ -1576,23 +1687,45 @@ export default function Form() {
                         
                         {watch('disability') === 'yes' && (
                           <div className="mt-4">
-                            <Label htmlFor="disability_description">Please describe your disability</Label>
-                            <Textarea
-                              id="disability_description"
-                              placeholder="Describe your disability..."
-                              {...register('disability_description')}
-                              className="mt-1"
-                            />
+                            <Label htmlFor="disability_description">Choose all that apply</Label>
+                            <div className="mt-2 space-y-2">
+                              {[
+                                "Physical disabilities (Wheel chaired, crunches, short limbs, facial)",
+                                "Sensory impairments (Hearing, vision, Low vision)",
+                                "Speech disabilities",
+                                "Medical conditions",
+                                "Attention Deficit disabilities",
+                                "Allergies",
+                                "Psychiatric disorders"
+                              ].map((option, index) => (
+                                <div key={index} className="flex items-center space-x-2">
+                                  <input
+                                    type="checkbox"
+                                    id={`disability_${index}`}
+                                    value={option}
+                                    {...register('disability_description')}
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                  />
+                                  <Label htmlFor={`disability_${index}`} className="text-sm font-normal cursor-pointer">
+                                    {option}
+                                  </Label>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
 
                       {/* Student-related offences */}
                       <div>
-                        <Label className="text-base font-medium">Any student-related offences?</Label>
+                        <Label className="text-base font-medium">Have you been convicted of a criminal offense against a learner or minor?</Label>
                         <RadioGroup 
                           value={watch('student_related_offence')} 
-                          onValueChange={(value) => setValue('student_related_offence', value)}
+                          onValueChange={(value) => {
+                            setValue('student_related_offence', value)
+                            setValue('student_related_offence_details', ''); // Reset details
+                            setValue('student_related_offence_attachments', undefined); // Reset attachments
+                          }}
                           className="mt-3"
                         >
                           <div className="flex items-center space-x-2">
@@ -1636,10 +1769,14 @@ export default function Form() {
 
                       {/* Drug-related offences */}
                       <div>
-                        <Label className="text-base font-medium">Any drug-related offences?</Label>
+                        <Label className="text-base font-medium">Have you been convicted of a drug related criminal offense?</Label>
                         <RadioGroup 
                           value={watch('drug_related_offence')} 
-                          onValueChange={(value) => setValue('drug_related_offence', value)}
+                          onValueChange={(value) => {
+                            setValue('drug_related_offence', value);
+                            setValue('drug_related_offence_details', ''); // Reset details
+                            setValue('drug_related_offence_attachments', undefined); // Reset attachments
+                          }}
                           className="mt-3"
                         >
                           <div className="flex items-center space-x-2">
@@ -1655,7 +1792,7 @@ export default function Form() {
                         {watch('drug_related_offence') === 'yes' && (
                           <div className="mt-4 space-y-4">
                             <div>
-                              <Label htmlFor="drug_related_offence_details">Please provide details</Label>
+                              <Label htmlFor="drug_related_offence_details">If yes, please provide full details</Label>
                               <Textarea
                                 id="drug_related_offence_details"
                                 placeholder="Describe the drug-related offence..."
@@ -1664,6 +1801,7 @@ export default function Form() {
                               />
                             </div>
                             <div>
+                              <Label htmlFor="drug_related_offence_details">Provide supporting evidence/documentation if any (Upload in pdf format)</Label>
                               <FileUpload
                                 name="drug_related_offence_attachments"
                                 label="Attachments (optional)"
@@ -1682,10 +1820,13 @@ export default function Form() {
 
                       {/* License-related issues */}
                       <div>
-                        <Label className="text-base font-medium">Any license-related issues?</Label>
+                        <Label className="text-base font-medium">Have you ever had your teaching license revoked, suspended, invalidated, cancelled or denied license by any Teaching Council or Authority?</Label>
                         <RadioGroup 
                           value={watch('license_flag')} 
-                          onValueChange={(value) => setValue('license_flag', value)}
+                          onValueChange={(value) => {
+                            setValue('license_flag', value)
+                            setValue('license_flag_details', undefined); // Reset details
+                          }}
                           className="mt-3"
                         >
                           <div className="flex items-center space-x-2">
@@ -1700,8 +1841,9 @@ export default function Form() {
                         
                         {watch('license_flag') === 'yes' && (
                           <div className="mt-4">
+                              <Label>If yes, please attach a letter giving full details and official documentation of the action taken.</Label>
                               <FileUpload
-                                name="drug_related_offence_attachments"
+                                name="license_flag_details"
                                 label="Attachments (optional)"
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
@@ -1717,10 +1859,13 @@ export default function Form() {
 
                       {/* Professional misconduct */}
                       <div>
-                        <Label className="text-base font-medium">Any professional misconduct?</Label>
+                        <Label className="text-base font-medium">Are you currently the subject of any review, enquiry or investigations by any Teaching Council or any Authority.?</Label>
                         <RadioGroup 
                           value={watch('misconduct_flag')} 
-                          onValueChange={(value) => setValue('misconduct_flag', value)}
+                          onValueChange={(value) => {
+                            setValue('misconduct_flag', value)
+                            setValue('misconduct_flag_details', undefined); // Reset details
+                          }}
                           className="mt-3"
                         >
                           <div className="flex items-center space-x-2">
@@ -1735,8 +1880,9 @@ export default function Form() {
                         
                         {watch('misconduct_flag') === 'yes' && (
                           <div className="mt-4">
+                              <Label htmlFor="misconduct_flag_details">If yes, please attach a letter giving full details and any official documentation available regarding the matter.</Label>
                               <FileUpload
-                                name="drug_related_offence_attachments"
+                                name="misconduct_flag_details"
                                 label="Attachments (optional)"
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
@@ -1744,7 +1890,7 @@ export default function Form() {
                                 required={true}
                                 value={misconductFlagDetailsDoc}
                                 onChange={setMisconductFlagDetailsDoc}
-                                error={errors.drug_related_offence_attachments?.message}
+                                error={errors.misconduct_flag_details?.message}
                               />
                           </div>
                         )}
@@ -1820,8 +1966,10 @@ export default function Form() {
                               Declaration *
                             </Label>
                             <p className='text-xs text-muted-foreground'>
-                              I hereby declare that all the information provided in this application is true and accurate to the best of my knowledge. 
-                              I understand that any false information may result in the rejection of my application or termination of employment.
+                              I hereby declare that the information I have provided in this application form is true and correct to the best of my knowledge and belief.
+                              I understand that provision of false or misleading information may result in the refusal of my application or cancellation of my registration.  
+                              I consent to the Council collecting and verifying this information and I authorise the council to share this information with other relevant 
+                              organizations, such as employers and educational institutions.
                             </p>
                           </div>
                         </div>

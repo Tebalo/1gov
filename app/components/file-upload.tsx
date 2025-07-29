@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Upload, File, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { fileUploadUrl } from '../lib/store'
 
 interface UploadResponse {
   bucket: string
@@ -100,11 +101,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
       }, 200)
 
       // Upload file
-      const response = await fetch('https://gateway-cus-acc.gov.bw/document/upload/MESD_006_28_001', {
+      const response = await fetch(fileUploadUrl, {
         method: 'POST',
         headers: {
-          'Accept': '*/*',
-          'User-Agent': 'PostmanRuntime/7.44.1',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Content-Type': 'multipart/form-data'
         },
         body: formData,
       })

@@ -91,7 +91,7 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
             {controlledOpen === undefined && (
                 <Button 
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full max-w-md mx-auto bg-white text-gray-800 hover:bg-gray-100 shadow-md flex items-center justify-center gap-2"
+                    className="w-full max-w-md mx-auto bg-white text-gray-800 border-spacing-2 hover:border-spacing-3 hover:bg-inherit flex items-center justify-center gap-2"
                 >
                     <Search className="w-4 h-4 mr-2" />
                     Search Records

@@ -182,7 +182,7 @@ export default function RoleAssignment() {
   return (
     <div className="h-full p-0 md:p-6">
       {/* Username input - Full width on mobile */}
-        <div className="sticky top-0 bg-white dark:bg-black pb-4 z-10 border-b p-2 rounded-md">
+        <div className="sticky top-0 bg-white dark:bg-black pb-4 border-b p-2 rounded-md">
             <Label htmlFor="username" className="text-base md:text-lg font-semibold">Username</Label>
             <div className='flex flex-col sm:flex-row gap-3 w-full'>
                 <Input

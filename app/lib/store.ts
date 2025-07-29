@@ -13,14 +13,15 @@ const trlsBaseUrlPROD = 'http://10.0.26.164' // Production
 /**
  * CMS Base URL
  */
-const cmsBaseUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/' // Development UAT
+const cmsBaseUrl = 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/' // Development UAT
 const cmsBaseUrlPROD = 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/' // Production
 
 const baseURLs = {
     uat: {
         trls: 'http://10.0.25.164',
         iam: 'https://gateway-cus-acc.gov.bw',
-        cms: 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_001/',
+        cms: 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/',
+        fileUploadUrl: 'http://reg-ui-acc.gov.bw:8080/upload/MESD_006_08_054/',
         iamBaseUrl: 'https://gateway-cus-acc.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus-acc.gov.bw/v2' 
     },
@@ -28,6 +29,7 @@ const baseURLs = {
         trls: 'http://10.0.26.164',
         iam: 'https://gateway-cus.gov.bw',
         cms: 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/',
+        fileUploadUrl: 'http://reg-ui.gov.bw:8080/upload/MESD_006_08_001/',
         iamBaseUrl: 'https://gateway-cus.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus.gov.bw'
     }
@@ -37,6 +39,7 @@ const currentBaseURLs = baseURLs[env as 'uat' | 'production']; // uat or product
 /**
  * TRLS API URLs
  */
+export const trlsBaseURL = currentBaseURLs.trls;
 export const apiUrl = `${currentBaseURLs.trls}:8080/trls-80`;
 export const invUrl = `${currentBaseURLs.trls}:8084/trls-84`;
 export const cpdUrl = `${currentBaseURLs.trls}:8086/trls-86`;
@@ -55,7 +58,7 @@ export const validateUrl = `${currentBaseURLs.iamAuthBaseURL}/auth/validate/otp`
 export const authUrl = `${currentBaseURLs.iamAuthBaseURL}/auth/login/sms`;
 export const emailauthUrl = `${currentBaseURLs.iamBaseUrl}/auth/login`;
 export const iamBaseUrl = currentBaseURLs.iamBaseUrl
-export const version = 'v2.0.03';
+export const version = 'v2.1.59';
 
 /**
  * ADMIN IAM URLs
@@ -67,6 +70,7 @@ export const AdminDeTokenizeUrl = `${currentBaseURLs.iamBaseUrl}/auth/validate-t
  * CMS URLs
  */
 export const cmsUrl = `${currentBaseURLs.cms}:8080/download/MESD_006_08_001/`;
+export const fileUploadUrl = currentBaseURLs.fileUploadUrl;
 
 export const licUrl = 'http://66.179.253.57:8081/api';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';

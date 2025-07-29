@@ -80,7 +80,6 @@ export const universityOfBotswanaQualifications = [
 // Botswana International University of Science and Technology (BIUST) Qualifications
 export const biustQualifications = [
   "Certificate in Engineering",
-  "Diploma in Engineering",
   "Bachelor of Engineering (BEng) - Chemical Engineering",
   "Bachelor of Engineering (BEng) - Civil Engineering", 
   "Bachelor of Engineering (BEng) - Computer Engineering",
@@ -90,10 +89,7 @@ export const biustQualifications = [
   "Bachelor of Science (BSc) - Applied Mathematics and Statistics",
   "Bachelor of Science (BSc) - Computer Science",
   "Bachelor of Science (BSc) - Geology",
-  "Bachelor of Science (BSc) - Physics",
-  "Master of Engineering (MEng)",
-  "Master of Science (MSc)",
-  "Doctor of Philosophy (PhD)"
+  "Bachelor of Science (BSc) - Physics"
 ];
 
 // Botswana University of Agriculture and Natural Resources (BUAN) Qualifications
@@ -101,7 +97,6 @@ export const buanQualifications = [
   "Certificate in Agriculture",
   "Diploma in Agriculture",
   "Diploma in Animal Science",
-  "Diploma in Environmental Science",
   "Diploma in Natural Resources Management",
   "Bachelor of Science in Agriculture (BSc Agric)",
   "Bachelor of Science in Animal Science",
@@ -110,8 +105,7 @@ export const buanQualifications = [
   "Bachelor of Science in Natural Resources Management",
   "Bachelor of Science in Wildlife Management",
   "Master of Science in Agriculture (MSc Agric)",
-  "Master of Science in Natural Resources Management",
-  "Doctor of Philosophy (PhD)"
+  "Master of Science in Natural Resources Management"
 ];
 
 // Limkokwing University Qualifications
@@ -120,26 +114,18 @@ export const limkokwingQualifications = [
   "Diploma in Interior Architecture",
   "Diploma in Fashion Design",
   "Diploma in Digital Media Design",
-  "Diploma in Business Administration",
   "Bachelor of Arts in Creative Multimedia",
   "Bachelor of Arts in Fashion Design",
   "Bachelor of Arts in Interior Architecture",
   "Bachelor of Business Administration",
   "Bachelor of Computer Science",
-  "Master of Business Administration (MBA)",
   "Master of Arts"
 ];
 
 // Teaching Qualifications (Education Specific)
 export const teachingQualifications = [
   "Primary Teachers Certificate (PTC)",
-  "Secondary Teachers Certificate (STC)", 
-  "Diploma in Primary Education",
-  "Diploma in Secondary Education",
-  "Bachelor of Education (Primary)",
-  "Bachelor of Education (Secondary)",
-  "Postgraduate Diploma in Education (PGDE)",
-  "Master of Education (MEd)",
+  "Secondary Teachers Certificate (STC)",
   "Doctor of Education (EdD)"
 ];
 
@@ -153,6 +139,115 @@ export const professionalQualifications = [
   "Botswana Institute of Chartered Accountants (BICA)",
   "Project Management Professional (PMP)",
   "Certified Information Systems Auditor (CISA)"
+];
+
+export const diplomas = [
+  "Diploma in Early Childhood Education",     
+  "Diploma in Educational Management and Administration",
+  "Diploma in Lifelong Learning and Community Development",
+  "Diploma in Non-Governmental Organisation Management",
+  "Diploma in Primary Education",
+  "Diploma in Secondary Education",
+  "Post Graduate Diploma in Education",
+  "Post Graduate Diploma in Educational Leadership and Management",
+  "Post Graduate Diploma in Educational Technology",
+  "Post Graduate Diploma in Higher Education",
+  "Post Graduate Diploma in Tertiary Education",
+  "Postgraduate Diploma in Technology Enhance Teaching and Learning",
+  "Diploma in Graphic Design",
+  "Diploma in Interior Architecture",
+  "Diploma in Fashion Design",
+  "Diploma in Digital Media Design",
+  "Diploma in Business Administration",
+  "Diploma in Agriculture",
+  "Diploma in Animal Science",
+  "Diploma in Environmental Science",
+  "Diploma in Natural Resources Management",
+  "Diploma in Engineering",
+  "Diploma in Education",
+  "Diploma in Agricultural Extension",
+  "Diploma in Computer Science",
+  "Diploma in Nursing",
+  "Diploma in Social Work",
+  "National Diploma"
+];
+
+export const degrees = [
+  "Bachelor of Arts in Early Childhood Development & Education",
+  "Bachelor of Child Development & Family Studies",
+  "Bachelor of Design and Technology Education",
+  "Bachelor of Education ( Music Education)",
+  "Bachelor of Education (Chemistry)",
+  "Bachelor of Education (Computer Science)",
+  "Bachelor of Education (Early Childhood Development and Education)",
+  "Bachelor of Education (Educational and Leadership Management)",
+  "Bachelor of Education (Educational Management)",
+  "Bachelor of Education (Lifelong Learning and Community Development)",
+  "Bachelor of Education (Mathematics) * Bachelor of Education (Physics)",
+  "Bachelor of Education (Primary Education)",
+  "Bachelor of Education (Secondary Education: Humanities)",
+  "Bachelor of Education in Art and Design (BEAD)",
+  "Bachelor of Education in Biology",
+  "Bachelor of Education in Business Education",
+  "Bachelor of Education in Early Childhood Education",
+  "Bachelor of Education in Family and Consumer Sciences",
+  "Bachelor of Education in Guidance and Counselling",
+  "Bachelor of Education in Social Studies",
+  "Bachelor of Education in Special and Inclusive Education",
+  "Bachelor of Education in Special Education and Inclusive Education",
+  "Bachelor of General Education",
+  "Bachelor of Science (BSc) in Rehabilitation Counselling",
+  "Bachelor of Science in Counselling Psychotherapy",
+  "Bachelor of Science in Physical Education and Sport Coaching"
+];
+
+export const masters = [
+  "Master of Arts in History",
+  "Master of Arts in Library and Information Studies",
+  "Master of Education (Early Childhood Education )",
+  "Master of Education (Leadership, Planning, Policy and Management)",
+  "Master of Education (Lifelong Learning and Community Development)",
+  "Master of Education (Mathematics)",
+  "Master of Education (Primary Education)",
+  "Master of Education (Science Education)",
+  "Master of Education in Curriculum and Instruction",
+  "Master of Education in Curriculum Design and Instruction",
+  "Master of Education in Early Childhood Development",
+  "Master of Education in Early Childhood Special Education",
+  "Master of Education in Educational Leadership and Management",
+  "Master of Education in Educational Technology",
+  "Master of Education in Environmental Education",
+  "Master of Education in Higher Education",
+  "Master of Education in Religious Education",
+  "Master of Education in Social Studies Education",
+  "Master of Education( Research and Evaluation)",
+  "Master of Education(Language Education)",
+  "Master of Educational Management and Leadership",
+  "Master of Educational Measurement and Evaluation",
+  "Master of Philosophy in Physics",
+  "Masters of Education in Gender Studies"
+];
+
+export const doctorates = [
+  "Doctor of Philosophy (Mathematics Education)", 
+  "Doctor of Philosophy in Curriculum and Instruction",
+  "Doctor of Philosophy in Design and Technology Education",
+  "Doctor of Philosophy in Early Childhood Education",
+  "Doctor of Philosophy in Education (Family and Consumer Sciences)",
+  "Doctor of Philosophy in Education (Gender Studies)",
+  "Doctor of Philosophy in Education (History Education)",
+  "Doctor of Philosophy in Education (Lifelong Learning and Community Development)",
+  "Doctor of Philosophy in Educational Management, Leadership, Policy and Planning",
+  "Doctor of Philosophy in Educational Technology",
+  "Doctor of Philosophy in Environmental Education",
+  "Doctor of Philosophy in Language Education",
+  "Doctor of Philosophy in Physical Education",
+  "Doctor of Philosophy in Physics",
+  "Doctor of Philosophy in Research and Evaluation",
+  "Doctor of Philosophy in Science Education",
+  "Doctor of Philosophy in Social Studies Education",
+  "Doctor of Philosophy in Special Education",
+  "PhD in Education (Religious Education)"
 ];
 
 // All Qualifications (merged from all categories)
@@ -170,6 +265,26 @@ export const allBotswanaQualifications = [
 ];
 
 // Formatted for Select components
+export const doctorateForSelect = doctorates.map((doctorate) => ({
+  value: doctorate.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: doctorate
+}));
+
+export const mastersForSelect = masters.map((master) => ({
+  value: master.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: master
+}));
+
+export const degreeForSelect = degrees.map((degree) => ({
+  value: degree.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: degree
+}));
+
+export const diplomasForSelect = diplomas.map((diploma) => ({
+  value: diploma.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: diploma,
+}));
+
 export const allBotswanaQualificationsForSelect = allBotswanaQualifications.map((qualification) => ({
   value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
