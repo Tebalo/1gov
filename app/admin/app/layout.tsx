@@ -81,7 +81,7 @@ export default async function DashboardLayout({
             />
           </div>
           
-          <div className="container md:mx-auto md:max-w-7xl bg-white/95 relative z-10 mt-16 md:mt-0"> {/* Added top margin for mobile header */}
+          <div className="container md:mx-auto md:max-w-7xl bg-white/95 relative mt-16 md:mt-0"> {/* Added top margin for mobile header */}
             <Suspense fallback={<LoadingSkeleton />}>
               {children}
             </Suspense>

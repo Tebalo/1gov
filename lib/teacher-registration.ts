@@ -1,25 +1,28 @@
+"use server"
+import { trlsBaseURL } from '@/app/lib/store'
 import { AttachmentObject, Profile, QualificationEntry, TeacherRegistrationRequest, TeacherRegistrationResponse } from '@/types/teacher-registration'
 import { v4 as uuidv4 } from 'uuid'
 
-const API_BASE_URL = 'http://10.0.26.164:8080/trls-80'
+const API_BASE_URL = `${trlsBaseURL}:8080/trls-80`
 const TEACHER_REGISTRATION_ENDPOINT = `${API_BASE_URL}/teacher_registrations/`
 
 /**
  * Generate a unique application ID
  */
-export function generateApplicationId(): string {
+export async function generateApplicationId(): Promise<string> {
   return uuidv4()
 }
 
 /**
  * Transform form data to match the expected API payload structure
  */
-export function transformFormData(formData: any, profile: Profile): TeacherRegistrationRequest {
-  const applicationId = generateApplicationId()
+export async function transformFormData(formData: any, profile: Profile): Promise<TeacherRegistrationRequest> {
+  const applicationId = await generateApplicationId()
   
   return {
     reference: {
       application_id: applicationId,
+      submission_id: applicationId.substring(0,8) + applicationId.substring(24),
       response_id: "",
       status: 0,
       profile: {
@@ -84,7 +87,7 @@ export function transformFormData(formData: any, profile: Profile): TeacherRegis
         major_subjects: formData.major_subjects,
         qualifications: formData.qualifications || null,
         disability: formData.disability || "No",
-        disability_description: formData.disability_description || null,
+        disability_description: "".concat(formData.disability_description) || null,
         student_related_offence: formData.student_related_offence || "No",
         student_related_offence_details: formData.student_related_offence_details || null,
         student_related_offence_attachments: formData.student_related_offence_attachments || {},
@@ -110,11 +113,11 @@ export function transformFormData(formData: any, profile: Profile): TeacherRegis
 /**
  * Helper function to create a qualification entry
  */
-export function createQualificationEntry(
+export async function createQualificationEntry(
   qualification: string,
   year: string,
   attachment: AttachmentObject
-): QualificationEntry {
+): Promise<QualificationEntry> {
   return {
     alt_qualification: qualification,
     alt_qualification_year: year,
@@ -125,7 +128,7 @@ export function createQualificationEntry(
 /**
  * Helper function to validate attachment object
  */
-export function isValidAttachment(attachment: any): attachment is AttachmentObject {
+export async function isValidAttachment(attachment: any): Promise<boolean> {
   return (
     attachment &&
     typeof attachment.bucket === 'string' &&
@@ -138,7 +141,7 @@ export function isValidAttachment(attachment: any): attachment is AttachmentObje
 /**
  * Helper function to process attachments from form data
  */
-export function processAttachments(formData: any): {
+export async function processAttachments(formData: any): Promise<{
   attachments: AttachmentObject | {}
   national_id_copy: AttachmentObject | {}
   qualification_copy: AttachmentObject | {}
@@ -147,16 +150,16 @@ export function processAttachments(formData: any): {
   drug_related_offence_attachments: AttachmentObject | {}
   license_flag_details: AttachmentObject | {}
   misconduct_flag_details: AttachmentObject | {}
-} {
+}> {
   return {
-    attachments: isValidAttachment(formData.attachments) ? formData.attachments : {},
-    national_id_copy: isValidAttachment(formData.national_id_copy) ? formData.national_id_copy : {},
-    qualification_copy: isValidAttachment(formData.qualification_copy) ? formData.qualification_copy : {},
-    work_permit: isValidAttachment(formData.work_permit) ? formData.work_permit : {},
-    student_related_offence_attachments: isValidAttachment(formData.student_related_offence_attachments) ? formData.student_related_offence_attachments : {},
-    drug_related_offence_attachments: isValidAttachment(formData.drug_related_offence_attachments) ? formData.drug_related_offence_attachments : {},
-    license_flag_details: isValidAttachment(formData.license_flag_details) ? formData.license_flag_details : {},
-    misconduct_flag_details: isValidAttachment(formData.misconduct_flag_details) ? formData.misconduct_flag_details : {}
+    attachments: await isValidAttachment(formData.attachments) ? formData.attachments : {},
+    national_id_copy: await isValidAttachment(formData.national_id_copy) ? formData.national_id_copy : {},
+    qualification_copy: await isValidAttachment(formData.qualification_copy) ? formData.qualification_copy : {},
+    work_permit: await isValidAttachment(formData.work_permit) ? formData.work_permit : {},
+    student_related_offence_attachments: await isValidAttachment(formData.student_related_offence_attachments) ? formData.student_related_offence_attachments : {},
+    drug_related_offence_attachments: await isValidAttachment(formData.drug_related_offence_attachments) ? formData.drug_related_offence_attachments : {},
+    license_flag_details: await isValidAttachment(formData.license_flag_details) ? formData.license_flag_details : {},
+    misconduct_flag_details: await isValidAttachment(formData.misconduct_flag_details) ? formData.misconduct_flag_details : {}
   }
 }
 
@@ -169,9 +172,9 @@ export async function submitTeacherRegistration(
 ): Promise<TeacherRegistrationResponse> {
   try {
     // Transform the form data to match the API structure
-    const requestPayload = transformFormData(formData, profile)
-    
-    console.log('Submitting teacher registration:', requestPayload)
+    const requestPayload = await transformFormData(formData, profile)
+    // console.log('Url:', TEACHER_REGISTRATION_ENDPOINT)
+    // console.log('Submitting teacher registration:', JSON.stringify(requestPayload))
     
     // Make the API request
     const response = await fetch(TEACHER_REGISTRATION_ENDPOINT, {
@@ -198,7 +201,7 @@ export async function submitTeacherRegistration(
     
     return {
       success: true,
-      application_id: requestPayload.reference.application_id,
+      application_id: (await requestPayload).reference.application_id,
       response_id: responseData.response_id || responseData.id,
       message: responseData.message || 'Application submitted successfully'
     }
@@ -270,13 +273,15 @@ export async function handleFormSubmission(formData: any) {
 }
 
 // Example of how to structure qualification data in your form
-export function createQualificationsArray(qualificationEntries: Array<{
+export async function createQualificationsArray(qualificationEntries: Array<{
   qualification: string
   year: string
   attachment: AttachmentObject
-}>): QualificationEntry[] {
-  return qualificationEntries.map(entry => 
-    createQualificationEntry(entry.qualification, entry.year, entry.attachment)
+}>): Promise<QualificationEntry[]> {
+  return await Promise.all(
+    qualificationEntries.map(entry => 
+      createQualificationEntry(entry.qualification, entry.year, entry.attachment)
+    )
   )
 }
 

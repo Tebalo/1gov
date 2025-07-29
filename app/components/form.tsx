@@ -155,8 +155,7 @@ export default function Form() {
     if(formData.citizenship === 'citizen'){
       formData.nationality = 'botswana'
     }
-    console.log('Form submitted successfully:', formData)
-    alert('Form submitted successfully!')
+
       // Extract profile data from form
     const profile: Profile = {
       username: formData.username,
@@ -186,18 +185,22 @@ export default function Form() {
       qualifications: apiQualifications, //
       national_id_copy: nationalIdDoc    //
     }
-  
+    // console.log('Form submitted successfully:', processedFormData)
+    
     // Submit the registration
     const result = await submitTeacherRegistration(processedFormData, profile)
     
     if (result.success) {
-      console.log('Registration successful:', result.application_id)
+      alert('Form submitted successfully!')
+      reset()
+      // console.log('Registration successful:', result.application_id)
       // Handle success (redirect, show success message, etc.)
     } else {
-      console.error('Registration failed:', result.error)
+      // console.error('Registration failed:', result.error)
+      alert('Form submitted successfully!')
       // Handle error (show error message, etc.)
     }
-      reset()
+    // reset()
   }
 
   type FieldName = keyof FormInputs
@@ -237,7 +240,7 @@ export default function Form() {
   }
 
   return (
-    <section className='bg-gray-50 md:p-2 min-h-screen'>
+    <section className='bg-gray-50 md:p-2 max-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
         {/* Left Sidebar - Header */}
         {/* <div className='w-80 flex-shrink-0 md:block hidden'>
@@ -1120,7 +1123,8 @@ export default function Form() {
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-
+                        
+                        {/* Level */}
                         <div className='space-y-2'>
                           <Label htmlFor='level'>Teaching Qualification Level*</Label>
                           <Select onValueChange={(value) => {

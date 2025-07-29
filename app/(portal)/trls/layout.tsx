@@ -74,8 +74,8 @@ export default async function DashboardLayout({
           </div>
           
           {/* Content Container */}
-          <div className="relative z-10 min-h-full">
-            <div className="container mx-auto p-4 lg:p-0 max-w-9xl">
+          <div className="relative min-h-full">
+            <div className="container mx-auto p-4 lg:p-0 max-w-7xl">
               <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-sm p-6">
                 <Suspense fallback={<LoadingSkeleton />}>
                   {children}

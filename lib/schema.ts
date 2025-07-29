@@ -10,7 +10,7 @@ const documentSchema = z.object({
 const QualificationSchema = z.object({
   alt_qualification: z.string(),
   alt_qualification_year: z.string(),
-  alt_attachments: documentSchema
+  alt_attachments: documentSchema.optional()
 }).optional();
 
 export const FormDataSchema = z.object({

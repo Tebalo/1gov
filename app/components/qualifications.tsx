@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Plus, Edit, Trash2, FileText, AlertCircle, CheckCircle } from 'lucide-react'
+import FileUpload from './file-upload'
 
 
 interface UploadResponse {
@@ -297,9 +298,20 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                     Qualification Certificate <span className="text-red-500">*</span>
                   </Label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-400 transition-colors">
-                    <SimpleFileUpload
+                    {/* <SimpleFileUpload
                       name="qualification_cert"
                       label="Qualification Certificate"
+                      value={formData.alt_attachments}
+                      onChange={handleAttachmentChange}
+                      error={formErrors.alt_attachments}
+                    /> */}
+                    <FileUpload
+                      name="qualification_cert"
+                      label="Qualification Certificate"
+                      description="Upload a clear copy of your National ID (PDF, JPG, PNG up to 5MB)"
+                      acceptedTypes=".pdf,.jpg,.jpeg,.png"
+                      maxSize={5}
+                      required={true}
                       value={formData.alt_attachments}
                       onChange={handleAttachmentChange}
                       error={formErrors.alt_attachments}
