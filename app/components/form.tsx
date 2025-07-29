@@ -197,7 +197,7 @@ export default function Form() {
       // Handle success (redirect, show success message, etc.)
     } else {
       // console.error('Registration failed:', result.error)
-      alert('Form submitted successfully!')
+      alert('Registration failed. Please try again.')
       // Handle error (show error message, etc.)
     }
     // reset()
