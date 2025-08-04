@@ -11,6 +11,7 @@ import { TeacherRegistrationService } from "../components/teacher-form";
 import { ServiceListWrapper } from "../components/ServiceListWrapper";
 import Form from "../components/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { RegistrationOfficerHome } from "../components/Home/RegistrationOfficerHome";
 
 interface ServiceCardProps {
   title: string;
@@ -193,7 +194,8 @@ export default function Page() {
           
           {/* Form content */}
           <div className="relative z-10">
-            <Form />
+            {/* <Form /> */}
+            <RegistrationOfficerHome/>
           </div>
         </div>
 

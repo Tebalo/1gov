@@ -81,47 +81,47 @@ export default function Welcome() {
   );
 }
 
-function LoginDialog() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="px-10 py-4">Login</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Login</DialogTitle>
-          <DialogDescription>
-            Complete the form below to access your account.
-          </DialogDescription>
-          <Separator/>
-          <Label>
-            Choose Login Option
-          </Label>
-        </DialogHeader>
-        <Tabs defaultValue="email" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-2">
-                <TabsTrigger value="email">1GOV ID</TabsTrigger>
-                <TabsTrigger value="onegov">Email</TabsTrigger>
-            </TabsList>
-            <Separator/>
-            <TabsContent value="email">
-                <Email/>
-            </TabsContent>
-            <TabsContent value="onegov">
-                <OneGovID/>
-            </TabsContent>
-        </Tabs> 
-      </DialogContent>
-    </Dialog>
-  );
-}
+// function LoginDialog() {
+//   return (
+//     <Dialog>
+//       <DialogTrigger asChild>
+//         <Button variant="outline" className="px-10 py-4">Login</Button>
+//       </DialogTrigger>
+//       <DialogContent className="sm:max-w-[425px]">
+//         <DialogHeader>
+//           <DialogTitle>Login</DialogTitle>
+//           <DialogDescription>
+//             Complete the form below to access your account.
+//           </DialogDescription>
+//           <Separator/>
+//           <Label>
+//             Choose Login Option
+//           </Label>
+//         </DialogHeader>
+//         <Tabs defaultValue="email" className="w-full">
+//             <TabsList className="grid w-full grid-cols-2 mb-2">
+//                 <TabsTrigger value="email">1GOV ID</TabsTrigger>
+//                 <TabsTrigger value="onegov">Email</TabsTrigger>
+//             </TabsList>
+//             <Separator/>
+//             <TabsContent value="email">
+//                 <Email/>
+//             </TabsContent>
+//             <TabsContent value="onegov">
+//                 <OneGovID/>
+//             </TabsContent>
+//         </Tabs> 
+//       </DialogContent>
+//     </Dialog>
+//   );
+// }
 
-function RegisterDialog() {
-  return (
-    <Button asChild>
-      <Link href="https://1gov.gov.bw/welcome" target="_blank" rel="noopener noreferrer">
-        Register
-      </Link>
-    </Button>
-  );
-}
+// function RegisterDialog() {
+//   return (
+//     <Button asChild>
+//       <Link href="https://1gov.gov.bw/welcome" target="_blank" rel="noopener noreferrer">
+//         Register
+//       </Link>
+//     </Button>
+//   );
+// }

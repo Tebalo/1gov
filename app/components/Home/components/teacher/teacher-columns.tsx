@@ -87,6 +87,17 @@ export const TeacherColumns: ColumnDef<Teacher>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "assigned_to",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Assigned To" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[150px]">{row.getValue("assigned_to")}</div>
+    ),
+    enableSorting: true,
+    enableHiding: false,
+  },
+  {
     accessorKey: "created_at",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Submission Date" />

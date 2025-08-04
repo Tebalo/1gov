@@ -1,13 +1,13 @@
 'use client'
 import React, { Suspense, useState } from "react";
-import { PageTitle } from "../PageTitle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Layout, Activity, FileText, AlertCircle, ClipboardSignature, BarChart3 } from "lucide-react";
+import { Search, Activity, BarChart3, Zap } from "lucide-react";
 import Link from "next/link";
 import { LoadingSkeleton } from "../LoadingSkeleton";
 import { cn } from "@/lib/utils";
-import LocationChangeBanner from "./components/TRLSBanner";
+import { MyAssignments } from "./components/teacher/assignments";
+
 
 interface ServiceCardProps {
   title: string;
@@ -43,11 +43,30 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, icon, hre
 );
 
 export const SnrRegistrationOfficerHome = () => {
+
+  return (
+    <div className="h-[calc(100vh-4rem-2.5rem)]">
+      {/* <LocationChangeBanner /> */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"> 
+        {/* Quick Action Sections */}
+        <div>
+          <QuickAccess/>
+        </div>
+        {/* My Assignments */}
+        <div className="col-span-1 md:col-span-2">
+          <MyAssignments status={"Pending-Assessment"}/>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const QuickAccess = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const services = [
     {
-      title: "My Work",
+      title: "Work Basket",
       description: "Work lists and queues",
       icon: <Activity className="w-6 h-6 text-blue-500" />,
       href: "/trls/work"
@@ -64,13 +83,14 @@ export const SnrRegistrationOfficerHome = () => {
     service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     service.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
   return (
-    <div className="h-[calc(100vh-4rem-2.5rem)]">
-      <div className="mb-6">
-        <PageTitle Title="Home" />
+    <div className="space-y-6">
+      <div className="flex items-center space-x-2">
+        <Zap className="w-6 h-6 text-blue-500" />
+        <h2 className="text-xl font-semibold text-gray-900">
+          Quick Access
+        </h2>
       </div>
-      {/* <LocationChangeBanner /> */}
       {/* Search Section */}
       <div className="mb-8">
         <Card>
@@ -91,15 +111,8 @@ export const SnrRegistrationOfficerHome = () => {
 
       {/* Services Section */}
       <div className="space-y-6">
-        <div className="flex items-center space-x-2">
-          <Layout className="w-6 h-6 text-blue-500" />
-          <h2 className="text-xl font-semibold text-gray-900">
-            Quick Access
-          </h2>
-        </div>
-
         <Suspense fallback={<LoadingSkeleton />}>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
             {filteredServices.map((service, index) => (
               <ServiceCard
                 key={index}
@@ -120,5 +133,5 @@ export const SnrRegistrationOfficerHome = () => {
         </Suspense>
       </div>
     </div>
-  );
-};
+  )
+}

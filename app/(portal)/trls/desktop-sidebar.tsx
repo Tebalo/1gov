@@ -17,6 +17,7 @@ import {
 import { NavItem } from '@/app/development/components/nav-item';
 import NavUtils from '@/app/components/NavComponents/NavUtilis';
 import { AccessGroup } from '@/app/lib/types';
+import { SearchFormModal } from '@/app/components/search-teacher';
 
 // Define the type for sidebar items
 interface SideBarItem {
@@ -111,7 +112,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
       {/* Decorative border accent */}
-      <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-blue-500 via-indigo-300 to-purple-300 opacity-60"></div>
+      <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-blue-500 via-black-300 to-gray-300 opacity-60"></div>
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
           href={'/trls/home'}
@@ -129,7 +130,8 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
           </div>
           <span className="sr-only">TRLS DEV</span>
         </Link>
-
+        {/* Search */}
+        <SearchFormModal/>
         {/* Map through sidebar items */}
         {sidebarItems.map((item, index) => (
           hasAccess(item.roles) && (

@@ -10,6 +10,9 @@ const env = process.env.environment ?? 'uat';
 const trlsBaseUrl = 'http://10.0.25.164' // Development UAT
 const trlsBaseUrlPROD = 'http://10.0.26.164' // Production
 
+//  PROD MESD_006_28_001
+// uat MESD_006_08_054
+
 /**
  * CMS Base URL
  */
@@ -21,7 +24,7 @@ const baseURLs = {
         trls: 'http://10.0.25.164',
         iam: 'https://gateway-cus-acc.gov.bw',
         cms: 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/',
-        fileUploadUrl: 'http://reg-ui-acc.gov.bw:8080/upload/MESD_006_08_054/',
+        fileUploadUrl: 'https://gateway-cus.gov.bw/document/upload/MESD_006_28_001',
         iamBaseUrl: 'https://gateway-cus-acc.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus-acc.gov.bw/v2' 
     },
@@ -29,7 +32,7 @@ const baseURLs = {
         trls: 'http://10.0.26.164',
         iam: 'https://gateway-cus.gov.bw',
         cms: 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/',
-        fileUploadUrl: 'http://reg-ui.gov.bw:8080/upload/MESD_006_08_001/',
+        fileUploadUrl: 'https://gateway-cus.gov.bw/document/upload/MESD_006_28_001',
         iamBaseUrl: 'https://gateway-cus.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus.gov.bw'
     }

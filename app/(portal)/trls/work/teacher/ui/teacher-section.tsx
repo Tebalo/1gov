@@ -1,4 +1,4 @@
-
+"use client"
 import React from 'react';
 import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap} from 'lucide-react'
 import { Role } from '@/app/lib/store';
@@ -215,7 +215,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
         caseType={'Teacher Registration'} 
         caseCreatedDate={data?.teacher_registrations?.created_at ?? ''} 
         caseCreatedBy={fullName} 
-        caseAssignedTo={''} 
+        caseAssignedTo={data?.teacher_registrations?.assigned_to ?? ''} 
         actions={<TeacherActions recordId={data?.teacher_registrations?.national_id ?? ''} userRole={userRole} current_status={data?.teacher_registrations?.reg_status ?? ''}/>} 
         auditTrail={<AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''} caseType='teacher'/>} 
         icon={<GraduationCap className='h-16 w-16 bg-blue-50 rounded-lg p-2 text-sky-600'/>}        

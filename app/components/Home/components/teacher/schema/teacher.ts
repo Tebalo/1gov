@@ -18,6 +18,7 @@ export const TeacherSchema = z.object({
   license_status: z.string().nullable(),
   pending_customer_action: z.string().nullable(),
   registration_type: z.string().nullable(),
+  assigned_to: z.string().nullable(),
   created_at: z.string().nullable(),
   updated_at: z.string().nullable(),
 })

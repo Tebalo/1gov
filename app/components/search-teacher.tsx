@@ -3,14 +3,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, X } from "lucide-react";
+import { ChevronRight, Search, X } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { SearchRecordResponse } from "../lib/types";
+import { searchRecord } from "../lib/actions";
+import Link from "next/link";
 
 interface SearchResult {
     id: string;
     name: string;
     type: string;
-    status: 'Active' | 'Pending' | 'Inactive';
+    status: string;
+    // Additional fields from API
+    regNumber?: string;
+    applicationId?: string;
+    endorsementStatus?: string;
+    institutionVerification?: string;
+    courseVerification?: string;
+    licenseStatus?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    // Store full API response for detailed operations
+    fullRecord?: SearchRecordResponse;
 }
 
 type RecordType = 'Teacher' | 'Student-Teacher' | 'Investigation' | 'Appeals' | 'Revocation';
@@ -45,25 +60,53 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
         
         setIsLoading(true);
         
-        // Simulate API call - replace with your actual API
         try {
             console.log("Searching for:", { recordType, searchId });
             
-            // Mock results for demonstration - replace with actual API call
-            const mockResults: SearchResult[] = [
-                { id: "001", name: "John Doe", type: recordType, status: "Active" },
-                { id: "002", name: "Jane Smith", type: recordType, status: "Pending" },
-                { id: "003", name: "Mike Johnson", type: recordType, status: "Inactive" }
-            ];
-
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Call your searchRecord function
+            const result = await searchRecord(searchId);
             
-            setSearchResults(mockResults);
+            if (result) {
+                // Transform the API response to match your SearchResult interface
+                const transformedResult: SearchResult = {
+                    id: result.national_id,
+                    name: result.payment_name || `${result.registration_type} - ${result.reg_number}`,
+                    type: result.registration_type,
+                    status: result.reg_status,
+                    // Add additional fields if needed
+                    regNumber: result.reg_number,
+                    applicationId: result.application_id,
+                    endorsementStatus: result.endorsement_status,
+                    institutionVerification: result.institution_verification,
+                    courseVerification: result.course_verification,
+                    licenseStatus: result.license_status,
+                    createdAt: result.created_at,
+                    updatedAt: result.updated_at,
+                    // Include full API response for detailed view
+                    fullRecord: result
+                };
+                
+                // Add to existing results or replace - depending on your needs
+                setSearchResults(prev => [transformedResult, ...prev]); // Adds to beginning
+                // OR replace all results:
+                // setSearchResults([transformedResult]);
+                
+                console.log("Search successful:", transformedResult);
+            } else {
+                // No results found
+                setSearchResults([]);
+                console.log("No results found for:", searchId);
+                
+                // Optional: Show a toast/notification
+                // toast.info("No records found matching your search criteria");
+            }
             
         } catch (error) {
             console.error("Search failed:", error);
             setSearchResults([]);
+            
+            // Optional: Show error toast/notification
+            // toast.error("Search failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -88,7 +131,7 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
     return (
         <>
             {/* Trigger Button - only show if not controlled */}
-            {controlledOpen === undefined && (
+            {/* {controlledOpen === undefined && (
                 <Button 
                     onClick={() => setIsModalOpen(true)}
                     className="w-full max-w-md mx-auto bg-white text-gray-800 border-spacing-2 hover:border-spacing-3 hover:bg-inherit flex items-center justify-center gap-2"
@@ -96,6 +139,32 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                     <Search className="w-4 h-4 mr-2" />
                     Search Records
                 </Button>
+            )} */}
+            {controlledOpen === undefined && (
+                <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className={cn(
+                        "group relative flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 hover:scale-105",
+                        "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                    )}
+                >
+                    {/* Icon */}
+                    <div className="transition-transform duration-300 group-hover:scale-110">
+                        <Search size={24} color="currentColor" />
+                    </div>
+                    
+                    {/* Tooltip */}
+                    <div className={cn(
+                        "absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap z-50",
+                        "group-hover:opacity-100 group-hover:translate-x-1"
+                    )}>
+                        Search
+                        {/* Tooltip arrow */}
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+                    </div>
+
+                    <span className="sr-only">Search</span>
+                </button>
             )}
 
             {/* Search Modal */}
@@ -116,7 +185,7 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                                     </label>
                                     <Select value={recordType} onValueChange={handleRecordTypeChange}>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Teacher" />
+                                            <SelectValue placeholder="Select record" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {recordTypes.map((type) => (
@@ -156,8 +225,8 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                                 <div className="flex gap-2 pt-6">
                                     <Button 
                                         onClick={handleSearch}
-                                        // disabled={!recordType || !searchId || isLoading}
-                                        disabled
+                                        disabled={!recordType || !searchId || isLoading}
+                                        //disabled
                                         className="px-6"
                                     >
                                         {isLoading ? "Searching..." : "Search"}
@@ -203,13 +272,13 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-4">
                                                         <div className="font-medium text-gray-900">
-                                                            ID: {result.id}
+                                                            {result.id}
                                                         </div>
-                                                        <div className="text-gray-600">
+                                                        {/* <div className="text-gray-600">
                                                             {result.name}
-                                                        </div>
-                                                        <div className="text-sm text-gray-500">
-                                                            Type: {result.type}
+                                                        </div> */}
+                                                        <div className="font-medium text-gray-500">
+                                                            {result.type}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -223,9 +292,16 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                                                     }`}>
                                                         {result.status}
                                                     </span>
-                                                    <Button size="sm" variant="outline">
-                                                        View Details
-                                                    </Button>
+                                                    <Link href={`/trls/work/teacher/${result.id}`}>
+                                                        <Button 
+                                                            size="sm" 
+                                                            className="group bg-blue-600 hover:bg-blue-700 text-white px-6"
+                                                            onClick={() => setIsModalOpen(false)}
+                                                        >
+                                                            View Details
+                                                            <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                                        </Button>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         ))}

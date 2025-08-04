@@ -11,7 +11,7 @@ import { AlertCircle } from "lucide-react";
 interface WorkProps {
     status: string;
     userRole: string;
-    assigned_to?: string
+    assigned_to?: string,
 }
 
 // Updated utility function to safely handle null values and prevent recursion
@@ -69,7 +69,7 @@ const processApiResponse = (data: any[]): Teacher[] => {
     }));
 };
 
-export const TeacherTable: React.FC<WorkProps> = ({status, userRole, assigned_to}) => {
+export const MyAssignmentsTable: React.FC<WorkProps> = ({status, userRole, assigned_to}) => {
     const [response, setResponse] = useState<teacher[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -79,7 +79,7 @@ export const TeacherTable: React.FC<WorkProps> = ({status, userRole, assigned_to
         setError(null);
         
         try {
-            const result = await getTeacherList(status, 100);
+            const result = await getTeacherList(status, 100, assigned_to);
             
             if (result.data && Array.isArray(result.data)) {
                 const processedData = processApiResponse(result.data);
@@ -141,4 +141,4 @@ export const TeacherTable: React.FC<WorkProps> = ({status, userRole, assigned_to
     )
 }
 
-export default TeacherTable;
+export default MyAssignmentsTable;

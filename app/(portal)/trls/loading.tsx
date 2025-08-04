@@ -1,8 +1,8 @@
 import { Loader2 } from "lucide-react"
 const LoadingSkeleton=()=>{
     return(
-    <div className="w-full h-[calc(100vh-4rem)] bg-background/50 backdrop-blur-sm flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4 p-6 rounded-lg bg-background shadow-lg">
+    <div className="w-full h-[calc(100vh-4rem)] bg-background/50flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 p-6">
             <Loader2 className="h-12 w-12 animate-spin text-primary"/>
             <div className="text-center space-y-1">
                 <h3 className="font-medium">Loading your content</h3>
