@@ -402,6 +402,7 @@ export const Work = ({ userRole }: Props) => {
         key={refreshKey}
         status={config.status}
         userRole={userRole}
+        assigned_to="all"
       />
     );
   };

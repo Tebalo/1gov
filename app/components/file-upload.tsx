@@ -76,20 +76,20 @@ const FileUpload: React.FC<FileUploadProps> = ({
     setUploadError(null)
 
     try {
-      // Validate file before upload
       const validationError = validateFile(file)
       if (validationError) {
         throw new Error(validationError)
       }
-
-      // Create FormData
+      
+      // Create FormData EXACTLY like their working code
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('type', file.type || 'application/octet-stream')
+      formData.append('type', 'document')
       formData.append('name', file.name)
       formData.append('description', description || `${label} - ${file.name}`)
-
-      // Simulate progress for better UX
+      // Don't append sessionId - handle it in the route
+      
+      // Progress simulation
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
@@ -99,34 +99,23 @@ const FileUpload: React.FC<FileUploadProps> = ({
           return prev + 10
         })
       }, 200)
-
-      // Upload file
-      const response = await fetch(fileUploadUrl, {
+      
+      const response = await fetch('/api/upload', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Content-Type': 'multipart/form-data'
-        },
-        body: formData,
+        body: formData, // Send directly like their code
       })
-
+      
       clearInterval(progressInterval)
       setUploadProgress(100)
-
+      
       if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`Upload failed: ${response.status} ${errorText}`)
+        throw new Error(errorText)
       }
-
-      const result: UploadResponse = await response.json()
       
-      // Call onChange with the upload response
+      const result = await response.json()
       onChange(result)
-
-      // Reset progress after a brief delay
+      
       setTimeout(() => setUploadProgress(0), 1000)
 
     } catch (error) {

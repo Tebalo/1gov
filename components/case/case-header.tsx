@@ -1,6 +1,7 @@
 import { Tags } from "lucide-react";
 import { Card, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface CaseHeaderProps {
     caseId: string;
@@ -27,6 +28,7 @@ const CaseHeader: React.FC<CaseHeaderProps> = ({
     actions,
     icon
 }) => {
+
     return(
         <Card className="hover:shadow-md transition-shadow duration-200 mb-4 border-b-cyan-500">
             <CardHeader className="">
@@ -44,13 +46,20 @@ const CaseHeader: React.FC<CaseHeaderProps> = ({
                                     <p className='text-purple-500 font-semibold text-sm'>{caseStatus}</p>
                                 </div>
                             </div>
+                            {caseAssignedTo && <div className="md:block hidden">                                
+                                <span className='text-sm text-gray-500'>The Record is currently locked by {caseAssignedTo}</span>
+                                <Link
+                                    href={`/trls/work/teacher/${caseId.charAt(2)}?assigned_to=`}
+                                    className="text-blue-500 hover:underline ml-2"
+                                >
+                                    <Button variant={'link'}>
+                                        Release Lock
+                                    </Button>
+                                </Link>
+                            </div>}
                             <div className="md:block hidden">                                
                                 <span className='text-sm text-gray-500'>Created by {caseCreatedBy} on {caseCreatedDate ? new Date(caseCreatedDate).toLocaleDateString().toString(): ''}</span>
                             </div>
-                            {/* <div className="md:block hidden">                                
-                                <span className='text-sm text-gray-500'>The record is currently locked by Bopaki Tebalo</span>
-                                <Button variant={'link'}>Release Lock</Button>
-                            </div> */}
                         </div>
                     </div>
                     <div className="space-y-2">

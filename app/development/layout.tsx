@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { NavItem } from "./components/nav-item";
 import { BriefcaseBusiness, Hammer, Home, Search, Settings } from "lucide-react";
+import { SearchFormModal } from "../components/search-teacher";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -78,7 +79,7 @@ function DesktopNav() {
           </div>
           <span className="sr-only">TRLS DEV</span>
         </Link>
-
+        <SearchFormModal/>
         {/* Navigation Divider */}
         <div className="w-8 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
 

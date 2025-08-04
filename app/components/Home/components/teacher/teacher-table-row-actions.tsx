@@ -13,6 +13,7 @@ import { FileText, AlertTriangle, Calendar, Scale, CheckCircle, Shield,  Buildin
 import { getAccessGroups } from '@/app/auth/auth';
 import { UserInfo } from '@/lib/audit-trail-service';
 import { useAuditTrail } from '@/lib/hooks/useAuditTrail';
+import { profile } from 'console';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -212,7 +213,7 @@ export function TeacherTableRowActions<TData>({
 
   async function handleOpen() {
     await logCaseViewed(record.national_id, 'teacher', currentUser);
-    router.push(`/trls/work/teacher/${record.national_id}`)
+    router.push(`/trls/work/teacher/${record.national_id}?assigned_to=${currentUser.name}`)
   }
 
   return (

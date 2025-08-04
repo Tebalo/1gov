@@ -15,6 +15,7 @@ export interface teacher {
     institution_verification: string | null,
     course_verification: string | null,
     license_status: string | null,
+    assigned_to: string | null,
     pending_customer_action: string | null,
     registration_type: string | null,
     created_at: string | null,

@@ -3,7 +3,7 @@
 // import { cookies } from 'next/headers';
 import { revalidateTag } from "next/cache";
 import { apiUrl, appealUrl, cpdUrl, deltaCategoryUrl, invUrl, licUrl, renewalUrl, restorationUrl, revocationUrl, studentTeacherUrl } from "./store";
-import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse, InvestigationReportPayload } from './types';
+import {  Appeals_list, ActivityListResponse, ActivityObject, ActivityPayload, ActivityResponse, ComplaintPayload, ComplaintSearchResponse, CPDListResponse, CPDResponseGet, DecodedToken, Investigation, InvestigationResponse, ReportPayload, ReportResponse, TipOffListResponse, TipOffPayload, TipOffResponse, appeal, TeacherRegistrationResponse, InvestigationReportPayload, SearchRecordResponse } from './types';
 import { decryptAccessToken, getAccessGroups, getSession, refreshToken } from '../auth/auth';
 import { options } from './schema';
 import { RevocationListResponse } from "../components/Home/components/revocation/types/revocation";
@@ -2035,14 +2035,14 @@ export async function getStudentTeacherList(status: string, count: number): Prom
   }
 }
 
-export async function getTeacherList(status: string, count: number): Promise<TeacherListResponse> {
+export async function getTeacherList(status: string, count: number, assigned_to?: string): Promise<TeacherListResponse> {
 
   try {
     let param_key='reg_status';
     if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
       param_key='endorsement_status';
     }
-    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&count=${count}`, {
+    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assigned_to}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -2087,6 +2087,57 @@ export async function getTeacherList(status: string, count: number): Promise<Tea
     };
   }
 }
+
+export const searchRecord = async (query: string): Promise<SearchRecordResponse | null> => {
+  try {
+    console.log('Searching for:', query);
+    
+    const url = `${apiUrl}/search-record?search=${encodeURIComponent(query)}`;
+    console.log('API URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('Response status:', response.status);
+    
+    if (response.status === 404) {
+      console.log('No record found for query:', query);
+      return null;
+    }
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error:', response.status, errorText);
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+
+    // Check if response has content
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('Response is not JSON:', contentType);
+      return null;
+    }
+
+    const result: SearchRecordResponse = await response.json();
+    console.log('Search successful:', result);
+    
+    return result;
+    
+  } catch (error) {
+    console.error('Search record error:', error);
+    
+    // Check if it's a network error
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error('Network error - check if API is running and accessible');
+    }
+    
+    return null;
+  }
+};
 
 export async function getCPDByNumber(ID: string): Promise<CPDResponseGet> {
   try {

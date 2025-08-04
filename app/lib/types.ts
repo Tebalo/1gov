@@ -1,3 +1,39 @@
+export interface SearchRecordResponse {
+  national_id: string;
+  reg_number: string;
+  reg_status: string;
+  work_status: string | null;
+  endorsement_status: string;
+  rejection_reason: string | null;
+  service_code: string;
+  payment_ref: string | null;
+  payment_amount: string | null;
+  payment_name: string | null;
+  application_id: string;
+  submission_id: string;
+  license_link: string | null;
+  education_bg_checks: string | null;
+  flags_no: string;
+  recite: string | null;
+  invoice: string | null;
+  assigned_to: string | null;
+  institution_verification: string;
+  course_verification: string;
+  license_status: string;
+  pending_customer_action: string;
+  registration_type: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// API Response wrapper
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
 export type AuthenticateResult =
   | { status: 'success' }
   | { status: 'failed'; message: string };
