@@ -131,17 +131,17 @@ export const allPrivateSchools = [
 
 // Formatted for Select components
 export const privatePrimarySchoolsForSelect = privatePrimarySchools.map(school => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school
 }));
 
 export const privateSecondarySchoolsForSelect = privateSecondarySchools.map(school => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school
 }));
 
 export const allPrivateSchoolsForSelect = allPrivateSchools.map(school => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school
 }));
 

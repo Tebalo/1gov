@@ -17,14 +17,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { FormDataSchema } from '@/lib/schema'
 import FileUpload from './file-upload'
 import { processAttachments, submitTeacherRegistration } from '@/lib/teacher-registration'
-import { Profile} from '@/types/teacher-registration'
+import { Profile, TeacherRegistrationResponse} from '@/types/teacher-registration'
 import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { set } from 'date-fns'
 import TeacherRegistrationHeader from './Header'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown, FileText, Loader2 } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
 import { subRegionsForSelect } from "@/types/regions"
@@ -33,13 +33,28 @@ import { allPublicSchoolsForSelect } from "@/types/public_junior_schools"
 import { allSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
 import { allBotswanaQualificationsForSelect, degreeForSelect, diplomasForSelect, doctorateForSelect, mastersForSelect } from "@/types/qualifications"
 import { institutionForSelect } from "@/types/institution"
-// Add this import:
-// Schema definition matching your external schema
-const documentSchema = z.object({
-  name: z.string(),
-  size: z.number(),
-  type: z.string()
-}).optional()
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import InfoItem from "./InfoItem"
+import { Badge } from "@/components/ui/badge"
+import {   
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,} from "@/components/ui/table"
+import {   
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger, } from "@/components/ui/alert-dialog"
 
 //  PROD MESD_006_28_001
 // uat MESD_006_08_054
@@ -100,13 +115,8 @@ export default function Form() {
   const [misconductFlagDetailsDoc, setMisconductFlagDetailsDoc] = useState<UploadResponse | null>(null)
   const [drugRelatedOffenceAttachmentsDoc, setDrugRelatedOffenceAttachmentsDoc] = useState<UploadResponse | null>(null)
   const [licenseFlagDetailsDoc, setLicenseFlagDetailsDoc] = useState<UploadResponse | null>(null)
-
-
   const [studentRelatedOffenceAttachmentDoc, setStudentRelatedOffenceAttachmentDoc] = useState<UploadResponse | null>(null)
   const [qualifications, setQualifications] = useState<QualificationEntry[]>([])
-
-  // const [open, setOpen] = React.useState(false)
-
   const [countryOpen, setCountryOpen] = React.useState(false)
   const [doctoralDegreeOpen, setDoctoralDegreeOpen] = React.useState(false) 
   const [degreeOpen, setDegreeOpen] = React.useState(false)
@@ -118,18 +128,14 @@ export default function Form() {
   const [juniorOpen, setJuniorOpen] = React.useState(false)
   const [primaryOpen, setPrimaryOpen] = React.useState(false)
   const [privateOpen, setPrivateOpen] = React.useState(false)
-
   const [postGradDiplomaOpen, setPostGradDiplomaOpen] = React.useState(false)
-  const [countryValue, setCountryValue] = React.useState("")
-  // const handleQualificationsChange = (newQualifications: QualificationEntry[]) => {
-  //   setQualifications(newQualifications)
-  //   console.log('Updated qualifications:', newQualifications)
-  // }
 
+  const [submitting,setSubmitting] = useState(false)
+  const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
   // Convert to API format
   const getAPIFormatQualifications = () => {
     return qualifications
-      .filter(q => q.alt_attachments) // Only include qualifications with attachments
+      .filter(q => q.alt_attachments)
       .map(q => ({
         alt_qualification: q.alt_qualification,
         alt_qualification_year: q.alt_qualification_year,
@@ -152,8 +158,8 @@ export default function Form() {
   })
 
   const processForm: SubmitHandler<FormInputs> = async (formData) => {
-    if(formData.citizenship === 'citizen'){
-      formData.nationality = 'botswana'
+    if(formData.citizenship.toLowerCase() === 'citizen'){
+      formData.nationality = 'Botswana'
     }
 
       // Extract profile data from form
@@ -185,22 +191,18 @@ export default function Form() {
       qualifications: apiQualifications, //
       national_id_copy: nationalIdDoc    //
     }
-    // console.log('Form submitted successfully:', processedFormData)
     
-    // Submit the registration
+    // Call the API to submit the form data
     const result = await submitTeacherRegistration(processedFormData, profile)
-    
-    if (result.success) {
-      alert('Form submitted successfully!')
+    setSubmissionResult(result)
+    if (submissionResult?.success==true || result.success==true) {  
+      //alert('Form submitted successfully!')
+      setSubmitting(false)
       reset()
-      // console.log('Registration successful:', result.application_id)
-      // Handle success (redirect, show success message, etc.)
     } else {
-      // console.error('Registration failed:', result.error)
-      alert('Registration failed. Please try again.')
-      // Handle error (show error message, etc.)
+      setSubmitting(false)
+      //alert('Registration failed. Please try again.')
     }
-    // reset()
   }
 
   type FieldName = keyof FormInputs
@@ -228,13 +230,15 @@ export default function Form() {
   }
 
   const submitForm = async () => {
+    setSubmitting(true)
     // Validate all fields before submitting
     const isValid = await trigger()
     if (isValid) {
       const formData = getValues()
       processForm(formData)
+      
     } else {
-      console.log('Form validation failed')
+      setSubmitting(false)
       alert('Please fill in all required fields correctly')
     }
   }
@@ -243,11 +247,11 @@ export default function Form() {
     <section className='bg-gray-50 md:p-2 max-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
         {/* Left Sidebar - Header */}
-        {/* <div className='w-80 flex-shrink-0 md:block hidden'>
+        <div className='w-80 flex-shrink-0 md:block hidden'>
           <div className='sticky top-4'>
             <TeacherRegistrationHeader />
           </div>
-        </div> */}
+        </div>
 
 
         {/* Main Content */}
@@ -314,6 +318,7 @@ export default function Form() {
                     </CardHeader>
                     <CardContent className='space-y-4 sm:space-y-6 p-4 sm:p-6'>
                       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>  
+
                         {/* First Name */}
                         <div className="space-y-2">
                           <Label htmlFor='first_name' className="text-sm font-medium text-gray-700">
@@ -414,9 +419,9 @@ export default function Form() {
                               <SelectValue placeholder='Select your gender' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='male' className="text-base">Male</SelectItem>
-                              <SelectItem value='female' className="text-base">Female</SelectItem>
-                              <SelectItem value='other' className="text-base">Other</SelectItem>
+                              <SelectItem value='Male' className="text-base">Male</SelectItem>
+                              <SelectItem value='Female' className="text-base">Female</SelectItem>
+                              <SelectItem value='Other' className="text-base">Other</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.gender && (
@@ -497,6 +502,9 @@ export default function Form() {
                                 </Command>
                               </PopoverContent>
                             </Popover>
+                            {/* {countries.map((country) => (
+                              <li key={country.value}>{country.value}-{country.label}</li>
+                            ))} */}
                             {errors.nationality && (
                               <p className='text-sm text-red-500 flex items-center gap-1'>
                                 <span className="text-xs">⚠</span>
@@ -515,7 +523,7 @@ export default function Form() {
                               <FileUpload
                                 name="national_id_copy"
                                 label="National ID Copy"
-                                description="Upload a clear copy of your National ID (PDF, JPG, PNG up to 5MB)"
+                                description="Omang copy"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
                                 required={true}
@@ -1928,27 +1936,216 @@ export default function Form() {
                     <CardContent className='space-y-6'>
                       {/* Summary Section */}
                       <div className='bg-gray-50 p-4 rounded-lg'>
-                        <h3 className='font-semibold mb-3'>Application Summary</h3>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
-                          <div>
-                            <strong>Name:</strong> {watch('first_name')} {watch('last_name')}
-                          </div>
-                          {/* <div>
-                            <strong>Email:</strong> {watch('primary_email')}
-                          </div> */}
-                          <div>
-                            <strong>Practice Category:</strong> {watch('practice_category')}
-                          </div>
-                          <div>
-                            <strong>District:</strong> {watch('district')}
-                          </div>
-                          <div>
-                            <strong>Institution:</strong> {watch('institution')}
-                          </div>
-                          <div>
-                            <strong>Qualification:</strong> {watch('qualification_certificate')}
-                          </div>
-                        </div>
+                        <Accordion
+                          type="single"
+                          collapsible
+                          className="w-full"
+                          defaultValue="item-1"
+                        >
+                          {/* Step 1: Personal Information */}
+                          <AccordionItem value="item-1">
+                            <AccordionTrigger>Step 1: Personal Information</AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-4 text-balance">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <InfoItem label="First Name" value={watch('first_name')} />
+                                <InfoItem label="Last Name" value={watch('last_name')} />
+                                <InfoItem label="Middle Name" value={watch('middle_name')} />
+                                <InfoItem label="Surname" value={watch('surname')} />
+                                <InfoItem label="Date of Birth" value={watch('date_of_birth')} />
+                                <InfoItem label="Gender" value={watch('gender')} />
+                                <InfoItem label="Citizenship" value={watch('citizenship')} />
+                                <InfoItem label="Nationality" value={watch('nationality')} />
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          {/* Step 2: Contact Information */}
+                          <AccordionItem value="item-2">
+                            <AccordionTrigger>Step 2: Contact Information</AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-4 text-balance">
+                              <div className="grid grid-cols-1 gap-4">
+                                <InfoItem label="Primary Phone" value={watch('primary_phone')} />
+                                <InfoItem label="Physical Address" value={watch('primary_physical')} />
+                                <InfoItem label="Postal Address" value={watch('primary_postal')} />
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          {/* Step 3: Professional Details */}
+                          <AccordionItem value="item-3">
+                            <AccordionTrigger>Step 3: Professional Details</AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-4 text-balance">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <InfoItem label="Work Status" value={watch('work_status')} />
+                                <InfoItem label="Practice Category" value={watch('practice_category')} />
+                                <InfoItem label="Sub Category" value={watch('sub_category')} />
+                                <InfoItem label="Years of Experience" value={watch('experience_years')} />
+                                <InfoItem label="District" value={watch('district')} />
+                                <InfoItem label="Institution Type" value={watch('institution_type')} />
+                                <InfoItem label="School Level" value={watch('school_level')} />
+                                <InfoItem label="Level" value={watch('level')} />
+                                <InfoItem label="Private Schools" value={watch('private_schools')} />
+                                <InfoItem label="Other Private Schools" value={watch('other_private_schools')} />
+                                <InfoItem label="Primary Schools" value={watch('primary_schools')} />
+                                {/* <InfoItem label="Pre-Primary Name" value={watch('pre_primary_name')} /> */}
+                                <InfoItem label="Other Primary Schools" value={watch('other_primary_schools')} />
+                                <InfoItem label="Junior Schools" value={watch('junior_schools')} />
+                                <InfoItem label="Other Junior Schools" value={watch('other_junior_schools')} />
+                                <InfoItem label="Senior Schools" value={watch('senior_schools')} />
+                                <InfoItem label="Other Senior Schools" value={watch('other_senior_schools')} />
+                                {/* <InfoItem label="Major Subjects" value={watch('subject_specialization')} /> */}
+                                <InfoItem label="Subject Specialization" value={watch('other_subject_specialization')} />
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          {/* Step 4: Qualifications */}
+                          <AccordionItem value="item-4">
+                            <AccordionTrigger>Step 4: Qualifications</AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-4 text-balance">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <InfoItem label="Certificate" value={watch('qualification_certificate')} />
+                                <InfoItem label="Post-Grad Certificate" value={watch('qualification_post_grad_certificate')} />
+                                <InfoItem label="Diploma" value={watch('qualification_diploma')} />
+                                <InfoItem label="Post-Grad Diploma" value={watch('qualification_post_grad_diploma')} />
+                                <InfoItem label="Degree" value={watch('qualification_degree')} />
+                                <InfoItem label="Honours Degree" value={watch('qualification_degree_honours')} />
+                                <InfoItem label="Masters Degree" value={watch('qualification_masters_degree')} />
+                                <InfoItem label="Doctoral Degree" value={watch('qualification_doctoral_degree')} />
+                                <InfoItem label="Other Qualification" value={watch('other_qualification')} />
+                                <InfoItem label="Institution" value={watch('institution')} />
+                                <InfoItem label="Other Institution" value={watch('other_institution')} />
+                                <InfoItem label="Qualification Year" value={watch('qualification_year')} />
+                              </div>
+                              {qualifications && qualifications.length > 0 && (
+                                <>
+                                  <Label>Additional Qualifications</Label>
+                                  {/* Desktop Table View - Hidden on mobile */}
+                                  <div className="hidden md:block rounded-md border overflow-hidden">
+                                    <Table className="w-full">
+                                      <TableHeader className="bg-gray-50">
+                                        <TableRow>
+                                          <TableHead  className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification</TableHead >
+                                          <TableHead  className="px-4 py-3 text-left text-sm font-medium text-gray-900">Year</TableHead >
+                                          <TableHead  className="px-4 py-3 text-left text-sm font-medium text-gray-900">Certificate</TableHead >
+                                          <TableHead  className="px-4 py-3 text-left text-sm font-medium text-gray-900 w-[100px]">Actions</TableHead >
+                                        </TableRow>
+                                      </TableHeader>
+                                      <TableBody className="divide-y divide-gray-200">
+                                        {qualifications.map((qualification) => (
+                                          <TableRow key={qualification.id} className="hover:bg-gray-50">
+                                            <TableCell  className="px-4 py-3 text-sm font-medium text-gray-900">
+                                              {qualification.alt_qualification}
+                                            </TableCell >
+                                            <TableCell  className="px-4 py-3 text-sm text-gray-700">{qualification.alt_qualification_year}</TableCell >
+                                            <TableCell  className="px-4 py-3 text-sm">
+                                              {qualification.alt_attachments ? (
+                                                <div className="flex items-center space-x-2">
+                                                  <FileText className="h-4 w-4 text-green-600" />
+                                                  <span className="text-sm">
+                                                    {qualification.alt_attachments['original-name']}
+                                                  </span>
+                                                  <Badge variant="secondary" className="text-xs">
+                                                    {qualification.alt_attachments.extension.toUpperCase()}
+                                                  </Badge>
+                                                </div>
+                                              ) : (
+                                                <span className="text-red-500 text-sm">No certificate</span>
+                                              )}
+                                            </TableCell >
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+
+                                  {/* Mobile Card View - Hidden on desktop */}
+                                  <div className="md:hidden space-y-4">
+                                    {qualifications.map((qualification, index) => (
+                                      <div 
+                                        key={qualification.id} 
+                                        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                                      >
+                                        {/* Header with qualification name and actions */}
+                                        <div className="flex items-start justify-between mb-3">
+                                          <div className="flex-1 min-w-0">
+                                            <h3 className="text-sm font-semibold text-gray-900 truncate">
+                                              {qualification.alt_qualification}
+                                            </h3>
+                                            <div className="flex items-center mt-1 text-xs text-gray-500">
+                                              <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                                                #{index + 1}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {/* Qualification details */}
+                                        <div className="space-y-3">
+                                          {/* Year */}
+                                          <div className="flex items-center justify-between">
+                                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                              Year Completed
+                                            </span>
+                                            <span className="text-sm font-medium text-gray-900">
+                                              {qualification.alt_qualification_year}
+                                            </span>
+                                          </div>
+
+                                          {/* Certificate Status */}
+                                          <div className="border-t border-gray-100 pt-3">
+                                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-2">
+                                              Certificate
+                                            </span>
+                                            {qualification.alt_attachments ? (
+                                              <div className="flex items-center space-x-2 p-2 bg-green-50 rounded-md border border-green-200">
+                                                <FileText className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                                <div className="flex-1 min-w-0">
+                                                  <p className="text-sm font-medium text-green-800 truncate">
+                                                    {qualification.alt_attachments['original-name']}
+                                                  </p>
+                                                  <div className="flex items-center mt-1">
+                                                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                                                      {qualification.alt_attachments.extension.toUpperCase()}
+                                                    </Badge>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="flex items-center space-x-2 p-2 bg-red-50 rounded-md border border-red-200">
+                                                <div className="h-4 w-4 rounded-full bg-red-500 flex-shrink-0"></div>
+                                                <span className="text-sm font-medium text-red-700">
+                                                  No certificate uploaded
+                                                </span>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          {/* Step 5: Background Check */}
+                          <AccordionItem value="item-5">
+                            <AccordionTrigger>Step 5: Background Check</AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-4 text-balance">
+                              <div className="grid grid-cols-1 gap-4">
+                                <InfoItem label="Disability" value={watch('disability')} />
+                                <InfoItem label="Disability Description" value={watch('disability_description')?.toString()} />
+                                <InfoItem label="Student Related Offence" value={watch('student_related_offence')} />
+                                <InfoItem label="Student Offence Details" value={watch('student_related_offence_details')} />
+                                <InfoItem label="Drug Related Offence" value={watch('drug_related_offence')} />
+                                <InfoItem label="Drug Offence Details" value={watch('drug_related_offence_details')} />
+                                <InfoItem label="License Flag" value={watch('license_flag')} />
+                                <InfoItem label="Misconduct Flag" value={watch('misconduct_flag')} />
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       </div>
 
                       {/* Declaration and Consent */}
@@ -2016,16 +2213,46 @@ export default function Form() {
               )}
             </form>
           
-              {/* Navigation */}
-              <div className='md:px-6 py-6 border-t bg-gray-50'>
-                <div className='flex justify-between items-center'>
+            {/* Navigation */}
+            <div className='md:px-6 py-6 border-t bg-gray-50'>
+              <div className='flex justify-between items-center'>
+                <Button
+                  type='button'
+                  onClick={prev}
+                  disabled={currentStep === 0}
+                  variant='outline'
+                  className='flex items-center gap-2'
+                >
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='1.5'
+                    stroke='currentColor'
+                    className='h-4 w-4'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M15.75 19.5L8.25 12l7.5-7.5'
+                    />
+                  </svg>
+                  Previous
+                </Button>
+                
+                <div className='flex items-center gap-2'>
+                  <span className='text-sm text-gray-500'>
+                    Step {currentStep + 1} of {steps.length}
+                  </span>
+                </div>
+
+                {currentStep < steps.length - 1 ? (
                   <Button
                     type='button'
-                    onClick={prev}
-                    disabled={currentStep === 0}
-                    variant='outline'
+                    onClick={next}
                     className='flex items-center gap-2'
                   >
+                    Next
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
                       fill='none'
@@ -2037,65 +2264,108 @@ export default function Form() {
                       <path
                         strokeLinecap='round'
                         strokeLinejoin='round'
-                        d='M15.75 19.5L8.25 12l7.5-7.5'
+                        d='M8.25 4.5l7.5 7.5-7.5 7.5'
                       />
                     </svg>
-                    Previous
                   </Button>
-                  
-                  <div className='flex items-center gap-2'>
-                    <span className='text-sm text-gray-500'>
-                      Step {currentStep + 1} of {steps.length}
-                    </span>
-                  </div>
-
-                  {currentStep < steps.length - 1 ? (
-                    <Button
-                      type='button'
-                      onClick={next}
-                      className='flex items-center gap-2'
+                ) : (
+                  <>
+                  {/* <Button 
+                    type='button'
+                    onClick={submitForm}
+                    className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'
+                  >
+                    Submit Application
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth='1.5'
+                      stroke='currentColor'
+                      className='h-4 w-4'
                     >
-                      Next
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth='1.5'
-                        stroke='currentColor'
-                        className='h-4 w-4'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M8.25 4.5l7.5 7.5-7.5 7.5'
-                        />
-                      </svg>
-                    </Button>
-                  ) : (
-                    <Button 
-                      type='button'
-                      onClick={submitForm}
-                      className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'
-                    >
-                      Submit Application
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth='1.5'
-                        stroke='currentColor'
-                        className='h-4 w-4'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M4.5 12.75l6 6 9-13.5'
-                        />
-                      </svg>
-                    </Button>
-                  )}
-                </div>
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M4.5 12.75l6 6 9-13.5'
+                      />
+                    </svg>
+                  </Button> */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button                       
+                      type='button'                    
+                      className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'>Submit Application</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      {!submitting && !submissionResult && (
+                        <>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Submit Teacher Registration Application?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              You are about to submit your teacher registration application. Please review all the information you have provided carefully before proceeding.
+                              
+                              Once submitted, your application will be sent for review and you will not be able to make changes until the review process is complete. You will receive a confirmation email with your application reference number.
+                              
+                              Are you ready to submit your application?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <Button onClick={submitForm}>Continue</Button>
+                          </AlertDialogFooter>
+                        </>
+                      )}
+                      {submitting && (
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Submitting...</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            <div className="items-center space-y-2">
+                              <div className="flex items-center justify-center">
+                                <Loader2 className="animate-spin h-6 w-6 text-blue-600 mr-2 inline-block" />
+                              </div>
+                              <div>
+                                Your application is being submitted. This may take a few moments depending on the size of your attachments and the current server load.
+                                Please wait while we process your application.
+                              </div>
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                      )}
+                      {submissionResult?.success==true && (
+                        <>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Application Submitted Successfully!</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Your teacher registration application has been submitted successfully. 
+                              You will receive a confirmation email shortly with your application reference number: <strong>{submissionResult.application_id}</strong>.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogAction onClick={() => setSubmissionResult(null)}>Close</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </>
+                      )}
+                      {submissionResult?.success==false && (
+                        <>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Application Submission Failed</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              We encountered an error while submitting your application. Please check your internet connection and try again.
+                              If the problem persists, contact support with the following error message: <strong>{submissionResult.error}</strong>.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogAction onClick={() => setSubmissionResult(null)}>Close</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </>
+                      )}
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  </>
+                )}
               </div>
+            </div>
           </ScrollArea>
         </div>
       </div>

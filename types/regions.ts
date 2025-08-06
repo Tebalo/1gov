@@ -125,11 +125,11 @@ export const regionsWithSubRegions = {
 
 // Alternative format with value/label structure for form components
 export const regionsForSelect = regions.map(region => ({
-  value: region.toLowerCase().replace(/\s+/g, '-'),
+  value: region.replace(/\s+/g, '-'),
   label: region
 }));
 
 export const subRegionsForSelect = subRegions.map(subRegion => ({
-  value: subRegion.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-'),
+  value: subRegion.replace(/\s+/g, '-').replace(/\//g, '-'),
   label: subRegion
 }));

@@ -4,7 +4,7 @@ export async function POST(req: Request) {
   try {
     // Get form data from incoming request
     const formData = await req.formData();
-
+    console.log("Received form data:", formData);
     // Forward DIRECTLY to external API (like their working code)
     const externalResponse = await fetch(
       "https://gateway-cus.gov.bw/document/upload/MESD_006_28_001",

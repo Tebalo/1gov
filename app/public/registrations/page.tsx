@@ -12,7 +12,7 @@ const RegistrationsPage = () => {
   return (
     <div className="min-h-screen p-8">
       <div className="">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-4">
           <DynamicComponentWithNoSSR/>
         </div>
       </div>

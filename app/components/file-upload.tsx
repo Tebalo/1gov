@@ -15,7 +15,6 @@ interface UploadResponse {
   'original-name': string
   key: string
 }
-
 interface FileUploadProps {
   name: string
   label: string
@@ -27,7 +26,6 @@ interface FileUploadProps {
   onChange: (value: UploadResponse | null) => void
   error?: string
 }
-
 const FileUpload: React.FC<FileUploadProps> = ({
   name,
   label,
@@ -44,7 +42,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -52,44 +49,36 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
-
   const validateFile = (file: File): string | null => {
     // Check file size
     if (file.size > maxSize * 1024 * 1024) {
       return `File size must be less than ${maxSize}MB`
     }
-
     // Check file type
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
     const allowedTypes = acceptedTypes.split(',').map(type => type.trim().toLowerCase())
-    
     if (!allowedTypes.includes(fileExtension)) {
       return `File type not allowed. Accepted types: ${acceptedTypes}`
     }
-
     return null
   }
-
   const uploadFile = async (file: File) => {
     setUploading(true)
     setUploadProgress(0)
     setUploadError(null)
-
     try {
+      // Validate file before upload
       const validationError = validateFile(file)
       if (validationError) {
         throw new Error(validationError)
       }
-      
-      // Create FormData EXACTLY like their working code
+      // Create FormData
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('type', 'document')
+      formData.append('type', file.type || 'document')
       formData.append('name', file.name)
-      formData.append('description', description || `${label} - ${file.name}`)
-      // Don't append sessionId - handle it in the route
-      
-      // Progress simulation
+      formData.append('description', description || '')
+      // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
@@ -99,25 +88,25 @@ const FileUpload: React.FC<FileUploadProps> = ({
           return prev + 10
         })
       }, 200)
-      
-      const response = await fetch('/api/upload', {
+      // Upload file
+      const response = await fetch(fileUploadUrl, {
         method: 'POST',
-        body: formData, // Send directly like their code
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formData,
       })
-      
       clearInterval(progressInterval)
       setUploadProgress(100)
-      
       if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(errorText)
+        throw new Error(`Upload failed: ${response.status} ${errorText}`)
       }
-      
-      const result = await response.json()
+      const result: UploadResponse = await response.json()
+      // Call onChange with the upload response
       onChange(result)
-      
+      // Reset progress after a brief delay
       setTimeout(() => setUploadProgress(0), 1000)
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Upload failed'
       setUploadError(errorMessage)
@@ -126,38 +115,31 @@ const FileUpload: React.FC<FileUploadProps> = ({
       setUploading(false)
     }
   }
-
   const handleFileSelect = (file: File) => {
     uploadFile(file)
   }
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       handleFileSelect(file)
     }
   }
-
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setDragOver(false)
-    
     const file = event.dataTransfer.files[0]
     if (file) {
       handleFileSelect(file)
     }
   }
-
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setDragOver(true)
   }
-
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setDragOver(false)
   }
-
   const removeFile = () => {
     onChange(null)
     setUploadError(null)
@@ -165,19 +147,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
       fileInputRef.current.value = ''
     }
   }
-
   const openFileDialog = () => {
     fileInputRef.current?.click()
   }
-
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="text-sm font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
-      
       {!value && !uploading && (
-        <Card 
+        <Card
           className={`border-2 border-dashed transition-colors cursor-pointer hover:border-primary/50 ${
             dragOver ? 'border-primary bg-primary/5' : 'border-gray-300'
           } ${error ? 'border-red-300' : ''}`}
@@ -197,7 +176,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </CardContent>
         </Card>
       )}
-
       {uploading && (
         <Card>
           <CardContent className="p-4">
@@ -211,7 +189,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </CardContent>
         </Card>
       )}
-
       {value && !uploading && (
         <Card>
           <CardContent className="p-4">
@@ -245,7 +222,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </CardContent>
         </Card>
       )}
-
       {(uploadError || error) && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -254,7 +230,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </AlertDescription>
         </Alert>
       )}
-
       <Input
         ref={fileInputRef}
         type="file"
@@ -263,53 +238,46 @@ const FileUpload: React.FC<FileUploadProps> = ({
         className="hidden"
         id={name}
       />
-
       {description && !error && !uploadError && (
         <p className="text-xs text-gray-500">{description}</p>
       )}
     </div>
   )
 }
-
 export default FileUpload
-
 // Example usage in your form:
-const ExampleForm = () => {
-  const [nationalIdDocument, setNationalIdDocument] = useState<UploadResponse | null>(null)
-  const [qualificationDocument, setQualificationDocument] = useState<UploadResponse | null>(null)
-
-  return (
-    <div className="space-y-6 p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold">Document Upload Example</h2>
-      
-      <FileUpload
-        name="national_id"
-        label="National ID Copy"
-        description="Upload a clear copy of your National ID"
-        acceptedTypes=".pdf,.jpg,.jpeg,.png"
-        maxSize={5}
-        required={true}
-        value={nationalIdDocument}
-        onChange={setNationalIdDocument}
-      />
-
-      <FileUpload
-        name="qualification"
-        label="Qualification Certificate"
-        description="Upload your qualification certificate"
-        acceptedTypes=".pdf,.jpg,.jpeg,.png"
-        maxSize={10}
-        required={false}
-        value={qualificationDocument}
-        onChange={setQualificationDocument}
-      />
-
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h3 className="font-medium mb-2">Upload Results:</h3>
-        <pre className="text-xs text-gray-600">
-          {JSON.stringify({ nationalIdDocument, qualificationDocument }, null, 2)}
-        </pre>
-      </div>
-    </div>
-  )
-}
+// const ExampleForm = () => {
+//   const [nationalIdDocument, setNationalIdDocument] = useState<UploadResponse | null>(null)
+//   const [qualificationDocument, setQualificationDocument] = useState<UploadResponse | null>(null)
+//   return (
+//     <div className="space-y-6 p-6 max-w-2xl mx-auto">
+//       <h2 className="text-2xl font-bold">Document Upload Example</h2>
+//       <FileUpload
+//         name="national_id"
+//         label="National ID Copy"
+//         description="Upload a clear copy of your National ID"
+//         acceptedTypes=".pdf,.jpg,.jpeg,.png"
+//         maxSize={5}
+//         required={true}
+//         value={nationalIdDocument}
+//         onChange={setNationalIdDocument}
+//       />
+//       <FileUpload
+//         name="qualification"
+//         label="Qualification Certificate"
+//         description="Upload your qualification certificate"
+//         acceptedTypes=".pdf,.jpg,.jpeg,.png"
+//         maxSize={10}
+//         required={false}
+//         value={qualificationDocument}
+//         onChange={setQualificationDocument}
+//       />
+//       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+//         <h3 className="font-medium mb-2">Upload Results:</h3>
+//         <pre className="text-xs text-gray-600">
+//           {JSON.stringify({ nationalIdDocument, qualificationDocument }, null, 2)}
+//         </pre>
+//       </div>
+//     </div>
+//   )
+// }

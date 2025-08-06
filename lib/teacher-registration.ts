@@ -163,6 +163,11 @@ export async function processAttachments(formData: any): Promise<{
   }
 }
 
+const extractErrorMessage = (errorText: string): string => {
+  const messageMatch = errorText.match(/"message":\s*"([^"]+)"/);
+  return messageMatch ? messageMatch[1] : "An error occurred";
+};
+
 /**
  * Submit teacher registration to the API
  */
@@ -188,16 +193,24 @@ export async function submitTeacherRegistration(
     
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('API Error:', response.status, errorText)
+      // console.error('API Error:', response.status, errorText)
       
       return {
         success: false,
         error: `API Error: ${response.status} - ${errorText}`
       }
     }
-    
+    // Check if the json is valid
+    if (!response.headers.get('content-type')?.includes('application/json')) {
+      return {
+        success: true,
+        application_id: (await requestPayload).reference.application_id,
+        response_id: '',
+        message: 'Application submitted successfully'
+      }
+    }
     const responseData = await response.json()
-    console.log('API Response:', responseData)
+    // console.log('API Response:', responseData)
     
     return {
       success: true,
@@ -207,11 +220,12 @@ export async function submitTeacherRegistration(
     }
     
   } catch (error) {
-    console.error('Submission error:', error)
+    // console.error('Submission error:', error)
     
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      // error: 'Error submitting application',
+      error: error instanceof Error ? extractErrorMessage(error.message) : 'Unknown error occurred'
     }
   }
 }

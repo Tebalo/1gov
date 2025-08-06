@@ -308,7 +308,7 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                     <FileUpload
                       name="qualification_cert"
                       label="Qualification Certificate"
-                      description="Upload a clear copy of your National ID (PDF, JPG, PNG up to 5MB)"
+                      description="Qualification certificate"
                       acceptedTypes=".pdf,.jpg,.jpeg,.png"
                       maxSize={5}
                       required={true}
@@ -530,47 +530,4 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
     </Card>
   )
 }
-
-// Example usage component
-const ExampleUsage = () => {
-  const [qualifications, setQualifications] = useState<QualificationEntry[]>([])
-
-  const handleQualificationsChange = (newQualifications: QualificationEntry[]) => {
-    setQualifications(newQualifications)
-    console.log('Updated qualifications:', newQualifications)
-  }
-
-  // Convert to API format
-  const getAPIFormatQualifications = () => {
-    return qualifications
-      .filter(q => q.alt_attachments) // Only include qualifications with attachments
-      .map(q => ({
-        alt_qualification: q.alt_qualification,
-        alt_qualification_year: q.alt_qualification_year,
-        alt_attachments: q.alt_attachments!
-      }))
-  }
-
-  return (
-    <div className="max-w-7xl mx-auto  space-y-6">
-      <QualificationsTable
-        qualifications={qualifications}
-        onChange={handleQualificationsChange}
-      />
-
-      {/* Debug output */}
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>API Format Output</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <pre className="text-xs bg-gray-50 p-4 rounded overflow-auto">
-            {JSON.stringify(getAPIFormatQualifications(), null, 2)}
-          </pre>
-        </CardContent>
-      </Card> */}
-    </div>
-  )
-}
-
 export default QualificationsTable

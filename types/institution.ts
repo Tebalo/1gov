@@ -13,6 +13,6 @@ const institutions = [
 ]
 
 export const institutionForSelect = institutions.map((institution) => ({
-  value: institution.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: institution.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: institution
 }));

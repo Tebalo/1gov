@@ -86,56 +86,56 @@ export const allSeniorSecondarySchools = [
 
 // Formatted for Select components
 export const allSeniorSecondarySchoolsForSelect = allSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const centralSeniorSecondarySchoolsForSelect = centralSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const chobeSeniorSecondarySchoolsForSelect = chobeSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const ghanziSeniorSecondarySchoolsForSelect = ghanziSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const kgalagadiSeniorSecondarySchoolsForSelect = kgalagadiSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const kgatlengSeniorSecondarySchoolsForSelect = kgatlengSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const kwenengSeniorSecondarySchoolsForSelect = kwenengSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const northEastSeniorSecondarySchoolsForSelect = northEastSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const northWestSeniorSecondarySchoolsForSelect = northWestSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const southEastSeniorSecondarySchoolsForSelect = southEastSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const southernSeniorSecondarySchoolsForSelect = southernSeniorSecondarySchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
