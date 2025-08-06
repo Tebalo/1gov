@@ -266,76 +266,76 @@ export const allBotswanaQualifications = [
 
 // Formatted for Select components
 export const doctorateForSelect = doctorates.map((doctorate) => ({
-  value: doctorate.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: doctorate.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: doctorate
 }));
 
 export const mastersForSelect = masters.map((master) => ({
-  value: master.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: master.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: master
 }));
 
 export const degreeForSelect = degrees.map((degree) => ({
-  value: degree.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: degree.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: degree
 }));
 
 export const diplomasForSelect = diplomas.map((diploma) => ({
-  value: diploma.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: diploma.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: diploma,
 }));
 
 export const allBotswanaQualificationsForSelect = allBotswanaQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const primaryQualificationsForSelect = primaryQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const juniorSecondaryQualificationsForSelect = juniorSecondaryQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const seniorSecondaryQualificationsForSelect = seniorSecondaryQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const tvetQualificationsForSelect = tvetQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const universityOfBotswanaQualificationsForSelect = universityOfBotswanaQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const biustQualificationsForSelect = biustQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const buanQualificationsForSelect = buanQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const limkokwingQualificationsForSelect = limkokwingQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const teachingQualificationsForSelect = teachingQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));
 
 export const professionalQualificationsForSelect = professionalQualifications.map((qualification) => ({
-  value: qualification.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
+  value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),
   label: qualification,
 }));

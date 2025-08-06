@@ -264,56 +264,56 @@ export const allPublicSchools = [
 
 // Formatted for Select components
 export const allPublicSchoolsForSelect = allPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const centralPublicSchoolsForSelect = centralPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const chobePublicSchoolsForSelect = chobePublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const ghanziPublicSchoolsForSelect = ghanziPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const kgalagadiPublicSchoolsForSelect = kgalagadiPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const kgatlengPublicSchoolsForSelect = kgatlengPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const kwenengPublicSchoolsForSelect = kwenengPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const northEastPublicSchoolsForSelect = northEastPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const northWestPublicSchoolsForSelect = northWestPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const southEastPublicSchoolsForSelect = southEastPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));
 
 export const southernPublicSchoolsForSelect = southernPublicSchools.map((school) => ({
-  value: school.toLowerCase().replace(/\s+/g, '-').replace(/['']/g, ''),
+  value: school.replace(/\s+/g, '-').replace(/['']/g, ''),
   label: school,
 }));

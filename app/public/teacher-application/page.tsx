@@ -3,7 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function TeacherApplicationPage() {
   return (
-    <ScrollArea className="h-[calc(100vh-2rem)]">
+    <ScrollArea className="">
       <section className='p-2 md:space-y-6'>
 
         {/* Main Form Container */}
