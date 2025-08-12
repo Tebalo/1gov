@@ -2,7 +2,10 @@
 
 import React, { useState } from 'react';
 import { Download } from 'lucide-react';
-import * as XLSX from 'xlsx';
+// Note: You'll need to install exceljs
+// npm install exceljs
+// For browser usage, you might need: npm install exceljs@4.3.0
+import ExcelJS from 'exceljs';
 
 // Define TypeScript interfaces
 interface Teacher {
@@ -56,56 +59,72 @@ export const ExportButton = ({ data }: { data: Teacher[] }) => {
     });
   };
 
-  const exportToCSV = (filteredData: Teacher[]) => {
+  const exportToExcel = async (filteredData: Teacher[]) => {
     setIsExporting(true);
     
     try {
-      // Create workbook and worksheet
-      const wb = XLSX.utils.book_new();
-      
-      // Convert data to array format for XLSX
-      const dataArray = [
-        [
-          'Registration Type',
-          'Endorsement Status',
-          'Registration Status',
-          'Surname',
-          'Forenames',
-          'Practice Category',
-          'Sub Category',
-          'National ID',
-          'Created At',
-          'Payment Amount'
-        ],
-        ...filteredData.map(row => [
-          row.registration_type,
-          row.endorsement_status,
-          row.reg_status,
-          row.surname,
-          row.forenames,
-          row.practice_category,
-          row.sub_category,
-          row.national_id,
-          row.created_at,
-          row.payment_amount || ''
-        ])
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Teacher Registrations');
+
+      // Define columns with headers and formatting
+      worksheet.columns = [
+        { header: 'Registration Type', key: 'registration_type', width: 20 },
+        { header: 'Endorsement Status', key: 'endorsement_status', width: 18 },
+        { header: 'Registration Status', key: 'reg_status', width: 18 },
+        { header: 'Surname', key: 'surname', width: 15 },
+        { header: 'Forenames', key: 'forenames', width: 20 },
+        { header: 'Practice Category', key: 'practice_category', width: 20 },
+        { header: 'Sub Category', key: 'sub_category', width: 15 },
+        { header: 'National ID', key: 'national_id', width: 15 },
+        { header: 'Created At', key: 'created_at', width: 15 },
+        { header: 'Payment Amount', key: 'payment_amount', width: 15 }
       ];
-      
-      const ws = XLSX.utils.aoa_to_sheet(dataArray);
-      
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, 'Teacher Registrations');
-      
+
+      // Style the header row
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE6F2FF' }
+      };
+
+      // Add data rows
+      filteredData.forEach(teacher => {
+        worksheet.addRow({
+          registration_type: teacher.registration_type,
+          endorsement_status: teacher.endorsement_status,
+          reg_status: teacher.reg_status,
+          surname: teacher.surname,
+          forenames: teacher.forenames,
+          practice_category: teacher.practice_category,
+          sub_category: teacher.sub_category,
+          national_id: teacher.national_id,
+          created_at: teacher.created_at,
+          payment_amount: teacher.payment_amount || ''
+        });
+      });
+
       // Generate filename
       const fileName = `teacher_registrations_${new Date().toISOString().slice(0, 10)}`;
-      
+
       if (exportFormat === 'xlsx') {
-        // Write XLSX file and trigger download
-        XLSX.writeFile(wb, `${fileName}.xlsx`);
+        // Generate Excel file
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { 
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${fileName}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       } else {
-        // For CSV format
-        const csvContent = XLSX.utils.sheet_to_csv(ws);
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        // Generate CSV
+        const csvData = await workbook.csv.writeBuffer();
+        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -113,12 +132,74 @@ export const ExportButton = ({ data }: { data: Teacher[] }) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
     } catch (error) {
       console.error('Error exporting data:', error);
       alert('There was an error exporting the data. Please try again.');
     } finally {
       setIsExporting(false);
+    }
+  };
+
+  const exportToCSV = (filteredData: Teacher[]) => {
+    setIsExporting(true);
+    
+    try {
+      // Create CSV content manually for better security control
+      const headers = [
+        'Registration Type',
+        'Endorsement Status', 
+        'Registration Status',
+        'Surname',
+        'Forenames',
+        'Practice Category',
+        'Sub Category',
+        'National ID',
+        'Created At',
+        'Payment Amount'
+      ];
+
+      const csvRows = [
+        headers.join(','),
+        ...filteredData.map(row => [
+          `"${(row.registration_type || '').replace(/"/g, '""')}"`,
+          `"${(row.endorsement_status || '').replace(/"/g, '""')}"`,
+          `"${(row.reg_status || '').replace(/"/g, '""')}"`,
+          `"${(row.surname || '').replace(/"/g, '""')}"`,
+          `"${(row.forenames || '').replace(/"/g, '""')}"`,
+          `"${(row.practice_category || '').replace(/"/g, '""')}"`,
+          `"${(row.sub_category || '').replace(/"/g, '""')}"`,
+          `"${(row.national_id || '').replace(/"/g, '""')}"`,
+          `"${(row.created_at || '').replace(/"/g, '""')}"`,
+          `"${(row.payment_amount || '').replace(/"/g, '""')}"`
+        ].join(','))
+      ];
+
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `teacher_registrations_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      alert('There was an error exporting the CSV. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExport = () => {
+    const filteredData = getFilteredData();
+    if (exportFormat === 'xlsx') {
+      exportToExcel(filteredData);
+    } else {
+      exportToCSV(filteredData);
     }
   };
 
@@ -158,7 +239,7 @@ export const ExportButton = ({ data }: { data: Teacher[] }) => {
         </div>
         
         <button
-          onClick={() => exportToCSV(getFilteredData())}
+          onClick={handleExport}
           disabled={isExporting}
           className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors ${
             isExporting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
@@ -267,4 +348,4 @@ export const ExportButton = ({ data }: { data: Teacher[] }) => {
       )}
     </div>
   );
-};
+}
