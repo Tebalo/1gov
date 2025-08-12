@@ -29,7 +29,8 @@ import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
-
+import { jwtDecode } from 'jwt-decode';
+ 
 // Create axios instance with default config
 const axiosInstance = axios.create({
     headers: {
@@ -140,25 +141,39 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
         const MAX_RETRIES = 3;
         const INITIAL_DELAY = 1000;
         let retryCount = 0;
-  
-        const attemptDeTokenize = async (): Promise<DecodedToken> => {
+
+        const attemptDeTokenize = (): DecodedToken => {
           try {
-            const deTokenizeResponse = await axiosInstance.post(
-              `${DeTokenizeUrl}${authResponse.access_token}`,
-              { username, otp: value }
-            );
-            return deTokenizeResponse.data;
-          } catch (error) {
-            if (retryCount < MAX_RETRIES) {
-              retryCount++;
-              const backoffDelay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
-              setErrorMessage(`Decryption failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
-              await new Promise(resolve => setTimeout(resolve, backoffDelay));
-              return attemptDeTokenize();
+            const decodedToken: DecodedToken = jwtDecode(authResponse.access_token);
+            
+            if (decodedToken.exp && decodedToken.exp * 1000 < Date.now()) {
+              throw new Error('Token has expired');
             }
-            throw error;
+            
+            return decodedToken;
+          } catch (error) {
+            throw new Error('Failed to decode authentication token');
           }
         };
+  
+        // const attemptDeTokenize = async (): Promise<DecodedToken> => {
+        //   try {
+        //     const deTokenizeResponse = await axiosInstance.post(
+        //       `${DeTokenizeUrl}${authResponse.access_token}`,
+        //       { username, otp: value }
+        //     );
+        //     return deTokenizeResponse.data;
+        //   } catch (error) {
+        //     if (retryCount < MAX_RETRIES) {
+        //       retryCount++;
+        //       const backoffDelay = INITIAL_DELAY * Math.pow(2, retryCount - 1);
+        //       setErrorMessage(`Decryption failed. Retrying... (${retryCount}/${MAX_RETRIES})`);
+        //       await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        //       return attemptDeTokenize();
+        //     }
+        //     throw error;
+        //   }
+        // };
   
         try {
           const profile = await attemptDeTokenize();

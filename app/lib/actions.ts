@@ -2036,13 +2036,16 @@ export async function getStudentTeacherList(status: string, count: number): Prom
 }
 
 export async function getTeacherList(status: string, count: number, assigned_to?: string): Promise<TeacherListResponse> {
-
+  
   try {
     let param_key='reg_status';
     if(status == "Endorsement-Complete" || status == "Pending-Endorsement" || status == "Endorsement-Recommendation"){
       param_key='endorsement_status';
     }
-    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assigned_to}&count=${count}`, {
+    const assignedTo = assigned_to || '';
+    console.log(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assignedTo}&count=${count}`);
+    
+    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assignedTo}&count=${count}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -3230,9 +3233,11 @@ export async function getStudentTeacherById(Id: string): Promise<StudentTeacherR
   }
 }
 
-export async function getTeacherRegistrationById(Id: string): Promise<TeacherResponse> {
+export async function getTeacherRegistrationById(Id: string, assigned_to?:string): Promise<TeacherResponse> {
   try {
-    const response = await fetch(`${apiUrl}/teacher_registrations/${Id}`, {
+    const assignedTo = assigned_to ? `?assigned_to=${assigned_to}` : '';
+    console.log(`${apiUrl}/teacher_registrations/${Id}${assignedTo}`)
+    const response = await fetch(`${apiUrl}/teacher_registrations/${Id}${assignedTo}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
