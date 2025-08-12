@@ -23,6 +23,7 @@ import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { storeAccessGroups, storeSession } from "../../auth/admin-auth"
 import { adminAuthUrl, AdminDeTokenizeUrl } from "@/app/lib/store"
+import { jwtDecode } from "jwt-decode"
 
 // Auth endpoints
 // const authUrl = "https://gateway-cus-acc.gov.bw/auth/login/sms"
@@ -163,14 +164,29 @@ export const Admin: React.FC = () => {
               isDecryptingSession: true,
               isRedirecting: false
             });
+
+            const attemptDeTokenize = (): DecodedToken => {
+            try {
+                const decodedToken: DecodedToken = jwtDecode(authResponse.access_token);
+                
+                if (decodedToken.exp && decodedToken.exp * 1000 < Date.now()) {
+                throw new Error('Token has expired');
+                }
+                
+                return decodedToken;
+            } catch (error) {
+                throw new Error('Failed to decode authentication token');
+            }
+            };
             
             // Process token
             try {
-                const deTokenizeResponse = await axiosInstance.post(
-                  `${AdminDeTokenizeUrl}${authResponse.access_token}`
-                );
-                
-                const profile = deTokenizeResponse.data as DecodedToken;
+                // const deTokenizeResponse = await axiosInstance.post(
+                //   `${AdminDeTokenizeUrl}${authResponse.access_token}`
+                // );
+                // const profile = deTokenizeResponse.data as DecodedToken;
+
+                const profile = await attemptDeTokenize();
                 await storeAccessGroups(profile);
                 
                 setAuthState({
