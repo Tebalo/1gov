@@ -39,7 +39,7 @@ export const MyAssignments = async ({status, userRole, assigned_to}: {status: st
             <div className="flex items-center space-x-2">
                 <ClipboardList className="w-6 h-6 text-blue-500" />
                 <h2 className="text-xl font-semibold text-gray-900">
-                    My Assignments 
+                    My Assigned Work
                 </h2>
             </div>
             <div className="w-full">

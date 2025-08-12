@@ -194,8 +194,8 @@ export default function Page() {
           
           {/* Form content */}
           <div className="relative z-10">
-            {/* <Form /> */}
-            <RegistrationOfficerHome/>
+            <Form />
+            {/* <RegistrationOfficerHome/> */}
           </div>
         </div>
 
