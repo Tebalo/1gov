@@ -49,12 +49,8 @@ export const RegistrarHome = () => {
       {/* <LocationChangeBanner /> */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"> 
         {/* Quick Action Sections */}
-        <div>
+        <div className="md:col-span-3">
           <QuickAccess/>
-        </div>
-        {/* My Assignments */}
-        <div className="col-span-1 md:col-span-2">
-          <MyAssignments status={"Pending-Assessment"}/>
         </div>
       </div>
     </div>
