@@ -77,9 +77,9 @@ export const MyAssignmentsTable: React.FC<WorkProps> = ({status, userRole, assig
     async function getList(status: string) {
         setIsLoading(true);
         setError(null);
-        
+        const assignedTo = await assigned_to;
         try {
-            const result = await getTeacherList(status, 100, assigned_to);
+            const result = await getTeacherList(status, 100, assignedTo);
             
             if (result.data && Array.isArray(result.data)) {
                 const processedData = processApiResponse(result.data);

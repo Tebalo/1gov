@@ -1,4 +1,4 @@
-import { Tags } from "lucide-react";
+import { Cross, Tags, Undo2, UserMinus, UserX } from "lucide-react";
 import { Card, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -46,17 +46,26 @@ const CaseHeader: React.FC<CaseHeaderProps> = ({
                                     <p className='text-purple-500 font-semibold text-sm'>{caseStatus}</p>
                                 </div>
                             </div>
-                            {caseAssignedTo && <div className="md:block hidden">                                
-                                <span className='text-sm text-gray-500'>The Record is currently locked by {caseAssignedTo}</span>
-                                <Link
-                                    href={`/trls/work/teacher/${caseId.charAt(2)}?assigned_to=`}
-                                    className="text-blue-500 hover:underline ml-2"
-                                >
-                                    <Button variant={'link'}>
-                                        Release Lock
-                                    </Button>
-                                </Link>
-                            </div>}
+                            {caseAssignedTo && (
+                                <div className="md:block hidden">                                
+                                    <div className="flex items-center justify-between gap-3">
+                                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                                            Assigned to 
+                                            <span className="italic font-medium text-gray-700">{caseAssignedTo}</span>
+                                        </span>
+                                        <Link href={`/trls/work/teacher/${caseId.substring(3)}?assigned_to=`}>
+                                            <Button 
+                                                variant="link" 
+                                                size="sm"
+                                                className="flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                                            >
+                                                <UserMinus className="w-4 h-4" />
+                                                Unassign
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
                             <div className="md:block hidden">                                
                                 <span className='text-sm text-gray-500'>Created by {caseCreatedBy} on {caseCreatedDate ? new Date(caseCreatedDate).toLocaleDateString().toString(): ''}</span>
                             </div>
