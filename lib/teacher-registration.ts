@@ -4,7 +4,8 @@ import { AttachmentObject, Profile, QualificationEntry, TeacherRegistrationReque
 import { v4 as uuidv4 } from 'uuid'
 
 const API_BASE_URL = `${trlsBaseURL}:8080/trls-80`
-const TEACHER_REGISTRATION_ENDPOINT = `${API_BASE_URL}/teacher_registrations/`
+// const TEACHER_REGISTRATION_ENDPOINT = `${API_BASE_URL}/teacher_registrations/`
+const TEACHER_REGISTRATION_ENDPOINT = `http://10.0.25.164:8080/trls-80/new-teacher-registration/`
 
 /**
  * Generate a unique application ID
