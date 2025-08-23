@@ -41,6 +41,18 @@ model AuditTrail {
   @@index([userId])
 }
 
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  message     String
+  link        String?  // Optional link to the relevant case or action
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([isRead])
+}
+
 // Comments model - for case discussions
 model Comment {
   id          String   @id @default(cuid())

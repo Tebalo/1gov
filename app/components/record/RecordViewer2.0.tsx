@@ -22,7 +22,7 @@ import { Info, FileCheck,  File, Briefcase, School, AlertTriangle, UserCircle, G
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '../InfoCard';
 import InfoItem from '../InfoItem';
-import { getAuthData } from '@/app/welcome/components/email-login';
+import { getAuthData } from '@/app/staff/login/components/email-login';
 
 
 interface TeacherRegistration {

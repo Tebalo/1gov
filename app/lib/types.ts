@@ -38,7 +38,7 @@ export type AuthenticateResult =
   | { status: 'success' }
   | { status: 'failed'; message: string };
 
-export type UserRole = 'MANAGER' | 
+export type UserRole = 'CUSTOMER' | 'MANAGER' | 
 'REGISTRATION_OFFICER' | 
 'SNR_REGISTRATION_OFFICER' | 
 'DIRECTOR' | 

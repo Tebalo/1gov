@@ -26,7 +26,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { Role, getFlowActionUserDetails } from '@/app/lib/store'
 import ActivityModal from '@/app/components/record/ActivityModal'
-import { getAuthData } from '@/app/welcome/components/email-login'
+import { getAuthData } from '@/app/staff/login/components/email-login'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { StatusType } from '../types/student-type'
 import { AddComment } from '@/components/case/add-comment'

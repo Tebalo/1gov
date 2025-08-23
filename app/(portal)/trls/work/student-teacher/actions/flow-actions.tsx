@@ -10,7 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, GitBranch, Tags, Terminal } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { getAuthData } from "@/app/welcome/components/email-login";
+import { getAuthData } from "@/app/staff/login/components/email-login";
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form"

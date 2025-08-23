@@ -247,11 +247,11 @@ export default function Form() {
     <section className='bg-gray-50 md:p-2 max-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
         {/* Left Sidebar - Header */}
-        <div className='w-80 flex-shrink-0 md:block hidden'>
+        {/* <div className='w-80 flex-shrink-0 md:block hidden'>
           <div className='sticky top-4'>
             <TeacherRegistrationHeader />
           </div>
-        </div>
+        </div> */}
 
 
         {/* Main Content */}
