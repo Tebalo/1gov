@@ -38,7 +38,7 @@ export type AuthenticateResult =
   | { status: 'success' }
   | { status: 'failed'; message: string };
 
-export type UserRole = 'MANAGER' | 
+export type UserRole = 'CUSTOMER' | 'MANAGER' | 
 'REGISTRATION_OFFICER' | 
 'SNR_REGISTRATION_OFFICER' | 
 'DIRECTOR' | 
@@ -104,6 +104,8 @@ export interface DecodedToken {
   preferred_username: string;
   email: string;
   email_verified: boolean;
+  national_id?:string;
+  passport_id?:string;
   gender: string;
   acr: string;
   realm_access: {

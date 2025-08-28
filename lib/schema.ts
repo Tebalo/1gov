@@ -36,7 +36,7 @@ export const FormDataSchema = z.object({
   sub_category: z.string().min(1, 'Sub category is required'),
   experience_years: z.string().min(1, 'Experience years is required'),
   district: z.string().min(1, 'District is required'),
-  institution_type: z.string().min(1, 'Institution type is required'),
+  institution_type: z.string().optional(),
   private_schools: z.string().optional(),
   other_private_schools: z.string().optional(),
   school_level: z.string().optional(),
