@@ -28,9 +28,9 @@ import { Check, ChevronsUpDown, FileText, Loader2 } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
 import { subRegionsForSelect } from "@/types/regions"
-import { allPrivateSchoolsForSelect } from "@/types/private_schools"
-import { allPublicSchoolsForSelect } from "@/types/public_junior_schools"
-import { allSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
+import { allPrivateSchoolsForSelect, centralPrivatePrimarySchoolsForSelect, centralPrivateSecondarySchoolsForSelect, chobePrivatePrimarySchoolsForSelect, chobePrivateSecondarySchoolsForSelect, ghanziPrivatePrimarySchoolsForSelect, ghanziPrivateSecondarySchoolsForSelect, kgalagadiPrivatePrimarySchoolsForSelect, kgalagadiPrivateSecondarySchoolsForSelect, kgatlengPrivatePrimarySchoolsForSelect, kgatlengPrivateSecondarySchoolsForSelect, kwenengPrivatePrimarySchoolsForSelect, kwenengPrivateSecondarySchoolsForSelect, northEastPrivatePrimarySchoolsForSelect, northEastPrivateSecondarySchoolsForSelect, northWestPrivatePrimarySchoolsForSelect, northWestPrivateSecondarySchoolsForSelect, southEastPrivatePrimarySchoolsForSelect, southEastPrivateSecondarySchoolsForSelect, southernPrivatePrimarySchoolsForSelect, southernPrivateSecondarySchoolsForSelect } from "@/types/private_schools"
+import { allPublicSchoolsForSelect, centralPublicSchools, centralPublicSchoolsForSelect, chobePublicSchoolsForSelect, ghanziPublicSchoolsForSelect, kgalagadiPublicSchoolsForSelect, kgatlengPublicSchoolsForSelect, kwenengPublicSchoolsForSelect, northEastPublicSchoolsForSelect, northWestPublicSchoolsForSelect, southEastPublicSchoolsForSelect, southernPublicSchoolsForSelect } from "@/types/public_junior_schools"
+import { allSeniorSecondarySchoolsForSelect, centralSeniorSecondarySchoolsForSelect, chobeSeniorSecondarySchoolsForSelect, ghanziSeniorSecondarySchoolsForSelect, kgalagadiSeniorSecondarySchoolsForSelect, kgatlengSeniorSecondarySchoolsForSelect, kwenengSeniorSecondarySchoolsForSelect, northEastSeniorSecondarySchoolsForSelect, northWestSeniorSecondarySchoolsForSelect, southEastSeniorSecondarySchoolsForSelect, southernSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
 import { allBotswanaQualificationsForSelect, degreeForSelect, diplomasForSelect, doctorateForSelect, mastersForSelect } from "@/types/qualifications"
 import { institutionForSelect } from "@/types/institution"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -55,6 +55,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger, } from "@/components/ui/alert-dialog"
+import { centralPrimarySchoolsForSelect, chobePrimarySchoolsForSelect, ghanziPrimarySchoolsForSelect, kgalagadiPrimarySchoolsForSelect, kgatlengPrimarySchoolsForSelect, kwenengPrimarySchoolsForSelect, northEastPrimarySchoolsForSelect, northWestPrimarySchoolsForSelect, southEastPrimarySchoolsForSelect, southernPrimarySchoolsForSelect } from "@/types/primary_schools"
 
 //  PROD MESD_006_28_001
 // uat MESD_006_08_054
@@ -257,7 +258,7 @@ export default function Form() {
         {/* Main Content */}
         <div className='flex-1 bg-white rounded-lg shadow-lg'>
           {/* Progress Steps */}
-          <nav aria-label='Progress' className='p-6 border-b md:block hidden'>
+          <nav aria-label='Progress' className='md:px-6 py-6 border-b md:block hidden'>
             <ol role='list' className='space-y-4 md:flex md:space-x-8 md:space-y-0'>
               {steps.map((step, index) => (
                 <li key={step.name} className='md:flex-1'>
@@ -329,6 +330,7 @@ export default function Form() {
                             {...register('first_name')}
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your first name"
+                            disabled={submitting}
                           />
                           {errors.first_name && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -368,68 +370,6 @@ export default function Form() {
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your middle name"
                           />
-                        </div>
-
-                        {/* National ID */}
-                        <div className="space-y-2">
-                          <Label htmlFor='username' className="text-sm font-medium text-gray-700">
-                            National ID <span className="text-red-500">*</span>
-                          </Label>
-                          <Input
-                            id='username'
-                            {...register('username')}
-                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                            placeholder="Enter your national ID number"
-                            inputMode="numeric"
-                          />
-                          {errors.username && (
-                            <p className='text-sm text-red-500 flex items-center gap-1'>
-                              <span className="text-xs">⚠</span>
-                              {errors.username.message}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Date of Birth - Full width on mobile for better date picker */}
-                        <div className="space-y-2 col-span-1 sm:col-span-1">
-                          <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
-                            Date of Birth <span className="text-red-500">*</span>
-                          </Label>
-                          <Input
-                            id='date_of_birth'
-                            type='date'
-                            {...register('date_of_birth')}
-                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                          />
-                          {errors.date_of_birth && (
-                            <p className='text-sm text-red-500 flex items-center gap-1'>
-                              <span className="text-xs">⚠</span>
-                              {errors.date_of_birth.message}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Gender */}
-                        <div className="space-y-2">
-                          <Label htmlFor='gender' className="text-sm font-medium text-gray-700">
-                            Gender <span className="text-red-500">*</span>
-                          </Label>
-                          <Select onValueChange={(value) => setValue('gender', value)}>
-                            <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
-                              <SelectValue placeholder='Select your gender' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='Male' className="text-base">Male</SelectItem>
-                              <SelectItem value='Female' className="text-base">Female</SelectItem>
-                              <SelectItem value='Other' className="text-base">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.gender && (
-                            <p className='text-sm text-red-500 flex items-center gap-1'>
-                              <span className="text-xs">⚠</span>
-                              {errors.gender.message}
-                            </p>
-                          )}
                         </div>
 
                         {/* Citizenship */}
@@ -512,6 +452,68 @@ export default function Form() {
                               </p>
                           )}
                         </div>}
+
+                        {/* National ID OR Passport*/}
+                        <div className="space-y-2">
+                          <Label htmlFor='username' className="text-sm font-medium text-gray-700">
+                            National/Passport ID <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            id='username'
+                            {...register('username')}
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            placeholder="Enter your national/passport ID number"
+                            inputMode="numeric"
+                          />
+                          {errors.username && (
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.username.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Date of Birth - Full width on mobile for better date picker */}
+                        <div className="space-y-2 col-span-1 sm:col-span-1">
+                          <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
+                            Date of Birth <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            id='date_of_birth'
+                            type='date'
+                            {...register('date_of_birth')}
+                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                          />
+                          {errors.date_of_birth && (
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.date_of_birth.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Gender */}
+                        <div className="space-y-2">
+                          <Label htmlFor='gender' className="text-sm font-medium text-gray-700">
+                            Gender <span className="text-red-500">*</span>
+                          </Label>
+                          <Select onValueChange={(value) => setValue('gender', value)}>
+                            <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
+                              <SelectValue placeholder='Select your gender' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='Male' className="text-base">Male</SelectItem>
+                              <SelectItem value='Female' className="text-base">Female</SelectItem>
+                              <SelectItem value='Other' className="text-base">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {errors.gender && (
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.gender.message}
+                            </p>
+                          )}
+                        </div>
 
                         {/* File Upload - Full width */}
                         <div className='col-span-1 sm:col-span-2 mt-4'>
@@ -769,7 +771,7 @@ export default function Form() {
                           )}
                         </div>
 
-                        {/* District */}
+                        {/* Region */}
                         <div className="space-y-2">
                           <Label htmlFor='district'>Region *</Label>
                           <Select onValueChange={(value) => setValue('district', value)}>
@@ -778,6 +780,7 @@ export default function Form() {
                             </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value='central'>Central</SelectItem>
+                                <SelectItem value='chobe'>Chobe</SelectItem>
                                 <SelectItem value='ghanzi'>Ghanzi</SelectItem>
                                 <SelectItem value='kgalagadi'>Kgalagadi</SelectItem>
                                 <SelectItem value='kgatleng'>Kgatleng</SelectItem>
@@ -794,8 +797,8 @@ export default function Form() {
                         </div>
 
                         {/* Institution Type */}
-                        <div className="space-y-2">
-                          <Label className="text-base font-medium">Institution Type *</Label>
+                        {watch('work_status') === 'Employed' && <div className="space-y-2">
+                          <Label className="text-base font-medium">Is the institution you are currently working at a public or private school?</Label>
                           <RadioGroup 
                             value={watch('institution_type')} 
                             onValueChange={(value) => {
@@ -820,9 +823,26 @@ export default function Form() {
                           {errors.institution_type && (
                             <p className='text-sm text-red-500 mt-1'>{errors.institution_type.message}</p>
                           )}
-                        </div>
+                        </div>}
 
-
+                        {/* School level */}
+                        {<div className="space-y-2">
+                          <Label htmlFor='school_level'>School Level *</Label>
+                          <Select onValueChange={(value) => setValue('school_level', value)}>
+                            <SelectTrigger className='mt-1'>
+                              <SelectValue placeholder='Select school level' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='pre-primary'>Pre-Primary</SelectItem>
+                              <SelectItem value='primary'>Primary</SelectItem>
+                              <SelectItem value='junior school'>Junior School</SelectItem>
+                              <SelectItem value='senior school'>Senior Secondary</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {errors.school_level && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.school_level.message}</p>
+                          )}
+                        </div>}
 
                         {/* Private school */}
                         {watch('institution_type') === 'private' && <div className='space-y-2'>
@@ -847,23 +867,365 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allPrivateSchoolsForSelect.map((school) => (
-                                        <CommandItem
-                                          key={school.value}
-                                          value={school.label}
-                                          onSelect={(currentValue) => {
-                                            setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
-                                            setPrivateOpen(false)
-                                          }}
-                                        >
-                                          {school.label}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
+                                      {watch('school_level') === 'primary school' && watch('district') === 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
+ <CommandItem
+   key={school.value}
+   value={school.label}
+   onSelect={(currentValue) => {
+     setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+     setPrivateOpen(false)
+   }}
+ >
+   {school.label}
+   <Check
+     className={cn(
+       "ml-auto",
+       watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+     )}
+   />
+ </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'ghanzi' && ghanziPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'kgalagadi' && kgalagadiPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'kgatleng' && kgatlengPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'kweneng' && kwenengPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'north-east' && northEastPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'north-west' && northWestPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'south-east' && southEastPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('school_level') === 'primary school' && watch('district') === 'southern' && southernPrivatePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'central' && centralPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'chobe' && chobePrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'ghanzi' && ghanziPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'kgalagadi' && kgalagadiPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'kgatleng' && kgatlengPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'kweneng' && kwenengPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'north-east' && northEastPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'north-west' && northWestPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'south-east' && southEastPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'southern' && southernPrivateSecondarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          setPrivateOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
                                       ))}
                                     </CommandGroup>
                                   </CommandList>
@@ -878,27 +1240,8 @@ export default function Form() {
                           )}
                         </div>}
 
-                        {/* School level */}
-                        {watch('institution_type') === 'public' && <div className="space-y-2">
-                          <Label htmlFor='school_level'>School Level *</Label>
-                          <Select onValueChange={(value) => setValue('school_level', value)}>
-                            <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select school level' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='pre-primary'>Pre-Primary</SelectItem>
-                              <SelectItem value='primary'>Primary</SelectItem>
-                              <SelectItem value='junior school'>Junior School</SelectItem>
-                              <SelectItem value='senior school'>Senior Secondary</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.school_level && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.school_level.message}</p>
-                          )}
-                        </div>}
-
                         {/* Primary school */}
-                        {watch('school_level') === 'primary' && <div className='space-y-2'>
+                        {watch('school_level') === 'primary' && watch('institution_type') === 'public' && <div className='space-y-2'>
                             <Label htmlFor='primary_schools' className="text-sm font-medium text-gray-700">
                               Primary School <span className="text-red-500">*</span>
                             </Label>
@@ -920,23 +1263,185 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allPrivateSchoolsForSelect.map((school) => (
-                                        <CommandItem
-                                          key={school.value}
-                                          value={school.label}
-                                          onSelect={(currentValue) => {
-                                            setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
-                                            setPrimaryOpen(false)
-                                          }}
-                                        >
-                                          {school.label}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
+                                      {watch('school_level') === 'primary' && watch('district') === 'central' && centralPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'chobe' && chobePrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'ghanzi' && ghanziPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'kgalagadi' && kgalagadiPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'kgatleng' && kgatlengPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'kweneng' && kwenengPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'north-east' && northEastPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      { watch('district') === 'north-west' && northWestPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'south-east' && southEastPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                      ))}
+                                      {watch('district') === 'southern' && southernPrimarySchoolsForSelect.map((school) => (
+                                      <CommandItem
+                                        key={school.value}
+                                        value={school.label}
+                                        onSelect={(currentValue) => {
+                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          setPrimaryOpen(false)
+                                        }}
+                                      >
+                                        {school.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('primary_schools') === school.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
                                       ))}
                                     </CommandGroup>
                                   </CommandList>
@@ -952,7 +1457,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Primary Schools */}
-                        {watch('other_primary_schools') === 'Other' && <div className="space-y-2">
+                        {watch('other_primary_schools') === 'Other' && watch('institution_type') === 'public' && <div className="space-y-2">
                           <Label htmlFor='other_primary_schools'>Other Primary School *</Label>
                           <Input
                             id='other_primary_schools'
@@ -965,7 +1470,7 @@ export default function Form() {
                         </div>}
 
                         {/* Junior school */}
-                        {watch('school_level') === 'junior school' && <div className='space-y-2'>
+                        {watch('school_level') === 'junior school' && watch('institution_type') === 'public' && <div className='space-y-2'>
                             <Label htmlFor='junior_schools' className="text-sm font-medium text-gray-700">
                               Junior School <span className="text-red-500">*</span>
                             </Label>
@@ -987,7 +1492,169 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allPublicSchoolsForSelect.map((school) => (
+                                      {watch('district') == 'central' && centralPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'chobe' && chobePublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'ghanzi' && ghanziPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'kgalagadi' && kgalagadiPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'kgatleng' && kgatlengPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'kweneng' && kwenengPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'north-east' && northEastPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'north-west' && northWestPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'south-east' && southEastPublicSchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            setJuniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('junior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') == 'southern' && southernPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label}
@@ -1019,7 +1686,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Junior Schools */}
-                        {watch('other_junior_schools') === 'Other' && <div className="space-y-2">
+                        {watch('other_junior_schools') === 'Other' && watch('institution_type') === 'public' && <div className="space-y-2">
                           <Label htmlFor='other_junior_schools'>Other Junior School *</Label>
                           <Input
                             id='other_junior_schools'
@@ -1032,7 +1699,7 @@ export default function Form() {
                         </div>}
 
                         {/* Senior school */}
-                        {watch('school_level') === 'senior school' && <div className='space-y-2'>
+                        {watch('school_level') === 'senior school' && watch('institution_type') === 'public' && <div className='space-y-2'>
                             <Label htmlFor='senior_schools' className="text-sm font-medium text-gray-700">
                               Senior School <span className="text-red-500">*</span>
                             </Label>
@@ -1054,7 +1721,187 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district') === "central" && centralSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "chobe" && chobeSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "kgalagadi" && kgalagadiSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "kgatleng" && kgatlengSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "kweneng" && kwenengSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "north-east" && northEastSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "north-west" && northWestSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "south-east" && southEastSeniorSecondarySchoolsForSelect.map((school) => (
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label}
+                                          onSelect={(currentValue) => {
+                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            setSeniorOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                      {watch('district') === "southern" && southernSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label}
@@ -1086,7 +1933,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Senior Schools */}
-                        {watch('senior_schools') === 'Other' && <div className="space-y-2">
+                        {watch('senior_schools') === 'Other' && watch('institution_type') === 'public' && <div className="space-y-2">
                           <Label htmlFor='other_senior_schools'>Other Senior School *</Label>
                           <Input
                             id='other_senior_schools'
@@ -2245,7 +3092,28 @@ export default function Form() {
                     Step {currentStep + 1} of {steps.length}
                   </span>
                 </div>
-
+                <div className='flex items-center gap-2'>
+                <Button 
+                  type='button'
+                  onClick={submitForm}
+                  className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'
+                >
+                  Save & Continue
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='1.5'
+                    stroke='currentColor'
+                    className='h-4 w-4'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M4.5 12.75l6 6 9-13.5'
+                    />
+                  </svg>
+                </Button>
                 {currentStep < steps.length - 1 ? (
                   <Button
                     type='button'
@@ -2270,27 +3138,6 @@ export default function Form() {
                   </Button>
                 ) : (
                   <>
-                  {/* <Button 
-                    type='button'
-                    onClick={submitForm}
-                    className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'
-                  >
-                    Submit Application
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth='1.5'
-                      stroke='currentColor'
-                      className='h-4 w-4'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M4.5 12.75l6 6 9-13.5'
-                      />
-                    </svg>
-                  </Button> */}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button                       
@@ -2364,6 +3211,7 @@ export default function Form() {
                   </AlertDialog>
                   </>
                 )}
+                </div>
               </div>
             </div>
           </ScrollArea>

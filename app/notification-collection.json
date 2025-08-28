@@ -1,0 +1,496 @@
+{
+  "info": {
+    "name": "Notification API",
+    "description": "Complete Notification Service API collection with all endpoints for managing notifications",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "testUserId",
+      "value": "user-123",
+      "type": "string"
+    },
+    {
+      "key": "testNotificationId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Core Notifications",
+      "item": [
+        {
+          "name": "Get Notifications (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?userId={{testUserId}}&page=1&limit=10&unreadOnly=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{testUserId}}",
+                  "description": "User ID to fetch notifications for"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Number of notifications per page (default: 10)"
+                },
+                {
+                  "key": "unreadOnly",
+                  "value": "false",
+                  "description": "Show only unread notifications (default: false)"
+                }
+              ]
+            },
+            "description": "Fetch paginated notifications for a user with optional filtering"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unread Notifications Only",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?userId={{testUserId}}&unreadOnly=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{testUserId}}"
+                },
+                {
+                  "key": "unreadOnly",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Fetch only unread notifications for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('testNotificationId', response.id);",
+                  "    console.log('Notification ID saved:', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{testUserId}}\",\n  \"message\": \"Welcome to our platform! This is your first notification.\",\n  \"link\": \"https://example.com/welcome\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"]
+            },
+            "description": "Send a new notification to a user"
+          },
+          "response": []
+        }
+      ],
+      "description": "Core notification operations - getting and sending notifications"
+    },
+    {
+      "name": "Individual Notification Operations",
+      "item": [
+        {
+          "name": "Get Specific Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{testNotificationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "{{testNotificationId}}"]
+            },
+            "description": "Get a specific notification and automatically mark it as read"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{testNotificationId}}/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "{{testNotificationId}}", "read"]
+            },
+            "description": "Mark a specific notification as read"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Specific Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{testNotificationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "{{testNotificationId}}"]
+            },
+            "description": "Delete a specific notification"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations on individual notifications"
+    },
+    {
+      "name": "User-Specific Operations",
+      "item": [
+        {
+          "name": "Get All User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{testUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "user", "{{testUserId}}"]
+            },
+            "description": "Get all notifications for a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{testUserId}}/count",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "user", "{{testUserId}}", "count"]
+            },
+            "description": "Get the count of unread notifications for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Notification Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{testUserId}}/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "user", "{{testUserId}}", "stats"]
+            },
+            "description": "Get notification statistics (total, read, unread) for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{testUserId}}/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "user", "{{testUserId}}", "read-all"]
+            },
+            "description": "Mark all notifications as read for a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete All User Notifications",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{testUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "user", "{{testUserId}}"]
+            },
+            "description": "Delete all notifications for a specific user"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations specific to a user's notifications"
+    },
+    {
+      "name": "Bulk Operations",
+      "item": [
+        {
+          "name": "Send Bulk Notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notifications\": [\n    {\n      \"userId\": \"user-123\",\n      \"message\": \"System maintenance scheduled for tonight\",\n      \"link\": \"https://example.com/maintenance\"\n    },\n    {\n      \"userId\": \"user-456\",\n      \"message\": \"Your subscription expires soon\",\n      \"link\": \"https://example.com/billing\"\n    },\n    {\n      \"userId\": \"user-789\",\n      \"message\": \"New feature available - check it out!\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/bulk",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "bulk"]
+            },
+            "description": "Send multiple notifications at once"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations for handling multiple notifications"
+    },
+    {
+      "name": "Maintenance Operations",
+      "item": [
+        {
+          "name": "Cleanup Old Notifications (30 days)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/cleanup?daysOld=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "cleanup"],
+              "query": [
+                {
+                  "key": "daysOld",
+                  "value": "30",
+                  "description": "Delete notifications older than this many days"
+                }
+              ]
+            },
+            "description": "Delete notifications older than 30 days"
+          },
+          "response": []
+        },
+        {
+          "name": "Cleanup Old Notifications (90 days)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/cleanup?daysOld=90",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "cleanup"],
+              "query": [
+                {
+                  "key": "daysOld",
+                  "value": "90"
+                }
+              ]
+            },
+            "description": "Delete notifications older than 90 days"
+          },
+          "response": []
+        }
+      ],
+      "description": "Maintenance operations for cleanup and optimization"
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Create Test Notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notifications\": [\n    {\n      \"userId\": \"{{testUserId}}\",\n      \"message\": \"Welcome to the platform!\",\n      \"link\": \"https://example.com/welcome\"\n    },\n    {\n      \"userId\": \"{{testUserId}}\",\n      \"message\": \"Your profile is incomplete\",\n      \"link\": \"https://example.com/profile\"\n    },\n    {\n      \"userId\": \"{{testUserId}}\",\n      \"message\": \"New message from admin\"\n    },\n    {\n      \"userId\": \"{{testUserId}}\",\n      \"message\": \"System update completed successfully\"\n    },\n    {\n      \"userId\": \"{{testUserId}}\",\n      \"message\": \"Weekly report is ready\",\n      \"link\": \"https://example.com/reports\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/bulk",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "bulk"]
+            },
+            "description": "Create multiple test notifications for testing purposes"
+          },
+          "response": []
+        },
+        {
+          "name": "Error Test - Invalid User ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"This should fail - no userId provided\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"]
+            },
+            "description": "Test error handling when required fields are missing"
+          },
+          "response": []
+        },
+        {
+          "name": "Error Test - Invalid Notification ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/invalid-id-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "invalid-id-123"]
+            },
+            "description": "Test error handling when notification doesn't exist"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test scenarios and error handling examples"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('Making request to:', pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "pm.test('Response time is less than 2000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "pm.test('Response has valid JSON', function () {",
+          "    pm.response.to.be.json;",
+          "});",
+          "",
+          "if (pm.response.code >= 200 && pm.response.code < 300) {",
+          "    pm.test('Status code is success', function () {",
+          "        pm.response.to.be.success;",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}

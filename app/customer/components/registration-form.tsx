@@ -241,7 +241,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         // })
         
         // Redirect to login page after successful registration
-        router.push('/login')
+        router.push('/customer/signin')
       } else {
         const errorData = await response.json()
         

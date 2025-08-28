@@ -1,6 +1,6 @@
 import { prisma } from './prisma';
 import { PrismaClient, Prisma } from '@prisma/client';
-// Types for the audit trail
+
 export type AuditActionType =
   | 'status_change'
   | 'comment_added'

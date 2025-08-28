@@ -3,7 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function TeacherApplicationPage() {
   return (
-      <section className='p-2 md:space-y-6'>
+      <section className='md:px-2 py-4 md:space-y-6'>
 
         {/* Main Form Container */}
         <div className='relative'>
