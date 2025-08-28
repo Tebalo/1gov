@@ -104,6 +104,8 @@ export interface DecodedToken {
   preferred_username: string;
   email: string;
   email_verified: boolean;
+  national_id?:string;
+  passport_id?:string;
   gender: string;
   acr: string;
   realm_access: {

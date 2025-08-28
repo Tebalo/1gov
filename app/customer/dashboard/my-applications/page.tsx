@@ -1,3 +1,5 @@
+import { MyForm } from "../../components/my-form";
+
 export default function MyApplicationsPage() {
   return (
     <section className='p-2 md:space-y-6'>
@@ -6,6 +8,10 @@ export default function MyApplicationsPage() {
         <div className="p-6">
           {/* Content for My Applications will go here */}
           <p>List of applications will be displayed here.</p>
+          <MyForm
+            userId="1234"
+            userName="John Doe"
+          />
         </div>
       </div>
     </section>

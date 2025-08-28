@@ -88,3 +88,20 @@ model Comment {
 
   @@index([caseId, caseType])
 }
+
+model Draft {
+  id        String   @id @default(cuid())
+  content   String
+  formType  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  userName  String
+  userRole  String?
+  caseId    String?
+  caseType  String?
+
+  @@unique([userId, formType, caseId])
+  @@index([userId, formType])
+  @@index([caseId, caseType])
+}

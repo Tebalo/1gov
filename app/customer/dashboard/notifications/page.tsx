@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// Enhanced interfaces for the new notification format
 interface NotificationAttachment {
   link: string;
   type: 'payment' | 'invoice' | 'receipt' | 'general' | string;
@@ -58,11 +57,9 @@ interface NotificationResponse {
   hasMore: boolean;
 }
 
-interface NotificationPageProps {
-  userId: string;
-}
 
-const NotificationPage: React.FC<NotificationPageProps> = ({ userId = "512927017" }) => {
+const NotificationPage = () => {
+  const userId = "440418213"
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
