@@ -155,7 +155,6 @@ export function CustomerNavigationMenu() {
                 Notifications
                 {/* <NotificationCounter userId="440418213" /> */}
                 <NotificationCounter 
-                  userId="440418213"
                   showAnimation={true}
                   maxDisplay={999}
                   refreshInterval={30000} // 30 seconds
@@ -290,7 +289,7 @@ export function CustomerNavigationMenu() {
                     </div>
                     <span className="font-medium">Notifications</span>
                   </div>
-                  <NotificationCounter userId="440418213" />
+                  <NotificationCounter />
                 </a>
               </div>
             </div>
