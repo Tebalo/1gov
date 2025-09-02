@@ -85,7 +85,7 @@ const NotificationPage = () => {
   });
 
   // Base URL for API calls
-  const baseUrl = 'http://localhost:3000/api';
+  const baseUrl = '/api';
 
   // Get icon for attachment type
   const getAttachmentIcon = (type: string) => {

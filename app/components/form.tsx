@@ -56,6 +56,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger, } from "@/components/ui/alert-dialog"
 import { centralPrimarySchoolsForSelect, chobePrimarySchoolsForSelect, ghanziPrimarySchoolsForSelect, kgalagadiPrimarySchoolsForSelect, kgatlengPrimarySchoolsForSelect, kwenengPrimarySchoolsForSelect, northEastPrimarySchoolsForSelect, northWestPrimarySchoolsForSelect, southEastPrimarySchoolsForSelect, southernPrimarySchoolsForSelect } from "@/types/primary_schools"
+import { useDraft } from "@/lib/hooks/useDraft"
 
 //  PROD MESD_006_28_001
 // uat MESD_006_08_054
@@ -132,8 +133,18 @@ export default function Form() {
   const [postGradDiplomaOpen, setPostGradDiplomaOpen] = React.useState(false)
 
   const [submitting,setSubmitting] = useState(false)
+  const [submittingDraft,setSubmittingDraft] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
-  // Convert to API format
+
+  const { saveDraft, loadDraft, deleteDraft, isLoading, error } = useDraft({
+    userId: "440418213", 
+    userName: "Bopaki Tebalo",
+    formType: "Registration", 
+    userRole: "user", 
+    // caseId: "case123", // Optional - only if this form is tied to a case
+    // caseType: "profile", // Optional - only if this form is tied to a case
+  });
+
   const getAPIFormatQualifications = () => {
     return qualifications
       .filter(q => q.alt_attachments)
@@ -163,7 +174,7 @@ export default function Form() {
       formData.nationality = 'Botswana'
     }
 
-      // Extract profile data from form
+    // Extract profile data from form
     const profile: Profile = {
       username: formData.username,
       first_name: formData.first_name,
@@ -180,8 +191,7 @@ export default function Form() {
       nationality: formData.nationality || "", // Ensure
       // marital_status: formData.marital_status
     }
-  
-    // Process attachments to ensure correct format
+
     const processedAttachments = processAttachments(formData)
 
     const apiQualifications = getAPIFormatQualifications()
@@ -206,6 +216,103 @@ export default function Form() {
     }
   }
 
+  const processDraft: SubmitHandler<FormInputs> = async (formData) => {
+    try {
+      setSubmittingDraft(true)
+      if(formData.citizenship.toLowerCase() === 'citizen'){
+        formData.nationality = 'Botswana'
+      }
+      
+      const profile: Profile = {
+        username: formData.username,
+        first_name: formData.first_name,
+        middle_name: formData.middle_name || "",
+        last_name: formData.last_name || "",
+        surname: formData.surname || formData.last_name,
+        date_of_birth: formData.date_of_birth,
+        citizenship: formData.citizenship,
+        primary_phone: formData.primary_phone,
+        primary_physical: formData.primary_physical,
+        primary_postal: formData.primary_postal,
+        gender: formData.gender,
+        nationality: formData.nationality || "",
+      }
+      
+      const processedAttachments = processAttachments(formData)
+      const apiQualifications = getAPIFormatQualifications()
+
+      const processedFormData = {
+        ...formData,
+        ...processedAttachments,
+        qualifications: apiQualifications,
+        national_id_copy: nationalIdDoc
+      }
+
+      // Save the processed form data as a draft
+      await saveDraft(processedFormData);
+      console.log('Draft saved successfully');
+
+      // Optional: Continue with your existing form submission logic here
+      // For example, if this was originally a submit function:
+      // await submitToAPI(processedFormData);
+      setSubmittingDraft(false)
+    } catch (error) {
+      setSubmittingDraft(false)
+      console.error('Error saving draft:', error);
+      // Handle error appropriately
+    }
+  }
+
+  // Function to save draft manually (e.g., on button click)
+  const handleSaveDraft = async () => {
+    const currentFormData = getValues(); // Get current form values
+    await processDraft(currentFormData);
+  }
+
+  // Function to load existing draft on component mount
+  // useEffect(() => {
+  //   const loadExistingDraft = async () => {
+  //     try {
+  //       const draftData = await loadDraft();
+  //       if (draftData) {
+  //         // Reset form with draft data
+  //         reset(draftData);
+  //         console.log('Draft loaded successfully');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error loading draft:', error);
+  //     }
+  //   };
+
+  //   loadExistingDraft();
+  // }, [loadDraft, reset]);
+
+  // Auto-save draft on form changes (debounced)
+  // Auto-save draft on form changes (debounced)
+  const watchedFields = watch();
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      // Only auto-save if there's meaningful content AND user has started filling the form
+      const hasContent = watchedFields.first_name || 
+                        watchedFields.username || 
+                        watchedFields.primary_phone ||
+                        watchedFields.last_name;
+      
+      // Don't auto-save on initial load/empty form
+      if (hasContent && (watchedFields.first_name !== '' || watchedFields.username !== '')) {
+        try {
+          await saveDraft(watchedFields);
+          console.log('Auto-saved draft');
+        } catch (error) {
+          console.error('Auto-save failed:', error);
+        }
+      }
+    }, 60000); // 60 seconds debounce
+
+    return () => clearTimeout(timer);
+  }, [watchedFields, saveDraft]);
+
   type FieldName = keyof FormInputs
 
   const next = async () => {
@@ -228,6 +335,10 @@ export default function Form() {
       setPreviousStep(currentStep)
       setCurrentStep(step => step - 1)
     }
+  }
+
+  const submitDraft = async () => { 
+    processDraft(getValues()) 
   }
 
   const submitForm = async () => {
@@ -3095,10 +3206,14 @@ export default function Form() {
                 <div className='flex items-center gap-2'>
                 <Button 
                   type='button'
-                  onClick={submitForm}
+                  onClick={submitDraft}
                   className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'
-                >
-                  Save & Continue
+                  disabled={submittingDraft || submitting}
+                > {submittingDraft ? (
+                  <>
+                    Saving Draft
+                  </>): (
+                    <>Save & Continue
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -3112,7 +3227,8 @@ export default function Form() {
                       strokeLinejoin='round'
                       d='M4.5 12.75l6 6 9-13.5'
                     />
-                  </svg>
+                  </svg></>
+                  )}
                 </Button>
                 {currentStep < steps.length - 1 ? (
                   <Button

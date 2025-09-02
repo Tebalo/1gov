@@ -40,7 +40,7 @@ export default function UserRegistrationPage() {
               <p className="text-muted-foreground">
                 Already have an account?{" "}
                 <a 
-                  href="/login" 
+                  href="/customer/signin" 
                   className="font-medium text-primary underline-offset-4 hover:underline"
                 >
                   Sign in

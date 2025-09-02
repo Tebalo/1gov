@@ -71,6 +71,57 @@ export const draftService = {
     }
   },
 
+  // Get a specific draft by ID
+  getDraftById: async (draftId: string) => {
+    try {
+      const draft = await prisma.draft.findUnique({
+        where: {
+          id: draftId,
+        },
+      });
+      return draft;
+    } catch (error) {
+      console.error('Error fetching draft by ID:', error);
+      throw new Error('Failed to fetch draft by ID');
+    }
+  },
+
+  // Update a draft by ID
+  updateDraftById: async (draftId: string, updateData: UpdateDraftData) => {
+    try {
+      const updatedDraft = await prisma.draft.update({
+        where: {
+          id: draftId,
+        },
+        data: {
+          content: updateData.content,
+          updatedAt: new Date(),
+        },
+      });
+
+      return updatedDraft;
+    }
+    catch (error) {
+      console.error('Error updating draft by ID:', error);
+      throw new Error('Failed to update draft by ID');
+    }
+  },
+
+  // Delete a draft by ID
+  deleteDraftById: async (draftId: string) => {
+    try {
+      const deletedDraft = await prisma.draft.delete({
+        where: {
+          id: draftId,
+        },
+      });
+      return deletedDraft;
+    } catch (error) {
+      console.error('Error deleting draft by ID:', error);
+      throw new Error('Failed to delete draft by ID');
+    }
+  },
+
   // Get all drafts for a user
   getUserDrafts: async (userId: string) => {
     try {

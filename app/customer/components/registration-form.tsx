@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight, Check } from "lucide-react"
 // import { toast } from "sonner"
 import Image from 'next/image';
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 interface RegistrationFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -91,6 +93,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     agreeToNewsletter: false
   })
 
+  const { toast } = useToast();
+
   const validateStep = (step: number): boolean => {
     setErrors([])
     setFieldErrors({})
@@ -114,6 +118,9 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         const stepTwoErrors: string[] = []
         if (!formData.firstName.trim()) stepTwoErrors.push("First name is required")
         if (!formData.lastName.trim()) stepTwoErrors.push("Last name is required")
+        if (!formData.dateOfBirth.trim()) stepTwoErrors.push("Date of birth is required")
+        if (!formData.gender.trim()) stepTwoErrors.push("Gender is required")
+        if (!formData.nationalId.trim()) stepTwoErrors.push("National ID is required")
         
         if (stepTwoErrors.length > 0) {
           setErrors(stepTwoErrors)
@@ -122,11 +129,36 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         return true
 
       case 3: // Contact information
-        // Optional validation for contact info
         return true
 
       case 4: // Professional information
-        // Optional validation for professional info
+        const stepFourErrors: string[] = []
+        
+        // Optional validation for URLs
+        if(formData.linkedinUrl && formData.linkedinUrl.length > 0 && !formData.linkedinUrl.includes("http")) { 
+          stepFourErrors.push("LinkedIn URL must start with http or https")
+        }
+        if(formData.githubUrl && formData.githubUrl.length > 0 && !formData.githubUrl.includes("http")) {
+          stepFourErrors.push("GitHub URL must start with http or https")
+        }
+        if(formData.websiteUrl && formData.websiteUrl.length > 0 && !formData.websiteUrl.includes("http")) {
+          stepFourErrors.push("Website URL must start with http or https")
+        }
+        
+        // Make job title required
+        if (!formData.jobTitle.trim()) {
+          stepFourErrors.push("Job title is required")
+        }
+        
+        // Make organization required
+        if (!formData.organization.trim()) {
+          stepFourErrors.push("Organization is required")
+        }
+        
+        if (stepFourErrors.length > 0) {
+          setErrors(stepFourErrors)
+          return false
+        }
         return true
 
       case 5: // Review and terms
@@ -236,9 +268,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
       if (response.ok) {
         const data = await response.json()
-        // toast.success("Registration successful!", {
-        //   description: "Your account has been created. You can now sign in.",
-        // })
+        toast({
+          title: "Passed!!!",
+          description: "Registration successful. You can now log in.",
+          action: (
+            <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        });
         
         // Redirect to login page after successful registration
         router.push('/customer/signin')
@@ -246,6 +282,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         const errorData = await response.json()
         
         if (response.status === 400) {
+          toast({
+            title: "Failed!!!",
+            description: "Authentication failed. Please check your credentials and try again.",
+            action: (
+              <ToastAction altText="Ok">Ok</ToastAction>
+            ),
+          });
           // Handle field-specific errors
           setFieldErrors(errorData)
           
@@ -258,6 +301,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
           })
           setErrors(errorMessages)
         } else {
+          toast({
+            title: "Failed!!!",
+            description: "Authentication failed. Please check your credentials and try again.",
+            action: (
+              <ToastAction altText="Ok">Ok</ToastAction>
+            ),
+          });
           setErrors(["Registration failed. Please try again."])
         }
       }
@@ -402,7 +452,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Label htmlFor="dateOfBirth">Date of Birth *</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
@@ -412,7 +462,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="gender">Gender</Label>
+                  <Label htmlFor="gender">Gender *</Label>
                   <Select
                     value={formData.gender}
                     onValueChange={(value) => handleInputChange("gender", value)}
@@ -433,7 +483,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="nationalId">National ID</Label>
+                  <Label htmlFor="nationalId">National ID *</Label>
                   <Input
                     id="nationalId"
                     placeholder="Enter your national ID"
@@ -681,7 +731,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="jobTitle">Job Title</Label>
+                  <Label htmlFor="jobTitle">Job Title *</Label>
                   <Input
                     id="jobTitle"
                     placeholder="Senior Developer"
@@ -692,7 +742,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="organization">Organization</Label>
+                  <Label htmlFor="organization">Organization *</Label>
                   <Input
                     id="organization"
                     placeholder="Company Name"

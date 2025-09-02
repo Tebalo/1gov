@@ -60,6 +60,7 @@ export interface FormData {
   private_schools?: string | null
   other_private_schools?: string | null
   school_level: string
+  submitted_via: string
   primary_schools?: string | null
   pre_primary_name?: string | null
   other_primary_schools?: string | null

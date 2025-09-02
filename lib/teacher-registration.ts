@@ -62,6 +62,7 @@ export async function transformFormData(formData: any, profile: Profile): Promis
         district: formData.district,
         institution_type: formData.institution_type,
         private_schools: formData.private_schools || null,
+        submitted_via: "TRLS Portal",
         other_private_schools: formData.other_private_schools || null,
         school_level: formData.school_level,
         primary_schools: formData.primary_schools || null,

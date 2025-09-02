@@ -12,11 +12,12 @@ import Image from 'next/image';
 // import { toast } from "sonner"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { SignInInput, signInSchema } from "../validations/auth"
-import { toast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 import { DecodedTokenResponse } from "../types/auth"
 import { storeAccessGroups, storeSession } from "@/app/auth/auth"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { storeAuthData } from "@/app/staff/login/components/email-login"
+import { ToastAction } from "@/components/ui/toast"
 
 // Auth API configuration
 const AUTH_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/login/"
@@ -34,8 +35,9 @@ export function LoginForm({
 
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState(String)
   const router = useRouter()
-
+  const { toast } = useToast();
   const {
     register,
     handleSubmit,
@@ -43,13 +45,6 @@ export function LoginForm({
   } = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
   })
-
-  const getClientInfo = () => {
-    return {
-      ipAddress: '', // You might want to get this from a service
-      userAgent: navigator.userAgent,
-    }
-  }
 
   const onSubmit = async (data: SignInInput) => {
     setIsLoading(true)
@@ -71,6 +66,15 @@ export function LoginForm({
         // toast.error("Login Failed", {
         //   description: "Invalid email or password. Please try again."
         // })
+        setFieldErrors("Invalid email or password");
+        console.error
+        toast({
+          title: "Login Failed",
+          description: "Invalid email or password. Please try again.",
+          action: (
+            <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        });
         return
       }
 
@@ -111,6 +115,14 @@ export function LoginForm({
         // toast.error("Login Failed", {
         //   description: "Invalid email or password. Please try again."
         // })
+        toast({
+          title: "Login Failed",
+          description: "Server error. Please try again later.",
+          action: (
+            <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        });
+        
         return
       }
 
@@ -299,6 +311,13 @@ export function LoginForm({
       // toast.error("Login Failed", {
       //   description: error instanceof Error ? error.message : "Invalid email or password. Please try again."
       // })
+        toast({
+          title: "Login Failed",
+          description: "Server error. Please try again later.",
+          action: (
+            <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        });
     } finally {
       setIsLoading(false)
     }
@@ -313,6 +332,7 @@ export function LoginForm({
           Enter your email below to login to your account
         </p>
       </div>
+      <p className="text-sm text-center text-destructive">{fieldErrors}</p>
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
@@ -337,9 +357,13 @@ export function LoginForm({
               className="ml-auto text-sm underline-offset-4 hover:underline"
               onClick={(e) => {
                 e.preventDefault()
-                // toast("Password Reset", {
-                //   description: "Password reset functionality will be available in the next version.",
-                // })
+                toast({
+                  title: "Password Reset",
+                  description: "Password reset functionality will be available in the next version.",
+                  action: (
+                    <ToastAction altText="Ok">Ok</ToastAction>
+                  ),
+                });
               }}
             >
               Forgot your password?

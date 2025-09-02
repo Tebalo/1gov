@@ -65,17 +65,6 @@ model ServiceCode {
   @@map("service_codes")
 }
 
-model DraftSubmission {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  formData  Json
-  formType  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("draft_submissions")
-}
-
 model Comment {
   id        String   @id @default(cuid())
   content   String
@@ -90,17 +79,22 @@ model Comment {
 }
 
 model Draft {
-  id        String   @id @default(cuid())
-  content   String
-  formType  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  userName  String
-  userRole  String?
-  caseId    String?
-  caseType  String?
-
+  id          String   @id @default(cuid())
+  content     String   // JSON string of form data
+  formType    String   // Type of form being drafted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // User information
+  userId      String
+  userName    String
+  userRole    String?
+  
+  // Case information (optional - for case-related forms)
+  caseId      String?
+  caseType    String?
+  
+  // Make sure only one draft per user per form type per case
   @@unique([userId, formType, caseId])
   @@index([userId, formType])
   @@index([caseId, caseType])

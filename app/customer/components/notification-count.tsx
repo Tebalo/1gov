@@ -1,4 +1,5 @@
 'use client';
+import { useUserData } from "@/lib/hooks/useUserData";
 import { Bell, BellRing } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -11,7 +12,6 @@ interface NotificationStats {
 }
 
 interface NotificationCounterProps {
-  userId: string;
   showAnimation?: boolean;
   showTooltip?: boolean;
   maxDisplay?: number;
@@ -21,7 +21,6 @@ interface NotificationCounterProps {
 }
 
 export const NotificationCounter: React.FC<NotificationCounterProps> = ({ 
-  userId,
   showAnimation = true,
   showTooltip = true,
   maxDisplay = 99,
@@ -29,6 +28,8 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
   className = "",
   onClick
 }) => {
+  const { userData, loading, nationalId, passportId, userId, userRoles } = useUserData()
+  console.log(userData?.profile.personal_info.national_id)
   const [stats, setStats] = useState<NotificationStats>({
     total: 0,
     unread: 0,
@@ -36,7 +37,7 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
     byType: {},
     byStatus: {}
   });
-  const [loading, setLoading] = useState(true);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasNewNotification, setHasNewNotification] = useState(false);
 
@@ -46,7 +47,7 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/notifications/user/${userId}/stats`);
+        const response = await fetch(`/api/notifications/user/${userId}/stats`);
         if (response.ok) {
           const data: NotificationStats = await response.json();
           
@@ -67,7 +68,7 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
         console.error('Failed to fetch notification stats:', error);
         setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
-        setLoading(false);
+        setNotificationsLoading(false);
       }
     };
 
@@ -88,7 +89,7 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
   // Get tooltip content
   const getTooltipContent = () => {
     if (error) return `Error: ${error}`;
-    if (loading) return 'Loading notifications...';
+    if (notificationsLoading) return 'Loading notifications...';
     
     const typeBreakdown = Object.entries(stats.byType)
       .map(([type, count]) => `${type}: ${count}`)
@@ -127,14 +128,14 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
       title={showTooltip ? getTooltipContent() : undefined}
     >
       {/* Loading state */}
-      {loading && (
+      {notificationsLoading && (
         <div className="relative">
           <Bell className="h-6 w-6 text-gray-400 animate-pulse" />
         </div>
       )}
 
       {/* Error state */}
-      {error && !loading && (
+      {error && !notificationsLoading && (
         <div className="relative">
           <Bell className="h-6 w-6 text-red-500" />
           <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-3 h-3 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
@@ -144,7 +145,7 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
       )}
 
       {/* Normal state */}
-      {!loading && !error && (
+      {!notificationsLoading && !error && (
         <div className="relative">
           {bellIcon}
           {counterBadge}
@@ -161,9 +162,9 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
       {/* Enhanced tooltip for desktop */}
       {showTooltip && (
         <div className="hidden group-hover:block absolute bottom-full right-0 mb-2 w-64 p-3 text-sm text-white bg-gray-800 rounded-lg shadow-lg z-50">
-          {loading && "Loading notifications..."}
+          {notificationsLoading && "Loading notifications..."}
           {error && `Error: ${error}`}
-          {!loading && !error && (
+          {!notificationsLoading && !error && (
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Total:</span>
