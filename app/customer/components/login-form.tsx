@@ -335,11 +335,11 @@ export function LoginForm({
       <p className="text-sm text-center text-destructive">{fieldErrors}</p>
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Username</Label>
           <Input
             id="email"
             type="email"
-            placeholder="...@mail.com"
+            placeholder="name@example.com"
             {...register("email")}
             className={errors.email ? "border-destructive" : ""}
             disabled={isLoading}
