@@ -13,6 +13,7 @@ export const useDraft = (options: UseDraftOptions) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Save draft
   const saveDraft = useCallback(async (formData: any) => {
     setIsLoading(true);
     setError(null);
@@ -49,21 +50,17 @@ export const useDraft = (options: UseDraftOptions) => {
     }
   }, [options]);
 
-  const loadDraft = useCallback(async () => {
+  // Load draft by ID
+  const loadDraft = useCallback(async (draftId: String) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const params = new URLSearchParams({
-        userId: options.userId,
-        formType: options.formType,
-      });
-
-      if (options.caseId) {
-        params.append('caseId', options.caseId);
+      if (!draftId) {
+        throw new Error('Draft ID is required');
       }
 
-      const response = await fetch(`/api/drafts?${params}`);
+      const response = await fetch(`/api/drafts/v1/${draftId}`);
 
       if (!response.ok) {
         throw new Error('Failed to load draft');
@@ -78,8 +75,9 @@ export const useDraft = (options: UseDraftOptions) => {
     } finally {
       setIsLoading(false);
     }
-  }, [options]);
+  }, []);
 
+  // Delete draft by ID
   const deleteDraft = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -111,10 +109,42 @@ export const useDraft = (options: UseDraftOptions) => {
     }
   }, [options]);
 
+  // Update draft by ID (optional, can be implemented similarly to saveDraft)
+  const updateDraft = useCallback(async (draftId: string, formData: any) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (!draftId) {
+        throw new Error('Draft ID is required for update');
+      }
+      const response = await fetch(`/api/drafts/v1/${draftId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: JSON.stringify(formData),
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update draft');
+      }
+      const updatedDraft = await response.json();
+      return updatedDraft;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update draft';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     saveDraft,
     loadDraft,
     deleteDraft,
+    updateDraft,
     isLoading,
     error,
   };
