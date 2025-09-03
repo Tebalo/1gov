@@ -113,6 +113,7 @@ import { useDraft } from "@/lib/hooks/useDraft"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
+import { useUserData } from "@/lib/hooks/useUserData"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -165,6 +166,8 @@ const countries = countryList.map((country) => ({
 }));
 
 export default function Form() {
+  const {nationalId, passportId} = useUserData();
+  const userId = nationalId || passportId || '';
 
   const [previousStep, setPreviousStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
@@ -193,8 +196,8 @@ export default function Form() {
   const { toast } = useToast();
   const router = useRouter()
   const { saveDraft, loadDraft, updateDraft, isLoading, error } = useDraft({
-    userId: "440418213", 
-    userName: "Bopaki Tebalo",
+    userId: userId, 
+    userName: "First Last",
     formType: "Registration", 
     userRole: "user", 
     // caseId: "case123", // Optional - only if this form is tied to a case
