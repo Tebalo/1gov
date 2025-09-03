@@ -3,9 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DraftsDataTable } from "../../components/drafts";
 import { Cog, FileText, Send } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUserData } from "@/lib/hooks/useUserData";
 
 export default function MyApplicationsPage() {
-  const userId = "440418213"
+  // const userId = "440418213"
+  const {nationalId, passportId} = useUserData();
+  const userId = nationalId || passportId || '';
   
   return (
     <section className='p-4 md:p-6 space-y-6'>

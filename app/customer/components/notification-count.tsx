@@ -2,6 +2,12 @@
 import { useUserData } from "@/lib/hooks/useUserData";
 import { Bell, BellRing } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface NotificationStats {
   total: number;
@@ -28,8 +34,13 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
   className = "",
   onClick
 }) => {
-  const { userData, loading, nationalId, passportId, userId, userRoles } = useUserData()
-  console.log(userData?.profile.personal_info.national_id)
+  const {nationalId, passportId} = useUserData();
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    setUserId(nationalId || passportId || '');
+  }, [nationalId, passportId]);
+
   const [stats, setStats] = useState<NotificationStats>({
     total: 0,
     unread: 0,
@@ -45,20 +56,23 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
   const [prevUnreadCount, setPrevUnreadCount] = useState(0);
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchStats = async () => {
       try {
         const response = await fetch(`/api/notifications/user/${userId}/stats`);
         if (response.ok) {
           const data: NotificationStats = await response.json();
           
-          // Check if there are new unread notifications
-          if (data.unread > prevUnreadCount && prevUnreadCount > 0) {
-            setHasNewNotification(true);
-            // Reset animation after 3 seconds
-            setTimeout(() => setHasNewNotification(false), 3000);
-          }
+          // Use functional update to get current prevUnreadCount
+          setPrevUnreadCount(currentPrevCount => {
+            if (data.unread > currentPrevCount && currentPrevCount > 0) {
+              setHasNewNotification(true);
+              setTimeout(() => setHasNewNotification(false), 3000);
+            }
+            return data.unread;
+          });
           
-          setPrevUnreadCount(data.unread);
           setStats(data);
           setError(null);
         } else {
@@ -76,7 +90,7 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
     const interval = setInterval(fetchStats, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [userId, refreshInterval, prevUnreadCount]);
+  }, [userId, refreshInterval]);
 
   // Format count for display
   const formatCount = (count: number) => {
@@ -88,19 +102,67 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
 
   // Get tooltip content
   const getTooltipContent = () => {
-    if (error) return `Error: ${error}`;
-    if (notificationsLoading) return 'Loading notifications...';
+    if (error) {
+      return (
+        <div className="space-y-1">
+          <div className="text-red-300 font-medium">Error</div>
+          <div className="text-sm">{error}</div>
+        </div>
+      );
+    }
     
-    const typeBreakdown = Object.entries(stats.byType)
-      .map(([type, count]) => `${type}: ${count}`)
-      .join('\n');
+    if (notificationsLoading) {
+      return (
+        <div className="text-sm">Loading notifications...</div>
+      );
+    }
     
-    return `Total: ${stats.total}
-    Unread: ${stats.unread}
-    Read: ${stats.read}
-
-    By Type:
-    ${typeBreakdown || 'No notifications'}`;
+    return (
+      <div className="space-y-3">
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-300">Total:</span>
+            <span className="font-medium">{stats.total}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-300">Unread:</span>
+            <span className="font-medium text-orange-300">{stats.unread}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-300">Read:</span>
+            <span className="font-medium text-green-300">{stats.read}</span>
+          </div>
+        </div>
+        
+        {Object.keys(stats.byType).length > 0 && (
+          <div className="space-y-2">
+            <div className="text-xs text-gray-400 border-t border-gray-600 pt-2">
+              By Type:
+            </div>
+            {Object.entries(stats.byType).map(([type, count]) => (
+              <div key={type} className="flex justify-between items-center text-sm">
+                <span className="text-gray-300 truncate">{type}</span>
+                <span className="font-medium">{count}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {Object.keys(stats.byStatus).length > 0 && (
+          <div className="space-y-2">
+            <div className="text-xs text-gray-400 border-t border-gray-600 pt-2">
+              By Status:
+            </div>
+            {Object.entries(stats.byStatus).map(([status, count]) => (
+              <div key={status} className="flex justify-between items-center text-sm">
+                <span className="text-gray-300">Status {status}</span>
+                <span className="font-medium">{count}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const bellIcon = stats.unread > 0 ? (
@@ -121,96 +183,72 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
     </span>
   );
 
-  return (
-    <div 
-      className={`relative cursor-pointer ${className}`}
-      onClick={onClick}
-      title={showTooltip ? getTooltipContent() : undefined}
-    >
-      {/* Loading state */}
-      {notificationsLoading && (
+  const renderNotificationIcon = () => {
+    // Loading state
+    if (notificationsLoading) {
+      return (
         <div className="relative">
           <Bell className="h-6 w-6 text-gray-400 animate-pulse" />
         </div>
-      )}
+      );
+    }
 
-      {/* Error state */}
-      {error && !notificationsLoading && (
+    // Error state
+    if (error && !notificationsLoading) {
+      return (
         <div className="relative">
           <Bell className="h-6 w-6 text-red-500" />
           <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-3 h-3 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
             !
           </span>
         </div>
-      )}
+      );
+    }
 
-      {/* Normal state */}
-      {!notificationsLoading && !error && (
-        <div className="relative">
-          {bellIcon}
-          {counterBadge}
-          
-          {/* Priority indicator for high-priority notifications */}
-          {stats.byStatus && stats.byStatus['3'] > 0 && (
-            <span className="absolute -bottom-1 -left-1 inline-flex items-center justify-center w-3 h-3 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
-              !
-            </span>
-          )}
-        </div>
-      )}
+    // Normal state
+    return (
+      <div className="relative">
+        {bellIcon}
+        {counterBadge}
+        
+        {/* Priority indicator for high-priority notifications */}
+        {stats.byStatus && stats.byStatus['3'] > 0 && (
+          <span className="absolute -bottom-1 -left-1 inline-flex items-center justify-center w-3 h-3 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
+            !
+          </span>
+        )}
+      </div>
+    );
+  };
 
-      {/* Enhanced tooltip for desktop */}
-      {showTooltip && (
-        <div className="hidden group-hover:block absolute bottom-full right-0 mb-2 w-64 p-3 text-sm text-white bg-gray-800 rounded-lg shadow-lg z-50">
-          {notificationsLoading && "Loading notifications..."}
-          {error && `Error: ${error}`}
-          {!notificationsLoading && !error && (
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>Total:</span>
-                <span className="font-medium">{stats.total}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Unread:</span>
-                <span className="font-medium text-orange-300">{stats.unread}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Read:</span>
-                <span className="font-medium text-green-300">{stats.read}</span>
-              </div>
-              
-              {Object.keys(stats.byType).length > 0 && (
-                <>
-                  <hr className="border-gray-600" />
-                  <div className="text-xs text-gray-300">By Type:</div>
-                  {Object.entries(stats.byType).map(([type, count]) => (
-                    <div key={type} className="flex justify-between text-xs">
-                      <span className="truncate">{type}</span>
-                      <span>{count}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-              
-              {Object.keys(stats.byStatus).length > 0 && (
-                <>
-                  <hr className="border-gray-600" />
-                  <div className="text-xs text-gray-300">By Status:</div>
-                  {Object.entries(stats.byStatus).map(([status, count]) => (
-                    <div key={status} className="flex justify-between text-xs">
-                      <span>Status {status}</span>
-                      <span>{count}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          )}
-          
-          {/* Tooltip arrow */}
-          <div className="absolute bottom-full right-4 border-4 border-transparent border-t-gray-800"></div>
-        </div>
-      )}
+  const content = (
+    <div 
+      className={`relative cursor-pointer ${className}`}
+      onClick={onClick}
+    >
+      {renderNotificationIcon()}
     </div>
+  );
+
+  // If tooltip is disabled, return the content directly
+  if (!showTooltip) {
+    return content;
+  }
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {content}
+        </TooltipTrigger>
+        <TooltipContent 
+          side="bottom" 
+          align="end"
+          className="max-w-xs p-4 text-white bg-gray-900 border-gray-700"
+        >
+          {getTooltipContent()}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

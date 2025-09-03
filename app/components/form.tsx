@@ -20,28 +20,71 @@ import { processAttachments, submitTeacherRegistration } from '@/lib/teacher-reg
 import { Profile, TeacherRegistrationResponse} from '@/types/teacher-registration'
 import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { set } from 'date-fns'
-import TeacherRegistrationHeader from './Header'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Check, ChevronsUpDown, FileText, Loader2 } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
-import { subRegionsForSelect } from "@/types/regions"
-import { allPrivateSchoolsForSelect, centralPrivatePrimarySchoolsForSelect, centralPrivateSecondarySchoolsForSelect, chobePrivatePrimarySchoolsForSelect, chobePrivateSecondarySchoolsForSelect, ghanziPrivatePrimarySchoolsForSelect, ghanziPrivateSecondarySchoolsForSelect, kgalagadiPrivatePrimarySchoolsForSelect, kgalagadiPrivateSecondarySchoolsForSelect, kgatlengPrivatePrimarySchoolsForSelect, kgatlengPrivateSecondarySchoolsForSelect, kwenengPrivatePrimarySchoolsForSelect, kwenengPrivateSecondarySchoolsForSelect, northEastPrivatePrimarySchoolsForSelect, northEastPrivateSecondarySchoolsForSelect, northWestPrivatePrimarySchoolsForSelect, northWestPrivateSecondarySchoolsForSelect, southEastPrivatePrimarySchoolsForSelect, southEastPrivateSecondarySchoolsForSelect, southernPrivatePrimarySchoolsForSelect, southernPrivateSecondarySchoolsForSelect } from "@/types/private_schools"
-import { allPublicSchoolsForSelect, centralPublicSchools, centralPublicSchoolsForSelect, chobePublicSchoolsForSelect, ghanziPublicSchoolsForSelect, kgalagadiPublicSchoolsForSelect, kgatlengPublicSchoolsForSelect, kwenengPublicSchoolsForSelect, northEastPublicSchoolsForSelect, northWestPublicSchoolsForSelect, southEastPublicSchoolsForSelect, southernPublicSchoolsForSelect } from "@/types/public_junior_schools"
-import { allSeniorSecondarySchoolsForSelect, centralSeniorSecondarySchoolsForSelect, chobeSeniorSecondarySchoolsForSelect, ghanziSeniorSecondarySchoolsForSelect, kgalagadiSeniorSecondarySchoolsForSelect, kgatlengSeniorSecondarySchoolsForSelect, kwenengSeniorSecondarySchoolsForSelect, northEastSeniorSecondarySchoolsForSelect, northWestSeniorSecondarySchoolsForSelect, southEastSeniorSecondarySchoolsForSelect, southernSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
-import { allBotswanaQualificationsForSelect, degreeForSelect, diplomasForSelect, doctorateForSelect, mastersForSelect } from "@/types/qualifications"
+import {  
+  centralPrivatePrimarySchoolsForSelect, 
+  centralPrivateSecondarySchoolsForSelect, 
+  chobePrivatePrimarySchoolsForSelect, 
+  chobePrivateSecondarySchoolsForSelect, 
+  ghanziPrivatePrimarySchoolsForSelect, 
+  ghanziPrivateSecondarySchoolsForSelect, 
+  kgalagadiPrivatePrimarySchoolsForSelect, 
+  kgalagadiPrivateSecondarySchoolsForSelect, 
+  kgatlengPrivatePrimarySchoolsForSelect, 
+  kgatlengPrivateSecondarySchoolsForSelect,
+  kwenengPrivatePrimarySchoolsForSelect, 
+  kwenengPrivateSecondarySchoolsForSelect, 
+  northEastPrivatePrimarySchoolsForSelect, 
+  northEastPrivateSecondarySchoolsForSelect, 
+  northWestPrivatePrimarySchoolsForSelect, 
+  northWestPrivateSecondarySchoolsForSelect, 
+  southEastPrivatePrimarySchoolsForSelect, 
+  southEastPrivateSecondarySchoolsForSelect, 
+  southernPrivatePrimarySchoolsForSelect, 
+  southernPrivateSecondarySchoolsForSelect } from "@/types/private_schools"
+import {  
+  centralPublicSchoolsForSelect, 
+  chobePublicSchoolsForSelect, 
+  ghanziPublicSchoolsForSelect, 
+  kgalagadiPublicSchoolsForSelect, 
+  kgatlengPublicSchoolsForSelect, 
+  kwenengPublicSchoolsForSelect, 
+  northEastPublicSchoolsForSelect, 
+  northWestPublicSchoolsForSelect, 
+  southEastPublicSchoolsForSelect, 
+  southernPublicSchoolsForSelect } from "@/types/public_junior_schools"
+import { 
+  centralSeniorSecondarySchoolsForSelect, 
+  chobeSeniorSecondarySchoolsForSelect, 
+  ghanziSeniorSecondarySchoolsForSelect, 
+  kgalagadiSeniorSecondarySchoolsForSelect, 
+  kgatlengSeniorSecondarySchoolsForSelect, 
+  kwenengSeniorSecondarySchoolsForSelect, 
+  northEastSeniorSecondarySchoolsForSelect, 
+  northWestSeniorSecondarySchoolsForSelect, 
+  southEastSeniorSecondarySchoolsForSelect, 
+  southernSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
+import { 
+  allBotswanaQualificationsForSelect, 
+  degreeForSelect, diplomasForSelect, 
+  doctorateForSelect, 
+  mastersForSelect } from "@/types/qualifications"
 import { institutionForSelect } from "@/types/institution"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger } from "@/components/ui/accordion"
 import InfoItem from "./InfoItem"
 import { Badge } from "@/components/ui/badge"
 import {   
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,} from "@/components/ui/table"
@@ -55,11 +98,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger, } from "@/components/ui/alert-dialog"
-import { centralPrimarySchoolsForSelect, chobePrimarySchoolsForSelect, ghanziPrimarySchoolsForSelect, kgalagadiPrimarySchoolsForSelect, kgatlengPrimarySchoolsForSelect, kwenengPrimarySchoolsForSelect, northEastPrimarySchoolsForSelect, northWestPrimarySchoolsForSelect, southEastPrimarySchoolsForSelect, southernPrimarySchoolsForSelect } from "@/types/primary_schools"
+import { 
+  centralPrimarySchoolsForSelect, 
+  chobePrimarySchoolsForSelect, 
+  ghanziPrimarySchoolsForSelect, 
+  kgalagadiPrimarySchoolsForSelect, 
+  kgatlengPrimarySchoolsForSelect, 
+  kwenengPrimarySchoolsForSelect, 
+  northEastPrimarySchoolsForSelect, 
+  northWestPrimarySchoolsForSelect, 
+  southEastPrimarySchoolsForSelect, 
+  southernPrimarySchoolsForSelect } from "@/types/primary_schools"
 import { useDraft } from "@/lib/hooks/useDraft"
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { useRouter } from "next/navigation"
 
 //  PROD MESD_006_28_001
-// uat MESD_006_08_054
+//  UAT MESD_006_08_054
 
 type FormInputs = z.infer<typeof FormDataSchema>
 
@@ -104,12 +160,12 @@ interface UploadResponse {
 }
 
 const countries = countryList.map((country) => ({
-  // value: country.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, ''),
   value: country,
   label: country,
 }));
 
 export default function Form() {
+
   const [previousStep, setPreviousStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
   const delta = currentStep - previousStep
@@ -131,12 +187,12 @@ export default function Form() {
   const [primaryOpen, setPrimaryOpen] = React.useState(false)
   const [privateOpen, setPrivateOpen] = React.useState(false)
   const [postGradDiplomaOpen, setPostGradDiplomaOpen] = React.useState(false)
-
   const [submitting,setSubmitting] = useState(false)
   const [submittingDraft,setSubmittingDraft] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
-
-  const { saveDraft, loadDraft, deleteDraft, isLoading, error } = useDraft({
+  const { toast } = useToast();
+  const router = useRouter()
+  const { saveDraft, loadDraft, updateDraft, isLoading, error } = useDraft({
     userId: "440418213", 
     userName: "Bopaki Tebalo",
     formType: "Registration", 
@@ -219,6 +275,8 @@ export default function Form() {
   const processDraft: SubmitHandler<FormInputs> = async (formData) => {
     try {
       setSubmittingDraft(true)
+      const urlParams = new URLSearchParams(window.location.search);
+      const draftIdFromUrl = urlParams.get('draftId');
       if(formData.citizenship.toLowerCase() === 'citizen'){
         formData.nationality = 'Botswana'
       }
@@ -247,19 +305,36 @@ export default function Form() {
         qualifications: apiQualifications,
         national_id_copy: nationalIdDoc
       }
+      let draft;
+      if(draftIdFromUrl && draftIdFromUrl) {
+        draft = await updateDraft(draftIdFromUrl, processedFormData);
+      }else {
+        draft = await saveDraft(processedFormData);
+      }
+      // console.log(draft.id);
+      if(draft && draft.id) {
+        // If draft saved successfully, refresh the page to load the draft
+        router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
+      }
+      toast({
+        title: "Draft saved successfully",
+        description: "You can continue your application later.",
+        action: (
+          <ToastAction altText="Ok">Ok</ToastAction>
+        ),
+      });
 
-      // Save the processed form data as a draft
-      await saveDraft(processedFormData);
-      console.log('Draft saved successfully');
-
-      // Optional: Continue with your existing form submission logic here
-      // For example, if this was originally a submit function:
-      // await submitToAPI(processedFormData);
       setSubmittingDraft(false)
     } catch (error) {
       setSubmittingDraft(false)
       console.error('Error saving draft:', error);
-      // Handle error appropriately
+      toast({
+          title: "Error saving draft",
+          description: "An error occurred while saving your draft. Please try again.",
+          action: (
+            <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        });
     }
   }
 
@@ -290,20 +365,30 @@ export default function Form() {
   // Auto-save draft on form changes (debounced)
   // Auto-save draft on form changes (debounced)
   const watchedFields = watch();
-
+  const citizenship = watch('citizenship');
+  const gender = watch("gender")
+  const nationality = watch("nationality")
+  // Auto-save draft every 60 seconds if there are changes
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const draftIdFromUrl = urlParams.get('draftId');
     const timer = setTimeout(async () => {
       // Only auto-save if there's meaningful content AND user has started filling the form
       const hasContent = watchedFields.first_name || 
-                        watchedFields.username || 
-                        watchedFields.primary_phone ||
-                        watchedFields.last_name;
+                        watchedFields.last_name ||
+                        watchedFields.username
       
       // Don't auto-save on initial load/empty form
-      if (hasContent && (watchedFields.first_name !== '' || watchedFields.username !== '')) {
+      if (hasContent) {
         try {
-          await saveDraft(watchedFields);
-          console.log('Auto-saved draft');
+          if(draftIdFromUrl) {
+            // If draftId exists in URL, update existing draft
+            await updateDraft(draftIdFromUrl, watchedFields);
+          } else {
+            // Otherwise, create a new draft
+            await saveDraft(watchedFields);
+          }
+          // console.log('Auto-saved draft');
         } catch (error) {
           console.error('Auto-save failed:', error);
         }
@@ -311,7 +396,35 @@ export default function Form() {
     }, 60000); // 60 seconds debounce
 
     return () => clearTimeout(timer);
-  }, [watchedFields, saveDraft]);
+  }, [watchedFields, saveDraft, updateDraft]);
+
+  // Load draft if draftId is present in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const draftIdFromUrl = urlParams.get('draftId');
+  
+    if (draftIdFromUrl) {
+      const fetchDraft = async () => {
+        const draftData = await loadDraft(draftIdFromUrl);
+        if (draftData) {
+          console.log('Draft data loaded:', draftData);
+          reset(draftData);
+          //setNationalIdDoc({"bucket":"MESD_006_28_001","extension":"pdf","original-name":"5f4d689a-b7c3-431c-91d3-d02e91aa5dea-3.pdf","key":"9e0b8db2-427b-4071-ae52-b9a72514b509"})
+          setNationalIdDoc(draftData.national_id_copy || null) 
+          setQualifications(draftData.qualifications || [])
+          setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachment || null)
+          setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
+          setLicenseFlagDetailsDoc(draftData.license_flag_details_attachment || null)
+          setMisconductFlagDetailsDoc(draftData.misconduct_flag_details_attachment || null)
+          // Object.keys(draftData).forEach((fieldName) => {
+          //     setValue(fieldName, draftData[fieldName]);
+          // });
+        }
+      };
+
+      fetchDraft();
+    }
+  }, [loadDraft, reset, setValue]);
 
   type FieldName = keyof FormInputs
 
@@ -347,8 +460,7 @@ export default function Form() {
     const isValid = await trigger()
     if (isValid) {
       const formData = getValues()
-      processForm(formData)
-      
+      processForm(formData) 
     } else {
       setSubmitting(false)
       alert('Please fill in all required fields correctly')
@@ -488,7 +600,9 @@ export default function Form() {
                           <Label htmlFor='citizenship' className="text-sm font-medium text-gray-700">
                             Citizenship <span className="text-red-500">*</span>
                           </Label>
-                          <Select onValueChange={(value) => {
+                          <Select 
+                            value={citizenship}
+                            onValueChange={(value) => {
                             setValue('citizenship', value);
                             setValue('nationality', value === 'citizen' ? 'botswana' : ''); // Reset
                             }}>
@@ -512,7 +626,11 @@ export default function Form() {
                             <Label htmlFor='nationality' className="text-sm font-medium text-gray-700">
                               Nationality <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+                            <Popover 
+                              open={countryOpen} 
+                              onOpenChange={setCountryOpen}
+                              
+                            >
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
@@ -533,7 +651,7 @@ export default function Form() {
                                       {countries.map((country) => (
                                         <CommandItem
                                           key={country.value}
-                                          value={country.label}
+                                          value={country.label || nationality}
                                           onSelect={(currentValue) => {
                                             setValue('nationality', currentValue === watch('nationality') ? "" : currentValue)
                                             setCountryOpen(false)
@@ -608,7 +726,10 @@ export default function Form() {
                           <Label htmlFor='gender' className="text-sm font-medium text-gray-700">
                             Gender <span className="text-red-500">*</span>
                           </Label>
-                          <Select onValueChange={(value) => setValue('gender', value)}>
+                          <Select 
+                          value={gender}
+                          onValueChange={(value) => setValue('gender', value)}
+                          >
                             <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your gender' />
                             </SelectTrigger>
@@ -809,7 +930,9 @@ export default function Form() {
                         {/* Employment Status */}
                         <div className="space-y-2">
                           <Label htmlFor='work_status'>Employment Status *</Label>
-                          <Select onValueChange={(value) => setValue('work_status', value)}>
+                          <Select 
+                          onValueChange={(value) => setValue('work_status', value)}
+                          value={watch('work_status')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select practice category' />
                             </SelectTrigger>
@@ -826,7 +949,10 @@ export default function Form() {
                         {/* Practice Category */}
                         <div className="space-y-2">
                           <Label htmlFor='practice_category'>Practice Category *</Label>
-                          <Select onValueChange={(value) => setValue('practice_category', value)}>
+                          <Select 
+                          value={watch('practice_category')}
+                          onValueChange={(value) => setValue('practice_category', value)}
+                          >
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select school level that you are teaching e.g Pre-Primary' />
                             </SelectTrigger>
@@ -844,7 +970,9 @@ export default function Form() {
                         { /* Sub Category */}           
                         <div className="space-y-2">
                           <Label htmlFor='sub_category'>Sub Category *</Label>
-                          <Select onValueChange={(value) => setValue('sub_category', value)}>
+                          <Select 
+                          onValueChange={(value) => setValue('sub_category', value)}
+                          value={watch('sub_category')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select sub category' />
                             </SelectTrigger>
@@ -866,7 +994,9 @@ export default function Form() {
                         {/* Experience Duration */}
                         <div className="space-y-2">
                           <Label htmlFor='experience_years'>Experience *</Label>
-                          <Select onValueChange={(value) => setValue('experience_years', value)}>
+                          <Select 
+                          onValueChange={(value) => setValue('experience_years', value)}
+                          value={watch('experience_years')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select teaching experience duration' />
                             </SelectTrigger>
@@ -885,7 +1015,9 @@ export default function Form() {
                         {/* Region */}
                         <div className="space-y-2">
                           <Label htmlFor='district'>Region *</Label>
-                          <Select onValueChange={(value) => setValue('district', value)}>
+                          <Select 
+                          onValueChange={(value) => setValue('district', value)}
+                          value={watch('district')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select district' />
                             </SelectTrigger>
@@ -939,7 +1071,9 @@ export default function Form() {
                         {/* School level */}
                         {<div className="space-y-2">
                           <Label htmlFor='school_level'>School Level *</Label>
-                          <Select onValueChange={(value) => setValue('school_level', value)}>
+                          <Select 
+                          onValueChange={(value) => setValue('school_level', value)}
+                          value={watch('school_level')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select school level' />
                             </SelectTrigger>
@@ -979,22 +1113,22 @@ export default function Form() {
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
                                       {watch('school_level') === 'primary school' && watch('district') === 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
- <CommandItem
-   key={school.value}
-   value={school.label}
-   onSelect={(currentValue) => {
-     setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
-     setPrivateOpen(false)
-   }}
- >
-   {school.label}
-   <Check
-     className={cn(
-       "ml-auto",
-       watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-     )}
-   />
- </CommandItem>
+                                        <CommandItem
+                                          key={school.value}
+                                          value={school.label || watch('private_schools')}
+                                          onSelect={(currentValue) => {
+                                            setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                            setPrivateOpen(false)
+                                          }}
+                                        >
+                                          {school.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
                                       ))}
                                       {watch('school_level') === 'primary school' && watch('district') === 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
@@ -1377,7 +1511,7 @@ export default function Form() {
                                       {watch('school_level') === 'primary' && watch('district') === 'central' && centralPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.label || watch('primary_schools')}
                                         onSelect={(currentValue) => {
                                           setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
                                           setPrimaryOpen(false)
@@ -1606,7 +1740,7 @@ export default function Form() {
                                       {watch('district') == 'central' && centralPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('junior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
                                             setJuniorOpen(false)
@@ -1835,7 +1969,7 @@ export default function Form() {
                                       {watch('district') === "central" && centralSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1853,7 +1987,7 @@ export default function Form() {
                                       {watch('district') === "chobe" && chobeSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label  || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1871,7 +2005,7 @@ export default function Form() {
                                       {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1889,7 +2023,7 @@ export default function Form() {
                                       {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1907,7 +2041,7 @@ export default function Form() {
                                       {watch('district') === "kgalagadi" && kgalagadiSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1925,7 +2059,7 @@ export default function Form() {
                                       {watch('district') === "kgatleng" && kgatlengSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1943,7 +2077,7 @@ export default function Form() {
                                       {watch('district') === "kweneng" && kwenengSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1961,7 +2095,7 @@ export default function Form() {
                                       {watch('district') === "north-east" && northEastSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1979,7 +2113,7 @@ export default function Form() {
                                       {watch('district') === "north-west" && northWestSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -1997,7 +2131,7 @@ export default function Form() {
                                       {watch('district') === "south-east" && southEastSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -2015,7 +2149,7 @@ export default function Form() {
                                       {watch('district') === "southern" && southernSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('senior_schools')}
                                           onSelect={(currentValue) => {
                                             setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
                                             setSeniorOpen(false)
@@ -2104,7 +2238,8 @@ export default function Form() {
                             setValue('qualification_masters_degree', '');
                             setValue('qualification_doctoral_degree', '');
                             setValue('other_qualification', '');
-                          }}>
+                          }}
+                          value={watch('level')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select level' />
                             </SelectTrigger>
@@ -2150,7 +2285,7 @@ export default function Form() {
                                       {doctorateForSelect.map((doctorate) => (
                                         <CommandItem
                                           key={doctorate.value}
-                                          value={doctorate.label}
+                                          value={doctorate.label || watch('qualification_doctoral_degree')}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_doctoral_degree', currentValue === watch('qualification_doctoral_degree') ? "" : currentValue)
                                             setDoctoralDegreeOpen(false)
@@ -2258,7 +2393,7 @@ export default function Form() {
                                       {degreeForSelect.map((degree) => (
                                         <CommandItem
                                           key={degree.value}
-                                          value={degree.label}
+                                          value={degree.label || watch('qualification_degree_honours')}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_degree_honours', currentValue === watch('qualification_degree_honours') ? "" : currentValue)
                                             setHonoursOpen(false)
@@ -2312,7 +2447,7 @@ export default function Form() {
                                       {diplomasForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('qualification_diploma')}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_diploma', currentValue === watch('qualification_diploma') ? "" : currentValue)
                                             setDiplomaOpen(false)
@@ -2366,7 +2501,7 @@ export default function Form() {
                                       {allBotswanaQualificationsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.label || watch('qualification_post_grad_diploma')}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_post_grad_diploma', currentValue === watch('qualification_post_grad_diploma') ? "" : currentValue)
                                             setPostGradDiplomaOpen(false)
@@ -2420,7 +2555,7 @@ export default function Form() {
                                       {degreeForSelect.map((degree) => (
                                         <CommandItem
                                           key={degree.value}
-                                          value={degree.label}
+                                          value={degree.label || watch('qualification_degree')}
                                           onSelect={(currentValue) => {
                                             setValue('qualification_degree', currentValue === watch('qualification_degree') ? "" : currentValue)
                                             setDegreeOpen(false)
@@ -2451,7 +2586,9 @@ export default function Form() {
                         {/* Certificate */}
                         {watch('level') === "Certificate" && <div>
                           <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
-                          <Select onValueChange={(value) => setValue('qualification_certificate', value)}>
+                          <Select 
+                          onValueChange={(value) => setValue('qualification_certificate', value)}
+                          value={watch('qualification_certificate')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select qualification' />
                             </SelectTrigger>
@@ -2510,7 +2647,7 @@ export default function Form() {
                                       {institutionForSelect.map((institution) => (
                                         <CommandItem
                                           key={institution.value}
-                                          value={institution.label}
+                                          value={institution.label || watch('institution')}
                                           onSelect={(currentValue) => {
                                             setValue('institution', currentValue === watch('institution') ? "" : currentValue)
                                             setInstitutionOpen(false)
