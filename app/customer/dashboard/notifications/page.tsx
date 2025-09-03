@@ -1,4 +1,5 @@
 "use client";
+import { useUserData } from '@/lib/hooks/useUserData';
 import { 
   Bell, 
   BellRing, 
@@ -18,7 +19,7 @@ import {
   Hash,
   User
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface NotificationAttachment {
   link: string;
@@ -57,253 +58,269 @@ interface NotificationResponse {
   hasMore: boolean;
 }
 
+// Move constants outside component to prevent re-renders
+const BASE_URL = '/api';
+const ITEMS_PER_PAGE = 15;
 
 const NotificationPage = () => {
-  const userId = "440418213"
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedNotifications, setSelectedNotifications] = useState<Set<string>>(new Set());
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+
+const {nationalId, passportId} = useUserData();
+const [userId, setUserId] = useState('');
+
+useEffect(() => {
+  setUserId(nationalId || passportId || '');
+}, [nationalId, passportId]);
+
+const [notifications, setNotifications] = useState<Notification[]>([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
+const [selectedNotifications, setSelectedNotifications] = useState<Set<string>>(new Set());
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+// Pagination state
+const [currentPage, setCurrentPage] = useState(1);
+const [totalCount, setTotalCount] = useState(0);
+const [hasMore, setHasMore] = useState(false);
+
+// Enhanced filter state
+const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+const [selectedType, setSelectedType] = useState<string>('all');
+const [selectedStatus, setSelectedStatus] = useState<string>('all');
+const [stats, setStats] = useState({ 
+  total: 0, 
+  unread: 0, 
+  read: 0,
+  byType: {} as Record<string, number>,
+  byStatus: {} as Record<string, number>
+});
+
+// Get icon for attachment type
+const getAttachmentIcon = (type: string) => {
+  switch (type) {
+    case 'payment': return <CreditCard className="h-3 w-3 text-green-600" />;
+    case 'invoice': return <FileText className="h-3 w-3 text-blue-600" />;
+    case 'receipt': return <Receipt className="h-3 w-3 text-purple-600" />;
+    default: return <ExternalLink className="h-3 w-3 text-gray-600" />;
+  }
+};
+
+// Get badge color for notification type
+const getTypeBadgeColor = (type: string) => {
+  const colors: Record<string, string> = {
+    'PushPayment': 'bg-green-100 text-green-800',
+    'DocumentApproval': 'bg-blue-100 text-blue-800',
+    'StatusUpdate': 'bg-yellow-100 text-yellow-800',
+    'DocumentRequest': 'bg-orange-100 text-orange-800',
+    'PassportApplication': 'bg-purple-100 text-purple-800',
+    'LicenseRenewal': 'bg-indigo-100 text-indigo-800',
+    'General': 'bg-gray-100 text-gray-800'
+  };
+  return colors[type] || 'bg-gray-100 text-gray-800';
+};
+
+// Get status badge color
+const getStatusBadgeColor = (status: string) => {
+  const colors: Record<string, string> = {
+    '1': 'bg-blue-100 text-blue-800',
+    '2': 'bg-yellow-100 text-yellow-800',
+    '3': 'bg-red-100 text-red-800',
+    '4': 'bg-green-100 text-green-800'
+  };
+  return colors[status] || 'bg-gray-100 text-gray-800';
+};
+
+// Memoized functions to prevent dependency issues
+const fetchNotifications = useCallback(async (page = 1, unreadOnly = false, type = 'all', status = 'all') => {
+  if (!userId) return; // Guard clause
   
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
-  const [limit] = useState(15);
-  
-  // Enhanced filter state
-  const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  const [selectedType, setSelectedType] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [stats, setStats] = useState({ 
-    total: 0, 
-    unread: 0, 
-    read: 0,
-    byType: {} as Record<string, number>,
-    byStatus: {} as Record<string, number>
-  });
-
-  // Base URL for API calls
-  const baseUrl = '/api';
-
-  // Get icon for attachment type
-  const getAttachmentIcon = (type: string) => {
-    switch (type) {
-      case 'payment': return <CreditCard className="h-3 w-3 text-green-600" />;
-      case 'invoice': return <FileText className="h-3 w-3 text-blue-600" />;
-      case 'receipt': return <Receipt className="h-3 w-3 text-purple-600" />;
-      default: return <ExternalLink className="h-3 w-3 text-gray-600" />;
-    }
-  };
-
-  // Get badge color for notification type
-  const getTypeBadgeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      'PushPayment': 'bg-green-100 text-green-800',
-      'DocumentApproval': 'bg-blue-100 text-blue-800',
-      'StatusUpdate': 'bg-yellow-100 text-yellow-800',
-      'DocumentRequest': 'bg-orange-100 text-orange-800',
-      'PassportApplication': 'bg-purple-100 text-purple-800',
-      'LicenseRenewal': 'bg-indigo-100 text-indigo-800',
-      'General': 'bg-gray-100 text-gray-800'
-    };
-    return colors[type] || 'bg-gray-100 text-gray-800';
-  };
-
-  // Get status badge color
-  const getStatusBadgeColor = (status: string) => {
-    const colors: Record<string, string> = {
-      '1': 'bg-blue-100 text-blue-800',
-      '2': 'bg-yellow-100 text-yellow-800',
-      '3': 'bg-red-100 text-red-800',
-      '4': 'bg-green-100 text-green-800'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-  };
-
-  // Fetch notifications with enhanced filtering
-  const fetchNotifications = async (page = 1, unreadOnly = false, type = 'all', status = 'all') => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        userId,
-        page: page.toString(),
-        limit: limit.toString(),
-        unreadOnly: unreadOnly.toString()
-      });
-
-      if (type !== 'all') params.append('type', type);
-
-      const response = await fetch(`${baseUrl}/notifications?${params}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch notifications');
-      }
-
-      const data: NotificationResponse = await response.json();
-      
-      // Filter by status on client side if needed
-      let filteredNotifications = data.notifications;
-      if (status !== 'all') {
-        filteredNotifications = data.notifications.filter(n => n.reference.status === status);
-      }
-      
-      setNotifications(filteredNotifications);
-      setTotalCount(status !== 'all' ? filteredNotifications.length : data.totalCount);
-      setHasMore(data.hasMore && status === 'all');
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      setNotifications([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch enhanced notification statistics
-  const fetchStats = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/notifications/user/${userId}/stats`);
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch stats:', err);
-    }
-  };
-
-  // Mark notification as read
-  const markAsRead = async (notificationId: string) => {
-    try {
-      const response = await fetch(`${baseUrl}/notifications/${notificationId}/read`, {
-        method: 'PATCH',
-      });
-
-      if (response.ok) {
-        setNotifications(prev =>
-          prev.map(notif =>
-            notif.id === notificationId ? { ...notif, isRead: true } : notif
-          )
-        );
-        fetchStats();
-      }
-    } catch (err) {
-      console.error('Failed to mark as read:', err);
-    }
-  };
-
-  // Mark all as read
-  const markAllAsRead = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/notifications/user/${userId}/read-all`, {
-        method: 'PATCH',
-      });
-
-      if (response.ok) {
-        setNotifications(prev =>
-          prev.map(notif => ({ ...notif, isRead: true }))
-        );
-        fetchStats();
-      }
-    } catch (err) {
-      console.error('Failed to mark all as read:', err);
-    }
-  };
-
-  // Delete notification
-  const deleteNotification = async (notificationId: string) => {
-    try {
-      const response = await fetch(`${baseUrl}/notifications/${notificationId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
-        fetchStats();
-      }
-    } catch (err) {
-      console.error('Failed to delete notification:', err);
-    }
-  };
-
-  // Open attachment
-  const openAttachment = (attachment: NotificationAttachment, notification: Notification) => {
-    if (!notification.isRead) {
-      markAsRead(notification.id);
-    }
-    window.open(attachment.link, '_blank');
-  };
-
-  // Handle filter changes
-  const handleFilterChange = () => {
-    const newUnreadOnly = !showUnreadOnly;
-    setShowUnreadOnly(newUnreadOnly);
-    setCurrentPage(1);
-    fetchNotifications(1, newUnreadOnly, selectedType, selectedStatus);
-  };
-
-  const handleTypeFilter = (type: string) => {
-    setSelectedType(type);
-    setCurrentPage(1);
-    fetchNotifications(1, showUnreadOnly, type, selectedStatus);
-  };
-
-  const handleStatusFilter = (status: string) => {
-    setSelectedStatus(status);
-    setCurrentPage(1);
-    fetchNotifications(1, showUnreadOnly, selectedType, status);
-  };
-
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    fetchNotifications(newPage, showUnreadOnly, selectedType, selectedStatus);
-  };
-
-  // Handle selection
-  const toggleSelection = (notificationId: string) => {
-    setSelectedNotifications(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(notificationId)) {
-        newSet.delete(notificationId);
-      } else {
-        newSet.add(notificationId);
-      }
-      return newSet;
+  setLoading(true);
+  try {
+    const params = new URLSearchParams({
+      userId,
+      page: page.toString(),
+      limit: ITEMS_PER_PAGE.toString(),
+      unreadOnly: unreadOnly.toString()
     });
-  };
 
-  const selectAll = () => {
-    setSelectedNotifications(new Set(notifications.map(n => n.id)));
-  };
+    if (type !== 'all') params.append('type', type);
 
-  const clearSelection = () => {
-    setSelectedNotifications(new Set());
-  };
-
-  // Format date
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Unknown time';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    const response = await fetch(`${BASE_URL}/notifications?${params}`);
     
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 48) return 'Yesterday';
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+    if (!response.ok) {
+      throw new Error('Failed to fetch notifications');
+    }
 
-  // Calculate pagination info
-  const totalPages = Math.ceil(totalCount / limit);
+    const data: NotificationResponse = await response.json();
+    
+    // Filter by status on client side if needed
+    let filteredNotifications = data.notifications;
+    if (status !== 'all') {
+      filteredNotifications = data.notifications.filter(n => n.reference.status === status);
+    }
+    
+    setNotifications(filteredNotifications);
+    setTotalCount(status !== 'all' ? filteredNotifications.length : data.totalCount);
+    setHasMore(data.hasMore && status === 'all');
+    setError(null);
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'An error occurred');
+    setNotifications([]);
+  } finally {
+    setLoading(false);
+  }
+}, [userId]); // Only userId as dependency
 
-  // Load initial data
-  useEffect(() => {
-    fetchNotifications(currentPage, showUnreadOnly, selectedType, selectedStatus);
-    fetchStats();
-  }, [userId]);
+// Fetch enhanced notification statistics
+const fetchStats = useCallback(async () => {
+  if (!userId) return; // Guard clause
+  
+  try {
+    const response = await fetch(`${BASE_URL}/notifications/user/${userId}/stats`);
+    if (response.ok) {
+      const data = await response.json();
+      setStats(data);
+    }
+  } catch (err) {
+    console.error('Failed to fetch stats:', err);
+  }
+}, [userId]); // Only userId as dependency
+
+// Mark notification as read
+const markAsRead = useCallback(async (notificationId: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/notifications/${notificationId}/read`, {
+      method: 'PATCH',
+    });
+
+    if (response.ok) {
+      setNotifications(prev =>
+        prev.map(notif =>
+          notif.id === notificationId ? { ...notif, isRead: true } : notif
+        )
+      );
+      fetchStats();
+    }
+  } catch (err) {
+    console.error('Failed to mark as read:', err);
+  }
+}, [fetchStats]);
+
+// Mark all as read
+const markAllAsRead = useCallback(async () => {
+  if (!userId) return;
+  
+  try {
+    const response = await fetch(`${BASE_URL}/notifications/user/${userId}/read-all`, {
+      method: 'PATCH',
+    });
+
+    if (response.ok) {
+      setNotifications(prev =>
+        prev.map(notif => ({ ...notif, isRead: true }))
+      );
+      fetchStats();
+    }
+  } catch (err) {
+    console.error('Failed to mark all as read:', err);
+  }
+}, [userId, fetchStats]);
+
+// Delete notification
+const deleteNotification = useCallback(async (notificationId: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/notifications/${notificationId}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      setNotifications(prev => prev.filter(notif => notif.id !== notificationId));
+      fetchStats();
+    }
+  } catch (err) {
+    console.error('Failed to delete notification:', err);
+  }
+}, [fetchStats]);
+
+// Open attachment
+const openAttachment = useCallback((attachment: NotificationAttachment, notification: Notification) => {
+  if (!notification.isRead) {
+    markAsRead(notification.id);
+  }
+  window.open(attachment.link, '_blank');
+}, [markAsRead]);
+
+// Handle filter changes
+const handleFilterChange = useCallback(() => {
+  const newUnreadOnly = !showUnreadOnly;
+  setShowUnreadOnly(newUnreadOnly);
+  setCurrentPage(1);
+  fetchNotifications(1, newUnreadOnly, selectedType, selectedStatus);
+}, [showUnreadOnly, selectedType, selectedStatus, fetchNotifications]);
+
+const handleTypeFilter = useCallback((type: string) => {
+  setSelectedType(type);
+  setCurrentPage(1);
+  fetchNotifications(1, showUnreadOnly, type, selectedStatus);
+}, [showUnreadOnly, selectedStatus, fetchNotifications]);
+
+const handleStatusFilter = useCallback((status: string) => {
+  setSelectedStatus(status);
+  setCurrentPage(1);
+  fetchNotifications(1, showUnreadOnly, selectedType, status);
+}, [showUnreadOnly, selectedType, fetchNotifications]);
+
+// Handle page change
+const handlePageChange = useCallback((newPage: number) => {
+  setCurrentPage(newPage);
+  fetchNotifications(newPage, showUnreadOnly, selectedType, selectedStatus);
+}, [showUnreadOnly, selectedType, selectedStatus, fetchNotifications]);
+
+// Handle selection
+const toggleSelection = useCallback((notificationId: string) => {
+  setSelectedNotifications(prev => {
+    const newSet = new Set(prev);
+    if (newSet.has(notificationId)) {
+      newSet.delete(notificationId);
+    } else {
+      newSet.add(notificationId);
+    }
+    return newSet;
+  });
+}, []);
+
+const selectAll = useCallback(() => {
+  setSelectedNotifications(new Set(notifications.map(n => n.id)));
+}, [notifications]);
+
+const clearSelection = useCallback(() => {
+  setSelectedNotifications(new Set());
+}, []);
+
+// Format date
+const formatDate = useCallback((dateString?: string) => {
+  if (!dateString) return 'Unknown time';
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+  
+  if (diffInHours < 1) return 'Just now';
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  if (diffInHours < 48) return 'Yesterday';
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}, []);
+
+// Calculate pagination info
+const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+// Load initial data - FIXED: Only depends on userId, no circular dependencies
+useEffect(() => {
+  if (!userId) return;
+  
+  // Use hardcoded initial values to avoid dependency loops
+  fetchNotifications(1, false, 'all', 'all');
+  fetchStats();
+}, [userId, fetchNotifications, fetchStats]); // These are now memoized with useCallback
 
   if (loading && notifications.length === 0) {
     return (
