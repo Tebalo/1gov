@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, Check } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Eye, EyeOff } from "lucide-react"
 // import { toast } from "sonner"
 import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
@@ -47,6 +47,9 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [errors, setErrors] = useState<string[]>([])
   const [fieldErrors, setFieldErrors] = useState<ApiError>({})
+  const [citizenship, setCitizenship] = useState<string>("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     // Basic credentials
     username: "",
@@ -73,7 +76,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     postalAddress: "",
     physicalAddress: "",
     city: "",
-    state: "",
+    state: "South-East",
     country: "Botswana",
     postalCode: "",
     
@@ -108,6 +111,17 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (formData.password.length < 8) stepOneErrors.push("Password must be at least 8 characters long")
         if (formData.password !== formData.confirmPassword) stepOneErrors.push("Passwords do not match")
         
+        // Validate that email and username are the same
+        if (formData.username.trim() && formData.email.trim() && formData.username !== formData.email) {
+          stepOneErrors.push("Email and username must be the same")
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (formData.email.trim() && !emailRegex.test(formData.email)) {
+          stepOneErrors.push("Please enter a valid email address")
+        }
+        
         if (stepOneErrors.length > 0) {
           setErrors(stepOneErrors)
           return false
@@ -120,7 +134,44 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (!formData.lastName.trim()) stepTwoErrors.push("Last name is required")
         if (!formData.dateOfBirth.trim()) stepTwoErrors.push("Date of birth is required")
         if (!formData.gender.trim()) stepTwoErrors.push("Gender is required")
-        if (!formData.nationalId.trim()) stepTwoErrors.push("National ID is required")
+        if (!citizenship) stepTwoErrors.push("Citizenship status is required")
+        
+        // Validate Date of Birth is in the past (not today or future)
+        if (formData.dateOfBirth.trim()) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+          const birthDate = new Date(formData.dateOfBirth);
+          
+          // Check if date is valid
+          if (isNaN(birthDate.getTime())) {
+            stepTwoErrors.push("Please enter a valid date of birth");
+          } else {
+            // Check if birth date is today or in the future
+            if (birthDate >= today) {
+              stepTwoErrors.push("Date of birth must be in the past");
+            }
+          }
+        }
+        
+        // Validate National ID or Passport ID based on citizenship
+        if (citizenship === "Citizen") {
+          if (!formData.nationalId.trim()) stepTwoErrors.push("National ID is required")
+          
+          // Validate National ID format (9 digits, 5th digit must be 1 or 2)
+          if (formData.nationalId.trim()) {
+            const nationalIdRegex = /^\d{9}$/
+            if (!nationalIdRegex.test(formData.nationalId)) {
+              stepTwoErrors.push("National ID must be exactly 9 digits")
+            } else {
+              const fifthDigit = formData.nationalId.charAt(4) // 5th digit (index 4)
+              if (fifthDigit !== '1' && fifthDigit !== '2') {
+                stepTwoErrors.push("National ID must have 1 or 2 as the 5th digit")
+              }
+            }
+          }
+        } else if (citizenship === "Non-citizen") {
+          if (!formData.passportId.trim()) stepTwoErrors.push("Passport ID is required")
+        }
         
         if (stepTwoErrors.length > 0) {
           setErrors(stepTwoErrors)
@@ -157,7 +208,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         
         if (stepFourErrors.length > 0) {
           setErrors(stepFourErrors)
-          return false
+          return true
         }
         return true
 
@@ -196,6 +247,43 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
       setCurrentStep(step)
       setErrors([])
       setFieldErrors({})
+    }
+  }
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+
+    // Auto-fill username when email is entered and username is empty
+    if (field === "email" && typeof value === "string" && !formData.username) {
+      setFormData(prev => ({
+        ...prev,
+        username: value
+      }))
+    }
+
+    // Validate National ID input (only allow digits)
+    if (field === "nationalId" && typeof value === "string") {
+      // Remove any non-digit characters
+      const digitsOnly = value.replace(/\D/g, '')
+      // Limit to 9 digits
+      const limitedDigits = digitsOnly.slice(0, 9)
+      setFormData(prev => ({
+        ...prev,
+        nationalId: limitedDigits
+      }))
+    }
+  }
+
+  const handleCitizenshipChange = (value: string) => {
+    setCitizenship(value)
+    // Clear the other ID field when citizenship changes
+    if (value === "Citizen") {
+      setFormData(prev => ({ ...prev, passportId: "" }))
+    } else if (value === "Non-citizen") {
+      setFormData(prev => ({ ...prev, nationalId: "" }))
     }
   }
 
@@ -245,9 +333,9 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         two_factor_enabled: false
       },
       social_info: {
-        linkedin_url: formData.linkedinUrl || null,
-        github_url: formData.githubUrl || null,
-        website_url: formData.websiteUrl || null,
+        linkedin_url: formData.linkedinUrl,
+        github_url: formData.githubUrl,
+        website_url: formData.websiteUrl,
         job_title: formData.jobTitle || null,
         organization: formData.organization || null
       },
@@ -284,7 +372,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (response.status === 400) {
           toast({
             title: "Failed!!!",
-            description: "Authentication failed. Please check your credentials and try again.",
+            description: "Registration failed. Please fill all information.",
             action: (
               <ToastAction altText="Ok">Ok</ToastAction>
             ),
@@ -303,7 +391,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         } else {
           toast({
             title: "Failed!!!",
-            description: "Authentication failed. Please check your credentials and try again.",
+            description: "Registration failed. Please fill all information.",
             action: (
               <ToastAction altText="Ok">Ok</ToastAction>
             ),
@@ -319,13 +407,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     }
   }
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
   const getProgressPercentage = () => {
     return ((currentStep - 1) / (STEPS.length - 1)) * 100
   }
@@ -339,20 +420,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               <CardTitle>Create Your Account</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  placeholder="Choose a unique username"
-                  type="text"
-                  autoComplete="username"
-                  disabled={isLoading}
-                  value={formData.username}
-                  onChange={(e) => handleInputChange("username", e.target.value)}
-                  className={fieldErrors.username ? "border-destructive" : ""}
-                />
-              </div>
-              
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -370,17 +437,46 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="password"
-                  placeholder="Create a strong password"
-                  type="password"
-                  autoComplete="new-password"
+                  id="username"
+                  placeholder="Use email as a username"
+                  type="email"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
                   disabled={isLoading}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  className={fieldErrors.password ? "border-destructive" : ""}
+                  value={formData.username}
+                  onChange={(e) => handleInputChange("username", e.target.value)}
+                  className={fieldErrors.username ? "border-destructive" : ""}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Username will automatically match your email address
+                </p>
+              </div>
+              
+
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    placeholder="Create a strong password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    disabled={isLoading}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    className={fieldErrors.password ? "border-destructive pr-10" : "pr-10"}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Password must be at least 8 characters long
                 </p>
@@ -388,15 +484,25 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  placeholder="Confirm your password"
-                  type="password"
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    placeholder="Confirm your password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    disabled={isLoading}
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -481,20 +587,46 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Citizenship Field */}
+              <div className="grid gap-2">
+                <Label htmlFor="citizenship">Citizenship *</Label>
+                <Select
+                  value={citizenship}
+                  onValueChange={handleCitizenshipChange}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select citizenship status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Citizen">Citizen</SelectItem>
+                    <SelectItem value="Non-citizen">Non-citizen</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Conditional ID Fields */}
+              {citizenship === "Citizen" && (
                 <div className="grid gap-2">
                   <Label htmlFor="nationalId">National ID *</Label>
                   <Input
                     id="nationalId"
-                    placeholder="Enter your national ID"
+                    placeholder="Enter 9-digit national ID"
                     type="text"
                     disabled={isLoading}
                     value={formData.nationalId}
                     onChange={(e) => handleInputChange("nationalId", e.target.value)}
+                    maxLength={9}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    
+                  </p>
                 </div>
+              )}
+
+              {citizenship === "Non-citizen" && (
                 <div className="grid gap-2">
-                  <Label htmlFor="passportId">Passport ID</Label>
+                  <Label htmlFor="passportId">Passport ID *</Label>
                   <Input
                     id="passportId"
                     placeholder="Enter your passport ID"
@@ -504,7 +636,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     onChange={(e) => handleInputChange("passportId", e.target.value)}
                   />
                 </div>
-              </div>
+              )}
 
               <div className="grid gap-2">
                 <Label htmlFor="bio">Bio</Label>
@@ -638,17 +770,39 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     onChange={(e) => handleInputChange("city", e.target.value)}
                   />
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="state">State/District</Label>
-                  <Input
-                    id="state"
-                    placeholder="South East"
-                    type="text"
-                    disabled={isLoading}
+                  <Select
                     value={formData.state}
-                    onChange={(e) => handleInputChange("state", e.target.value)}
-                  />
+                    onValueChange={(value) => handleInputChange("state", value)}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Central">Central</SelectItem>
+                      <SelectItem value="Chobe">Chobe </SelectItem>
+                      <SelectItem value="Ghanzi">Ghanzi</SelectItem>
+                      <SelectItem value="Kgalagadi">Kgalagadi</SelectItem>
+                      <SelectItem value="Kgatleng">Kgatleng</SelectItem>
+                      <SelectItem value="Kweneng">Kweneng </SelectItem>
+                      <SelectItem value="North-East">North-East</SelectItem>
+                      <SelectItem value="North-West">North-West</SelectItem>
+                      <SelectItem value="South-East">South-East</SelectItem>
+                      <SelectItem value="Southern ">Southern</SelectItem>
+                      <SelectItem value="Gaborone">Gaborone</SelectItem>
+                      <SelectItem value="Francistown">Francistown</SelectItem>
+                      <SelectItem value="Lobatse">Lobatse</SelectItem>
+                      <SelectItem value="Jwaneng">Jwaneng</SelectItem>
+                      <SelectItem value="Orapa">Orapa</SelectItem>
+                      <SelectItem value="Sowa">Sowa</SelectItem>
+                      <SelectItem value="Selebi-Phikwe">Selebi-Phikwe</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="country">Country</Label>
                   <Select
@@ -667,6 +821,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     </SelectContent>
                   </Select>
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="postalCode">Postal Code</Label>
                   <Input
@@ -734,7 +889,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   <Label htmlFor="jobTitle">Job Title *</Label>
                   <Input
                     id="jobTitle"
-                    placeholder="Senior Developer"
+                    placeholder="Mathematics Teacher"
                     type="text"
                     disabled={isLoading}
                     value={formData.jobTitle}
@@ -745,7 +900,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   <Label htmlFor="organization">Organization *</Label>
                   <Input
                     id="organization"
-                    placeholder="Company Name"
+                    placeholder="School Name"
                     type="text"
                     disabled={isLoading}
                     value={formData.organization}
@@ -766,29 +921,16 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="githubUrl">GitHub URL</Label>
-                  <Input
-                    id="githubUrl"
-                    placeholder="https://github.com/username"
-                    type="url"
-                    disabled={isLoading}
-                    value={formData.githubUrl}
-                    onChange={(e) => handleInputChange("githubUrl", e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="websiteUrl">Website URL</Label>
-                  <Input
-                    id="websiteUrl"
-                    placeholder="https://yourwebsite.com"
-                    type="url"
-                    disabled={isLoading}
-                    value={formData.websiteUrl}
-                    onChange={(e) => handleInputChange("websiteUrl", e.target.value)}
-                  />
-                </div>
+              <div className="grid gap-2">
+                <Label htmlFor="websiteUrl">Website URL</Label>
+                <Input
+                  id="websiteUrl"
+                  placeholder="https://yourwebsite.com"
+                  type="url"
+                  disabled={isLoading}
+                  value={formData.websiteUrl}
+                  onChange={(e) => handleInputChange("websiteUrl", e.target.value)}
+                />
               </div>
 
               <div className="mt-6">
@@ -823,6 +965,9 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     <p>Name: {formData.firstName} {formData.middleName} {formData.lastName}</p>
                     {formData.dateOfBirth && <p>Date of Birth: {formData.dateOfBirth}</p>}
                     {formData.gender && <p>Gender: {formData.gender}</p>}
+                    <p>Citizenship: {citizenship}</p>
+                    {formData.nationalId && <p>National ID: {formData.nationalId}</p>}
+                    {formData.passportId && <p>Passport ID: {formData.passportId}</p>}
                   </div>
                 </div>
 

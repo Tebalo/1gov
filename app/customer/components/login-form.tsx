@@ -9,23 +9,178 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from 'next/image';
-// import { toast } from "sonner"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react"
 import { SignInInput, signInSchema } from "../validations/auth"
-import { toast, useToast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast" 
 import { DecodedTokenResponse } from "../types/auth"
 import { storeAccessGroups, storeSession } from "@/app/auth/auth"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { storeAuthData } from "@/app/staff/login/components/email-login"
-import { ToastAction } from "@/components/ui/toast"
+import { ToastAction } from "@/components/ui/toast" // import { toast } from "sonner"
 
 // Auth API configuration
 const AUTH_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/login/"
 const DECODE_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/decode-token/"
+const RESET_PASSWORD_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/reset-password/"
 
 interface LocalAuthResponse {
   access: string
   refresh: string
+}
+
+// Password reset form component
+function PasswordResetForm({ onBackToLogin }: { onBackToLogin: () => void }) {
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState("")
+  const { toast } = useToast()
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      new_password: ""
+    }
+  })
+
+  const onSubmit = async (data: { username: string, new_password: string }) => {
+    setIsLoading(true)
+    setFieldErrors("")
+
+    try {
+      const resetResponse = await fetch(RESET_PASSWORD_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: data.username,
+          new_password: data.new_password,
+        }),
+      })
+
+      if (!resetResponse.ok) {
+        setFieldErrors("Password reset failed. Please try again.");
+        toast({
+          title: "Reset Failed",
+          description: "Password reset failed. Please try again.",
+          action: (
+            <ToastAction altText="Ok">Ok</ToastAction>
+          ),
+        });
+        return
+      }
+
+      // Show success toast
+      toast({
+        title: "Password Reset Successful",
+        description: "Your password has been reset successfully. You can now login with your new password.",
+        action: (
+          <ToastAction altText="Ok">Ok</ToastAction>
+        ),
+      });
+
+      // Return to login form
+      onBackToLogin()
+
+    } catch (error) {
+      console.error("Password reset error:", error)
+      toast({
+        title: "Password Reset Failed",
+        description: "Server error. Please try again later.",
+        action: (
+          <ToastAction altText="Ok">Ok</ToastAction>
+        ),
+      });
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <form className={cn("flex flex-col gap-6")} onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col items-center gap-2 text-center">
+        <button 
+          type="button" 
+          onClick={onBackToLogin}
+          className="self-start flex items-center text-sm text-muted-foreground hover:text-foreground mb-2"
+        >
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          Back to login
+        </button>
+        <h1 className="text-2xl font-bold">Reset your password</h1>
+        <p className="text-muted-foreground text-sm text-balance">
+          Enter your username and new password to reset your password
+        </p>
+      </div>
+      {fieldErrors && <p className="text-sm text-center text-destructive">{fieldErrors}</p>}
+      <div className="grid gap-6">
+        <div className="grid gap-3">
+          <Label htmlFor="reset-username">Username</Label>
+          <Input
+            id="reset-username"
+            type="text"
+            placeholder="Enter your username"
+            {...register("username", { required: "Username is required" })}
+            className={errors.username ? "border-destructive" : ""}
+            disabled={isLoading}
+          />
+          {errors.username && (
+            <p className="text-sm text-destructive">{errors.username.message}</p>
+          )}
+        </div>
+
+        <div className="grid gap-3">
+          <Label htmlFor="reset-password">New Password</Label>
+          <div className="relative">
+            <Input
+              id="reset-password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your new password"
+              {...register("new_password", { 
+                required: "New password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters"
+                }
+              })}
+              className={errors.new_password ? "border-destructive pr-10" : "pr-10"}
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              )}
+            </button>
+          </div>
+          {errors.new_password && (
+            <p className="text-sm text-destructive">{errors.new_password.message}</p>
+          )}
+        </div>
+        
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Resetting...
+            </>
+          ) : (
+            "Reset Password"
+          )}
+        </Button>
+      </div>
+    </form>
+  )
 }
 
 export function LoginForm({
@@ -36,6 +191,7 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState(String)
+  const [showResetForm, setShowResetForm] = useState(false)
   const router = useRouter()
   const { toast } = useToast();
   const {
@@ -63,9 +219,7 @@ export function LoginForm({
       })
 
       if (!localAuthResponse.ok) {
-        // toast.error("Login Failed", {
-        //   description: "Invalid email or password. Please try again."
-        // })
+       
         setFieldErrors("Invalid email or password");
         console.error
         toast({
@@ -112,9 +266,6 @@ export function LoginForm({
       })
 
       if (!decodeResponse.ok) {
-        // toast.error("Login Failed", {
-        //   description: "Invalid email or password. Please try again."
-        // })
         toast({
           title: "Login Failed",
           description: "Server error. Please try again later.",
@@ -243,60 +394,12 @@ export function LoginForm({
 
       // Step 6: 🔥 SYNC USER BEFORE REDIRECT
       console.log('🚀 Starting user sync...')
-      // console.log('User data to sync:', {
-      //   externalUserId: userData.externalUserId,
-      //   role: userData.role,
-      //   email: userData.email,
-      //   name: userData.name
-      // })
 
       try {
-        // const syncResponse = await fetch('/api/v1/auth/sync-user', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'x-user-id': userData.externalUserId,
-        //     'x-user-role': userData.role,
-        //     'x-user-email': userData.email || '',
-        //     'x-user-name': userData.profile.personal_info.first_name + ' ' + userData.profile.personal_info.last_name,
-        //     'x-access-token': authData.access
-        //   } as HeadersInit
-        // })
-
-        // console.log('📡 Sync response status:', syncResponse.status)
         
-        // if (syncResponse.ok) {
-        //   const syncData = await syncResponse.json()
-        //   // console.log('✅ User synced successfully:', syncData.user)
-          
-        //   // Update userData with synced information
-        //   const updatedUserData = {
-        //     ...userData,
-        //     workBaskets: syncData.user.workBaskets,
-        //     availableRoles: syncData.user.roles,
-        //     localUserId: syncData.user.id
-        //   }
-          
-        //   // console.log('📝 Updated user data:', updatedUserData)
-          
-        //   // Update sessionStorage with synced data
-        //   sessionStorage.setItem('user_data', JSON.stringify(updatedUserData))
-          
-        //   // Also update cookie
-        //   document.cookie = `user_data=${encodeURIComponent(JSON.stringify(updatedUserData))}; path=/; max-age=${cookieOptions.maxAge}; ${cookieOptions.secure ? 'secure;' : ''} samesite=${cookieOptions.sameSite}`
-          
-        // } else {
-        //   const errorData = await syncResponse.json()
-        //   console.error('❌ User sync failed:', syncResponse.status, errorData)
-        // }
       } catch (syncError) {
         console.error('💥 User sync error:', syncError)
       }
-
-      // Step 7: Success notification
-      // toast.success("Login Successful", {
-      //   description: `Welcome back, ${sessionData.profile.personal_info.first_name}!`,
-      // })
 
       // Step 8: 🔥 FIXED - Role-based redirect with fallbacks
       const userRoles = sessionData.roles || []
@@ -323,6 +426,10 @@ export function LoginForm({
     }
   }
 
+  // Show password reset form if toggled
+  if (showResetForm) {
+    return <PasswordResetForm onBackToLogin={() => setShowResetForm(false)} />
+  }
 
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
@@ -335,11 +442,11 @@ export function LoginForm({
       <p className="text-sm text-center text-destructive">{fieldErrors}</p>
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Username</Label>
           <Input
             id="email"
             type="email"
-            placeholder="...@mail.com"
+            placeholder="name@example.com"
             {...register("email")}
             className={errors.email ? "border-destructive" : ""}
             disabled={isLoading}
@@ -357,13 +464,7 @@ export function LoginForm({
               className="ml-auto text-sm underline-offset-4 hover:underline"
               onClick={(e) => {
                 e.preventDefault()
-                toast({
-                  title: "Password Reset",
-                  description: "Password reset functionality will be available in the next version.",
-                  action: (
-                    <ToastAction altText="Ok">Ok</ToastAction>
-                  ),
-                });
+                setShowResetForm(true)
               }}
             >
               Forgot your password?
