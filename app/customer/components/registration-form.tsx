@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, Check } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Eye, EyeOff } from "lucide-react"
 // import { toast } from "sonner"
 import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
@@ -48,6 +48,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   const [errors, setErrors] = useState<string[]>([])
   const [fieldErrors, setFieldErrors] = useState<ApiError>({})
   const [citizenship, setCitizenship] = useState<string>("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     // Basic credentials
     username: "",
@@ -133,6 +135,23 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (!formData.dateOfBirth.trim()) stepTwoErrors.push("Date of birth is required")
         if (!formData.gender.trim()) stepTwoErrors.push("Gender is required")
         if (!citizenship) stepTwoErrors.push("Citizenship status is required")
+        
+        // Validate Date of Birth is in the past (not today or future)
+        if (formData.dateOfBirth.trim()) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+          const birthDate = new Date(formData.dateOfBirth);
+          
+          // Check if date is valid
+          if (isNaN(birthDate.getTime())) {
+            stepTwoErrors.push("Please enter a valid date of birth");
+          } else {
+            // Check if birth date is today or in the future
+            if (birthDate >= today) {
+              stepTwoErrors.push("Date of birth must be in the past");
+            }
+          }
+        }
         
         // Validate National ID or Passport ID based on citizenship
         if (citizenship === "Citizen") {
@@ -439,16 +458,25 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  placeholder="Create a strong password"
-                  type="password"
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  className={fieldErrors.password ? "border-destructive" : ""}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    placeholder="Create a strong password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    disabled={isLoading}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    className={fieldErrors.password ? "border-destructive pr-10" : "pr-10"}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Password must be at least 8 characters long
                 </p>
@@ -456,15 +484,25 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  placeholder="Confirm your password"
-                  type="password"
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    placeholder="Confirm your password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    disabled={isLoading}
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>

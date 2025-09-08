@@ -9,15 +9,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from 'next/image';
-// import { toast } from "sonner"
 import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react"
 import { SignInInput, signInSchema } from "../validations/auth"
-import { toast, useToast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast" 
 import { DecodedTokenResponse } from "../types/auth"
 import { storeAccessGroups, storeSession } from "@/app/auth/auth"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { storeAuthData } from "@/app/staff/login/components/email-login"
-import { ToastAction } from "@/components/ui/toast"
+import { ToastAction } from "@/components/ui/toast" // import { toast } from "sonner"
 
 // Auth API configuration
 const AUTH_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/login/"
@@ -220,9 +219,7 @@ export function LoginForm({
       })
 
       if (!localAuthResponse.ok) {
-        // toast.error("Login Failed", {
-        //   description: "Invalid email or password. Please try again."
-        // })
+       
         setFieldErrors("Invalid email or password");
         console.error
         toast({
@@ -269,9 +266,6 @@ export function LoginForm({
       })
 
       if (!decodeResponse.ok) {
-        // toast.error("Login Failed", {
-        //   description: "Invalid email or password. Please try again."
-        // })
         toast({
           title: "Login Failed",
           description: "Server error. Please try again later.",
@@ -400,60 +394,12 @@ export function LoginForm({
 
       // Step 6: 🔥 SYNC USER BEFORE REDIRECT
       console.log('🚀 Starting user sync...')
-      // console.log('User data to sync:', {
-      //   externalUserId: userData.externalUserId,
-      //   role: userData.role,
-      //   email: userData.email,
-      //   name: userData.name
-      // })
 
       try {
-        // const syncResponse = await fetch('/api/v1/auth/sync-user', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'x-user-id': userData.externalUserId,
-        //     'x-user-role': userData.role,
-        //     'x-user-email': userData.email || '',
-        //     'x-user-name': userData.profile.personal_info.first_name + ' ' + userData.profile.personal_info.last_name,
-        //     'x-access-token': authData.access
-        //   } as HeadersInit
-        // })
-
-        // console.log('📡 Sync response status:', syncResponse.status)
         
-        // if (syncResponse.ok) {
-        //   const syncData = await syncResponse.json()
-        //   // console.log('✅ User synced successfully:', syncData.user)
-          
-        //   // Update userData with synced information
-        //   const updatedUserData = {
-        //     ...userData,
-        //     workBaskets: syncData.user.workBaskets,
-        //     availableRoles: syncData.user.roles,
-        //     localUserId: syncData.user.id
-        //   }
-          
-        //   // console.log('📝 Updated user data:', updatedUserData)
-          
-        //   // Update sessionStorage with synced data
-        //   sessionStorage.setItem('user_data', JSON.stringify(updatedUserData))
-          
-        //   // Also update cookie
-        //   document.cookie = `user_data=${encodeURIComponent(JSON.stringify(updatedUserData))}; path=/; max-age=${cookieOptions.maxAge}; ${cookieOptions.secure ? 'secure;' : ''} samesite=${cookieOptions.sameSite}`
-          
-        // } else {
-        //   const errorData = await syncResponse.json()
-        //   console.error('❌ User sync failed:', syncResponse.status, errorData)
-        // }
       } catch (syncError) {
         console.error('💥 User sync error:', syncError)
       }
-
-      // Step 7: Success notification
-      // toast.success("Login Successful", {
-      //   description: `Welcome back, ${sessionData.profile.personal_info.first_name}!`,
-      // })
 
       // Step 8: 🔥 FIXED - Role-based redirect with fallbacks
       const userRoles = sessionData.roles || []
@@ -530,7 +476,7 @@ export function LoginForm({
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               {...register("password")}
-              className={errors.password ? "border-destructive pr-极狐" : "pr-10"}
+              className={errors.password ? "border-destructive pr-10" : "pr-10"}
               disabled={isLoading}
             />
             <button
