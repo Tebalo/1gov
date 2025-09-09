@@ -64,18 +64,18 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
         title: 'Work', 
         roles: ['*'] 
     },
-    // { 
-    //     path: '/trls/registration', 
-    //     icon: <ClipboardSignature size={24} color="#FFFFFF" />, 
-    //     title: 'Teacher', 
-    //     roles: [
-    //         'REGISTRATION_OFFICER', 
-    //         'SNR_REGISTRATION_OFFICER', 
-    //         'MANAGER', 
-    //         'DIRECTOR', 
-    //         'REGISTRAR'
-    //     ] 
-    // },
+    { 
+        path: '/trls/registers', 
+        icon: <ClipboardSignature size={24} color="#FFFFFF" />, 
+        title: 'Registers', 
+        roles: [
+            'REGISTRATION_OFFICER', 
+            'SNR_REGISTRATION_OFFICER', 
+            'MANAGER', 
+            'DIRECTOR', 
+            'REGISTRAR'
+        ] 
+    },
     { 
         path: '/trls/activity', 
         icon: <ClipboardList size={24} color="#FFFFFF" />, 
