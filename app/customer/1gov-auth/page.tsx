@@ -1,5 +1,7 @@
+"use client";
 import Image from 'next/image';
 import { LoginForm } from '../components/login-form';
+import { OneGovAuth } from '../components/1gov-login';
 
 export default function LoginPage() {
   return (
@@ -24,8 +26,14 @@ export default function LoginPage() {
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
+          <div className="w-full max-w-xs space-y-6">
+            <div className="flex flex-col items-center gap-2 text-center">
+                <h1 className="text-2xl font-bold">Login to your account</h1>
+                <p className="text-muted-foreground text-sm text-balance">
+                Enter your <b className='text-bold'>1GOV</b>ID below to login to your account
+                </p>
+            </div>
+            <OneGovAuth />
           </div>
         </div>
       </div>

@@ -518,7 +518,7 @@ export function LoginForm({
         </div>
 
          {/* Login with 1Gov1Citizen */}
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" onClick={() => router.push('/customer/1gov-auth')}>
           <div className="w-6 h-6 items-center justify-center flex mr-2">
             <Image
                 src="/gov_icon.png"
