@@ -166,7 +166,7 @@ const countries = countryList.map((country) => ({
 }));
 
 export default function Form() {
-  const {nationalId, passportId} = useUserData();
+  const {nationalId, passportId, userData} = useUserData();
   const userId = nationalId || passportId || '';
 
   const [previousStep, setPreviousStep] = useState(0)
@@ -197,7 +197,7 @@ export default function Form() {
   const router = useRouter()
   const { saveDraft, loadDraft, updateDraft, isLoading, error } = useDraft({
     userId: userId, 
-    userName: "First Last",
+    userName: (userData?.profile?.personal_info?.first_name ?? '') + (userData?.profile?.personal_info?.last_name ?? '') || '',
     formType: "Registration", 
     userRole: "user", 
     // caseId: "case123", // Optional - only if this form is tied to a case
