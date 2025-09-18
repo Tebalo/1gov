@@ -1,4 +1,6 @@
 "use client";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useUserData } from '@/lib/hooks/useUserData';
 import { 
   Bell, 
@@ -19,6 +21,7 @@ import {
   Hash,
   User
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 interface NotificationAttachment {
@@ -45,6 +48,7 @@ interface NotificationPayload {
 interface Notification {
   id: string;
   userId: string;
+  draft_id?: string | null;
   reference: NotificationReference;
   payload: NotificationPayload;
   isRead: boolean;
@@ -312,6 +316,8 @@ const formatDate = useCallback((dateString?: string) => {
 
 // Calculate pagination info
 const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+const router = useRouter();
 
 // Load initial data - FIXED: Only depends on userId, no circular dependencies
 useEffect(() => {
@@ -713,12 +719,15 @@ useEffect(() => {
                             notification.isRead ? 'text-gray-600' : 'text-gray-700'
                           }`}>
                             {notification.payload.message}
+                            {notification.draft_id && (
+                                <Button variant={"link"} onClick={()=>{router.push("/customer/dashboard/teacher-application?draftId=${notification.draft_id}")}}>@{notification.draft_id}</Button>
+                            )}
                           </p>
 
                           {/* Description */}
                           {notification.payload.description && notification.payload.description !== notification.payload.message && (
                             <p className="text-sm text-gray-500 mb-2">
-                              {notification.payload.description}
+                              {notification.payload.description}                             
                             </p>
                           )}
 
@@ -728,10 +737,10 @@ useEffect(() => {
                               <div className="flex flex-wrap gap-2">
                                 {notification.payload.fields.map((field, index) => (
                                   <div key={index} className="text-xs bg-gray-50 rounded px-2 py-1">
-                                    <span className="font-medium text-gray-700">{field.key}:</span>
-                                    <span className="text-gray-600 ml-1">
-                                      {Array.isArray(field.value) ? field.value.join(', ') : String(field.value)}
-                                    </span>
+                                    {/* <span className="font-medium text-gray-700">{field}:</span> */}
+                                    <Badge>
+                                      {Array.isArray(field) ? field.join(', ') : String(field).toLocaleUpperCase().replace(/_/g, ' ')}
+                                    </Badge>
                                   </div>
                                 ))}
                               </div>

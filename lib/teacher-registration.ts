@@ -17,13 +17,14 @@ export async function generateApplicationId(): Promise<string> {
 /**
  * Transform form data to match the expected API payload structure
  */
-export async function transformFormData(formData: any, profile: Profile): Promise<TeacherRegistrationRequest> {
+export async function transformFormData(formData: any, profile: Profile, draft_id:string): Promise<TeacherRegistrationRequest> {
   const applicationId = await generateApplicationId()
   
   return {
     reference: {
       application_id: applicationId,
       submission_id: applicationId.substring(0,8) + applicationId.substring(24),
+      draft_id: draft_id, 
       response_id: "",
       status: 0,
       profile: {
@@ -175,11 +176,12 @@ const extractErrorMessage = (errorText: string): string => {
  */
 export async function submitTeacherRegistration(
   formData: any,
-  profile: Profile
+  profile: Profile, 
+  draft_id:string
 ): Promise<TeacherRegistrationResponse> {
   try {
     // Transform the form data to match the API structure
-    const requestPayload = await transformFormData(formData, profile)
+    const requestPayload = await transformFormData(formData, profile, draft_id)
     // console.log('Url:', TEACHER_REGISTRATION_ENDPOINT)
     // console.log('Submitting teacher registration:', JSON.stringify(requestPayload))
     
@@ -275,7 +277,8 @@ export async function handleFormSubmission(formData: any) {
   }
   
   // Submit the registration
-  const result = await submitTeacherRegistration(processedFormData, profile)
+  const draft_id = "" // Default empty draft ID
+  const result = await submitTeacherRegistration(processedFormData, profile, draft_id)
   
   if (result.success) {
     console.log('Registration successful:', result.application_id)

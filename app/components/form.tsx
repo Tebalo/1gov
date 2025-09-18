@@ -195,7 +195,7 @@ export default function Form() {
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
   const { toast } = useToast();
   const router = useRouter()
-  const { saveDraft, loadDraft, updateDraft, isLoading, error } = useDraft({
+  const { saveDraft, loadDraft, updateDraft, updateDraftStatus, isLoading, error } = useDraft({
     userId: userId, 
     userName: (userData?.profile?.personal_info?.first_name ?? '') + (userData?.profile?.personal_info?.last_name ?? '') || '',
     formType: "Registration", 
@@ -258,14 +258,16 @@ export default function Form() {
     const processedFormData = {
       ...formData,
       ...processedAttachments,
-      qualifications: apiQualifications, //
-      national_id_copy: nationalIdDoc    //
+      qualifications: apiQualifications, 
+      national_id_copy: nationalIdDoc    
     }
-    
+    const urlParams = new URLSearchParams(window.location.search);
+    const draft_Id = urlParams.get('draftId');
     // Call the API to submit the form data
-    const result = await submitTeacherRegistration(processedFormData, profile)
+    const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
     setSubmissionResult(result)
     if (submissionResult?.success==true || result.success==true) {  
+      await updateDraftStatus(draft_Id || '', 'submitted')
       //alert('Form submitted successfully!')
       setSubmitting(false)
       reset()
@@ -410,7 +412,7 @@ export default function Form() {
       const fetchDraft = async () => {
         const draftData = await loadDraft(draftIdFromUrl);
         if (draftData) {
-          console.log('Draft data loaded:', draftData);
+
           reset(draftData);
           //setNationalIdDoc({"bucket":"MESD_006_28_001","extension":"pdf","original-name":"5f4d689a-b7c3-431c-91d3-d02e91aa5dea-3.pdf","key":"9e0b8db2-427b-4071-ae52-b9a72514b509"})
           setNationalIdDoc(draftData.national_id_copy || null) 
@@ -3420,6 +3422,7 @@ export default function Form() {
                         </>
                       )}
                       {submitting && (
+                        <>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Submitting...</AlertDialogTitle>
                           <AlertDialogDescription>
@@ -3434,6 +3437,11 @@ export default function Form() {
                             </div>
                           </AlertDialogDescription>
                         </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            {/* <Button onClick={submitForm}>Re-submit</Button> */}
+                          </AlertDialogFooter>
+                        </>
                       )}
                       {submissionResult?.success==true && (
                         <>

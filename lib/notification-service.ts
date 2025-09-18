@@ -10,6 +10,7 @@ export interface NotificationAttachment {
 export interface NotificationReference {
     status: string;
     user_id: string;
+    draft_id?: string;  // Optional field to link to a draft
     application_id: string;
     type: string;
     service_code: string;
@@ -28,6 +29,7 @@ export interface NotificationPayload {
 export interface Notification {
     id: string;
     userId: string;
+    draft_id?: string | null;
     reference: NotificationReference;
     payload: NotificationPayload;
     isRead: boolean;
@@ -74,6 +76,7 @@ function convertPrismaNotificationToNotification(prismaNotification: any): Notif
     return {
         id: prismaNotification.id,
         userId: prismaNotification.userId,
+        draft_id: prismaNotification.draft_id,  
         reference: parseNotificationReference(prismaNotification.reference),
         payload: parseNotificationPayload(prismaNotification.payload),
         isRead: prismaNotification.isRead,
@@ -91,6 +94,7 @@ export const notificationService = {
             const prismaNotification = await prisma.notification.create({
                 data: {
                     userId: notificationData.reference.user_id,
+                    draft_id: notificationData.reference.draft_id || null,
                     reference: notificationData.reference,
                     payload: notificationData.payload,
                     isRead: false

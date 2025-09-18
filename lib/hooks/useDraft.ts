@@ -140,11 +140,43 @@ export const useDraft = (options: UseDraftOptions) => {
     }
   }, []);
 
+  // Update draft status by ID (optional)
+  const updateDraftStatus = useCallback(async (draftId: string, status: string) => {
+    setIsLoading(true);
+    setError(null); 
+    try {
+      if (!draftId) {
+        throw new Error('Draft ID is required for status update');
+      }
+
+      const response = await fetch(`/api/drafts/v1/${draftId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update draft status');
+      }
+      const updatedDraft = await response.json();
+      return updatedDraft;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update draft status';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     saveDraft,
     loadDraft,
     deleteDraft,
     updateDraft,
+    updateDraftStatus,
     isLoading,
     error,
   };

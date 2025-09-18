@@ -54,6 +54,7 @@ export type Draft = {
 
 interface DraftsTableProps {
   userId: string
+  status: string
   initialData?: Draft[]
 }
 
@@ -103,7 +104,7 @@ const getFormTypeColor = (formType: string) => {
   }
 }
 
-export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) {
+export function DraftsDataTable({ userId, status, initialData = [] }: DraftsTableProps) {
   const router = useRouter()
   const [data, setData] = React.useState<Draft[]>(initialData)
   const [loading, setLoading] = React.useState(!initialData.length)
@@ -127,7 +128,7 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
       
       try {
         setLoading(true)
-        const response = await fetch(`/api/drafts?userId=${userId}`)
+        const response = await fetch(`/api/drafts?userId=${userId}&status=${status}`)
         if (!response.ok) throw new Error('Failed to fetch drafts')
         const drafts = await response.json()
         setData(drafts)
@@ -139,7 +140,7 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
     }
 
     fetchDrafts()
-  }, [userId])
+  }, [userId, status])
 
   const handleEditDraft = (draft: Draft) => {
     const formType = draft.formType.toLowerCase()
@@ -308,29 +309,30 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(draft.id)}
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Copy draft ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleViewDraft(draft)}>
+              </DropdownMenuItem> */}
+              {/* <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleViewDraft(draft)} disabled={status !== "draft"}>
                 <Eye className="mr-2 h-4 w-4" />
                 View draft
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleEditDraft(draft)}>
+              </DropdownMenuItem> */}
+              <DropdownMenuItem onClick={() => handleEditDraft(draft)} disabled={status !== "draft"}>
                 <Edit className="mr-2 h-4 w-4" />
                 Continue editing
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              {status=="draft" && <DropdownMenuSeparator />}
+              {status=="draft"&&<DropdownMenuItem 
                 onClick={() => handleDeleteDraft(draft.id)}
                 className="text-red-600 focus:text-red-600"
+                disabled={status !== "draft"}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete draft
-              </DropdownMenuItem>
+              </DropdownMenuItem>}
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -361,7 +363,7 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Loading Drafts...</CardTitle>
+          <CardTitle>Loading Data...</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-32">
@@ -377,10 +379,22 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
       {/* Header */}
       <Card>
         <CardHeader>
-          <CardTitle>Draft Applications</CardTitle>
-          <CardDescription>
-            Manage your saved draft applications. You can continue editing or delete drafts as needed.
-          </CardDescription>
+          
+          {status=="draft" ? (
+            <>
+            <CardTitle>Draft Applications</CardTitle>
+            <CardDescription>
+              Manage your saved draft applications. You can continue editing or delete drafts as needed.
+            </CardDescription>
+            </>
+          ) : (
+            <>
+            <CardTitle>Submitted Forms</CardTitle>
+            <CardDescription>
+              View your submitted forms.
+            </CardDescription>
+            </>
+          )}
         </CardHeader>
       </Card>
 
@@ -459,10 +473,10 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
                             <Eye className="mr-2 h-4 w-4" />
                             View draft
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEditDraft(draft)}>
+                          {status=="draft" && <DropdownMenuItem onClick={() => handleEditDraft(draft)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Continue editing
-                          </DropdownMenuItem>
+                          </DropdownMenuItem>}
                           <DropdownMenuItem 
                             onClick={() => handleDeleteDraft(draft.id)}
                             className="text-red-600"
@@ -579,15 +593,3 @@ export function DraftsDataTable({ userId, initialData = [] }: DraftsTableProps) 
     </div>
   )
 }
-
-// Usage Example Component
-// export function DraftsPage() {
-//   // This would typically come from your auth context or session
-//   const userId = "440418213" // Replace with actual user ID
-  
-//   return (
-//     <div className="container mx-auto py-6 px-4">
-//       <DraftsDataTable userId={userId} />
-//     </div>
-//   )
-// }

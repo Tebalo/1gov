@@ -42,29 +42,13 @@ export default function MyApplicationsPage() {
           
           <TabsContent value="drafts" className="p-0 mt-0">
             <div className="p-4 md:p-6">
-              <DraftsDataTable userId={userId} />
+              <DraftsDataTable userId={userId} status={"draft"}/>
             </div>
           </TabsContent>
           
           <TabsContent value="submissions" className="p-0 mt-0">
             <div className="p-4 md:p-6">
-              <Card className="border-dashed border-2 border-gray-200">
-                <CardHeader className="text-center pb-4">
-                  <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <Cog className="h-6 w-6 text-gray-400 animate-spin" />
-                  </div>
-                  <CardTitle className="text-xl text-gray-600">Work in Progress</CardTitle>
-                  <CardDescription className="text-gray-500">
-                    The submissions view is currently under development. 
-                    You&apos;ll be able to view all your submitted applications here soon.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-sm text-muted-foreground">
-                    In the meantime, you can continue working on your drafts or create new applications.
-                  </p>
-                </CardContent>
-              </Card>
+              <DraftsDataTable userId={userId} status={"submitted"}/>
             </div>
           </TabsContent>
         </Tabs>
