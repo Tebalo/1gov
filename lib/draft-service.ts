@@ -4,7 +4,9 @@ export interface CreateDraftData {
   content: string;
   formType: string;
   userId: string;
+  status?: string;
   userName: string;
+  currentStep?: number;
   userRole?: string;
   caseId?: string;
   caseType?: string;
@@ -12,6 +14,7 @@ export interface CreateDraftData {
 
 export interface UpdateDraftData {
   content: string;
+  currentStep?: number;
 }
 
 export const draftService = {
@@ -29,6 +32,7 @@ export const draftService = {
         update: {
           content: data.content,
           userName: data.userName,
+          currentStep: data.currentStep,
           userRole: data.userRole,
           caseType: data.caseType,
           updatedAt: new Date(),
@@ -37,6 +41,8 @@ export const draftService = {
           content: data.content,
           formType: data.formType,
           userId: data.userId,
+          currentStep: data.currentStep,
+          status: data.status || 'draft',
           userName: data.userName,
           userRole: data.userRole,
           caseId: data.caseId,
@@ -86,6 +92,23 @@ export const draftService = {
     }
   },
 
+  // Update notification fields in a draft by ID
+  updateDraftCorrectionFields: async (draftId: string, fields: string) => {
+    try { 
+      const updatedDraft = await prisma.draft.update({
+        where:{
+          id: draftId
+        },
+        data:{
+          fields: fields,
+          updatedAt: new Date()}
+      });
+      return updatedDraft;
+    } catch (error) {
+      throw new Error('Failed to update draft fields');
+    }
+  },
+
   // Update a draft by ID
   updateDraftById: async (draftId: string, updateData: UpdateDraftData) => {
     try {
@@ -95,6 +118,7 @@ export const draftService = {
         },
         data: {
           content: updateData.content,
+          currentStep: updateData.currentStep,
           updatedAt: new Date(),
         },
       });
@@ -104,6 +128,24 @@ export const draftService = {
     catch (error) {
       console.error('Error updating draft by ID:', error);
       throw new Error('Failed to update draft by ID');
+    }
+  },
+  // Update draft status by ID
+  updateDraftStatus: async (draftId: string, status: string) => {
+    try {
+      const updatedDraft = await prisma.draft.update({
+        where: {
+          id: draftId,
+        },
+        data: {
+          status: status,
+          updatedAt: new Date(),
+        },
+      });
+      return updatedDraft;
+    } catch (error) {
+      console.error('Error updating draft status by ID:', error);
+      throw new Error('Failed to update draft status by ID');
     }
   },
 
@@ -128,6 +170,26 @@ export const draftService = {
       const drafts = await prisma.draft.findMany({
         where: {
           userId: userId,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      });
+
+      return drafts;
+    } catch (error) {
+      console.error('Error fetching user drafts:', error);
+      throw new Error('Failed to fetch drafts');
+    }
+  },
+
+  // Get all drafts for a user by status
+  getUserDraftsByStatus: async (userId: string, status?: string) => {
+    try {
+      const drafts = await prisma.draft.findMany({
+        where: {
+          userId: userId,
+          status: status || 'draft',
         },
         orderBy: {
           updatedAt: 'desc',

@@ -1,4 +1,5 @@
 import { notificationService, CreateNotificationRequest } from '@/lib/notification-service';
+import { draftService } from '@/lib/draft-service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -37,6 +38,11 @@ export async function GET(request: NextRequest) {
     }
 }
 
+/**
+ * Send a new notification
+ * @param request - Request object containing notification data
+ * @returns 
+ */
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
@@ -55,6 +61,36 @@ export async function POST(request: NextRequest) {
                     { error: 'reference.user_id and payload.title are required' },
                     { status: 400 }
                 );
+            }
+            // Additional validation for specific types
+            if(notificationData.reference.type.toUpperCase() === 'CORRECTION'){
+                if(!notificationData.reference.application_id || !notificationData.reference.status){
+                    return NextResponse.json(
+                        { error: 'For Correction type, draft_id are required in reference' },
+                        { status: 400 }
+                    );
+                } else {
+                    // Verify that the draft exists
+                    const draft = await draftService.getDraftById(notificationData.reference.draft_id!);
+
+                    if(!draft){
+                        return NextResponse.json(
+                            { error: 'The specified draft does not exist' },
+                            { status: 400 }
+                        );
+                    }else{
+                        // Update draft correction fields
+                        if(notificationData.payload.fields && Array.isArray(notificationData.payload.fields)){
+                            //const fieldNames = notificationData.payload.fields.map(field => field.name as string);
+                            await draftService.updateDraftCorrectionFields(draft.id, notificationData.payload.fields as unknown as string);
+                        } else {
+                            return NextResponse.json(
+                                { error: 'For Correction type, payload.fields must be an array of field objects with name property' },
+                                { status: 400 }
+                            );
+                        }
+                    }
+                }
             }
 
             const notification = await notificationService.createNotification(notificationData);
@@ -76,7 +112,10 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error('POST /api/notifications error:', error);
         return NextResponse.json(
-            { error: 'Failed to create notification' },
+            { 
+                error: 'Failed to create notification',
+                cause: (error instanceof Error) ? error.message : 'Unknown error'
+            },
             { status: 500 }
         );
     }

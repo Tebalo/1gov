@@ -10,6 +10,7 @@ export interface NotificationAttachment {
 export interface NotificationReference {
     status: string;
     user_id: string;
+    draft_id?: string;  // Optional field to link to a draft
     application_id: string;
     type: string;
     service_code: string;
@@ -28,6 +29,7 @@ export interface NotificationPayload {
 export interface Notification {
     id: string;
     userId: string;
+    draft_id?: string | null;
     reference: NotificationReference;
     payload: NotificationPayload;
     isRead: boolean;
@@ -74,6 +76,7 @@ function convertPrismaNotificationToNotification(prismaNotification: any): Notif
     return {
         id: prismaNotification.id,
         userId: prismaNotification.userId,
+        draft_id: prismaNotification.draft_id,  
         reference: parseNotificationReference(prismaNotification.reference),
         payload: parseNotificationPayload(prismaNotification.payload),
         isRead: prismaNotification.isRead,
@@ -83,7 +86,11 @@ function convertPrismaNotificationToNotification(prismaNotification: any): Notif
 }
 
 export const notificationService = {
-    // Send a new notification with enhanced payload
+    /**
+     * Create a new notification with enhanced structure
+     * @param notificationData - Data for the new notification
+     * @returns 
+     */
     createNotification: async (
         notificationData: CreateNotificationRequest
     ): Promise<Notification> => {
@@ -91,6 +98,7 @@ export const notificationService = {
             const prismaNotification = await prisma.notification.create({
                 data: {
                     userId: notificationData.reference.user_id,
+                    draft_id: notificationData.reference.draft_id || null,
                     reference: notificationData.reference,
                     payload: notificationData.payload,
                     isRead: false
@@ -104,7 +112,13 @@ export const notificationService = {
         }
     },
 
-    // Legacy method for backwards compatibility
+    /**
+     * Legacy method to send a simple notification
+     * @param userId 
+     * @param message 
+     * @param link 
+     * @returns 
+     */
     sendNotification: async (
         userId: string, 
         message: string, 
@@ -135,7 +149,11 @@ export const notificationService = {
         }
     },
 
-    // Fetch notifications for a user
+    /**
+     * Fetch notifications for a user
+     * @param userId - ID of the user
+     * @returns 
+     */
     getUserNotifications: async (userId: string): Promise<Notification[]> => {
         try {
             const prismaNotifications = await prisma.notification.findMany({
@@ -154,7 +172,11 @@ export const notificationService = {
         }
     },
     
-    // Mark a notification as read
+    /**
+     * Mark a notification as read
+     * @param notificationId - ID of the notification to mark as read
+     * @returns
+     */
     markAsRead: async (notificationId: string): Promise<void> => {
         try {
             await prisma.notification.update({

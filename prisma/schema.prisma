@@ -31,6 +31,7 @@ model AuditTrail {
 model Notification {
   id        String   @id @default(cuid())
   userId    String
+  draft_id String?  // Optional field to link to a draft
   reference Json
   payload   Json
   isRead    Boolean  @default(false)
@@ -82,6 +83,9 @@ model Draft {
   id          String   @id @default(cuid())
   content     String   // JSON string of form data
   formType    String   // Type of form being drafted
+  status      String   @default("draft") // e.g., "draft", "submitted"
+  currentStep Int?    // Current step in multi-step forms
+  fields      Json? // List of fields included in the draft
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   

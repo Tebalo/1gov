@@ -43,6 +43,7 @@ export interface Service {
 export interface Reference {
   application_id: string
   submission_id: string
+  draft_id: string | null
   response_id: string
   status: number
   profile: Profile
