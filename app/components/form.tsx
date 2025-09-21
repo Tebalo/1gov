@@ -495,7 +495,7 @@ export default function Form() {
 
       fetchDraft();
     }
-  }, [loadDraft, reset, setValue, updateDraft, currentStep]);
+  }, [loadDraft, reset, setValue, updateDraft]);
 
   type FieldName = keyof FormInputs
 
