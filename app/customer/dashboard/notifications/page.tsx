@@ -21,6 +21,7 @@ import {
   Hash,
   User
 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -64,7 +65,7 @@ interface NotificationResponse {
 
 // Move constants outside component to prevent re-renders
 const BASE_URL = '/api';
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 5;
 
 const NotificationPage = () => {
 
@@ -720,7 +721,7 @@ useEffect(() => {
                           }`}>
                             {notification.payload.message}
                             {notification.draft_id && (
-                                <Button variant={"link"} onClick={()=>{router.push("/customer/dashboard/teacher-application?draftId=${notification.draft_id}")}}>@{notification.draft_id}</Button>
+                                <Button variant={"link"} onClick={()=>{router.push(`/customer/dashboard/teacher-application?draftId=${notification.draft_id}`)}}>{notification.draft_id}</Button>
                             )}
                           </p>
 
@@ -734,16 +735,21 @@ useEffect(() => {
                           {/* Custom Fields */}
                           {notification.payload.fields && notification.payload.fields.length > 0 && (
                             <div className="mb-2">
-                              <div className="flex flex-wrap gap-2">
-                                {notification.payload.fields.map((field, index) => (
-                                  <div key={index} className="text-xs bg-gray-50 rounded px-2 py-1">
-                                    {/* <span className="font-medium text-gray-700">{field}:</span> */}
-                                    <Badge>
-                                      {Array.isArray(field) ? field.join(', ') : String(field).toLocaleUpperCase().replace(/_/g, ' ')}
-                                    </Badge>
-                                  </div>
-                                ))}
-                              </div>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                  {notification.payload.fields.map((field, index) => (
+                                    <Link
+                                      key={index} 
+                                      href={`/customer/dashboard/teacher-application?draftId=${notification.draft_id}`}
+                                    >
+                                      <span 
+                                        key={index} 
+                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                                      >
+                                        {field.replace(/_/g, ' ')}
+                                      </span>
+                                    </Link>
+                                  ))}
+                                </div>
                             </div>
                           )}
 

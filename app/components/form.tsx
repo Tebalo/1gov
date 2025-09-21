@@ -195,7 +195,7 @@ export default function Form() {
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
   const { toast } = useToast();
   const router = useRouter()
-  const { saveDraft, loadDraft, updateDraft, updateDraftStatus, isLoading, error } = useDraft({
+  const { saveDraft, loadDraft, updateDraft, updateDraftFields, updateDraftStatus, isLoading, error } = useDraft({
     userId: userId, 
     userName: (userData?.profile?.personal_info?.first_name ?? '') + (userData?.profile?.personal_info?.last_name ?? '') || '',
     formType: "Registration", 
@@ -203,6 +203,7 @@ export default function Form() {
     // caseId: "case123", // Optional - only if this form is tied to a case
     // caseType: "profile", // Optional - only if this form is tied to a case
   });
+  const [fields, setFields] = useState<string[]>([])
 
   const getAPIFormatQualifications = () => {
     return qualifications
@@ -228,52 +229,69 @@ export default function Form() {
     mode: 'onChange'
   })
 
+  /**
+   * Process and submit the form data
+   * @param formData - Data from the form submission
+   */
   const processForm: SubmitHandler<FormInputs> = async (formData) => {
-    if(formData.citizenship.toLowerCase() === 'citizen'){
-      formData.nationality = 'Botswana'
-    }
+    try{
+      if(formData.citizenship.toLowerCase() === 'citizen'){
+        formData.nationality = 'Botswana'
+      }
 
-    // Extract profile data from form
-    const profile: Profile = {
-      username: formData.username,
-      first_name: formData.first_name,
-      middle_name: formData.middle_name || "",
-      last_name: formData.last_name || "", // Ensure last_name is included
-      surname: formData.surname || formData.last_name,
-      date_of_birth: formData.date_of_birth,
-      citizenship: formData.citizenship,
-      // primary_email: formData.primary_email,
-      primary_phone: formData.primary_phone,
-      primary_physical: formData.primary_physical,
-      primary_postal: formData.primary_postal,
-      gender: formData.gender,
-      nationality: formData.nationality || "", // Ensure
-      // marital_status: formData.marital_status
-    }
+      // Extract profile data from form
+      const profile: Profile = {
+        username: formData.username,
+        first_name: formData.first_name,
+        middle_name: formData.middle_name || "",
+        last_name: formData.last_name || "", // Ensure last_name is included
+        surname: formData.surname || formData.last_name,
+        date_of_birth: formData.date_of_birth,
+        citizenship: formData.citizenship,
+        // primary_email: formData.primary_email,
+        primary_phone: formData.primary_phone,
+        primary_physical: formData.primary_physical,
+        primary_postal: formData.primary_postal,
+        gender: formData.gender,
+        nationality: formData.nationality || "", // Ensure
+        // marital_status: formData.marital_status
+      }
 
-    const processedAttachments = processAttachments(formData)
+      const processedAttachments = processAttachments(formData)
 
-    const apiQualifications = getAPIFormatQualifications()
+      const apiQualifications = getAPIFormatQualifications()
 
-    const processedFormData = {
-      ...formData,
-      ...processedAttachments,
-      qualifications: apiQualifications, 
-      national_id_copy: nationalIdDoc    
-    }
-    const urlParams = new URLSearchParams(window.location.search);
-    const draft_Id = urlParams.get('draftId');
-    // Call the API to submit the form data
-    const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
-    setSubmissionResult(result)
-    if (submissionResult?.success==true || result.success==true) {  
-      await updateDraftStatus(draft_Id || '', 'submitted')
-      //alert('Form submitted successfully!')
+      const processedFormData = {
+        ...formData,
+        ...processedAttachments,
+        qualifications: apiQualifications, 
+        national_id_copy: nationalIdDoc    
+      }
+      const urlParams = new URLSearchParams(window.location.search);
+      const draft_Id = urlParams.get('draftId');
+      
+      /**
+       * Submit the registration form
+       */
+      const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
+      setSubmissionResult(result)
+      if (submissionResult?.success==true || result.success==true) {  
+
+        /**
+         * If submission is successful, update draft status to 'submitted'
+         */
+        await updateDraftStatus(draft_Id || '', 'submitted')
+        
+        setSubmitting(false)
+        reset()
+      } else {
+        setSubmitting(false)
+        //alert('Registration failed. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }finally {
       setSubmitting(false)
-      reset()
-    } else {
-      setSubmitting(false)
-      //alert('Registration failed. Please try again.')
     }
   }
 
@@ -312,7 +330,7 @@ export default function Form() {
       }
       let draft;
       if(draftIdFromUrl && draftIdFromUrl) {
-        draft = await updateDraft(draftIdFromUrl, processedFormData);
+        draft = await updateDraft(draftIdFromUrl, processedFormData, currentStep);
       }else {
         draft = await saveDraft(processedFormData);
       }
@@ -388,7 +406,7 @@ export default function Form() {
         try {
           if(draftIdFromUrl) {
             // If draftId exists in URL, update existing draft
-            await updateDraft(draftIdFromUrl, watchedFields);
+            await updateDraft(draftIdFromUrl, watchedFields, currentStep);
           } else {
             // Otherwise, create a new draft
             await saveDraft(watchedFields);
@@ -398,12 +416,15 @@ export default function Form() {
           console.error('Auto-save failed:', error);
         }
       }
-    }, 60000); // 60 seconds debounce
+    }, 30000); // 30 seconds debounce
 
     return () => clearTimeout(timer);
-  }, [watchedFields, saveDraft, updateDraft]);
+  }, [watchedFields, saveDraft, updateDraft, currentStep]);
 
-  // Load draft if draftId is present in URL
+  /**
+   * Load draft if draftId is present in URL
+   * This effect runs only once on component mount
+   */
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const draftIdFromUrl = urlParams.get('draftId');
@@ -411,25 +432,70 @@ export default function Form() {
     if (draftIdFromUrl) {
       const fetchDraft = async () => {
         const draftData = await loadDraft(draftIdFromUrl);
+        setFields(draftData.fields || [])
+        setCurrentStep(draftData.currentStep || 0)
         if (draftData) {
 
           reset(draftData);
-          //setNationalIdDoc({"bucket":"MESD_006_28_001","extension":"pdf","original-name":"5f4d689a-b7c3-431c-91d3-d02e91aa5dea-3.pdf","key":"9e0b8db2-427b-4071-ae52-b9a72514b509"})
           setNationalIdDoc(draftData.national_id_copy || null) 
           setQualifications(draftData.qualifications || [])
           setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachment || null)
           setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
           setLicenseFlagDetailsDoc(draftData.license_flag_details_attachment || null)
           setMisconductFlagDetailsDoc(draftData.misconduct_flag_details_attachment || null)
-          // Object.keys(draftData).forEach((fieldName) => {
-          //     setValue(fieldName, draftData[fieldName]);
-          // });
+
+          /**
+           * Clear fields that were requested to be corrected
+           */
+          if(draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0){
+
+            const handleFieldReset = (field: string) => {
+              switch (field) {
+                case 'national_id_copy':
+                  if (draftData.national_id_copy) setNationalIdDoc(null);
+                  break;
+                case 'qualifications':
+                  if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+                  break;
+                case 'student_related_offence_attachment':
+                  if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+                  break;
+                case 'drug_related_offence_attachments':
+                  if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+                  break;
+                case 'license_flag_details_attachment':
+                  if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+                  break;
+                case 'misconduct_flag_details_attachment':
+                  if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+                  break;
+                default:
+                  // Clear the form field value
+                  setValue(field as keyof FormInputs, '');
+              }
+            };
+
+            draftData.fields.forEach((field: string) => {
+              try {
+                handleFieldReset(field);
+              } catch (error) {
+                console.error(`Error resetting field ${field}:`, error);
+              }
+            });
+
+            // After resetting fields, update the draft to clear the fields array
+            await updateDraft(draftIdFromUrl, watchedFields, currentStep);
+            // Reset draft fields
+            // await updateDraftFields(draftIdFromUrl, []);
+            // Update draft status to 'correction'
+            await updateDraftStatus(draftIdFromUrl, 'correction');
+          }
         }
       };
 
       fetchDraft();
     }
-  }, [loadDraft, reset, setValue]);
+  }, [loadDraft, reset, setValue, updateDraft, currentStep]);
 
   type FieldName = keyof FormInputs
 
@@ -485,6 +551,23 @@ export default function Form() {
 
         {/* Main Content */}
         <div className='flex-1 bg-white rounded-lg shadow-lg'>
+          {fields.length > 0 && (
+            <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
+              <p className="text-sm text-red-800">
+                <span className="font-medium">Please correct these fields:</span>
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {fields.map((field, index) => (
+                  <span 
+                    key={index} 
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200"
+                  >
+                    {field.replace(/_/g, ' ')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           {/* Progress Steps */}
           <nav aria-label='Progress' className='md:px-6 py-6 border-b md:block hidden'>
             <ol role='list' className='space-y-4 md:flex md:space-x-8 md:space-y-0'>

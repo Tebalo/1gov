@@ -14,7 +14,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Eye, Edit, Trash2, FileText } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -277,10 +277,10 @@ export function DraftsDataTable({ userId, status, initialData = [] }: DraftsTabl
       accessorKey: "userId",
       header: "User ID",
     },
-    {
-      accessorKey: "userName",
-      header: "User Name",
-    },
+    // {
+    //   accessorKey: "userName",
+    //   header: "User Namee",
+    // },
     {
       accessorKey: "userRole", 
       header: "Role",

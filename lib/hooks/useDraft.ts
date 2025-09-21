@@ -4,6 +4,7 @@ interface UseDraftOptions {
   userId: string;
   userName: string;
   formType: string;
+  currentStep?: number;
   userRole?: string;
   caseId?: string;
   caseType?: string;
@@ -28,6 +29,7 @@ export const useDraft = (options: UseDraftOptions) => {
           content: JSON.stringify(formData),
           formType: options.formType,
           userId: options.userId,
+          currentStep: options.currentStep,
           userName: options.userName,
           userRole: options.userRole,
           caseId: options.caseId,
@@ -67,7 +69,8 @@ export const useDraft = (options: UseDraftOptions) => {
       }
 
       const draft = await response.json();
-      return draft ? JSON.parse(draft.content) : null;
+
+      return draft ? { ...JSON.parse(draft.content), fields: draft.fields, status: draft.status, currentStep: draft.currentStep } : null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load draft';
       setError(errorMessage);
@@ -110,7 +113,7 @@ export const useDraft = (options: UseDraftOptions) => {
   }, [options]);
 
   // Update draft by ID (optional, can be implemented similarly to saveDraft)
-  const updateDraft = useCallback(async (draftId: string, formData: any) => {
+  const updateDraft = useCallback(async (draftId: string, formData: any, currentStep:number) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -124,6 +127,7 @@ export const useDraft = (options: UseDraftOptions) => {
         },
         body: JSON.stringify({
           content: JSON.stringify(formData),
+          currentStep: currentStep,
         }),
       });
       if (!response.ok) {
@@ -171,12 +175,46 @@ export const useDraft = (options: UseDraftOptions) => {
     }
   }, []);
 
+  /**
+   * Update fields in a draft by ID (optional)
+   * @param draftId - ID of the draft to update
+   * @param fields - Array of field names to update
+   */
+  const updateDraftFields = useCallback(async (draftId: string, fields: string[]) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (!draftId) {
+        throw new Error('Draft ID is required for fields update');
+      }
+      const response = await fetch(`/api/drafts/v1/${draftId}/fields`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fields }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update draft fields');
+      }
+      const updatedDraft = await response.json();
+      return updatedDraft;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update draft fields';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     saveDraft,
     loadDraft,
     deleteDraft,
     updateDraft,
     updateDraftStatus,
+    updateDraftFields,
     isLoading,
     error,
   };
