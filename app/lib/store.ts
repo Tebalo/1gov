@@ -21,7 +21,7 @@ const cmsBaseUrlPROD = 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/' // 
 
 const baseURLs = {
     uat: {
-        trls: 'http://10.0.25.164',
+        trls: 'http://10.0.25.174',
         iam: 'https://gateway-cus-acc.gov.bw',
         cms: 'http://reg-ui-acc.gov.bw:8080/download/MESD_006_08_054/',
         fileUploadUrl: 'https://gateway-cus.gov.bw/document/upload/MESD_006_28_001',
@@ -30,7 +30,7 @@ const baseURLs = {
         trlsAuthBaseURL: 'http://'
     },
     production: {
-        trls: 'http://10.0.26.164',
+        trls: 'http://10.0.26.174',
         iam: 'https://gateway-cus.gov.bw',
         cms: 'http://reg-ui.gov.bw:8080/download/MESD_006_08_001/',
         fileUploadUrl: 'https://gateway-cus.gov.bw/document/upload/MESD_006_28_001',
