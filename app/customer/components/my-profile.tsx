@@ -77,14 +77,45 @@ export function UserProfile() {
     fetchUserData();
   }, []);
 
+  // UPDATED: Enhanced logout function to completely clear user session
   const handleLogout = async () => {
     try {
       setIsLogOut(true);
+      
+      // UPDATED: Clear session storage first
+      sessionStorage.removeItem('access_token');
+      sessionStorage.removeItem('refresh_token');
+      sessionStorage.removeItem('user_data');
+      
+      // UPDATED: Clear cookies by setting them to expire
+      document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'user_data=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      
+      // UPDATED: Call the existing logout function for additional cleanup
       await logout();
-      console.log('Logged out successfully');
+      
+      console.log('✅ User session deleted successfully');
+      
+      // UPDATED: Redirect to login page after successful logout
+      setTimeout(() => {
+        window.location.href = '/customer/login';
+      }, 1000);
+      
     } catch (error) {
       setIsLogOut(false);
       console.error('Error during logout:', error);
+      
+      // UPDATED: Force cleanup even if logout API fails
+      sessionStorage.clear();
+      document.cookie.split(";").forEach(function(c) {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+      
+      // UPDATED: Redirect to login page even on error
+      setTimeout(() => {
+        window.location.href = '/customer/login';
+      }, 500);
     }
   };
 
@@ -151,11 +182,11 @@ export function UserProfile() {
         userId={userProfile?.id || 0} 
       />
 
-      {/* Logout Dialog */}
+      {/* UPDATED: Enhanced Logout Dialog with better session deletion messaging */}
       <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{isLoggingOut ? "Logging Out..." : "Confirm Logout"}</DialogTitle>
+            <DialogTitle>{isLoggingOut ? "Clearing Session..." : "Confirm Logout"}</DialogTitle>
             <DialogDescription>
               {isLoggingOut ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -163,10 +194,10 @@ export function UserProfile() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span>Removing session...</span>
+                  <span>Deleting user session...</span>
                 </div>
               ) : (
-                "Are you sure you want to log out? This will end your current session."
+                "Are you sure you want to log out? This will completely delete your current session and redirect you to the login page."
               )}
             </DialogDescription>
           </DialogHeader>
@@ -181,7 +212,7 @@ export function UserProfile() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Processing...
+                  Deleting Session...
                 </>
               ) : (
                 'Logout'

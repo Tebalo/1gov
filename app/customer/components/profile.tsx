@@ -23,7 +23,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Save, Edit, X } from 'lucide-react';
+import { Loader2, Save, Edit, X, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 // Types for the user profile data
@@ -331,13 +331,28 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="national_id">National ID</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="national_id">National ID</Label>
+                    {editingSection === 'personal_info' && (
+                      <div className="flex items-center gap-1 text-amber-600 text-xs">
+                        <AlertTriangle className="h-3 w-3" />
+                        <span>Update with caution</span>
+                      </div>
+                    )}
+                  </div>
                   {editingSection === 'personal_info' ? (
-                    <Input
-                      id="national_id"
-                      value={formData.personal_info?.national_id || ''}
-                      onChange={(e) => handleInputChange('personal_info', 'national_id', e.target.value)}
-                    />
+                    <div className="space-y-2">
+                      <Input
+                        id="national_id"
+                        value={formData.personal_info?.national_id || ''}
+                        onChange={(e) => handleInputChange('personal_info', 'national_id', e.target.value)}
+                        className={editingSection === 'personal_info' ? 'border-amber-300 focus:border-amber-500' : ''}
+                      />
+                      <p className="text-xs text-amber-600 flex items-center gap-1">
+                        <AlertTriangle className="h-3 w-3" />
+                        Ensure this is correct to see accurate account information
+                      </p>
+                    </div>
                   ) : (
                     <p>{userData.personal_info.national_id}</p>
                   )}
@@ -476,7 +491,7 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                   )}
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2">
                   <Label htmlFor="physical_address">Physical Address</Label>
                   {editingSection === 'contact_info' ? (
                     <Input
@@ -489,7 +504,7 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                   )}
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2">
                   <Label htmlFor="postal_address">Postal Address</Label>
                   {editingSection === 'contact_info' ? (
                     <Input
@@ -592,6 +607,32 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
+                  <Label htmlFor="job_title">Job Title</Label>
+                  {editingSection === 'social_info' ? (
+                    <Input
+                      id="job_title"
+                      value={formData.social_info?.job_title || ''}
+                      onChange={(e) => handleInputChange('social_info', 'job_title', e.target.value)}
+                    />
+                  ) : (
+                    <p>{userData.social_info.job_title}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="organization">Organization</Label>
+                  {editingSection === 'social_info' ? (
+                    <Input
+                      id="organization"
+                      value={formData.social_info?.organization || ''}
+                      onChange={(e) => handleInputChange('social_info', 'organization', e.target.value)}
+                    />
+                  ) : (
+                    <p>{userData.social_info.organization}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="linkedin_url">LinkedIn URL</Label>
                   {editingSection === 'social_info' ? (
                     <Input
@@ -627,32 +668,6 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                     />
                   ) : (
                     <p>{userData.social_info.website_url}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="job_title">Job Title</Label>
-                  {editingSection === 'social_info' ? (
-                    <Input
-                      id="job_title"
-                      value={formData.social_info?.job_title || ''}
-                      onChange={(e) => handleInputChange('social_info', 'job_title', e.target.value)}
-                    />
-                  ) : (
-                    <p>{userData.social_info.job_title}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="organization">Organization</Label>
-                  {editingSection === 'social_info' ? (
-                    <Input
-                      id="organization"
-                      value={formData.social_info?.organization || ''}
-                      onChange={(e) => handleInputChange('social_info', 'organization', e.target.value)}
-                    />
-                  ) : (
-                    <p>{userData.social_info.organization}</p>
                   )}
                 </div>
               </div>
