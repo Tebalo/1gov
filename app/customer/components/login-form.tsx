@@ -369,6 +369,7 @@ export function LoginForm({
         username: String(sessionData.profile.contact_info.email_verified || ""), // Use email_verified as username;
         active: true, // Assuming the user is active;
       }
+
       // await storeSession(authResponse);
       // await storeAuthData(authResponse);
       await storeAccessGroups(profile);

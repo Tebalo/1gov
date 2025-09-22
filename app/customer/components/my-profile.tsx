@@ -45,7 +45,8 @@ export function UserProfile() {
         setIsLoading(true);
         const userRole = await getRole() || '';
         const access_profile = await getAccessGroups() || null;
-    
+        const userData = await sessionStorage.getItem('user_data')
+
         if (!access_profile) {
           console.warn('No access profile found');
         }
@@ -54,11 +55,11 @@ export function UserProfile() {
           username: access_profile?.username || "Guest",
           email: access_profile?.username || "No email provided",
           initials: access_profile?.username ? access_profile.username.charAt(0).toUpperCase() : "G",
-          id: Number(access_profile?.userid) || 0, // Use the actual user ID
+          id: userData ? JSON.parse(userData).id: null,
         };
-        
+
         setUserProfile(profile);
-        console.log('Fetched user profile:', profile);
+
       } catch (error) {
         console.error('Error fetching session or role:', error);
         // Set fallback profile
