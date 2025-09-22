@@ -22,15 +22,18 @@ import { LogOut, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AccessGroup, Session } from '@/app/lib/types';
 import { getAccessGroups, getRole, logout } from '@/app/auth/auth';
+import { Profile } from './profile'; // Import the Profile component
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLogOut] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); // State for Profile dialog
   const [userProfile, setUserProfile] = useState<{
     username: string;
     email: string;
     initials: string;
+    id: number | null;  // Add ID field
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -51,16 +54,19 @@ export function UserProfile() {
           username: access_profile?.username || "Guest",
           email: access_profile?.username || "No email provided",
           initials: access_profile?.username ? access_profile.username.charAt(0).toUpperCase() : "G",
+          id: Number(access_profile?.userid) || 0, // Use the actual user ID
         };
         
         setUserProfile(profile);
+        console.log('Fetched user profile:', profile);
       } catch (error) {
         console.error('Error fetching session or role:', error);
         // Set fallback profile
         setUserProfile({
           username: "Guest",
           email: "No email provided",
-          initials: "G"
+          initials: "G",
+          id: 0,
         });
       } finally {
         setIsLoading(false);
@@ -114,10 +120,16 @@ export function UserProfile() {
             </div>
             <Separator />
             <div className="grid gap-1">
-              <Link href="/customer/dashboard/profile" className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent">
+              <div 
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent cursor-pointer" 
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsProfileOpen(true);
+                }}
+              >
                 <User className="h-4 w-4" />
                 <span>Profile</span>
-              </Link>
+              </div>
               
               <div 
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md hover:bg-accent cursor-pointer" 
@@ -130,6 +142,13 @@ export function UserProfile() {
           </div>
         </PopoverContent>
       </Popover>
+
+      {/* Profile Dialog - This is where we call the Profile component */}
+      <Profile 
+        isOpen={isProfileOpen} 
+        onClose={() => setIsProfileOpen(false)} 
+        userId={userProfile?.id || 0} 
+      />
 
       {/* Logout Dialog */}
       <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
