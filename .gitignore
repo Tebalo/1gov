@@ -11,6 +11,7 @@
 
 # prisma
 /migrations/
+/migrations
 
 # next.js
 /.next/
