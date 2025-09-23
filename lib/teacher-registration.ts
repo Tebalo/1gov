@@ -1,11 +1,11 @@
 "use server"
-import { trlsBaseURL } from '@/app/lib/store'
+import { trlsBaseURL, apiUrl } from '@/app/lib/store'
 import { AttachmentObject, Profile, QualificationEntry, TeacherRegistrationRequest, TeacherRegistrationResponse } from '@/types/teacher-registration'
 import { v4 as uuidv4 } from 'uuid'
 
 const API_BASE_URL = `${trlsBaseURL}:8080/trls-80`
 // const TEACHER_REGISTRATION_ENDPOINT = `${API_BASE_URL}/teacher_registrations/`
-const TEACHER_REGISTRATION_ENDPOINT = `${API_BASE_URL}/new-teacher-registration/`
+const TEACHER_REGISTRATION_ENDPOINT = `${apiUrl}/new-teacher-registration/`
 
 /**
  * Generate a unique application ID
