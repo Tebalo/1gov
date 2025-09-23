@@ -283,7 +283,7 @@ export default function Form() {
         await updateDraftStatus(draft_Id || '', 'submitted')
         
         setSubmitting(false)
-        reset()
+        // reset()
       } else {
         setSubmitting(false)
         //alert('Registration failed. Please try again.')
@@ -294,7 +294,10 @@ export default function Form() {
       setSubmitting(false)
     }
   }
-
+  /**
+   * Submit draft
+   * @param formData 
+   */
   const processDraft: SubmitHandler<FormInputs> = async (formData) => {
     try {
       setSubmittingDraft(true)
@@ -432,7 +435,7 @@ export default function Form() {
     if (draftIdFromUrl) {
       const fetchDraft = async () => {
         const draftData = await loadDraft(draftIdFromUrl);
-        setFields(draftData.fields || [])
+        setFields(draftData?.fields || [])
         setCurrentStep(draftData.currentStep || 0)
         if (draftData) {
 
