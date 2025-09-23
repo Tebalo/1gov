@@ -1,6 +1,9 @@
 "use server"
-const prodBaseUrl = 'http://10.0.26.164'
-const uatBaseUrl = 'http://10.0.25.164'
+
+import { trlsBaseURL } from "@/app/lib/store";
+
+const prodBaseUrl = trlsBaseURL
+const uatBaseUrl = trlsBaseURL
 export async function deleteCase(caseNumber: string, caseType: string, productionLevel: string): Promise<number | null> {
     let url;
     if (!caseNumber || !caseType || !productionLevel) {
