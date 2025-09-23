@@ -528,6 +528,7 @@ export default function Form() {
 
       fetchDraft();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadDraft, reset, setValue, updateDraft]);
 
   type FieldName = keyof FormInputs
