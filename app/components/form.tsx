@@ -114,6 +114,9 @@ import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
 import { useUserData } from "@/lib/hooks/useUserData"
+import { subjectSpecializationForSelect } from "@/types/subjects_specialization"
+import { getAccessGroups } from "../auth/auth"
+import { AccessGroup } from "../lib/types"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -166,18 +169,21 @@ const countries = countryList.map((country) => ({
 }));
 
 export default function Form() {
-  const {nationalId, passportId, userData} = useUserData();
-  const userId = nationalId || passportId || '';
+  // const {nationalId, passportId, userData} = useUserData();
+  // const userId = nationalId || passportId || '';
 
   const [previousStep, setPreviousStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
   const delta = currentStep - previousStep
+
   const [nationalIdDoc, setNationalIdDoc] = useState<UploadResponse | null>(null)
   const [misconductFlagDetailsDoc, setMisconductFlagDetailsDoc] = useState<UploadResponse | null>(null)
   const [drugRelatedOffenceAttachmentsDoc, setDrugRelatedOffenceAttachmentsDoc] = useState<UploadResponse | null>(null)
   const [licenseFlagDetailsDoc, setLicenseFlagDetailsDoc] = useState<UploadResponse | null>(null)
   const [studentRelatedOffenceAttachmentDoc, setStudentRelatedOffenceAttachmentDoc] = useState<UploadResponse | null>(null)
   const [qualifications, setQualifications] = useState<QualificationEntry[]>([])
+  const [mandatoryDoc,setMandatoryDoc] = useState<UploadResponse | null>(null) // Mandatory qualification attachment
+
   const [countryOpen, setCountryOpen] = React.useState(false)
   const [doctoralDegreeOpen, setDoctoralDegreeOpen] = React.useState(false) 
   const [degreeOpen, setDegreeOpen] = React.useState(false)
@@ -189,19 +195,32 @@ export default function Form() {
   const [juniorOpen, setJuniorOpen] = React.useState(false)
   const [primaryOpen, setPrimaryOpen] = React.useState(false)
   const [privateOpen, setPrivateOpen] = React.useState(false)
+  const [subjectOpen, setSubjectOpen] = useState(false)
   const [postGradDiplomaOpen, setPostGradDiplomaOpen] = React.useState(false)
-  const [submitting,setSubmitting] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [submittingDraft,setSubmittingDraft] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
   const { toast } = useToast();
   const router = useRouter()
+
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    const fetchId = async () => {
+      const result = await getAccessGroups();
+      console.log(result)
+      if (result) {
+        setUserId(result.nationalId || result.passportId || result.userid);
+      }
+    };
+    fetchId();
+  }, []);
+
   const { saveDraft, loadDraft, updateDraft, updateDraftFields, updateDraftStatus, isLoading, error } = useDraft({
-    userId: userId, 
-    userName: (userData?.profile?.personal_info?.first_name ?? '') + (userData?.profile?.personal_info?.last_name ?? '') || '',
+    userId: userId ?? '', 
+    userName: 'system_user',
     formType: "Registration", 
-    userRole: "user", 
-    // caseId: "case123", // Optional - only if this form is tied to a case
-    // caseType: "profile", // Optional - only if this form is tied to a case
+    userRole: "Customer", 
   });
   const [fields, setFields] = useState<string[]>([])
 
@@ -265,7 +284,12 @@ export default function Form() {
         ...formData,
         ...processedAttachments,
         qualifications: apiQualifications, 
-        national_id_copy: nationalIdDoc    
+        national_id_copy: nationalIdDoc,
+        attachments: mandatoryDoc,
+        student_related_offence_attachments: studentRelatedOffenceAttachmentDoc,
+        misconduct_flag_details: misconductFlagDetailsDoc,
+        drug_related_offence_attachments:  drugRelatedOffenceAttachmentsDoc,
+        license_flag_details: licenseFlagDetailsDoc
       }
       const urlParams = new URLSearchParams(window.location.search);
       const draft_Id = urlParams.get('draftId');
@@ -328,8 +352,13 @@ export default function Form() {
       const processedFormData = {
         ...formData,
         ...processedAttachments,
-        qualifications: apiQualifications,
-        national_id_copy: nationalIdDoc
+        qualifications: qualifications,
+        national_id_copy: nationalIdDoc,
+        attachments: mandatoryDoc,
+        student_related_offence_attachments: studentRelatedOffenceAttachmentDoc,
+        misconduct_flag_details: misconductFlagDetailsDoc,
+        drug_related_offence_attachments:  drugRelatedOffenceAttachmentsDoc,
+        license_flag_details: licenseFlagDetailsDoc
       }
       let draft;
       if(draftIdFromUrl && draftIdFromUrl) {
@@ -395,34 +424,34 @@ export default function Form() {
   const gender = watch("gender")
   const nationality = watch("nationality")
   // Auto-save draft every 60 seconds if there are changes
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const draftIdFromUrl = urlParams.get('draftId');
-    const timer = setTimeout(async () => {
-      // Only auto-save if there's meaningful content AND user has started filling the form
-      const hasContent = watchedFields.first_name || 
-                        watchedFields.last_name ||
-                        watchedFields.username
+  // useEffect(() => {
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const draftIdFromUrl = urlParams.get('draftId');
+  //   const timer = setTimeout(async () => {
+  //     // Only auto-save if there's meaningful content AND user has started filling the form
+  //     const hasContent = watchedFields.first_name || 
+  //                       watchedFields.last_name ||
+  //                       watchedFields.username
       
-      // Don't auto-save on initial load/empty form
-      if (hasContent) {
-        try {
-          if(draftIdFromUrl) {
-            // If draftId exists in URL, update existing draft
-            await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-          } else {
-            // Otherwise, create a new draft
-            await saveDraft(watchedFields);
-          }
-          // console.log('Auto-saved draft');
-        } catch (error) {
-          console.error('Auto-save failed:', error);
-        }
-      }
-    }, 30000); // 30 seconds debounce
+  //     // Don't auto-save on initial load/empty form
+  //     if (hasContent) {
+  //       try {
+  //         if(draftIdFromUrl) {
+  //           // If draftId exists in URL, update existing draft
+  //           await updateDraft(draftIdFromUrl, watchedFields, currentStep);
+  //         } else {
+  //           // Otherwise, create a new draft
+  //           await saveDraft(watchedFields);
+  //         }
+  //         // console.log('Auto-saved draft');
+  //       } catch (error) {
+  //         console.error('Auto-save failed:', error);
+  //       }
+  //     }
+  //   }, 30000); // 30 seconds debounce
 
-    return () => clearTimeout(timer);
-  }, [watchedFields, saveDraft, updateDraft, currentStep]);
+  //   return () => clearTimeout(timer);
+  // }, [watchedFields, saveDraft, updateDraft, currentStep]);
 
   /**
    * Load draft if draftId is present in URL
@@ -442,10 +471,11 @@ export default function Form() {
           reset(draftData);
           setNationalIdDoc(draftData.national_id_copy || null) 
           setQualifications(draftData.qualifications || [])
-          setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachment || null)
+          setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null)
           setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
-          setLicenseFlagDetailsDoc(draftData.license_flag_details_attachment || null)
-          setMisconductFlagDetailsDoc(draftData.misconduct_flag_details_attachment || null)
+          setLicenseFlagDetailsDoc(draftData.license_flag_details || null)
+          setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null)
+          setMandatoryDoc(draftData.attachments || null)
 
           /**
            * Clear fields that were requested to be corrected
@@ -1203,7 +1233,7 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {watch('school_level') === 'primary school' && watch('district') === 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase() === 'primary' && watch('district').toLowerCase() === 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label || watch('private_schools')}
@@ -1221,7 +1251,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1239,7 +1269,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'ghanzi' && ghanziPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'ghanzi' && ghanziPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1257,7 +1287,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'kgalagadi' && kgalagadiPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kgalagadi' && kgalagadiPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1275,7 +1305,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'kgatleng' && kgatlengPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kgatleng' && kgatlengPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1293,7 +1323,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'kweneng' && kwenengPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kweneng' && kwenengPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1311,7 +1341,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'north-east' && northEastPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'north-east' && northEastPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1329,7 +1359,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'north-west' && northWestPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'north-west' && northWestPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1347,7 +1377,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'south-east' && southEastPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'south-east' && southEastPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1365,7 +1395,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level') === 'primary school' && watch('district') === 'southern' && southernPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'southern' && southernPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1383,7 +1413,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'central' && centralPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'central' && centralPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1401,7 +1431,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'chobe' && chobePrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'chobe' && chobePrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1419,7 +1449,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'ghanzi' && ghanziPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'ghanzi' && ghanziPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1437,7 +1467,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'kgalagadi' && kgalagadiPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'kgalagadi' && kgalagadiPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1455,7 +1485,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'kgatleng' && kgatlengPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'kgatleng' && kgatlengPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1473,7 +1503,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'kweneng' && kwenengPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'kweneng' && kwenengPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1491,7 +1521,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'north-east' && northEastPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'north-east' && northEastPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1509,7 +1539,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'north-west' && northWestPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'north-west' && northWestPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1527,7 +1557,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'south-east' && southEastPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'south-east' && southEastPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1545,7 +1575,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level') === 'junior school' || watch('school_level') === 'senior school') && watch('district') === 'southern' && southernPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'southern' && southernPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -2313,6 +2343,55 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
+                      {Object.keys(errors).length > 0 && (
+                        <div className="relative bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                          <div className="flex items-start">
+                            <div className="flex-shrink-0">
+                              <svg 
+                                className="h-5 w-5 text-red-400" 
+                                viewBox="0 0 20 20" 
+                                fill="currentColor"
+                              >
+                                <path 
+                                  fillRule="evenodd" 
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                                  clipRule="evenodd" 
+                                />
+                              </svg>
+                            </div>
+                            <div className="ml-3 flex-1">
+                              <h3 className="text-sm font-medium text-red-800 mb-2">
+                                Please correct the following errors:
+                              </h3>
+                              <div className="space-y-1">
+                                {Object.entries(errors).map(([field, error]) => (
+                                  <div key={field} className="flex items-center text-sm text-red-700">
+                                    <span className="inline-block w-2 h-2 bg-red-400 rounded-full mr-2 flex-shrink-0"></span>
+                                    <span className="font-medium capitalize">
+                                      {field.replace(/_/g, ' ')}:
+                                    </span>
+                                    <span className="ml-1">
+                                      {error?.message || 'This field is required'}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => {/* Add logic to clear errors or scroll to first error */}}
+                            className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors"
+                          >
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path 
+                                fillRule="evenodd" 
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" 
+                                clipRule="evenodd" 
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         
                         {/* Level */}
@@ -2794,7 +2873,7 @@ export default function Form() {
                           )}
                         </div>
 
-                        <div className='space-y-2'>
+                        {/* <div className='space-y-2'>
                           <Label htmlFor='subject_specialization'>Subject Specialization *</Label>
                           <Input
                             id='subject_specialization'
@@ -2803,6 +2882,60 @@ export default function Form() {
                           />
                           {errors.subject_specialization && (
                             <p className='text-sm text-red-500 mt-1'>{errors.subject_specialization.message}</p>
+                          )}
+                        </div> */}
+
+                        {/* Subject Specialization */}
+                        <div className='space-y-2'>
+                            <Label htmlFor='subject_specialization' className="text-sm font-medium text-gray-700">
+                              Subject Specialization <span className="text-red-500">*</span>
+                            </Label>
+                            <Popover open={subjectOpen} onOpenChange={setSubjectOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={subjectOpen}
+                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                  {watch('subject_specialization') || "Select your specialization"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search subject..." />
+                                  <CommandList>
+                                    <CommandEmpty>No specialization found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {subjectSpecializationForSelect.map((subject_specialization) => (
+                                        <CommandItem
+                                          key={subject_specialization.value}
+                                          value={subject_specialization.label || watch('subject_specialization')}
+                                          onSelect={(currentValue) => {
+                                            setValue('subject_specialization', currentValue === watch('subject_specialization') ? "" : currentValue)
+                                            setSubjectOpen(false)
+                                          }}
+                                        >
+                                          {subject_specialization.label}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              watch('subject_specialization') === subject_specialization.label ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {errors.subject_specialization && (
+                              <p className='text-sm text-red-500 flex items-center gap-1'>
+                                <span className="text-xs">⚠</span>
+                                {errors.subject_specialization.message}
+                              </p>
                           )}
                         </div>
 
@@ -2820,6 +2953,17 @@ export default function Form() {
                             )}
                           </div>)}
                       </div>  
+                        <FileUpload
+                          name="attachments"
+                          label="Attach a pdf copy of your qualification document"
+                          description="Mandatory Qualification"
+                          acceptedTypes=".pdf,.jpg,.jpeg,.png"
+                          maxSize={5}
+                          required={true}
+                          value={mandatoryDoc}
+                          onChange={setMandatoryDoc}
+                          error={errors.attachments?.message}
+                        />
                         
                       <div>
                           <QualificationsTable
@@ -2951,7 +3095,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={true}
+                                required={watch('student_related_offence') === 'yes' ? true : false}
                                 value={studentRelatedOffenceAttachmentDoc}
                                 onChange={setStudentRelatedOffenceAttachmentDoc}
                                 error={errors.student_related_offence_attachments?.message}
@@ -3002,7 +3146,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={true}
+                                required={watch('drug_related_offence') === 'yes' ? true : false}
                                 value={drugRelatedOffenceAttachmentsDoc}
                                 onChange={setDrugRelatedOffenceAttachmentsDoc}
                                 error={errors.drug_related_offence_attachments?.message}
@@ -3042,7 +3186,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={true}
+                                required={watch('license_flag') === 'yes' ? true : false}
                                 value={licenseFlagDetailsDoc}
                                 onChange={setLicenseFlagDetailsDoc}
                                 error={errors.license_flag_details?.message}
@@ -3081,7 +3225,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={true}
+                                required={watch('misconduct_flag') === 'yes' ? true : false}
                                 value={misconductFlagDetailsDoc}
                                 onChange={setMisconductFlagDetailsDoc}
                                 error={errors.misconduct_flag_details?.message}
@@ -3120,6 +3264,55 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
+                      {Object.keys(errors).length > 0 && (
+                        <div className="relative bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                          <div className="flex items-start">
+                            <div className="flex-shrink-0">
+                              <svg 
+                                className="h-5 w-5 text-red-400" 
+                                viewBox="0 0 20 20" 
+                                fill="currentColor"
+                              >
+                                <path 
+                                  fillRule="evenodd" 
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                                  clipRule="evenodd" 
+                                />
+                              </svg>
+                            </div>
+                            <div className="ml-3 flex-1">
+                              <h3 className="text-sm font-medium text-red-800 mb-2">
+                                Please correct the following errors:
+                              </h3>
+                              <div className="space-y-1">
+                                {Object.entries(errors).map(([field, error]) => (
+                                  <div key={field} className="flex items-center text-sm text-red-700">
+                                    <span className="inline-block w-2 h-2 bg-red-400 rounded-full mr-2 flex-shrink-0"></span>
+                                    <span className="font-medium capitalize">
+                                      {field.replace(/_/g, ' ')}:
+                                    </span>
+                                    <span className="ml-1">
+                                      {error?.message || 'This field is required'}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => {/* Add logic to clear errors or scroll to first error */}}
+                            className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors"
+                          >
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path 
+                                fillRule="evenodd" 
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" 
+                                clipRule="evenodd" 
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
                       {/* Summary Section */}
                       <div className='bg-gray-50 p-4 rounded-lg'>
                         <Accordion
@@ -3423,7 +3616,7 @@ export default function Form() {
                       d='M15.75 19.5L8.25 12l7.5-7.5'
                     />
                   </svg>
-                  Previous
+                  Back
                 </Button>
                 
                 <div className='flex items-center gap-2'>
@@ -3439,9 +3632,9 @@ export default function Form() {
                   disabled={submittingDraft || submitting}
                 > {submittingDraft ? (
                   <>
-                    Saving Draft
+                    Saving
                   </>): (
-                    <>Save & Continue
+                    <>Save
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -3464,7 +3657,7 @@ export default function Form() {
                     onClick={next}
                     className='flex items-center gap-2'
                   >
-                    Next
+                    Continue
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
                       fill='none'
