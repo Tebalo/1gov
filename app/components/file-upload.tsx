@@ -245,39 +245,3 @@ const FileUpload: React.FC<FileUploadProps> = ({
   )
 }
 export default FileUpload
-// Example usage in your form:
-// const ExampleForm = () => {
-//   const [nationalIdDocument, setNationalIdDocument] = useState<UploadResponse | null>(null)
-//   const [qualificationDocument, setQualificationDocument] = useState<UploadResponse | null>(null)
-//   return (
-//     <div className="space-y-6 p-6 max-w-2xl mx-auto">
-//       <h2 className="text-2xl font-bold">Document Upload Example</h2>
-//       <FileUpload
-//         name="national_id"
-//         label="National ID Copy"
-//         description="Upload a clear copy of your National ID"
-//         acceptedTypes=".pdf,.jpg,.jpeg,.png"
-//         maxSize={5}
-//         required={true}
-//         value={nationalIdDocument}
-//         onChange={setNationalIdDocument}
-//       />
-//       <FileUpload
-//         name="qualification"
-//         label="Qualification Certificate"
-//         description="Upload your qualification certificate"
-//         acceptedTypes=".pdf,.jpg,.jpeg,.png"
-//         maxSize={10}
-//         required={false}
-//         value={qualificationDocument}
-//         onChange={setQualificationDocument}
-//       />
-//       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-//         <h3 className="font-medium mb-2">Upload Results:</h3>
-//         <pre className="text-xs text-gray-600">
-//           {JSON.stringify({ nationalIdDocument, qualificationDocument }, null, 2)}
-//         </pre>
-//       </div>
-//     </div>
-//   )
-// }
