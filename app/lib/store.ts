@@ -74,7 +74,7 @@ export const AdminDeTokenizeUrl = `${currentBaseURLs.iamBaseUrl}/auth/validate-t
 /**
  * CMS URLs
  */
-export const cmsUrl = `${currentBaseURLs.cms}`;
+export const cmsUrl = currentBaseURLs.cms;
 export const fileUploadUrl = currentBaseURLs.fileUploadUrl;
 
 export const licUrl = 'http://66.179.253.57:8081/api';
