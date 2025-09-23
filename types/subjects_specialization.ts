@@ -1,0 +1,46 @@
+export const subjectSpecializationList = [
+  "English Language",
+  "English Literature",
+  "Setswana",
+  "French (and other foreign languages in private schools)",
+  "Mathematics",
+  "Early Mathematics",
+  "Integrated Science",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "Combined Science",
+  "Environmental Awareness",
+  "Social Studies",
+  "History",
+  "Geography",
+  "Development Studies",
+  "Religious Education",
+  "Moral Education",
+  "Life Skills",
+  "Commerce",
+  "Accounting",
+  "Business Studies",
+  "Economics",
+  "Agriculture",
+  "Design and Technology",
+  "Home Economics",
+  "Food and Nutrition",
+  "Fashion and Fabrics",
+  "Art and Craft",
+  "Art and Design",
+  "Creative and Performing Arts",
+  "Music",
+  "Drama",
+  "Dance",
+  "Physical Education",
+  "Computer Studies",
+  "Computer Awareness",
+  "Other"
+]
+
+// Format for Shadcn React Comp
+export const subjectSpecializationForSelect = subjectSpecializationList.map((subject) => ({
+    value: subject,
+    label: subject
+}));

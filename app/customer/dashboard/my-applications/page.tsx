@@ -4,11 +4,24 @@ import { DraftsDataTable } from "../../components/drafts";
 import { Cog, FileText, Send } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserData } from "@/lib/hooks/useUserData";
+import { getAccessGroups } from "@/app/auth/auth";
+import { AccessGroup } from "@/app/lib/types";
+import { useEffect, useState } from "react";
 
 export default function MyApplicationsPage() {
-  // const userId = "440418213"
-  const {nationalId, passportId} = useUserData();
-  const userId = nationalId || passportId || '';
+
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    const fetchId = async () => {
+      const result = await getAccessGroups();
+      console.log(result)
+      if (result) {
+        setUserId(result.nationalId || result.passportId || result.userid);
+      }
+    };
+    fetchId();
+  }, []);
   
   return (
     <section className='p-4 md:p-6 space-y-6'>
@@ -42,13 +55,13 @@ export default function MyApplicationsPage() {
           
           <TabsContent value="drafts" className="p-0 mt-0">
             <div className="p-4 md:p-6">
-              <DraftsDataTable userId={userId} status={"draft"}/>
+              <DraftsDataTable userId={userId || ''} status={"draft"}/>
             </div>
           </TabsContent>
           
           <TabsContent value="submissions" className="p-0 mt-0">
             <div className="p-4 md:p-6">
-              <DraftsDataTable userId={userId} status={"submitted"}/>
+              <DraftsDataTable userId={userId || ''} status={"submitted"}/>
             </div>
           </TabsContent>
         </Tabs>

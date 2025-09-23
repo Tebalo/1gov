@@ -344,6 +344,9 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       current: currentPersona,
       username: decodedToken.name,
       userid: decodedToken.preferred_username,
+      nationalId: decodedToken.national_id,
+      passportId: decodedToken.passport_id,
+      systemId: Number(decodedToken.client_id),
     }
 
     const encryptedAccessGroup = await encrypt(access_group);

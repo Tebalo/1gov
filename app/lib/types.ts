@@ -134,6 +134,9 @@ export interface AccessGroup {
   current: string;
   username: string;
   userid: string;
+  nationalId?: string;
+  passportId?: string;
+  systemId?: number
 }
 
 export interface LoginPayload {

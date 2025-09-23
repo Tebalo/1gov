@@ -349,6 +349,8 @@ export function LoginForm({
         session_state: "session-state-id",
         name: sessionData.profile.personal_info.first_name + " " + sessionData.profile.personal_info.last_name,
         given_name: sessionData.profile.personal_info.first_name,
+        national_id: sessionData.profile.personal_info?.national_id || '',
+        passport_id: sessionData.profile.personal_info.passport_id || '',
         family_name: sessionData.profile.personal_info.last_name,
         preferred_username: String(sessionData.profile.contact_info.email_verified || ""), // Use email_verified as username;
         email: String(sessionData.profile.contact_info.email_verified ?? ""), // Use email_verified as email;

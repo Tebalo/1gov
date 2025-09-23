@@ -1,3 +1,5 @@
+import { getAccessGroups } from "@/app/auth/auth"
+import { AccessGroup } from "@/app/lib/types"
 import { useEffect, useState } from "react"
 
 interface UserData {
@@ -12,43 +14,41 @@ interface UserData {
       last_name: string
       national_id: string
       passport_id: string
-      // ... other fields
     }
     contact_info: {
       phone: string
       email_verified: string
-      // ... other fields
     }
-    // ... other profile sections
   }
-  // ... other user data fields
+
 }
 
 export const useUserData = () => {
-  const [userData, setUserData] = useState<UserData | null>(null)
+  const [userData, setUserData] = useState<AccessGroup | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const getUserData = () => {
+    const getUserData = async () => {
       try {
         // Try sessionStorage first (faster)
-        const sessionData = sessionStorage.getItem('user_data')
+        // const sessionData = sessionStorage.getItem('user_data')
+        const sessionData = await getAccessGroups()
         if (sessionData) {
-          const parsed = JSON.parse(sessionData)
-          setUserData(parsed)
+          setUserData(sessionData)
+          console.log(userData)
           setLoading(false)
           return
         }
 
         // Fallback to cookie if sessionStorage is empty
-        const cookieData = getCookieValue('user_data')
-        if (cookieData) {
-          const decoded = decodeURIComponent(cookieData)
-          const parsed = JSON.parse(decoded)
-          setUserData(parsed)
-          // Sync back to sessionStorage
-          sessionStorage.setItem('user_data', JSON.stringify(parsed))
-        }
+        // const cookieData = getCookieValue('user_data')
+        // if (cookieData) {
+        //   const decoded = decodeURIComponent(cookieData)
+        //   const parsed = JSON.parse(decoded)
+        //   setUserData(parsed)
+        //   // Sync back to sessionStorage
+        //   sessionStorage.setItem('user_data', JSON.stringify(parsed))
+        // }
       } catch (error) {
         console.error('Error parsing user data:', error)
       } finally {
@@ -57,7 +57,7 @@ export const useUserData = () => {
     }
 
     getUserData()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateUserData = (newData: Partial<UserData>) => {
     if (userData) {
@@ -80,10 +80,9 @@ export const useUserData = () => {
     userData,
     loading,
     updateUserData,
-    nationalId: userData?.profile?.personal_info?.national_id,
-    passportId: userData?.profile?.personal_info?.passport_id,
-    userId: userData?.id,
-    userRoles: userData?.roles || []
+    nationalId: userData?.nationalId,
+    passportId: userData?.passportId,
+    userId: userData?.systemId,
   }
 }
 

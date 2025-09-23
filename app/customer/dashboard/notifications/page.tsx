@@ -1,7 +1,7 @@
 "use client";
-import { Badge } from '@/components/ui/badge';
+import { getAccessGroups } from '@/app/auth/auth';
+import { AccessGroup } from '@/app/lib/types';
 import { Button } from '@/components/ui/button';
-import { useUserData } from '@/lib/hooks/useUserData';
 import { 
   Bell, 
   BellRing, 
@@ -68,72 +68,93 @@ const BASE_URL = '/api';
 const ITEMS_PER_PAGE = 5;
 
 const NotificationPage = () => {
+    //const {nationalId, passportId} = useUserData();
+    const [userId, setUserId] = useState('');
 
+    // const [userData, setUserData] = useState<AccessGroup | null>(null);
+    // const userId = data?.nationalId || data?.passportId;
+    // let userId;
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     const result = await getAccessGroups();
+        
+    //     if (result) {
+    //       console.log('Result', result)
+    //       setUserData(result);
+    //       console.log('Profile', userData)
+    //     }
+    //   };
+    //   fetchData();
+    // }, [userData]);
 
-const {nationalId, passportId} = useUserData();
-const [userId, setUserId] = useState('');
+    useEffect(() => {
+      const fetchId = async () => {
+        const result = await getAccessGroups();
+        console.log(result)
+        if (result) {
+          setUserId(result.nationalId || result.passportId || result.userid);
+        }
+      };
+      fetchId();
+    }, []);
 
-useEffect(() => {
-  setUserId(nationalId || passportId || '');
-}, [nationalId, passportId]);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [selectedNotifications, setSelectedNotifications] = useState<Set<string>>(new Set());
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-const [notifications, setNotifications] = useState<Notification[]>([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState<string | null>(null);
-const [selectedNotifications, setSelectedNotifications] = useState<Set<string>>(new Set());
-const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const [hasMore, setHasMore] = useState(false);
 
-// Pagination state
-const [currentPage, setCurrentPage] = useState(1);
-const [totalCount, setTotalCount] = useState(0);
-const [hasMore, setHasMore] = useState(false);
+    // Enhanced filter state
+    const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+    const [selectedType, setSelectedType] = useState<string>('all');
+    const [selectedStatus, setSelectedStatus] = useState<string>('all');
+    const [stats, setStats] = useState({ 
+      total: 0, 
+      unread: 0, 
+      read: 0,
+      byType: {} as Record<string, number>,
+      byStatus: {} as Record<string, number>
+    });
 
-// Enhanced filter state
-const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-const [selectedType, setSelectedType] = useState<string>('all');
-const [selectedStatus, setSelectedStatus] = useState<string>('all');
-const [stats, setStats] = useState({ 
-  total: 0, 
-  unread: 0, 
-  read: 0,
-  byType: {} as Record<string, number>,
-  byStatus: {} as Record<string, number>
-});
+    // Get icon for attachment type
+    const getAttachmentIcon = (type: string) => {
+      switch (type) {
+        case 'payment': return <CreditCard className="h-3 w-3 text-green-600" />;
+        case 'invoice': return <FileText className="h-3 w-3 text-blue-600" />;
+        case 'receipt': return <Receipt className="h-3 w-3 text-purple-600" />;
+        default: return <ExternalLink className="h-3 w-3 text-gray-600" />;
+      }
+    };
 
-// Get icon for attachment type
-const getAttachmentIcon = (type: string) => {
-  switch (type) {
-    case 'payment': return <CreditCard className="h-3 w-3 text-green-600" />;
-    case 'invoice': return <FileText className="h-3 w-3 text-blue-600" />;
-    case 'receipt': return <Receipt className="h-3 w-3 text-purple-600" />;
-    default: return <ExternalLink className="h-3 w-3 text-gray-600" />;
-  }
-};
+    // Get badge color for notification type
+    const getTypeBadgeColor = (type: string) => {
+      const colors: Record<string, string> = {
+        'PushPayment': 'bg-green-100 text-green-800',
+        'DocumentApproval': 'bg-blue-100 text-blue-800',
+        'StatusUpdate': 'bg-yellow-100 text-yellow-800',
+        'DocumentRequest': 'bg-orange-100 text-orange-800',
+        'PassportApplication': 'bg-purple-100 text-purple-800',
+        'LicenseRenewal': 'bg-indigo-100 text-indigo-800',
+        'General': 'bg-gray-100 text-gray-800'
+      };
+      return colors[type] || 'bg-gray-100 text-gray-800';
+    };
 
-// Get badge color for notification type
-const getTypeBadgeColor = (type: string) => {
-  const colors: Record<string, string> = {
-    'PushPayment': 'bg-green-100 text-green-800',
-    'DocumentApproval': 'bg-blue-100 text-blue-800',
-    'StatusUpdate': 'bg-yellow-100 text-yellow-800',
-    'DocumentRequest': 'bg-orange-100 text-orange-800',
-    'PassportApplication': 'bg-purple-100 text-purple-800',
-    'LicenseRenewal': 'bg-indigo-100 text-indigo-800',
-    'General': 'bg-gray-100 text-gray-800'
-  };
-  return colors[type] || 'bg-gray-100 text-gray-800';
-};
-
-// Get status badge color
-const getStatusBadgeColor = (status: string) => {
-  const colors: Record<string, string> = {
-    '1': 'bg-blue-100 text-blue-800',
-    '2': 'bg-yellow-100 text-yellow-800',
-    '3': 'bg-red-100 text-red-800',
-    '4': 'bg-green-100 text-green-800'
-  };
-  return colors[status] || 'bg-gray-100 text-gray-800';
-};
+    // Get status badge color
+    const getStatusBadgeColor = (status: string) => {
+      const colors: Record<string, string> = {
+        '1': 'bg-blue-100 text-blue-800',
+        '2': 'bg-yellow-100 text-yellow-800',
+        '3': 'bg-red-100 text-red-800',
+        '4': 'bg-green-100 text-green-800'
+      };
+      return colors[status] || 'bg-gray-100 text-gray-800';
+    };
 
 // Memoized functions to prevent dependency issues
 const fetchNotifications = useCallback(async (page = 1, unreadOnly = false, type = 'all', status = 'all') => {
@@ -846,3 +867,7 @@ useEffect(() => {
 };
 
 export default NotificationPage;
+
+function setUserId(arg0: string) {
+  throw new Error('Function not implemented.');
+}
