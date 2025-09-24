@@ -20,6 +20,7 @@ interface TeacherRegistration {
     payment_ref?: string | null;
     payment_amount?: string | null;
     payment_name?: string | null;
+    paid_at?: string | null;
     application_id?: string | null;
     assigned_to?: string | null;
     work_status?: string | null;

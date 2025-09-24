@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { updateTeacherStatus } from '../api/update-status';
 import { getAuthData } from '@/app/staff/login/components/email-login';
+import { InfoLink } from '@/app/components/InfoLink';
 
 
 interface TeacherViewerProps {
@@ -65,6 +66,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
       <InfoItem label="Payment Amount" value={String(Number(data.teacher_registrations?.payment_amount)/100)}/>
       <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name || "Teacher Registration and License"}/>
+      <InfoLink label="Payment Link" paymentUrl={data.teacher_registrations?.paid_at ?? ''} className=""/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
       <InfoItem label="SLA" value={data.teacher_registrations?.created_at} isSLA/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
