@@ -13,6 +13,7 @@ interface CaseHeaderProps {
     caseAssignedTo: string;
     actions: React.ReactNode;
     auditTrail: React.ReactNode;
+    resendPayment?: React.ReactNode;
     icon: React.ReactNode;
 }
 
@@ -26,6 +27,7 @@ const CaseHeader: React.FC<CaseHeaderProps> = ({
     caseAssignedTo,
     auditTrail,
     actions,
+    resendPayment,
     icon
 }) => {
 
@@ -71,9 +73,10 @@ const CaseHeader: React.FC<CaseHeaderProps> = ({
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex-row">
                         {actions}
                         {auditTrail}
+                        {resendPayment}
                     </div>
                 </div>
             </CardHeader>

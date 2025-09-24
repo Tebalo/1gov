@@ -30,14 +30,18 @@ export async function updateTeacherStatus(
       }else{
         // Advance to next status
         const params = new URLSearchParams();
+        let key = 'reg_status';
         if(status === 'Endorsement-Complete' || status === 'Endorsement-Recommendation') {
-          params.append('endorsement_status', status);
-        } else {
-          params.append('reg_status', status);
-        }
-    
+          //params.append('endorsement_status', status);
+          key='endorsement_status'
+        } 
+        // else {
+        //   // params.append('reg_status', status);
+        //   key='reg_status'
+        // }
+        console.log(`${apiUrl}/teacher_registrations/${id}?${key}=${status}&rejection_reason=${rejection_reason}`)
         const response = await fetch(
-          `${apiUrl}/teacher_registrations/${id}?reg_status=${status}&rejection_reason=${rejection_reason}`,
+          `${apiUrl}/teacher_registrations/${id}?${key}=${status}&rejection_reason=${rejection_reason}`,
           {
             method: 'PUT',
             headers: {
@@ -47,7 +51,7 @@ export async function updateTeacherStatus(
             },
             // Trigger revalidation
             next: {
-              tags: [`teacher-${id}`]
+              
             }
           }
         );

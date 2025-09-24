@@ -14,7 +14,7 @@ const TeacherRegistrationViewer = dynamic(
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 text-gray-400 animate-spin mx-auto mb-2" />
-          <p className="text-gray-600">Loading registration details...</p>
+          <p className="text-gray-600 animate-pulse">Loading registration details...</p>
         </div>
       </div>
     )

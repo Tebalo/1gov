@@ -1,6 +1,6 @@
 "use client"
-import React from 'react';
-import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap} from 'lucide-react'
+import React, { useState } from 'react';
+import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap, Coins} from 'lucide-react'
 import { Role } from '@/app/lib/store';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '@/app/components/InfoCard';
@@ -10,6 +10,10 @@ import AuditTrail from '@/components/case/audit-trail';
 import { CommentSection } from '@/components/case/add-comment';
 import CaseHeader from '@/components/case/case-header';
 import TeacherActions from '../actions/action-section';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { updateTeacherStatus } from '../api/update-status';
+import { getAuthData } from '@/app/staff/login/components/email-login';
 
 
 interface TeacherViewerProps {
@@ -57,9 +61,10 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   const renderRegistrationInfo = () => (
     <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Registration Status" value={data.teacher_registrations?.reg_status}/>
+      <InfoItem label="Endorsement Status" value={data.teacher_registrations?.endorsement_status}/>
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
-      <InfoItem label="Payment Amount" value={data.teacher_registrations?.payment_amount}/>
-      <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name}/>
+      <InfoItem label="Payment Amount" value={String(Number(data.teacher_registrations?.payment_amount)/100)}/>
+      <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name || "Teacher Registration and License"}/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
       <InfoItem label="SLA" value={data.teacher_registrations?.created_at} isSLA/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
@@ -217,7 +222,8 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
         caseCreatedBy={fullName} 
         caseAssignedTo={data?.teacher_registrations?.assigned_to ?? ''} 
         actions={<TeacherActions recordId={data?.teacher_registrations?.national_id ?? ''} userRole={userRole} current_status={data?.teacher_registrations?.reg_status ?? ''}/>} 
-        auditTrail={<AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''} caseType='teacher'/>} 
+        auditTrail={<AuditTrail caseId={data?.teacher_registrations?.national_id ?? ''} caseType='teacher'/>}
+        resendPayment={userRole == "manager" && data?.teacher_registrations?.reg_status == "Manager-Approved" && <ResendPayment caseId={data?.teacher_registrations?.national_id ?? ''}/>} 
         icon={<GraduationCap className='h-16 w-16 bg-blue-50 rounded-lg p-2 text-sky-600'/>}        
       />
       
@@ -236,5 +242,50 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
     </div>
   );
 };
+
+const ResendPayment: React.FC<{caseId: string}> = ({ 
+  caseId
+}) => {
+  const [submitting, setSubmission] = useState(false)
+  const { toast } = useToast();
+  async function onSubmit(){
+    try{
+      setSubmission(true)
+      const authData = getAuthData();
+      const bearer = authData?.access_token;
+      const result = await updateTeacherStatus(caseId, "Manager-Approved", "N/A", [], bearer || '');
+      if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
+        toast({
+          title: "Payment link sent",
+          variant: "default",
+          description: "Payment link has been sent to the customer"
+        });
+      }
+      setSubmission(false)
+    }catch(error){
+      toast({
+        title: "Payment link sent",
+        variant: "destructive",
+        description: `Payment link has been sent to the customer ${error}`
+      });
+      
+      setSubmission(false)
+      throw new Error
+    }finally{
+      setSubmission(false)
+    }
+  }
+  return(
+    <div>
+      <Button variant={"outline"} onClick={onSubmit}>
+        <Coins 
+          className={`mr-2 ${submitting ? 'animate-spin text-green-400' : ''}`} 
+          size={16} 
+        />
+        {submitting ? "Sending Link.." : "Resend Invoice Link"}
+      </Button>
+    </div>
+  )
+}
 
 export default TeacherRegistrationViewer;
