@@ -1,9 +1,14 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageTitle } from "@/app/components/PageTitle";
 import Registers from "@/app/public/registrations/components/registers";
+import TeacherTable from "@/app/components/Home/components/teacher/teacher-table";
+import { getRole } from "@/app/auth/auth";
+import { Role } from "@/app/lib/store";
 
 
 export default async function Register(){
+    const rawRole = await getRole() as Role;
+    const userRole = rawRole.toLowerCase() as Lowercase<Role>;
     return (
         <div className="h-screen overflow-y-auto bg-background">
             <div className="sticky top-0 z-10 bg-background p-6 border-b">
@@ -30,6 +35,12 @@ export default async function Register(){
                             >
                                 Registered Teachers
                             </TabsTrigger>
+                            {userRole=="manager" && <TabsTrigger 
+                                value="pending-payment"
+                                className="text-sm font-medium transition-colors"
+                            >
+                                Pending Payment
+                            </TabsTrigger>}
                             <TabsTrigger 
                                 value="de-registered"
                                 className="text-sm font-medium transition-colors"
@@ -44,6 +55,9 @@ export default async function Register(){
                         <TabsContent value="registered" className="space-y-6 mt-6">
                             <Registers status="Pending-Endorsement"/>
                         </TabsContent>   
+                        <TabsContent value="pending-payment" className="space-y-6 mt-6">
+                            <TeacherTable status="Pending-Payment" userRole={"manager"}/>
+                        </TabsContent> 
                         <TabsContent value="de-registered" className="space-y-6 mt-6">
                             <Registers status="Manager-Revoked"/>
                         </TabsContent>              

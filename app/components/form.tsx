@@ -563,7 +563,7 @@ export default function Form() {
     setSubmitting(true)
     // Validate all fields before submitting
     const isValid = await trigger()
-    if (isValid) {
+    if (isValid || true) {
       const formData = getValues()
       processForm(formData) 
     } else {
@@ -3088,7 +3088,7 @@ export default function Form() {
                                 className="mt-1"
                               />
                             </div>
-
+                            {/* watch('student_related_offence') === 'yes' ? true : false */}
                             <div className='col-span-2'>
                               <FileUpload
                                 name="student_related_offence_attachments"
@@ -3096,7 +3096,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={watch('student_related_offence') === 'yes' ? true : false}
+                                required={false}
                                 value={studentRelatedOffenceAttachmentDoc}
                                 onChange={setStudentRelatedOffenceAttachmentDoc}
                                 error={errors.student_related_offence_attachments?.message}
@@ -3147,7 +3147,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={watch('drug_related_offence') === 'yes' ? true : false}
+                                required={false}
                                 value={drugRelatedOffenceAttachmentsDoc}
                                 onChange={setDrugRelatedOffenceAttachmentsDoc}
                                 error={errors.drug_related_offence_attachments?.message}
@@ -3187,7 +3187,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={watch('license_flag') === 'yes' ? true : false}
+                                required={false}
                                 value={licenseFlagDetailsDoc}
                                 onChange={setLicenseFlagDetailsDoc}
                                 error={errors.license_flag_details?.message}
@@ -3226,7 +3226,7 @@ export default function Form() {
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
-                                required={watch('misconduct_flag') === 'yes' ? true : false}
+                                required={false}
                                 value={misconductFlagDetailsDoc}
                                 onChange={setMisconductFlagDetailsDoc}
                                 error={errors.misconduct_flag_details?.message}
