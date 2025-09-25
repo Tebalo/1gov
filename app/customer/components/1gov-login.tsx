@@ -158,6 +158,7 @@ const InputOTPControlled: React.FC<InputOTPControlledProps> = ({ username, passw
 
         try {
           const profile = await attemptDeTokenize();
+          // console.log('PROFILE ON LOGIN',profile)
           await storeAccessGroups(profile);
 
           setAuthState({
@@ -440,9 +441,26 @@ export const OneGovAuth: React.FC = () => {
 
     return (
         <>
+            <div className="flex flex-col items-center gap-2 text-center">
+                <div className="w-20 h-20 items-center justify-center flex mr-2">
+                  <Image
+                      src="/gov_icon.png"
+                      alt='Coat-of-arms'
+                      width={24}
+                      height={24}
+                      className="w-full h-full object-contain"
+                      priority
+                      />
+                </div>
+                <h1 className="text-2xl font-bold">Login to your account</h1>
+                <p className="text-muted-foreground text-sm text-balance">
+                Enter your <b className='text-bold text-sky-600'>1GOV</b> credentials below to login to your account
+                </p>
+            </div>
             {(!authResponse || authResponse.error) ? (
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
+
                         <div className="grid gap-4 py-4">
                             {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
                             <FormField
@@ -499,14 +517,14 @@ export const OneGovAuth: React.FC = () => {
                             </Button>
                         </div>
                     </form>
-                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                    <span className="bg-background text-muted-foreground relative z-10 px-2">
-                        Or continue with
-                    </span>
-                    </div>
+                    {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                      <span className="bg-background text-muted-foreground relative z-10 px-2">
+                          Or continue with
+                      </span>
+                    </div> */}
 
                     {/* Login with 1Gov1Citizen */}
-                    <Button variant="outline" className="w-full" onClick={() => router.push('/customer/signin')}>
+                    {/* <Button variant="outline" className="w-full" onClick={() => router.push('/customer/signin')}>
                     <div className="w-6 h-6 items-center justify-center flex mr-2">
                         <Image
                             src="/botepco.png"
@@ -518,7 +536,7 @@ export const OneGovAuth: React.FC = () => {
                             />
                         </div>
                     Login with Trls
-                    </Button>
+                    </Button> */}
                     <div className="mt-4 text-center text-sm">
                         <span>Don&lsquo;t have an account?</span>{" "}
                         <a 
