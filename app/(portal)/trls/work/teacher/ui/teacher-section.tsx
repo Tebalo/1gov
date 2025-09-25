@@ -266,13 +266,12 @@ const ResendPayment: React.FC<{caseId: string}> = ({
       setSubmission(false)
     }catch(error){
       toast({
-        title: "Payment link sent",
+        title: "Failed to send",
         variant: "destructive",
-        description: `Payment link has been sent to the customer ${error}`
+        description: `Failed to resend link ${error}`
       });
       
       setSubmission(false)
-      throw new Error
     }finally{
       setSubmission(false)
     }
