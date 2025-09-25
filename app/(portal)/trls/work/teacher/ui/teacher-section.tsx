@@ -268,7 +268,7 @@ const ResendPayment: React.FC<{caseId: string}> = ({
       toast({
         title: "Failed to send",
         variant: "destructive",
-        description: `Failed to resend link ${error}`
+        description: `Failed to resend invoice link ${error}`
       });
       
       setSubmission(false)
