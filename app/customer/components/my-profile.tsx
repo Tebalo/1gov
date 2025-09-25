@@ -85,9 +85,8 @@ export function UserProfile() {
     return (
       <Button variant="ghost" className="h-14 w-14 p-0 flex flex-col items-center justify-center gap-1" disabled>
         <Avatar className="h-6 w-6">
-          <AvatarFallback>...</AvatarFallback>
+          <AvatarImage src="/avatars/01.png" alt="Avatar" />
         </Avatar>
-        <span className="text-[10px] text-center font-medium text-muted-foreground">Loading</span>
       </Button>
     );
   }

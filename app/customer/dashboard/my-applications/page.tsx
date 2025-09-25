@@ -15,7 +15,7 @@ export default function MyApplicationsPage() {
   useEffect(() => {
     const fetchId = async () => {
       const result = await getAccessGroups();
-      console.log(result)
+      
       if (result) {
         setUserId(result.nationalId || result.passportId || result.userid);
       }

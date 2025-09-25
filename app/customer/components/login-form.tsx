@@ -17,6 +17,8 @@ import { storeAccessGroups, storeSession } from "@/app/auth/auth"
 import { AuthResponse, DecodedToken } from "@/app/lib/types"
 import { storeAuthData } from "@/app/staff/login/components/email-login"
 import { ToastAction } from "@/components/ui/toast" // import { toast } from "sonner"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { OneGovAuth } from "./1gov-login"
 
 // Auth API configuration
 const AUTH_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/login/"
@@ -520,19 +522,26 @@ export function LoginForm({
         </div>
 
          {/* Login with 1Gov1Citizen */}
-        <Button variant="outline" className="w-full" onClick={() => router.push('/customer/1gov-auth')}>
-          <div className="w-6 h-6 items-center justify-center flex mr-2">
-            <Image
-                src="/gov_icon.png"
-                alt='Coat-of-arms'
-                width={24}
-                height={24}
-                className="w-full h-full object-contain"
-                priority
-                />
-            </div>
-          Login with 1Gov
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full">
+              <div className="w-6 h-6 items-center justify-center flex mr-2">
+                <Image
+                    src="/gov_icon.png"
+                    alt='Coat-of-arms'
+                    width={24}
+                    height={24}
+                    className="w-full h-full object-contain"
+                    priority
+                    />
+              </div>
+              Login with 1Gov
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <OneGovAuth/>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
