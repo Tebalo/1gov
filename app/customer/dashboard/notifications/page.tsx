@@ -71,26 +71,9 @@ const NotificationPage = () => {
     //const {nationalId, passportId} = useUserData();
     const [userId, setUserId] = useState('');
 
-    // const [userData, setUserData] = useState<AccessGroup | null>(null);
-    // const userId = data?.nationalId || data?.passportId;
-    // let userId;
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     const result = await getAccessGroups();
-        
-    //     if (result) {
-    //       console.log('Result', result)
-    //       setUserData(result);
-    //       console.log('Profile', userData)
-    //     }
-    //   };
-    //   fetchData();
-    // }, [userData]);
-
     useEffect(() => {
       const fetchId = async () => {
         const result = await getAccessGroups();
-        console.log(result)
         if (result) {
           setUserId(result.nationalId || result.passportId || result.userid);
         }

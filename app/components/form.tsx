@@ -300,13 +300,23 @@ export default function Form() {
       const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
       setSubmissionResult(result)
       if (submissionResult?.success==true || result.success==true) {  
-
+      let draft;
+      if(draft_Id) {
+        draft = await updateDraft(draft_Id, processedFormData, currentStep);
         /**
          * If submission is successful, update draft status to 'submitted'
          */
         await updateDraftStatus(draft_Id || '', 'submitted')
-        
-        setSubmitting(false)
+      }else {
+        draft = await saveDraft(processedFormData);
+      }
+
+      if(draft && draft.id) {
+        // If draft saved successfully, refresh the page to load the draft
+        router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
+      }
+ 
+      setSubmitting(false)
         // reset()
       } else {
         setSubmitting(false)
@@ -361,12 +371,12 @@ export default function Form() {
         license_flag_details: licenseFlagDetailsDoc
       }
       let draft;
-      if(draftIdFromUrl && draftIdFromUrl) {
+      if(draftIdFromUrl) {
         draft = await updateDraft(draftIdFromUrl, processedFormData, currentStep);
       }else {
         draft = await saveDraft(processedFormData);
       }
-      // console.log(draft.id);
+
       if(draft && draft.id) {
         // If draft saved successfully, refresh the page to load the draft
         router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
