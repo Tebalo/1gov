@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getAccessGroups } from "@/app/auth/auth";
 
 interface NotificationStats {
   total: number;
@@ -38,8 +39,14 @@ export const NotificationCounter: React.FC<NotificationCounterProps> = ({
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    setUserId(nationalId || passportId || '');
-  }, [nationalId, passportId]);
+    const fetchId = async () => {
+      const result = await getAccessGroups();
+      if (result) {
+        setUserId(result.nationalId || result.passportId || result.userid);
+      }
+    };
+    fetchId();
+  }, []);
 
   const [stats, setStats] = useState<NotificationStats>({
     total: 0,
