@@ -403,12 +403,6 @@ export default function Form() {
     }
   }
 
-  // Function to save draft manually (e.g., on button click)
-  const handleSaveDraft = async () => {
-    const currentFormData = getValues(); // Get current form values
-    await processDraft(currentFormData);
-  }
-
   // Function to load existing draft on component mount
   // useEffect(() => {
   //   const loadExistingDraft = async () => {
@@ -528,8 +522,7 @@ export default function Form() {
 
             // After resetting fields, update the draft to clear the fields array
             await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-            // Reset draft fields
-            // await updateDraftFields(draftIdFromUrl, []);
+
             // Update draft status to 'correction'
             await updateDraftStatus(draftIdFromUrl, 'correction');
           }
@@ -555,6 +548,7 @@ export default function Form() {
     if (currentStep < steps.length - 1) {
       setPreviousStep(currentStep)
       setCurrentStep(step => step + 1)
+      processDraft(getValues()) 
     }
   }
 
@@ -562,6 +556,7 @@ export default function Form() {
     if (currentStep > 0) {
       setPreviousStep(currentStep)
       setCurrentStep(step => step - 1)
+      processDraft(getValues()) 
     }
   }
 
