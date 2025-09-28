@@ -32,8 +32,8 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <main className="min-h-screen bg-gray-50 p-4 md:p-6">
-            <div className="max-w-4xl mx-auto">
+        <main className="min-h-screen bg-gray-50">
+            <div className="">
                 <Card className="shadow-sm border-gray-200">
                     <CardHeader className="pb-4">
                         <UserWelcomeMessage username={username}/>
