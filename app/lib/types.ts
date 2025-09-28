@@ -12,10 +12,16 @@ export interface SearchRecordResponse {
   application_id: string;
   submission_id: string;
   license_link: string | null;
+  draft_id: string | null;
+  submitted_via: string;
   education_bg_checks: string | null;
   flags_no: string;
   recite: string | null;
   invoice: string | null;
+  charges: string | null;
+  paid_at: string | null;
+  subscription_due_date: string | null;
+  license_expiry_date: string | null;
   assigned_to: string | null;
   institution_verification: string;
   course_verification: string;

@@ -2092,11 +2092,8 @@ export async function getTeacherList(status: string, count: number, assigned_to?
 }
 
 export const searchRecord = async (query: string): Promise<SearchRecordResponse | null> => {
-  try {
-    console.log('Searching for:', query);
-    
+  try {    
     const url = `${apiUrl}/search-record?search=${encodeURIComponent(query)}`;
-    console.log('API URL:', url);
     
     const response = await fetch(url, {
       method: 'GET',
@@ -2104,11 +2101,8 @@ export const searchRecord = async (query: string): Promise<SearchRecordResponse 
         'Content-Type': 'application/json',
       },
     });
-
-    console.log('Response status:', response.status);
     
     if (response.status === 404) {
-      console.log('No record found for query:', query);
       return null;
     }
     
