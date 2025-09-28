@@ -10,6 +10,7 @@ import { getAccessGroups } from "@/app/auth/auth";
 export default function Dashboard() {
     const [userId, setUserId] = useState('');
     const [isLoading, setIsLoading] = useState(true)
+    const [username, setUserName] = useState('')
   
     useEffect(() => {
         const fetchId = async () => {
@@ -19,6 +20,7 @@ export default function Dashboard() {
                 if (result) {
                     const id = result.nationalId || result.passportId || result.userid;
                     setUserId(id);
+                    setUserName(result.username)
                 }
             } catch (error) {
                 console.error('Error fetching access groups:', error);
@@ -34,7 +36,7 @@ export default function Dashboard() {
             <div className="max-w-4xl mx-auto">
                 <Card className="shadow-sm border-gray-200">
                     <CardHeader className="pb-4">
-                        <UserWelcomeMessage/>
+                        <UserWelcomeMessage username={username}/>
                     </CardHeader>
                     <Separator className="border-gray-200" />                   
                     <CardContent className="pt-6">
@@ -50,14 +52,14 @@ export default function Dashboard() {
     )
 }
 
-const UserWelcomeMessage = () => {
+const UserWelcomeMessage: React.FC<{username:string}> = ({username}) => {
     return (
         <div className="flex items-center space-x-4">
             <div className="p-3 bg-gray-100 rounded-full">
                 <UserRound className="w-6 h-6 text-gray-600" />
             </div>
             <div>
-                <h1 className="text-xl font-semibold text-gray-900">Hello, Bopaki Tebalo</h1>
+                <h1 className="text-xl font-semibold text-gray-900">Hello, {username.toUpperCase()}</h1>
                 <p className="text-sm text-gray-500 mt-1">Welcome to your dashboard</p>
             </div>
         </div>
