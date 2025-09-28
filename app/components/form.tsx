@@ -403,59 +403,11 @@ export default function Form() {
     }
   }
 
-  // Function to load existing draft on component mount
-  // useEffect(() => {
-  //   const loadExistingDraft = async () => {
-  //     try {
-  //       const draftData = await loadDraft();
-  //       if (draftData) {
-  //         // Reset form with draft data
-  //         reset(draftData);
-  //         console.log('Draft loaded successfully');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error loading draft:', error);
-  //     }
-  //   };
-
-  //   loadExistingDraft();
-  // }, [loadDraft, reset]);
-
-  // Auto-save draft on form changes (debounced)
   // Auto-save draft on form changes (debounced)
   const watchedFields = watch();
   const citizenship = watch('citizenship');
   const gender = watch("gender")
   const nationality = watch("nationality")
-  // Auto-save draft every 60 seconds if there are changes
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   const draftIdFromUrl = urlParams.get('draftId');
-  //   const timer = setTimeout(async () => {
-  //     // Only auto-save if there's meaningful content AND user has started filling the form
-  //     const hasContent = watchedFields.first_name || 
-  //                       watchedFields.last_name ||
-  //                       watchedFields.username
-      
-  //     // Don't auto-save on initial load/empty form
-  //     if (hasContent) {
-  //       try {
-  //         if(draftIdFromUrl) {
-  //           // If draftId exists in URL, update existing draft
-  //           await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-  //         } else {
-  //           // Otherwise, create a new draft
-  //           await saveDraft(watchedFields);
-  //         }
-  //         // console.log('Auto-saved draft');
-  //       } catch (error) {
-  //         console.error('Auto-save failed:', error);
-  //       }
-  //     }
-  //   }, 30000); // 30 seconds debounce
-
-  //   return () => clearTimeout(timer);
-  // }, [watchedFields, saveDraft, updateDraft, currentStep]);
 
   /**
    * Load draft if draftId is present in URL

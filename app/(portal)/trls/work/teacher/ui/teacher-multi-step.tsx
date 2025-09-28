@@ -10,6 +10,10 @@ import { TriangleDownIcon } from "@radix-ui/react-icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import { Text } from "../components/text";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { DownloadLink } from "../components/attachment";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 interface Teacher{
     data: TeacherResponse,
@@ -205,7 +209,7 @@ export default function TeacherRegistration({data, userRole}:Teacher){
                             
 
                             
-                            <CardContent className="space-y-10">
+                            <CardContent className="space-y-10 py-10 px-20">
                                 {/* Step 1: Personal Information */}
                                 {currentStep === 0 && (
                                     <motion.div
@@ -214,14 +218,19 @@ export default function TeacherRegistration({data, userRole}:Teacher){
                                         transition={{ duration: 0.3, ease: 'easeInOut'}}
                                     >
                                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
-                                            <Text label={"First Name"} value={"Bopaki"}/>
-                                            <Text label={"Last Name"} value={"Tebalo"}/>
+                                            <Text label={"First Name"} value={data?.bio_datas?.forenames}/>
+                                            <Text label={"Last Name"} value={data?.bio_datas?.surname}/>
                                             <Text label={"Middle Name"} value={null}/>
-                                            <Text label={"Citizenship"} value={"Citizen"}/>
-                                            <Text label={"Nationality"} value={"Botswana"}/>
-                                            <Text label={"National/Passport ID"} value={"440418213"}/>
-                                            <Text label={"Gender"} value={"Male"}/>
-                                            <Text label={"Date of birth"} value={"28/09/1996"}/>
+                                            <Text label={"Citizenship"} value={data?.teacher_preliminary_infos?.citizen_status}/>
+                                            <Text label={"Nationality"} value={data?.bio_datas?.nationality}/>
+                                            <Text label={"National/Passport ID"} value={data?.bio_datas?.national_id}/>
+                                            <Text label={"Gender"} value={data?.bio_datas?.gender}/>
+                                            <Text label={"Date of birth"} value={data?.bio_datas?.dob}/>
+                                            <DownloadLink 
+                                                label="National ID Copy" 
+                                                url={data.attachments?.national_id_copy}
+                                                variant="default"
+                                            />
                                         </div>                                    
                                     </motion.div>
                                 )}
@@ -234,14 +243,114 @@ export default function TeacherRegistration({data, userRole}:Teacher){
                                         transition={{ duration: 0.3, ease: 'easeInOut'}}
                                     >
                                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
-                                            <Text label={"First Name"} value={"Bopaki"}/>
-                                            <Text label={"Last Name"} value={"Tebalo"}/>
-                                            <Text label={"Middle Name"} value={"--"}/>
-                                            <Text label={"Citizenship"} value={"Citizen"}/>
-                                            <Text label={"Nationality"} value={"Botswana"}/>
-                                            <Text label={"National/Passport ID"} value={"440418213"}/>
-                                            <Text label={"Gender"} value={"Male"}/>
-                                            <Text label={"Date of birth"} value={"28/09/1996"}/>
+                                            <Text label={"Primary Phone"} value={data.bio_datas?.mobile}/>
+                                            <Text label={"Physical Address"} value={data.bio_datas?.physical_address}/>
+                                            <Text label={"Postal Address"} value={data.bio_datas?.postal_address}/>
+                                        </div>                                
+                                    </motion.div>
+                                )}
+
+                                {/* Step 2: Professional Details */}
+                                {currentStep === 2 && (
+                                    <motion.div
+                                        initial={{x: delta ? '50%':'-50%', opacity: 0}}
+                                        animate={{x: 0, opacity: 1}}
+                                        transition={{ duration: 0.3, ease: 'easeInOut'}}
+                                    >
+                                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                                            <Text label={"Employment Status"} value={data.teacher_registrations?.work_status}/>
+                                            <Text label={"Practice Category"} value={data.teacher_preliminary_infos?.practice_category}/>
+                                            <Text label={"Sub Category"} value={data.teacher_preliminary_infos?.sub_category}/>
+                                            <Text label={"Experience"} value={data.employment_details?.experience_years}/>
+                                            <Text label={"Region"} value={data.employment_details?.region}/>
+                                            <Text label={"Institution"} value={data.employment_details?.institution_type}/>
+                                            {/* <Text label={"School Level"} value={data.edu_pro_qualifications?.level}/> */}
+                                            <Text label={"Private School"} value={data.employment_details?.current_institution}/>
+                                        </div>                                
+                                    </motion.div>
+                                )}
+
+                                {/* Step 3: Qualifications */}
+                                {currentStep === 3 && (
+                                    <motion.div
+                                        initial={{x: delta ? '50%':'-50%', opacity: 0}}
+                                        animate={{x: 0, opacity: 1}}
+                                        transition={{ duration: 0.3, ease: 'easeInOut'}}
+                                    >
+                                        <div className="flex-row space-y-6">
+                                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                                                <Text label={"Teaching Qualification Level"} value={data.edu_pro_qualifications?.level}/>
+                                                <Text label={"Bachelor's Degree"} value={data.edu_pro_qualifications?.qualification}/>
+                                                <Text label={"Name of Institution"} value={data.edu_pro_qualifications?.institution}/>
+                                                <Text label={"Qualification Year"} value={data.edu_pro_qualifications?.qualification_year}/>
+                                                <Text label={"Subject Specialization"} value={data.edu_pro_qualifications?.major_subjects}/>
+                                                <Text label={"Institution"} value={data.edu_pro_qualifications?.institution}/>
+                                                <DownloadLink 
+                                                    label="Qualification Document" 
+                                                    url={data.edu_pro_qualifications?.attachments}
+                                                    variant="default"
+                                                    />
+                                            </div>
+                                            <Separator/>
+                                            <div>
+                                                <div><h1 className="text-2xl font-semibold">Other Qualifications</h1></div>
+                                                {data?.other_qualifications && data.other_qualifications.length > 0 ? (
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow>
+                                                            <TableHead>Level</TableHead>
+                                                            <TableHead>Qualification</TableHead>
+                                                            <TableHead>Attachment</TableHead>
+                                                            <TableHead>Institution</TableHead>
+                                                            <TableHead>Year</TableHead>
+                                                            <TableHead>Subjects</TableHead>
+                                                            </TableRow>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {data.other_qualifications.map((qual, index) => (
+                                                            <TableRow key={index}>
+                                                                <TableCell>{qual.level ?? '-'}</TableCell>
+                                                                <TableCell>{qual.qualification ?? '-'}</TableCell>
+                                                                <TableCell>
+                                                                    <DownloadLink 
+                                                                        label="" 
+                                                                        url={qual.attachments}
+                                                                        variant="compact"
+                                                                        />
+                                                                </TableCell>
+                                                                <TableCell>{qual.institution ?? '-'}</TableCell>
+                                                                <TableCell>{qual.qualification_year ?? '-'}</TableCell>
+                                                                <TableCell>{qual.major_subjects ?? '-'}</TableCell>
+                                                            </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                ) : (
+                                                    <div className="flex items-center justify-center p-4 text-muted-foreground">
+                                                    No qualifications data available
+                                                    </div>
+                                                )}
+                                            </div>   
+                                        </div>                             
+                                    </motion.div>
+                                )}
+
+                                {/* Step 4: Background Check */}
+                                {currentStep === 4 && (
+                                    <motion.div
+                                        initial={{x: delta ? '50%':'-50%', opacity: 0}}
+                                        animate={{x: 0, opacity: 1}}
+                                        transition={{ duration: 0.3, ease: 'easeInOut'}}
+                                    >
+                                        <div className='grid grid-cols-1 sm:grid-cols-1 gap-4 sm:gap-6'>
+                                            <Text label={"Are you living with any form of disability"} value={data.teacher_registrations?.work_status}/>
+                                            <Text label={"Have you been convicted of a criminal offense against a learner or minor?"} value={data.teacher_preliminary_infos?.practice_category}/>
+                                            <Text label={"Have you been convicted of a drug related criminal offense?"} value={data.teacher_preliminary_infos?.sub_category}/>
+                                            <Text label={"Have you been convicted of a drug related criminal offense?"} value={data.employment_details?.experience_years}/>
+                                            <Text label={"Have you ever had your teaching license revoked, suspended, invalidated, cancelled or denied license by any Teaching Council or Authority?"} value={data.employment_details?.region}/>
+                                            <Text label={"Are you currently the subject of any review, enquiry or investigations by any Teaching Council or any Authority.?"} value={data.employment_details?.institution_type}/>
+                                            {/* <Text label={"School Level"} value={data.edu_pro_qualifications?.level}/> */}
+                                            <Text label={"Private School"} value={data.employment_details?.current_institution}/>
                                         </div>                                
                                     </motion.div>
                                 )}
