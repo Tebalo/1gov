@@ -182,7 +182,19 @@ const data: TeacherResponse = {
   "code": 200,
   "message": "Success",
   "background_checks": [],
-  "other_qualifications": [],
+  "other_qualifications": [{
+            "id": 6,
+            "national_id": "440418213",
+            "level": "Bachelor",
+            "qualification": "Bachelor of Agriculture",
+            "institution": "University of Botswana",
+            "attachments": "https://gateway-cus-acc.gov.bw/document/download/MESD_006_08_054/3bd077e3-c9e1-40d2-b53a-4373a513518d",
+            "qualification_year": "2002",
+            "minor_subjects": null,
+            "major_subjects": "English",
+            "created_at": "2025-09-24 02:44:43",
+            "updated_at": "2025-09-24 02:44:43"
+        }],
   "teacher_registrations": {
       "national_id": "436415528",
       "reg_number": "$2y$10$fxDFkAVR",

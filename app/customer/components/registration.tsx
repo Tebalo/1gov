@@ -87,7 +87,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
 
   useEffect(() => {
     fetchRegistrationData();
-  },[ userId]);
+  },[userId]);
 
   // Helper functions for conditional logic
   const shouldShowPaymentButton = (data: RegistrationData): boolean => {
@@ -173,7 +173,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   if (!registrationData) return <QuickActions/>;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6">
+    <div className="mx-auto grid">
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         {/* Header */}
         <div className="border-b border-gray-200 p-6">
