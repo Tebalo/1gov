@@ -73,7 +73,7 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                     name: result.payment_name || `${result.registration_type} - ${result.reg_number}`,
                     type: result.registration_type,
                     status: result.reg_status,
-                    // Add additional fields if needed
+                    
                     regNumber: result.reg_number,
                     applicationId: result.application_id,
                     endorsementStatus: result.endorsement_status,
@@ -82,7 +82,7 @@ export function SearchFormModal({ isOpen: controlledOpen, onOpenChange }: Search
                     licenseStatus: result.license_status,
                     createdAt: result.created_at,
                     updatedAt: result.updated_at,
-                    // Include full API response for detailed view
+                    
                     fullRecord: result
                 };
                 

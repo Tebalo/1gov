@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react"
 import { Menu, X, ChevronDown, ChevronRight, Home, FileText, Plus, Bell, User, Settings } from "lucide-react"
 import { NotificationCounter } from "./notification-count";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import Notifications from "./notifications";
 
 const components: { title: string; href: string; description: string; icon?: React.ReactNode }[] = [
   {
@@ -162,6 +171,18 @@ export function CustomerNavigationMenu() {
                   className="hover:scale-110 transition-transform"
                 />
               </a>
+              {/* New Notification */}
+              {/* <Sheet>
+                <SheetTrigger><Bell className="h-6 w-6 group-hover:scale-110 transition-transform" /></SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Notifications</SheetTitle>
+                    <SheetDescription>
+                        <Notifications/>
+                    </SheetDescription>
+                  </SheetHeader>
+                </SheetContent>
+              </Sheet> */}
             </div>
           </div>
         </div>
