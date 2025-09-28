@@ -113,10 +113,12 @@ import { useDraft } from "@/lib/hooks/useDraft"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
-import { useUserData } from "@/lib/hooks/useUserData"
 import { subjectSpecializationForSelect } from "@/types/subjects_specialization"
 import { getAccessGroups } from "../auth/auth"
-import { AccessGroup } from "../lib/types"
+import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -782,7 +784,7 @@ export default function Form() {
                         </div>
 
                         {/* Date of Birth - Full width on mobile for better date picker */}
-                        <div className="space-y-2 col-span-1 sm:col-span-1">
+                        {/* <div className="space-y-2 col-span-1 sm:col-span-1">
                           <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
                             Date of Birth <span className="text-red-500">*</span>
                           </Label>
@@ -792,6 +794,49 @@ export default function Form() {
                             {...register('date_of_birth')}
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                           />
+                          {errors.date_of_birth && (
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.date_of_birth.message}
+                            </p>
+                          )}
+                        </div> */}
+ 
+                        <div className="space-y-2 col-span-1 sm:col-span-1">
+                          <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
+                            Date of Birth <span className="text-red-500">*</span>
+                          </Label>
+                          
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500",
+                                  !watch('date_of_birth') && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {watch('date_of_birth') ? format(new Date(watch('date_of_birth')), "PPP") : <span>Pick a date</span>}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={watch('date_of_birth') ? new Date(watch('date_of_birth')) : undefined}
+                                onSelect={(newDate) => {
+                                  setValue('date_of_birth', newDate ? newDate.toISOString().split('T')[0] : '')
+                                }}
+                                className="rounded-md border shadow-sm"
+                                captionLayout="dropdown"
+                                disabled={(date) =>
+                                  date > new Date() || date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
                           {errors.date_of_birth && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
                               <span className="text-xs">⚠</span>
