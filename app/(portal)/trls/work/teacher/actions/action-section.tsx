@@ -177,7 +177,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
           const items = values.items ? [...values.items] : [];
           const rejection_reason = values.comments || '';
           const result = await updateTeacherStatus(recordId, status, rejection_reason, items, bearer || '');
-          if (result.code === 200 || result.code === 201 || result.code === 504 || result.code === 500) {
+          if (result.code === 200 || result.code === 201) {
             toast({
               title: "Success",
               description: `Status updated to: ${status}`
@@ -192,28 +192,30 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
             )
             setOpen(false); // Close dialog on success
             router.push('/trls/work');
-          } else {
-            await logStatusChange(
-              recordId,           // Case ID
-              'teacher',  // Case type
-              currentUser,        // User info
-              current_status,     // Old status
-              status,             // New status
-              `Status changed from ${current_status} to ${status}` // Description
-            )
-            toast({
-              title: "Success",
-              description: `Status updated to: ${status}`
-            });
-            setOpen(false); // Close dialog on success
-            router.push('/trls/work');
-          }
+          } 
+          // else {
+          //   await logStatusChange(
+          //     recordId,           // Case ID
+          //     'teacher',  // Case type
+          //     currentUser,        // User info
+          //     current_status,     // Old status
+          //     status,             // New status
+          //     `Status changed from ${current_status} to ${status}` // Description
+          //   )
+          //   toast({
+          //     title: "Success",
+          //     description: `Status updated to: ${status}`
+          //   });
+          //   setOpen(false); // Close dialog on success
+          //   router.push('/trls/work');
+          // }
         }
         } catch (error) {
           console.error("Error updating status:", error);
           toast({
-            title: "Success",
-            description: `Status updated to: ${values.status}`
+            title: "Failed to update status",
+            description: `${(error as Error).message || 'An unexpected error occurred.'}`,
+            variant: "destructive",
           });
           setOpen(false); // Close dialog on error too
           router.push('/trls/work');
