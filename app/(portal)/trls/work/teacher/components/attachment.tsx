@@ -46,12 +46,12 @@ export const DownloadLink: React.FC<DownloadLinkProps> = ({
         <Dialog>
           <DialogTrigger asChild>
             <Button 
-              variant="ghost" 
+              variant="link" 
               size="sm"
-              className="text-blue-600 hover:text-blue-800 space-y-2"
+              className="space-x-2 pl-0"
             >
-            <FileText className="h-4 w-4 text-green-600" />
-              View Document
+              <FileText className="h-4 w-4 text-green-600" />
+              <div>View Document</div>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-5xl w-[90vw] max-h-[90vh]">
@@ -78,11 +78,11 @@ export const DownloadLink: React.FC<DownloadLinkProps> = ({
         <Dialog>
           <DialogTrigger asChild>
             <Button 
-              variant="ghost" 
-              className="space-x-2"
+              variant="link" 
+              className="space-x-2 pl-0"
             >
-            <FileText className="h-4 w-4 text-green-600" />
-              Open Document
+              <FileText className="h-4 w-4 text-green-600" />
+              <div>Open Document</div>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-5xl w-[90vw] max-h-[90vh]">

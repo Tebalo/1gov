@@ -8,7 +8,7 @@ export const Text: React.FC<{label: string, value:string | null | undefined}> =(
                 {label}
             </Label>
             <div>
-                <span>{value ? value : '--'}</span>
+                <span>{value ? value.toUpperCase() : '--'}</span>
             </div>
         </div>
     )

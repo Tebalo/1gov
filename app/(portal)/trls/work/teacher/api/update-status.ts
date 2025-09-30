@@ -8,7 +8,6 @@ export async function updateTeacherStatus(
     items?: (string | undefined)[],
     bearer?: string
    ): Promise<{code: number; message: string}> {
-    console.log(bearer)
     try {
       if(status === 'Pending-Customer-Action'){
         // Return to customer 
@@ -35,11 +34,7 @@ export async function updateTeacherStatus(
           //params.append('endorsement_status', status);
           key='endorsement_status'
         } 
-        // else {
-        //   // params.append('reg_status', status);
-        //   key='reg_status'
-        // }
-        console.log(`${apiUrl}/teacher_registrations/${id}?${key}=${status}&rejection_reason=${rejection_reason}`)
+
         const response = await fetch(
           `${apiUrl}/teacher_registrations/${id}?${key}=${status}&rejection_reason=${rejection_reason}`,
           {
@@ -49,7 +44,7 @@ export async function updateTeacherStatus(
               'Accept': 'application/json',
               'Authorization': `Bearer ${bearer}`
             },
-            // Trigger revalidation
+
             next: {
               
             }
@@ -69,7 +64,7 @@ export async function updateTeacherStatus(
    
     } catch (error) {
       // Log the error with more context
-      console.error('Error updating category status:', {
+      console.error('Error updating status:', {
         id,
         status,
         error: error instanceof Error ? error.message : 'Unknown error'

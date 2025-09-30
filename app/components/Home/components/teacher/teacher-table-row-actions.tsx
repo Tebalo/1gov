@@ -216,6 +216,11 @@ export function TeacherTableRowActions<TData>({
     router.push(`/trls/work/teacher/${record.national_id}?assigned_to=${currentUser.name}`)
   }
 
+  async function handleOpenNew() {
+    await logCaseViewed(record.national_id, 'teacher', currentUser);
+    router.push(`/trls/work/teacher/v2/${record.national_id}?assigned_to=${currentUser.name}`)
+  }
+
   return (
     <>
       <DropdownMenu>
@@ -228,13 +233,22 @@ export function TeacherTableRowActions<TData>({
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuContent align="end" className="w-[160px] hover:cursor-pointer">
           <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
             Quick View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleOpen}>
+          <DropdownMenuItem onClick={handleOpenNew} className='hover:cursor-pointer'>
+      <span className="flex items-center justify-between w-full">
+    Open
+    <span className="ml-2 bg-blue-600 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+      NEW
+    </span>
+  </span>
+</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleOpen} className='hover:cursor-pointer'>
             View Full Details
           </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
       <TeacherDetailsDialog 

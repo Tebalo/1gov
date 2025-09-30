@@ -20,6 +20,14 @@ interface TeacherRegistration {
     payment_ref?: string | null;
     payment_amount?: string | null;
     payment_name?: string | null;
+    draft_id?: string | null;
+    submitted_via?: string | null;
+    recite?: string | null;
+    invoice?: string | null;
+    charges?: string | null;
+    payment_link?: string | null;
+    subscription_due_date?: string | null;
+    license_expiry_date?: string | null;
     paid_at?: string | null;
     application_id?: string | null;
     assigned_to?: string | null;
