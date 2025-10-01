@@ -346,6 +346,11 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       userid: decodedToken.preferred_username,
       nationalId: decodedToken.national_id,
       passportId: decodedToken.passport_id,
+      gender: decodedToken.gender,
+      preferred_username: decodedToken.preferred_username,
+      given_name: decodedToken.given_name,
+      family_name: decodedToken.family_name,
+      email: decodedToken.email,
       systemId: Number(decodedToken.client_id),
     }
 
@@ -440,6 +445,13 @@ export async function logout() {
   cookies().set("access", "", { expires: new Date(0) });
   revalidatePath('/trls/home');
   redirect('/welcome');
+}
+
+export async function customerLogout() {
+  cookies().set("session", "", { expires: new Date(0) });
+  cookies().set("access", "", { expires: new Date(0) });
+  revalidatePath('/customer/dashboard');
+  redirect('/customer/signin');
 }
 
 // Main functions

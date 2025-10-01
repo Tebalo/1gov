@@ -109,7 +109,7 @@ function AuthorizeContent() {
               </p>
             </div>
             <button
-              onClick={() => router.push('/login')}
+              onClick={() => router.push('/customer/signin')}
               className="w-full bg-blue-600 text-white rounded-md py-2 px-4 hover:bg-blue-700 transition-colors"
             >
               Return to Login

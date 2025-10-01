@@ -17,12 +17,9 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
 import { LogOut, User } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { AccessGroup, Session } from '@/app/lib/types';
-import { getAccessGroups, getRole, logout } from '@/app/auth/auth';
-import { Profile } from './profile'; // Import the Profile component
+import { customerLogout, getAccessGroups, getRole, logout } from '@/app/auth/auth';
+import { Profile } from './profile';
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +74,6 @@ export function UserProfile() {
     fetchUserData();
   }, []);
 
-  // UPDATED: Enhanced logout function to completely clear user session
   const handleLogout = async () => {
     try {
       setIsLogOut(true);
@@ -92,29 +88,25 @@ export function UserProfile() {
       document.cookie = 'user_data=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       
-      // UPDATED: Call the existing logout function for additional cleanup
-      await logout();
+      await customerLogout();
       
-      console.log('✅ User session deleted successfully');
+      // console.log('✅ User session deleted successfully');
       
-      // UPDATED: Redirect to login page after successful logout
       setTimeout(() => {
-        window.location.href = '/customer/login';
+        window.location.href = '/customer/signin';
       }, 1000);
       
     } catch (error) {
       setIsLogOut(false);
       console.error('Error during logout:', error);
-      
-      // UPDATED: Force cleanup even if logout API fails
+
       sessionStorage.clear();
       document.cookie.split(";").forEach(function(c) {
         document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
-      
-      // UPDATED: Redirect to login page even on error
+
       setTimeout(() => {
-        window.location.href = '/customer/login';
+        window.location.href = '/customer/signin';
       }, 500);
     }
   };
