@@ -366,18 +366,14 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                             <Table>
                                                 <TableHeader>
                                                     <TableRow>
-                                                    <TableHead>Level</TableHead>
                                                     <TableHead>Qualification</TableHead>
                                                     <TableHead>Attachment</TableHead>
-                                                    <TableHead>Institution</TableHead>
                                                     <TableHead>Year</TableHead>
-                                                    <TableHead>Subjects</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
                                                     {data.other_qualifications.map((qual, index) => (
                                                     <TableRow key={index}>
-                                                        <TableCell>{qual.level ?? '-'}</TableCell>
                                                         <TableCell>{qual.qualification ?? '-'}</TableCell>
                                                         <TableCell className="w-32">
                                                             <DownloadLink 
@@ -386,9 +382,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                                                 variant="compact"
                                                                 />
                                                         </TableCell>
-                                                        <TableCell>{qual.institution ?? '-'}</TableCell>
                                                         <TableCell>{qual.qualification_year ?? '-'}</TableCell>
-                                                        <TableCell>{qual.major_subjects ?? '-'}</TableCell>
                                                     </TableRow>
                                                     ))}
                                                 </TableBody>
