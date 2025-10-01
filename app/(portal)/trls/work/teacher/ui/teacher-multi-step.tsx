@@ -257,10 +257,8 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                         <Text label={"Subscription Due Date"} value={data.teacher_registrations?.subscription_due_date}/>
                                         <Text label={"License Expiry Date"} value={data.teacher_registrations?.license_expiry_date}/>
                                         <Text label={"Registration Type"} value={data.teacher_registrations?.registration_type}/>
-                                        <Text label={"Institution Verification"} value={data.teacher_registrations?.institution_verification}/>
-                                        <Text label={"Course Verification"} value={data.teacher_registrations?.course_verification}/>
-                                        <Text label={"License Status"} value={data.teacher_registrations?.license_status}/>
-                                        <Text label={"Pending Customer Action"} value={data.teacher_registrations?.pending_customer_action}/>
+                                        <Text label={"Submitted Via"} value={data.teacher_registrations?.submitted_via}/>
+                                        {/* <Text label={"Pending Customer Action"} value={data.teacher_registrations?.pending_customer_action}/> */}
                                     </div> 
                                     <Separator/>
                                     <Card className="p-4">
@@ -342,6 +340,8 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                         <Text label={"Qualification Year"} value={data.edu_pro_qualifications?.qualification_year}/>
                                         <Text label={"Subject Specialization"} value={data.edu_pro_qualifications?.major_subjects}/>
                                         <Text label={"Institution"} value={data.edu_pro_qualifications?.institution}/>
+                                        <Text label={"Institution Verification"} value={data.teacher_registrations?.institution_verification}/>
+                                        <Text label={"Course Verification"} value={data.teacher_registrations?.course_verification}/>
                                         <DownloadLink 
                                             label="Qualification Document" 
                                             url={data.edu_pro_qualifications?.attachments}

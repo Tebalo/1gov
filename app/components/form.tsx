@@ -210,7 +210,6 @@ export default function Form() {
   useEffect(() => {
     const fetchId = async () => {
       const result = await getAccessGroups();
-      console.log(result)
       if (result) {
         setUserId(result.nationalId || result.passportId || result.userid);
       }
@@ -232,6 +231,9 @@ export default function Form() {
       .map(q => ({
         alt_qualification: q.alt_qualification,
         alt_qualification_year: q.alt_qualification_year,
+        level: q.level,
+        institution: q.institution,
+        major_subjects: q.major_subjects,
         alt_attachments: q.alt_attachments!
       }))
   }
@@ -825,14 +827,21 @@ export default function Form() {
                                 mode="single"
                                 selected={watch('date_of_birth') ? new Date(watch('date_of_birth')) : undefined}
                                 onSelect={(newDate) => {
-                                  setValue('date_of_birth', newDate ? newDate.toISOString().split('T')[0] : '')
+                                  if (newDate) {
+                                    const year = newDate.getFullYear();
+                                    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+                                    const day = String(newDate.getDate()).padStart(2, '0');
+                                    setValue('date_of_birth', `${year}-${month}-${day}`);
+                                  } else {
+                                    setValue('date_of_birth', '');
+                                  }
                                 }}
                                 className="rounded-md border shadow-sm"
                                 captionLayout="dropdown"
                                 disabled={(date) =>
-                                  date > new Date() || date < new Date("1900-01-01")
+                                  date >= new Date(new Date().setHours(0, 0, 0, 0) + 86400000) || 
+                                  date < new Date("1900-01-01")
                                 }
-                                initialFocus
                               />
                             </PopoverContent>
                           </Popover>
