@@ -204,6 +204,7 @@ export default function Form() {
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
   const { toast } = useToast();
   const [isLoadingForm, setIsLoadingForm] = useState(true);
+  const [disabled, setDisabled] = useState(false);
   const router = useRouter()
 
   const [userId, setUserId] = useState('');
@@ -559,10 +560,10 @@ export default function Form() {
 
               // After resetting fields, update the draft to clear the fields array
               await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-
               // Update draft status to 'correction'
               await updateDraftStatus(draftIdFromUrl, 'correction');
             }
+            setDisabled(true); // Disable fields if draft exists
           }
         } else if (access_profile) {
           // No draft, fill form with access profile data
@@ -572,7 +573,6 @@ export default function Form() {
             last_name: access_profile.family_name?.toUpperCase() || '',
             primary_email: access_profile.email || '',
             gender: access_profile.gender || '',
-            // Add other fields as needed based on your FormInputs type
           };
           
           // Set form values
@@ -581,6 +581,7 @@ export default function Form() {
               setValue(key as keyof FormInputs, value);
             }
           });
+          setDisabled(true); // Disable fields if no draft but access profile exists
         }
       } catch (error) {
         console.error('Error initializing form:', error);
@@ -814,7 +815,7 @@ export default function Form() {
                             {...register('first_name')}
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your first name"
-                            disabled
+                            disabled={disabled}
                           />
                           {errors.first_name && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -834,7 +835,7 @@ export default function Form() {
                             {...register('last_name')}
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your last name"
-                            disabled
+                            disabled={disabled}
                           />
                           {errors.last_name && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -955,7 +956,7 @@ export default function Form() {
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national/passport ID number"
                             inputMode="numeric"
-                            disabled
+                            disabled={disabled}
                           />
                           {errors.username && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -1138,7 +1139,7 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
-                            disabled
+                            disabled={disabled}
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
@@ -1206,7 +1207,7 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
-                      {Object.keys(errors).length > 0 && (
+                      {/* {Object.keys(errors).length > 0 && (
                         <div className="relative bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                           <div className="flex items-start">
                             <div className="flex-shrink-0">
@@ -1242,7 +1243,7 @@ export default function Form() {
                             </div>
                           </div>
                           <button 
-                            onClick={() => {/* Add logic to clear errors or scroll to first error */}}
+                            onClick={() => { Add logic to clear errors or scroll to first error }}
                             className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors"
                           >
                             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -1254,7 +1255,7 @@ export default function Form() {
                             </svg>
                           </button>
                         </div>
-                      )}
+                      )} */}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
                         <div className="space-y-2">
