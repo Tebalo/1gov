@@ -140,6 +140,11 @@ export interface AccessGroup {
   current: string;
   username: string;
   userid: string;
+  gender?: string;
+  preferred_username?: string;
+  given_name?: string;
+  family_name?: string;
+  email?: string;
   nationalId?: string;
   passportId?: string;
   systemId?: number

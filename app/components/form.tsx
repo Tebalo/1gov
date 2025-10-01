@@ -418,78 +418,171 @@ export default function Form() {
    * Load draft if draftId is present in URL
    * This effect runs only once on component mount
    */
+  // useEffect(() => {
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const draftIdFromUrl = urlParams.get('draftId');
+    
+  //   if (draftIdFromUrl) {
+  //     const fetchDraft = async () => {
+  //       const draftData = await loadDraft(draftIdFromUrl);
+  //       setFields(draftData?.fields || [])
+  //       setCurrentStep(draftData.currentStep || 0)
+  //       if (draftData) {
+
+  //         reset(draftData);
+  //         setNationalIdDoc(draftData.national_id_copy || null) 
+  //         setQualifications(draftData.qualifications || [])
+  //         setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null)
+  //         setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
+  //         setLicenseFlagDetailsDoc(draftData.license_flag_details || null)
+  //         setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null)
+  //         setMandatoryDoc(draftData.attachments || null)
+
+  //         /**
+  //          * Clear fields that were requested to be corrected
+  //          */
+  //         if(draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0){
+
+  //           const handleFieldReset = (field: string) => {
+  //             switch (field) {
+  //               case 'national_id_copy':
+  //                 if (draftData.national_id_copy) setNationalIdDoc(null);
+  //                 break;
+  //               case 'qualifications':
+  //                 if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+  //                 break;
+  //               case 'student_related_offence_attachment':
+  //                 if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+  //                 break;
+  //               case 'drug_related_offence_attachments':
+  //                 if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+  //                 break;
+  //               case 'license_flag_details_attachment':
+  //                 if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+  //                 break;
+  //               case 'misconduct_flag_details_attachment':
+  //                 if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+  //                 break;
+  //               default:
+  //                 // Clear the form field value
+  //                 setValue(field as keyof FormInputs, '');
+  //             }
+  //           };
+
+  //           draftData.fields.forEach((field: string) => {
+  //             try {
+  //               handleFieldReset(field);
+  //             } catch (error) {
+  //               console.error(`Error resetting field ${field}:`, error);
+  //             }
+  //           });
+
+  //           // After resetting fields, update the draft to clear the fields array
+  //           await updateDraft(draftIdFromUrl, watchedFields, currentStep);
+
+  //           // Update draft status to 'correction'
+  //           await updateDraftStatus(draftIdFromUrl, 'correction');
+  //         }
+  //       }
+  //     };
+
+  //     fetchDraft();
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [loadDraft, reset, setValue, updateDraft]);
+
   useEffect(() => {
+  const initializeForm = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const draftIdFromUrl = urlParams.get('draftId');
-  
+    
+    // Fetch access groups data
+    const access_profile = await getAccessGroups();
+    
     if (draftIdFromUrl) {
-      const fetchDraft = async () => {
-        const draftData = await loadDraft(draftIdFromUrl);
-        setFields(draftData?.fields || [])
-        setCurrentStep(draftData.currentStep || 0)
-        if (draftData) {
+      // If there's a draft, load it
+      const draftData = await loadDraft(draftIdFromUrl);
+      setFields(draftData?.fields || []);
+      setCurrentStep(draftData.currentStep || 0);
+      
+      if (draftData) {
+        reset(draftData);
+        setNationalIdDoc(draftData.national_id_copy || null);
+        setQualifications(draftData.qualifications || []);
+        setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
+        setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
+        setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
+        setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
+        setMandatoryDoc(draftData.attachments || null);
 
-          reset(draftData);
-          setNationalIdDoc(draftData.national_id_copy || null) 
-          setQualifications(draftData.qualifications || [])
-          setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null)
-          setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
-          setLicenseFlagDetailsDoc(draftData.license_flag_details || null)
-          setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null)
-          setMandatoryDoc(draftData.attachments || null)
+        /**
+         * Clear fields that were requested to be corrected
+         */
+        if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
+          const handleFieldReset = (field: string) => {
+            switch (field) {
+              case 'national_id_copy':
+                if (draftData.national_id_copy) setNationalIdDoc(null);
+                break;
+              case 'qualifications':
+                if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+                break;
+              case 'student_related_offence_attachment':
+                if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+                break;
+              case 'drug_related_offence_attachments':
+                if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+                break;
+              case 'license_flag_details_attachment':
+                if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+                break;
+              case 'misconduct_flag_details_attachment':
+                if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+                break;
+              default:
+                // Clear the form field value
+                setValue(field as keyof FormInputs, '');
+            }
+          };
 
-          /**
-           * Clear fields that were requested to be corrected
-           */
-          if(draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0){
+          draftData.fields.forEach((field: string) => {
+            try {
+              handleFieldReset(field);
+            } catch (error) {
+              console.error(`Error resetting field ${field}:`, error);
+            }
+          });
 
-            const handleFieldReset = (field: string) => {
-              switch (field) {
-                case 'national_id_copy':
-                  if (draftData.national_id_copy) setNationalIdDoc(null);
-                  break;
-                case 'qualifications':
-                  if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-                  break;
-                case 'student_related_offence_attachment':
-                  if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-                  break;
-                case 'drug_related_offence_attachments':
-                  if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-                  break;
-                case 'license_flag_details_attachment':
-                  if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-                  break;
-                case 'misconduct_flag_details_attachment':
-                  if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-                  break;
-                default:
-                  // Clear the form field value
-                  setValue(field as keyof FormInputs, '');
-              }
-            };
+          // After resetting fields, update the draft to clear the fields array
+          await updateDraft(draftIdFromUrl, watchedFields, currentStep);
 
-            draftData.fields.forEach((field: string) => {
-              try {
-                handleFieldReset(field);
-              } catch (error) {
-                console.error(`Error resetting field ${field}:`, error);
-              }
-            });
-
-            // After resetting fields, update the draft to clear the fields array
-            await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-
-            // Update draft status to 'correction'
-            await updateDraftStatus(draftIdFromUrl, 'correction');
-          }
+          // Update draft status to 'correction'
+          await updateDraftStatus(draftIdFromUrl, 'correction');
         }
+      }
+    } else if (access_profile) {
+      // No draft, fill form with access profile data
+      const formDefaults = {
+        username: access_profile.preferred_username || '',
+        first_name: access_profile.given_name?.toUpperCase() || '',
+        last_name: access_profile.family_name?.toUpperCase() || '',
+        primary_email: access_profile.email || '',
+        gender: access_profile.gender || '',
+        // Add other fields as needed based on your FormInputs type
       };
-
-      fetchDraft();
+      
+      // Set form values
+      Object.entries(formDefaults).forEach(([key, value]) => {
+        if (value) {
+          setValue(key as keyof FormInputs, value);
+        }
+      });
     }
+  };
+
+  initializeForm();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadDraft, reset, setValue, updateDraft]);
+}, [loadDraft, reset, setValue, updateDraft]);
 
   type FieldName = keyof FormInputs
 
@@ -637,7 +730,7 @@ export default function Form() {
                             {...register('first_name')}
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your first name"
-                            disabled={submitting}
+                            disabled
                           />
                           {errors.first_name && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -657,6 +750,7 @@ export default function Form() {
                             {...register('last_name')}
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your last name"
+                            disabled
                           />
                           {errors.last_name && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -766,10 +860,10 @@ export default function Form() {
                           )}
                         </div>}
 
-                        {/* National ID OR Passport*/}
+                        {/* National ID OR 1GOV ID*/}
                         <div className="space-y-2">
                           <Label htmlFor='username' className="text-sm font-medium text-gray-700">
-                            National/Passport ID <span className="text-red-500">*</span>
+                            National/1Gov ID <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             id='username'
@@ -959,6 +1053,7 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
+                            disabled
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
