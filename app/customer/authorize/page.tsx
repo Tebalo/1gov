@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthResponse, DecodedToken } from '@/app/lib/types'
 import { jwtDecode } from 'jwt-decode'
@@ -13,7 +13,7 @@ type AuthState = {
   isRedirecting: boolean
 }
 
-export default function AuthorizePage() {
+function AuthorizeContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [token, setToken] = useState<string | null>(null)
@@ -150,5 +150,22 @@ export default function AuthorizePage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function AuthorizePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8">
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+          <p className="text-sm text-gray-600 text-center mt-4">Loading...</p>
+        </div>
+      </div>
+    }>
+      <AuthorizeContent />
+    </Suspense>
   )
 }
