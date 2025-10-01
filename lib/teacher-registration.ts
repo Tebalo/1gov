@@ -183,7 +183,7 @@ export async function submitTeacherRegistration(
     // Transform the form data to match the API structure
     const requestPayload = await transformFormData(formData, profile, draft_id)
     // console.log('Url:', TEACHER_REGISTRATION_ENDPOINT)
-    console.log('Submitting teacher registration:', JSON.stringify(requestPayload))
+    // console.log('Submitting teacher registration:', JSON.stringify(requestPayload))
     
     // Make the API request
     const response = await fetch(TEACHER_REGISTRATION_ENDPOINT, {

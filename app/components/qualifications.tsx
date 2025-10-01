@@ -113,9 +113,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingQualification, setEditingQualification] = useState<QualificationEntry | null>(null)
   const [formData, setFormData] = useState({
-    level: '',
-    institution: '',
-    major_subjects: '',
+    // level: '',
+    // institution: '',
+    // major_subjects: '',
     alt_qualification: '',
     alt_qualification_year: '',
     alt_attachments: null as UploadResponse | null
@@ -124,9 +124,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
 
   const resetForm = () => {
     setFormData({
-      level: '',
-      institution: '',
-      major_subjects: '',
+      // level: '',
+      // institution: '',
+      // major_subjects: '',
       alt_qualification: '',
       alt_qualification_year: '',
       alt_attachments: null
@@ -139,9 +139,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
     if (qualification) {
       setEditingQualification(qualification)
       setFormData({
-        level: qualification.level || '',
-        institution: qualification.institution || '',
-        major_subjects: qualification.major_subjects || '',
+        // level: qualification.level || '',
+        // institution: qualification.institution || '',
+        // major_subjects: qualification.major_subjects || '',
         alt_qualification: qualification.alt_qualification,
         alt_qualification_year: qualification.alt_qualification_year,
         alt_attachments: qualification.alt_attachments
@@ -189,9 +189,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
       id: editingQualification?.id || Date.now().toString(),
       alt_qualification: formData.alt_qualification.trim(),
       alt_qualification_year: formData.alt_qualification_year.trim(),
-      level: formData.level,
-      institution: formData.institution,
-      major_subjects: formData.major_subjects,
+      // level: formData.level,
+      // institution: formData.institution,
+      // major_subjects: formData.major_subjects,
       alt_attachments: formData.alt_attachments!
     }
 
@@ -267,7 +267,7 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
               </DialogHeader>
               
               <div className="space-y-4">
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="level" className="text-sm font-medium text-gray-700">
                     Teaching Qualification Level <span className="text-red-500">*</span>
                   </Label>
@@ -295,9 +295,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                       {formErrors.level}
                     </p>
                   )}
-                </div>
+                </div> */}
  
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="institution" className="text-sm font-medium text-gray-700">
                     Institution <span className="text-red-500">*</span>
                   </Label>
@@ -314,9 +314,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                       {formErrors.institution}
                     </p>
                   )}
-                </div>
+                </div> */}
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="major_subjects" className="text-sm font-medium text-gray-700">
                     Subject Specialization  <span className="text-red-500">*</span>
                   </Label>
@@ -333,7 +333,7 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                       {formErrors.major_subjects}
                     </p>
                   )}
-                </div>
+                </div> */}
 
                 <div className="space-y-2">
                   <Label htmlFor="qualification" className="text-sm font-medium text-gray-700">
@@ -453,9 +453,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Year</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Specialization</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Institution</th>                   
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Certificate</th>
+                    {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Specialization</th> */}
+                    {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Institution</th>                    */}
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification Attachment</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 w-[100px]">Actions</th>
                   </tr>
                 </thead>
@@ -466,12 +466,12 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                         {qualification.alt_qualification}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">{qualification.alt_qualification_year}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      {/* <td className="px-4 py-3 text-sm font-medium text-gray-900">
                         {qualification.institution}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      </td> */}
+                      {/* <td className="px-4 py-3 text-sm font-medium text-gray-900">
                         {qualification.major_subjects}
-                      </td>
+                      </td> */}
                       <td className="px-4 py-3 text-sm">
                         {qualification.alt_attachments ? (
                           <div className="flex items-center space-x-2">

@@ -16,7 +16,7 @@ const QualificationSchema = z.object({
 export const FormDataSchema = z.object({
   first_name: z.string().min(1, 'First name is required'),
   last_name: z.string().min(1, 'Last name is required'),
-  // primary_email: z.string().min(1, 'Email is required').email('Invalid email'),
+  primary_email: z.string().optional(),
   citizenship: z.string().min(1, 'Citizenship is required'),
   surname: z.string().optional(),
   middle_name: z.string().optional(),

@@ -271,7 +271,7 @@ export default function Form() {
         surname: formData.surname || formData.last_name,
         date_of_birth: formData.date_of_birth,
         citizenship: formData.citizenship,
-        // primary_email: formData.primary_email,
+        primary_email: formData.primary_email,
         primary_phone: formData.primary_phone,
         primary_physical: formData.primary_physical,
         primary_postal: formData.primary_postal,
@@ -355,6 +355,7 @@ export default function Form() {
         citizenship: formData.citizenship,
         primary_phone: formData.primary_phone,
         primary_physical: formData.primary_physical,
+        primary_email: formData.primary_email,
         primary_postal: formData.primary_postal,
         gender: formData.gender,
         nationality: formData.nationality || "",
@@ -949,6 +950,21 @@ export default function Form() {
                           )}
                         </div>
 
+                        {/* Primary Email */}
+                        <div className='space-y-2'>
+                          <Label htmlFor='primary_email'>Primary Email *</Label>
+                          <Input
+                            id='primary_email'
+                            type='tel'
+                            placeholder='e.g. yourname@gmail.com'
+                            {...register('primary_email')}
+                            className='mt-1'
+                          />
+                          {errors.primary_email && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
+                          )}
+                        </div>
+
                         {/* Primary Physical */} 
                         <div className='space-y-2'>
                           <Label htmlFor='primary_physical'>Physical Address *</Label>
@@ -1211,10 +1227,10 @@ export default function Form() {
                               <SelectValue placeholder='Select school level' />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='pre-primary'>Pre-Primary</SelectItem>
-                              <SelectItem value='primary'>Primary</SelectItem>
-                              <SelectItem value='junior school'>Junior School</SelectItem>
-                              <SelectItem value='senior school'>Senior Secondary</SelectItem>
+                              <SelectItem value='Pre-primary'>Pre-Primary</SelectItem>
+                              <SelectItem value='Primary'>Primary</SelectItem>
+                              <SelectItem value='Junior Secondary'>Junior School</SelectItem>
+                              <SelectItem value='Senior Secondary'>Senior Secondary</SelectItem>
                             </SelectContent>
                           </Select>
                           {errors.school_level && (
@@ -1619,7 +1635,7 @@ export default function Form() {
                         </div>}
 
                         {/* Primary school */}
-                        {watch('school_level') === 'primary' && watch('institution_type') === 'public' && <div className='space-y-2'>
+                        {watch('school_level') === 'Primary' && watch('institution_type') === 'public' && <div className='space-y-2'>
                             <Label htmlFor='primary_schools' className="text-sm font-medium text-gray-700">
                               Primary School <span className="text-red-500">*</span>
                             </Label>
@@ -1641,7 +1657,7 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {watch('school_level') === 'primary' && watch('district') === 'central' && centralPrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level') === 'Primary' && watch('district') === 'central' && centralPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label || watch('primary_schools')}
@@ -1848,7 +1864,7 @@ export default function Form() {
                         </div>}
 
                         {/* Junior school */}
-                        {watch('school_level') === 'junior school' && watch('institution_type') === 'public' && <div className='space-y-2'>
+                        {watch('school_level') === 'Junior Secondary' && watch('institution_type') === 'public' && <div className='space-y-2'>
                             <Label htmlFor='junior_schools' className="text-sm font-medium text-gray-700">
                               Junior School <span className="text-red-500">*</span>
                             </Label>
@@ -2077,7 +2093,7 @@ export default function Form() {
                         </div>}
 
                         {/* Senior school */}
-                        {watch('school_level') === 'senior school' && watch('institution_type') === 'public' && <div className='space-y-2'>
+                        {watch('school_level') === 'Senior Secondary' && watch('institution_type') === 'public' && <div className='space-y-2'>
                             <Label htmlFor='senior_schools' className="text-sm font-medium text-gray-700">
                               Senior School <span className="text-red-500">*</span>
                             </Label>

@@ -228,6 +228,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                     <Text label={"Primary Phone"} value={data.bio_datas?.mobile}/>
                                     <Text label={"Physical Address"} value={data.bio_datas?.physical_address}/>
                                     <Text label={"Postal Address"} value={data.bio_datas?.postal_address}/>
+                                    <Text label={"Email"} value={data.bio_datas?.email}/>
                                     <DownloadLink 
                                         label="National ID Copy" 
                                         url={data.attachments?.national_id_copy}
