@@ -203,6 +203,7 @@ export default function Form() {
   const [submittingDraft,setSubmittingDraft] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
   const { toast } = useToast();
+  const [isLoadingForm, setIsLoadingForm] = useState(true);
   const router = useRouter()
 
   const [userId, setUserId] = useState('');
@@ -492,97 +493,105 @@ export default function Form() {
   // }, [loadDraft, reset, setValue, updateDraft]);
 
   useEffect(() => {
-  const initializeForm = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const draftIdFromUrl = urlParams.get('draftId');
-    
-    // Fetch access groups data
-    const access_profile = await getAccessGroups();
-    
-    if (draftIdFromUrl) {
-      // If there's a draft, load it
-      const draftData = await loadDraft(draftIdFromUrl);
-      setFields(draftData?.fields || []);
-      setCurrentStep(draftData.currentStep || 0);
-      
-      if (draftData) {
-        reset(draftData);
-        setNationalIdDoc(draftData.national_id_copy || null);
-        setQualifications(draftData.qualifications || []);
-        setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
-        setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
-        setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
-        setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
-        setMandatoryDoc(draftData.attachments || null);
+    const initializeForm = async () => {
+      try {
+        setIsLoadingForm(true);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const draftIdFromUrl = urlParams.get('draftId');
+        
+        // Fetch access groups data
+        const access_profile = await getAccessGroups();
+        
+        if (draftIdFromUrl) {
+          // If there's a draft, load it
+          const draftData = await loadDraft(draftIdFromUrl);
+          setFields(draftData?.fields || []);
+          setCurrentStep(draftData.currentStep || 0);
+          
+          if (draftData) {
+            reset(draftData);
+            setNationalIdDoc(draftData.national_id_copy || null);
+            setQualifications(draftData.qualifications || []);
+            setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
+            setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
+            setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
+            setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
+            setMandatoryDoc(draftData.attachments || null);
 
-        /**
-         * Clear fields that were requested to be corrected
-         */
-        if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
-          const handleFieldReset = (field: string) => {
-            switch (field) {
-              case 'national_id_copy':
-                if (draftData.national_id_copy) setNationalIdDoc(null);
-                break;
-              case 'qualifications':
-                if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-                break;
-              case 'student_related_offence_attachment':
-                if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-                break;
-              case 'drug_related_offence_attachments':
-                if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-                break;
-              case 'license_flag_details_attachment':
-                if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-                break;
-              case 'misconduct_flag_details_attachment':
-                if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-                break;
-              default:
-                // Clear the form field value
-                setValue(field as keyof FormInputs, '');
+            /**
+             * Clear fields that were requested to be corrected
+             */
+            if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
+              const handleFieldReset = (field: string) => {
+                switch (field) {
+                  case 'national_id_copy':
+                    if (draftData.national_id_copy) setNationalIdDoc(null);
+                    break;
+                  case 'qualifications':
+                    if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+                    break;
+                  case 'student_related_offence_attachment':
+                    if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+                    break;
+                  case 'drug_related_offence_attachments':
+                    if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+                    break;
+                  case 'license_flag_details_attachment':
+                    if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+                    break;
+                  case 'misconduct_flag_details_attachment':
+                    if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+                    break;
+                  default:
+                    // Clear the form field value
+                    setValue(field as keyof FormInputs, '');
+                }
+              };
+
+              draftData.fields.forEach((field: string) => {
+                try {
+                  handleFieldReset(field);
+                } catch (error) {
+                  console.error(`Error resetting field ${field}:`, error);
+                }
+              });
+
+              // After resetting fields, update the draft to clear the fields array
+              await updateDraft(draftIdFromUrl, watchedFields, currentStep);
+
+              // Update draft status to 'correction'
+              await updateDraftStatus(draftIdFromUrl, 'correction');
             }
+          }
+        } else if (access_profile) {
+          // No draft, fill form with access profile data
+          const formDefaults = {
+            username: access_profile.preferred_username || '',
+            first_name: access_profile.given_name?.toUpperCase() || '',
+            last_name: access_profile.family_name?.toUpperCase() || '',
+            primary_email: access_profile.email || '',
+            gender: access_profile.gender || '',
+            // Add other fields as needed based on your FormInputs type
           };
-
-          draftData.fields.forEach((field: string) => {
-            try {
-              handleFieldReset(field);
-            } catch (error) {
-              console.error(`Error resetting field ${field}:`, error);
+          
+          // Set form values
+          Object.entries(formDefaults).forEach(([key, value]) => {
+            if (value) {
+              setValue(key as keyof FormInputs, value);
             }
           });
-
-          // After resetting fields, update the draft to clear the fields array
-          await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-
-          // Update draft status to 'correction'
-          await updateDraftStatus(draftIdFromUrl, 'correction');
         }
+      } catch (error) {
+        console.error('Error initializing form:', error);
+      } finally {
+        setIsLoadingForm(false);
       }
-    } else if (access_profile) {
-      // No draft, fill form with access profile data
-      const formDefaults = {
-        username: access_profile.preferred_username || '',
-        first_name: access_profile.given_name?.toUpperCase() || '',
-        last_name: access_profile.family_name?.toUpperCase() || '',
-        primary_email: access_profile.email || '',
-        gender: access_profile.gender || '',
-        // Add other fields as needed based on your FormInputs type
-      };
-      
-      // Set form values
-      Object.entries(formDefaults).forEach(([key, value]) => {
-        if (value) {
-          setValue(key as keyof FormInputs, value);
-        }
-      });
-    }
-  };
+    };
 
-  initializeForm();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [loadDraft, reset, setValue, updateDraft]);
+    initializeForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadDraft, reset, setValue, updateDraft]);
 
   type FieldName = keyof FormInputs
 
@@ -627,6 +636,17 @@ export default function Form() {
     }
   }
 
+  if (isLoadingForm) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+          <p className="mt-4 text-gray-600">Loading form...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className='bg-gray-50 md:p-2 max-h-screen'>
       <div className='max-w-9xl mx-auto flex gap-6'>
@@ -659,7 +679,7 @@ export default function Form() {
           )}
           {/* Progress Steps */}
           <nav aria-label='Progress' className='md:px-6 py-6 border-b md:block hidden'>
-            <ol role='list' className='space-y-4 md:flex md:space-x-8 md:space-y-0'>
+            {/* <ol role='list' className='space-y-4 md:flex md:space-x-8 md:space-y-0'>
               {steps.map((step, index) => (
                 <li key={step.name} className='md:flex-1'>
                   {currentStep > index ? (
@@ -688,6 +708,70 @@ export default function Form() {
                     </div>
                   )}
                 </li>
+              ))}
+            </ol> */}
+            <ol role='list' className='space-y-4 md:flex md:space-x-0 md:space-y-0'>
+              {steps.map((step, index) => (
+                  <li key={step.name} className='md:flex-1'>
+                  {currentStep > index ? (
+                      <div>
+                          <div className="flex justify-center mt-2">
+                              <span className="text-xs font-light text-blue-600">{step.name}</span>
+                          </div>
+                          <div className="flex items-center justify-center">
+                              {index > 0 ? (
+                              <div className="w-full h-0.5 bg-blue-600"></div>
+                              ) : (
+                              <div className="w-full"></div>
+                              )}
+                              <div className="w-4 h-4 bg-blue-600 rounded-full flex-shrink-0"></div>
+                              {index < steps.length - 1 ? (
+                              <div className="w-full h-0.5 bg-blue-600"></div>
+                              ) : (
+                              <div className="w-full"></div>
+                              )}
+                          </div>
+                      </div>
+                  ) : currentStep === index ? (
+                      <div>
+                          <div className="flex justify-center mt-2">
+                              <span className="text-xs font-light text-blue-600">{step.name}</span>
+                          </div>
+                          <div className="flex items-center justify-center">
+                              {index > 0 ? (
+                              <div className="w-full h-0.5 bg-blue-600"></div>
+                              ) : (
+                              <div className="w-full"></div>
+                              )}
+                              <div className="w-4 h-4 border-2 border-blue-600 bg-white rounded-full flex-shrink-0 hover:cursor-pointer"></div>
+                              {index < steps.length - 1 ? (
+                              <div className="w-full h-0.5 bg-gray-300"></div>
+                              ) : (
+                              <div className="w-full"></div>
+                              )}
+                          </div>
+                      </div>
+                  ) : (
+                      <div>
+                          <div className="flex justify-center mt-2">
+                              <span className="text-xs font-light text-gray-500">{step.name}</span>
+                          </div>
+                          <div className="flex items-center justify-center">
+                              {index > 0 ? (
+                              <div className="w-full h-0.5 bg-gray-300"></div>
+                              ) : (
+                              <div className="w-full"></div>
+                              )}
+                              <div className="w-4 h-4 border-2 border-gray-300 bg-white rounded-full flex-shrink-0 hover:cursor-pointer"></div>
+                              {index < steps.length - 1 ? (
+                              <div className="w-full h-0.5 bg-gray-300"></div>
+                              ) : (
+                              <div className="w-full"></div>
+                              )}
+                          </div>
+                      </div>
+                  )}
+                  </li>
               ))}
             </ol>
           </nav>
@@ -871,6 +955,7 @@ export default function Form() {
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national/passport ID number"
                             inputMode="numeric"
+                            disabled
                           />
                           {errors.username && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
