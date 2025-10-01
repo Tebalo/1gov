@@ -4,11 +4,10 @@ import React, { useRef, useState } from 'react';
 import { Role } from "@/app/lib/store";
 import { TeacherResponse } from "../types/teacher-type";
 import { Button } from "@/components/ui/button";
-import {  BriefcaseBusiness, GraduationCap, Star, FileCheck, PlusCircle} from 'lucide-react';
+import {  BriefcaseBusiness, GraduationCap, Star, FileCheck} from 'lucide-react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { TriangleDownIcon } from "@radix-ui/react-icons";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import { Text } from "../components/text";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -91,7 +90,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     return (
 <section className="w-full h-screen overflow-hidden bg-gray-50">
-    <div className="h-full flex gap-6 p-2 md:p-4">
+    <div className="h-full flex gap-6 p-2 md:p-2">
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0 h-full">
@@ -320,7 +319,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                     <Text label={"Experience"} value={data.employment_details?.experience_years}/>
                                     <Text label={"Region"} value={data.employment_details?.region}/>
                                     <Text label={"Institution"} value={data.employment_details?.institution_type}/>
-                                    <Text label={"Private School"} value={data.employment_details?.current_institution}/>
+                                    <Text label={"School"} value={data.employment_details?.current_institution}/>
                                 </div>                                
                             </motion.div>
                         )}
@@ -413,28 +412,35 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                             >
                                 <div className='grid grid-cols-1 gap-4 sm:gap-6'>
                                     <Text label={"Are you living with any form of disability"} value={data.bio_datas?.disability}/>
-                                    <Text label={"Have you been convicted of a criminal offense against a learner or minor?"} value={data.bio_datas?.disability_description}/>
+                                    {data.bio_datas?.disability?.toUpperCase()==="YES" && <Text label={"Have you been convicted of a criminal offense against a learner or minor?"} value={data.bio_datas?.disability_description}/>}
                                     <Separator/>
                                     <Text label={"Have you been convicted of a drug related criminal offense?"} value={data.offence_convictions?.drug_related_offence}/>
-                                    <Text label={"If yes, please provide full details"} value={data.offence_convictions?.drug_related_offence_details}/>
-                                    <DownloadLink 
-                                        label="Provide supporting evidence/documentation if any (Upload in pdf format) Attachments (optional)" 
-                                        url={data.offence_convictions?.drug_related_offence_attachments}
-                                        variant="default"
-                                        />
+                                    {data.offence_convictions?.drug_related_offence_attachments?.toUpperCase()==="YES" && (
+                                    <>
+                                        <Text label={"If yes, please provide full details"} value={data.offence_convictions?.drug_related_offence_details}/>
+                                        <DownloadLink 
+                                            label="Provide supporting evidence/documentation if any (Upload in pdf format) Attachments (optional)" 
+                                            url={data.offence_convictions?.drug_related_offence_attachments}
+                                            variant="default"
+                                            />
+                                    </>
+                                    )}
                                     <Separator/>
-                                    <Text label={"Have you ever had your teaching license revoked, suspended, invalidated, cancelled or denied license by any Teaching Council or Authority?"} value={data.offence_convictions?.license_flag}/>                                            <DownloadLink 
+                                    <Text 
+                                    label={"Have you ever had your teaching license revoked, suspended, invalidated, cancelled or denied license by any Teaching Council or Authority?"} 
+                                    value={data.offence_convictions?.license_flag}/>                                            
+                                    {data.offence_convictions?.license_flag?.toUpperCase()==="YES" && <DownloadLink 
                                         label="If yes, please attach a letter giving full details and official documentation of the action taken. Attachments (optional)" 
                                         url={data.offence_convictions?.license_flag_details}
                                         variant="default"
-                                    />
+                                    />}
                                     <Separator/>
                                     <Text label={"Are you currently the subject of any review, enquiry or investigations by any Teaching Council or any Authority?"} value={data.offence_convictions?.misconduct_flag}/>
-                                    <DownloadLink 
+                                    {data.offence_convictions?.license_flag?.toUpperCase()==="YES" && <DownloadLink 
                                         label="If yes, please attach a letter giving full details and any official documentation available regarding the matter. Attachments (optional)" 
                                         url={data.offence_convictions?.misconduct_flag_details}
                                         variant="default"
-                                    />
+                                    />}
                                 </div>                                
                             </motion.div>
                         )}
@@ -485,7 +491,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                 </span>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                <Button 
+                                {/* <Button 
                                 type='button'
                                 className='flex items-center gap-2 rounded-full'
                                 variant={"outline"}
@@ -505,7 +511,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                         d='M4.5 12.75l6 6 9-13.5'
                                         />
                                     </svg>
-                                </Button>
+                                </Button> */}
                                 {currentStep == steps.length - 1 && <Button 
                                     type="submit" 
                                     className="flex items-center gap-2 rounded-full" 

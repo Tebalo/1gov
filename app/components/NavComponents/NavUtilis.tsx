@@ -76,7 +76,7 @@ const NavUtils: React.FC<NavUtilsProps> = ({ accessProfile }) => {
           <Button variant="ghost" className="h-14 w-14 p-0 flex flex-col items-center justify-center gap-1">
             <Avatar className="h-6 w-6">
               <AvatarImage src="/avatars/011.png" alt="Avatar" />
-              <AvatarFallback>{accessProfile?.username[0]}</AvatarFallback>
+              <AvatarFallback>{accessProfile?.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <span className="text-[10px] text-center font-medium text-muted-foreground">Profile</span>
           </Button>

@@ -3276,6 +3276,7 @@ export async function getTeacherRegistrationById(Id: string, assigned_to?:string
       bio_datas: result?.bio_datas,
       teacher_preliminary_infos: result?.teacher_preliminary_infos,
       employment_details: result?.employment_details,
+      offence_convictions: result?.offence_convictions,
       edu_pro_qualifications: result?.edu_pro_qualifications,
       other_qualifications: result?.other_qualifications,
       background_checks: result?.background_checks,

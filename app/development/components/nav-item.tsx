@@ -18,35 +18,27 @@ export function NavItem({ href, label, children }: NavItemProps) {
   return (
     <Link
       href={href}
-      className={cn(
-        "group relative flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 hover:scale-105",
-        isActive 
-          ? "bg-gradient-to-br from-blue-500 to-indigo-300 text-white shadow-lg shadow-blue-500/25" 
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
-      )}
+      className="group relative flex flex-col items-center gap-1 transition-all duration-200"
     >
-      {/* Active indicator */}
-      {isActive && (
-        <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-400 to-indigo-300 rounded-l-full"></div>
-      )}
-      
-      {/* Icon */}
+      {/* Icon container */}
       <div className={cn(
-        "transition-transform duration-300",
-        isActive ? "scale-110" : "group-hover:scale-110"
+        "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200",
+        isActive 
+          ? "bg-sky-500 text-white shadow-sm" 
+          : "text-gray-400 hover:text-sky-500 hover:bg-sky-50"
       )}>
         {children}
       </div>
       
-      {/* Tooltip */}
-      <div className={cn(
-        "absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap z-50",
-        "group-hover:opacity-100 group-hover:translate-x-1"
+      {/* Label */}
+      <span className={cn(
+        "text-[10px] font-medium transition-colors duration-200",
+        isActive 
+          ? "text-sky-600" 
+          : "text-gray-400 group-hover:text-sky-500"
       )}>
         {label}
-        {/* Tooltip arrow */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
-      </div>
+      </span>
 
       <span className="sr-only">{label}</span>
     </Link>
