@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Plus, Edit, Trash2, FileText, AlertCircle, CheckCircle } from 'lucide-react'
 import FileUpload from './file-upload'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 
 interface UploadResponse {
@@ -90,8 +91,11 @@ const SimpleFileUpload: React.FC<FileUploadProps> = ({ name, label, value, onCha
 // Main Qualifications Table Component
 export interface QualificationEntry {
   id: string
+  level?: string
   alt_qualification: string
   alt_qualification_year: string
+  institution?: string
+  major_subjects?: string
   alt_attachments: UploadResponse | null
 }
 
@@ -109,6 +113,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingQualification, setEditingQualification] = useState<QualificationEntry | null>(null)
   const [formData, setFormData] = useState({
+    // level: '',
+    // institution: '',
+    // major_subjects: '',
     alt_qualification: '',
     alt_qualification_year: '',
     alt_attachments: null as UploadResponse | null
@@ -117,6 +124,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
 
   const resetForm = () => {
     setFormData({
+      // level: '',
+      // institution: '',
+      // major_subjects: '',
       alt_qualification: '',
       alt_qualification_year: '',
       alt_attachments: null
@@ -129,6 +139,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
     if (qualification) {
       setEditingQualification(qualification)
       setFormData({
+        // level: qualification.level || '',
+        // institution: qualification.institution || '',
+        // major_subjects: qualification.major_subjects || '',
         alt_qualification: qualification.alt_qualification,
         alt_qualification_year: qualification.alt_qualification_year,
         alt_attachments: qualification.alt_attachments
@@ -176,6 +189,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
       id: editingQualification?.id || Date.now().toString(),
       alt_qualification: formData.alt_qualification.trim(),
       alt_qualification_year: formData.alt_qualification_year.trim(),
+      // level: formData.level,
+      // institution: formData.institution,
+      // major_subjects: formData.major_subjects,
       alt_attachments: formData.alt_attachments!
     }
 
@@ -250,7 +266,75 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-4">
+                {/* <div className="space-y-2">
+                  <Label htmlFor="level" className="text-sm font-medium text-gray-700">
+                    Teaching Qualification Level <span className="text-red-500">*</span>
+                  </Label>
+                  <Select 
+                    onValueChange={(value) => handleInputChange('level', value)}
+                    value={formData.level }
+                  >
+                    <SelectTrigger className={`h-11 text-base ${formErrors.level ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}>
+                      <SelectValue placeholder="e.g., Diploma" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='Certificate'>Certificate</SelectItem>
+                      <SelectItem value='Diploma'>Diploma</SelectItem>
+                      <SelectItem value='Post-Graduate Diploma'>Post-Graduate Diploma</SelectItem>
+                      <SelectItem value="Bachelor's Degree">Bachelor&lsquo;s Degree</SelectItem>
+                      <SelectItem value="Bachelor's Degree Honours">Bachelor&lsquo;s Degree Honours</SelectItem>
+                      <SelectItem value="Master's Degree">Master&lsquo;s Degree</SelectItem>
+                      <SelectItem value="Doctoral Degree">Doctoral Degree</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {formErrors.level && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="text-xs">⚠</span>
+                      {formErrors.level}
+                    </p>
+                  )}
+                </div> */}
+ 
+                {/* <div className="space-y-2">
+                  <Label htmlFor="institution" className="text-sm font-medium text-gray-700">
+                    Institution <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="institution"
+                    value={formData.institution}
+                    onChange={(e) => handleInputChange('institution', e.target.value)}
+                    placeholder="e.g., BAC"
+                    className={`h-11 text-base ${formErrors.institution ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
+                  />
+                  {formErrors.institution && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="text-xs">⚠</span>
+                      {formErrors.institution}
+                    </p>
+                  )}
+                </div> */}
+
+                {/* <div className="space-y-2">
+                  <Label htmlFor="major_subjects" className="text-sm font-medium text-gray-700">
+                    Subject Specialization  <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="major_subjects"
+                    value={formData.major_subjects}
+                    onChange={(e) => handleInputChange('major_subjects', e.target.value)}
+                    placeholder="e.g., Economics"
+                    className={`h-11 text-base ${formErrors.major_subjects ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}`}
+                  />
+                  {formErrors.major_subjects && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <span className="text-xs">⚠</span>
+                      {formErrors.major_subjects}
+                    </p>
+                  )}
+                </div> */}
+
                 <div className="space-y-2">
                   <Label htmlFor="qualification" className="text-sm font-medium text-gray-700">
                     Qualification Name <span className="text-red-500">*</span>
@@ -369,7 +453,9 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Year</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Certificate</th>
+                    {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Specialization</th> */}
+                    {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Institution</th>                    */}
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Qualification Attachment</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 w-[100px]">Actions</th>
                   </tr>
                 </thead>
@@ -380,6 +466,12 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                         {qualification.alt_qualification}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">{qualification.alt_qualification_year}</td>
+                      {/* <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        {qualification.institution}
+                      </td> */}
+                      {/* <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        {qualification.major_subjects}
+                      </td> */}
                       <td className="px-4 py-3 text-sm">
                         {qualification.alt_attachments ? (
                           <div className="flex items-center space-x-2">

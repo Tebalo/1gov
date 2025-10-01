@@ -4,22 +4,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
-  Home, 
   Settings,
-  LayoutDashboard,
-  Briefcase,
-  ClipboardSignature,
-  ClipboardList,
   BarChart3,
   Building,
   FolderOpenDot,
+  ClipboardSignature,
+  ClipboardList,
 } from 'lucide-react';
 import { NavItem } from '@/app/development/components/nav-item';
 import NavUtils from '@/app/components/NavComponents/NavUtilis';
 import { AccessGroup } from '@/app/lib/types';
 import { SearchFormModal } from '@/app/components/search-teacher';
 
-// Define the type for sidebar items
 interface SideBarItem {
   path: string;
   icon: React.ReactNode;
@@ -34,17 +30,17 @@ interface DesktopNavProps {
 
 const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile }) => {
   const currentPath = usePathname();
-  // Define sidebar items
+  
   const sidebarItems: SideBarItem[] = [
     { 
         path: '/trls/home', 
-        icon: <Building size={24} color="#FFFFFF" />, 
+        icon: <Building size={20} />, 
         title: 'Home', 
         roles: ['*'] 
     },
     { 
         path: '/trls/dashboard', 
-        icon: <BarChart3 size={24} color="#FFFFFF" />, 
+        icon: <BarChart3 size={20} />, 
         title: 'Reports', 
         roles: [
             'MANAGER', 
@@ -52,21 +48,18 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
             'SNR_REGISTRATION_OFFICER', 
             'DIRECTOR', 
             'REGISTRAR', 
-            // 'INVESTIGATIONS_OFFICER', 
-            // 'SENIOR_INVESTIGATIONS_OFFICER', 
-            // 'INVESTIGATIONS_MANAGER', 
             'ADMIN'
         ] 
     },
     { 
         path: '/trls/work', 
-        icon: <FolderOpenDot size={24} color="#FFFFFF" />, 
+        icon: <FolderOpenDot size={20} />, 
         title: 'Work', 
         roles: ['*'] 
     },
     { 
         path: '/trls/registers', 
-        icon: <ClipboardSignature size={24} color="#FFFFFF" />, 
+        icon: <ClipboardSignature size={20} />, 
         title: 'Registers', 
         roles: [
             'REGISTRATION_OFFICER', 
@@ -78,7 +71,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
     },
     { 
         path: '/trls/activity', 
-        icon: <ClipboardList size={24} color="#FFFFFF" />, 
+        icon: <ClipboardList size={20} />, 
         title: 'Activities', 
         roles: [
             'INVESTIGATIONS_OFFICER', 
@@ -88,70 +81,57 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
             'DISCIPLINARY_COMMITTEE'
         ] 
     },
-    { 
-        path: '/trls/settings', 
-        icon: <Settings size={24} color="#FFFFFF" />, 
-        title: 'Settings', 
-        roles: [] 
-    },
   ];
 
-  // Check if user has access to the item
   const hasAccess = (itemRoles: string[]) => {
     return itemRoles.includes('*') || itemRoles.includes(currentPersona.toUpperCase());
   };
 
-  // Check if path is active
-  const isActivePath = (path: string) => {
-    if (path === '/trls') {
-      return currentPath === path;
-    }
-    return currentPath.startsWith(path);
-  };
-
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
-      {/* Decorative border accent */}
-      <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-blue-500 via-black-300 to-gray-300 opacity-60"></div>
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-20 flex-col border-r border-gray-200 bg-white sm:flex">
+      <nav className="flex flex-col items-center gap-3 px-2 py-4">
+        {/* Logo */}
         <Link
           href={'/trls/home'}
-          className="group flex h-14 w-14 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-14 md:w-14 md:text-base"
+          className="mb-2 flex h-12 w-12 shrink-0 items-center justify-center"
         >
-          <div className="w-12 h-12 items-center justify-center">
+          <div className="w-10 h-10">
             <Image
               src="/botepco.png"
               alt='Coat-of-arms'
-              width={100}
-              height={100}
+              width={40}
+              height={40}
               className="w-full h-full object-contain"
               priority
             />
           </div>
-          <span className="sr-only">TRLS DEV</span>
+          <span className="sr-only">TRLS</span>
         </Link>
+
+        {/* Divider */}
+        <div className="w-8 h-px bg-gray-200 mb-1" />
+        
         {/* Search */}
         <SearchFormModal/>
-        {/* Map through sidebar items */}
+        
+        {/* Navigation Items */}
         {sidebarItems.map((item, index) => (
           hasAccess(item.roles) && (
             <NavItem 
               key={index} 
               href={item.path} 
-            //   isActive={isActivePath(item.path)} 
               label={item.title}
             >
-              {React.cloneElement(item.icon as React.ReactElement, { 
-                color: isActivePath(item.path) ? "#FFFFFF" : undefined 
-              })}
+              {item.icon}
             </NavItem>
           )
         ))}
       </nav>
       
-      {/* Bottom nav section for settings */}
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-          <NavUtils accessProfile={access_profile} />
+      {/* Bottom section */}
+      <nav className="mt-auto flex flex-col items-center gap-3 px-2 py-4">
+        <div className="w-8 h-px bg-gray-200 mb-1" />
+        <NavUtils accessProfile={access_profile} />
       </nav>
     </aside>
   );

@@ -4,11 +4,10 @@ import React, { useRef, useState } from 'react';
 import { Role } from "@/app/lib/store";
 import { TeacherResponse } from "../types/teacher-type";
 import { Button } from "@/components/ui/button";
-import {  BriefcaseBusiness, GraduationCap, Star, FileCheck, PlusCircle} from 'lucide-react';
+import {  BriefcaseBusiness, GraduationCap, Star, FileCheck} from 'lucide-react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { TriangleDownIcon } from "@radix-ui/react-icons";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import { Text } from "../components/text";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -91,7 +90,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     return (
 <section className="w-full h-screen overflow-hidden bg-gray-50">
-    <div className="h-full flex gap-6 p-2 md:p-4">
+    <div className="h-full flex gap-6 p-2 md:p-2">
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0 h-full">
@@ -229,6 +228,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                     <Text label={"Primary Phone"} value={data.bio_datas?.mobile}/>
                                     <Text label={"Physical Address"} value={data.bio_datas?.physical_address}/>
                                     <Text label={"Postal Address"} value={data.bio_datas?.postal_address}/>
+                                    <Text label={"Email"} value={data.bio_datas?.email}/>
                                     <DownloadLink 
                                         label="National ID Copy" 
                                         url={data.attachments?.national_id_copy}
@@ -257,10 +257,8 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                         <Text label={"Subscription Due Date"} value={data.teacher_registrations?.subscription_due_date}/>
                                         <Text label={"License Expiry Date"} value={data.teacher_registrations?.license_expiry_date}/>
                                         <Text label={"Registration Type"} value={data.teacher_registrations?.registration_type}/>
-                                        <Text label={"Institution Verification"} value={data.teacher_registrations?.institution_verification}/>
-                                        <Text label={"Course Verification"} value={data.teacher_registrations?.course_verification}/>
-                                        <Text label={"License Status"} value={data.teacher_registrations?.license_status}/>
-                                        <Text label={"Pending Customer Action"} value={data.teacher_registrations?.pending_customer_action}/>
+                                        <Text label={"Submitted Via"} value={data.teacher_registrations?.submitted_via}/>
+                                        {/* <Text label={"Pending Customer Action"} value={data.teacher_registrations?.pending_customer_action}/> */}
                                     </div> 
                                     <Separator/>
                                     <Card className="p-4">
@@ -322,7 +320,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                     <Text label={"Experience"} value={data.employment_details?.experience_years}/>
                                     <Text label={"Region"} value={data.employment_details?.region}/>
                                     <Text label={"Institution"} value={data.employment_details?.institution_type}/>
-                                    <Text label={"Private School"} value={data.employment_details?.current_institution}/>
+                                    <Text label={"School"} value={data.employment_details?.current_institution}/>
                                 </div>                                
                             </motion.div>
                         )}
@@ -342,6 +340,8 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                         <Text label={"Qualification Year"} value={data.edu_pro_qualifications?.qualification_year}/>
                                         <Text label={"Subject Specialization"} value={data.edu_pro_qualifications?.major_subjects}/>
                                         <Text label={"Institution"} value={data.edu_pro_qualifications?.institution}/>
+                                        <Text label={"Institution Verification"} value={data.teacher_registrations?.institution_verification}/>
+                                        <Text label={"Course Verification"} value={data.teacher_registrations?.course_verification}/>
                                         <DownloadLink 
                                             label="Qualification Document" 
                                             url={data.edu_pro_qualifications?.attachments}
@@ -366,18 +366,14 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                             <Table>
                                                 <TableHeader>
                                                     <TableRow>
-                                                    <TableHead>Level</TableHead>
                                                     <TableHead>Qualification</TableHead>
                                                     <TableHead>Attachment</TableHead>
-                                                    <TableHead>Institution</TableHead>
                                                     <TableHead>Year</TableHead>
-                                                    <TableHead>Subjects</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
                                                     {data.other_qualifications.map((qual, index) => (
                                                     <TableRow key={index}>
-                                                        <TableCell>{qual.level ?? '-'}</TableCell>
                                                         <TableCell>{qual.qualification ?? '-'}</TableCell>
                                                         <TableCell className="w-32">
                                                             <DownloadLink 
@@ -386,9 +382,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                                                 variant="compact"
                                                                 />
                                                         </TableCell>
-                                                        <TableCell>{qual.institution ?? '-'}</TableCell>
                                                         <TableCell>{qual.qualification_year ?? '-'}</TableCell>
-                                                        <TableCell>{qual.major_subjects ?? '-'}</TableCell>
                                                     </TableRow>
                                                     ))}
                                                 </TableBody>
@@ -413,28 +407,35 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                             >
                                 <div className='grid grid-cols-1 gap-4 sm:gap-6'>
                                     <Text label={"Are you living with any form of disability"} value={data.bio_datas?.disability}/>
-                                    <Text label={"Have you been convicted of a criminal offense against a learner or minor?"} value={data.bio_datas?.disability_description}/>
+                                    {data.bio_datas?.disability?.toUpperCase()==="YES" && <Text label={"Have you been convicted of a criminal offense against a learner or minor?"} value={data.bio_datas?.disability_description}/>}
                                     <Separator/>
                                     <Text label={"Have you been convicted of a drug related criminal offense?"} value={data.offence_convictions?.drug_related_offence}/>
-                                    <Text label={"If yes, please provide full details"} value={data.offence_convictions?.drug_related_offence_details}/>
-                                    <DownloadLink 
-                                        label="Provide supporting evidence/documentation if any (Upload in pdf format) Attachments (optional)" 
-                                        url={data.offence_convictions?.drug_related_offence_attachments}
-                                        variant="default"
-                                        />
+                                    {data.offence_convictions?.drug_related_offence_attachments?.toUpperCase()==="YES" && (
+                                    <>
+                                        <Text label={"If yes, please provide full details"} value={data.offence_convictions?.drug_related_offence_details}/>
+                                        <DownloadLink 
+                                            label="Provide supporting evidence/documentation if any (Upload in pdf format) Attachments (optional)" 
+                                            url={data.offence_convictions?.drug_related_offence_attachments}
+                                            variant="default"
+                                            />
+                                    </>
+                                    )}
                                     <Separator/>
-                                    <Text label={"Have you ever had your teaching license revoked, suspended, invalidated, cancelled or denied license by any Teaching Council or Authority?"} value={data.offence_convictions?.license_flag}/>                                            <DownloadLink 
+                                    <Text 
+                                    label={"Have you ever had your teaching license revoked, suspended, invalidated, cancelled or denied license by any Teaching Council or Authority?"} 
+                                    value={data.offence_convictions?.license_flag}/>                                            
+                                    {data.offence_convictions?.license_flag?.toUpperCase()==="YES" && <DownloadLink 
                                         label="If yes, please attach a letter giving full details and official documentation of the action taken. Attachments (optional)" 
                                         url={data.offence_convictions?.license_flag_details}
                                         variant="default"
-                                    />
+                                    />}
                                     <Separator/>
                                     <Text label={"Are you currently the subject of any review, enquiry or investigations by any Teaching Council or any Authority?"} value={data.offence_convictions?.misconduct_flag}/>
-                                    <DownloadLink 
+                                    {data.offence_convictions?.license_flag?.toUpperCase()==="YES" && <DownloadLink 
                                         label="If yes, please attach a letter giving full details and any official documentation available regarding the matter. Attachments (optional)" 
                                         url={data.offence_convictions?.misconduct_flag_details}
                                         variant="default"
-                                    />
+                                    />}
                                 </div>                                
                             </motion.div>
                         )}
@@ -485,7 +486,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                 </span>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                <Button 
+                                {/* <Button 
                                 type='button'
                                 className='flex items-center gap-2 rounded-full'
                                 variant={"outline"}
@@ -505,7 +506,7 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
                                         d='M4.5 12.75l6 6 9-13.5'
                                         />
                                     </svg>
-                                </Button>
+                                </Button> */}
                                 {currentStep == steps.length - 1 && <Button 
                                     type="submit" 
                                     className="flex items-center gap-2 rounded-full" 
