@@ -573,6 +573,10 @@ export default function Form() {
             last_name: access_profile.family_name?.toUpperCase() || '',
             primary_email: access_profile.email || '',
             gender: access_profile.gender || '',
+            primary_postal: access_profile.postal_address || null,
+            primary_physical: access_profile.physical_address || null,
+            primary_phone: access_profile.phone || null,
+            date_of_birth: access_profile.date_of_birth || null,
           };
           
           // Set form values

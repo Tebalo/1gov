@@ -354,10 +354,10 @@ export function LoginForm({
         national_id: sessionData.profile.personal_info?.national_id || '',
         passport_id: sessionData.profile.personal_info.passport_id || '',
         family_name: sessionData.profile.personal_info.last_name,
-        preferred_username: String(sessionData.profile.contact_info.email_verified || ""), // Use email_verified as username;
-        email: String(sessionData.profile.contact_info.email_verified ?? ""), // Use email_verified as email;
+        preferred_username: String(sessionData.profile.personal_info?.national_id || ""), // Use email_verified as username;
+        email: String(sessionData.email ?? sessionData.username), // Use email_verified as email;
         email_verified: sessionData.profile.contact_info.email_verified ?? false, // Ensure email_verified is boolean;
-        gender: sessionData.profile.personal_info.gender ?? "not specified", // Default to "not;
+        gender: sessionData.profile.personal_info.gender ?? "", // Default to "not;
         acr: "1",
         realm_access: {
           roles: ["CUSTOMER"], 
@@ -369,6 +369,10 @@ export function LoginForm({
         },
         scope: "openid profile email",
         sid: "session-id", 
+        postal_address: sessionData.profile.contact_info.postal_address || null,
+        physical_address: sessionData.profile.contact_info.physical_address || null,
+        phone: sessionData.profile.contact_info.phone || null,
+        date_of_birth: sessionData.profile.personal_info.date_of_birth || null,
         client_id: String(sessionData.user_id || 1), // Use client_id from sessionData
         username: String(sessionData.profile.contact_info.email_verified || ""), // Use email_verified as username;
         active: true, // Assuming the user is active;

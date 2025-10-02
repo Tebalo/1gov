@@ -279,8 +279,6 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   const renderDocuments = () => (
     <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy}/>
-      <InfoItem label="Qualification Documents" value={data.attachments?.qualification_copy}/>
-      <InfoItem label="Proof of Payment" value={data.attachments?.proof_of_payment}/>
       <InfoItem label="License Certificate" value={data.teacher_registrations?.license_link}/>
       <InfoItem label="Receipt" value={data.teacher_registrations?.recite}/>
       <InfoItem label="Invoice" value={data.teacher_registrations?.invoice}/>
@@ -300,7 +298,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <CaseHeader 
         caseId={'TR-'+data?.teacher_registrations?.national_id ?? ''} 
         caseTitle={'Teacher Registration Request'} 
-        caseStatus={data?.teacher_registrations?.reg_status ?? ''} 
+        caseStatus={(data?.teacher_registrations?.reg_status != "Manager-Approved" ? data?.teacher_registrations?.reg_status: data.teacher_registrations?.endorsement_status) || ''} 
         caseType={'Teacher Registration'} 
         caseCreatedDate={data?.teacher_registrations?.created_at ?? ''} 
         caseCreatedBy={fullName} 
