@@ -87,6 +87,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
 
   useEffect(() => {
     fetchRegistrationData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userId]);
 
   // Helper functions for conditional logic
@@ -210,7 +211,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
               {shouldShowLicenseDownload(registrationData) && (
                 <>
                   <a
-                    href={registrationData.license_link ?? '#'}
+                    href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.license_link ?? '')}&embedded=true`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
@@ -237,7 +238,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
 
               {registrationData.invoice && (
                 <a
-                  href={registrationData.invoice}
+                  href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.invoice ?? '')}&embedded=true`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
