@@ -142,9 +142,9 @@ export interface AccessGroup {
   userid: string;
   gender?: string;
   preferred_username?: string;
+  email?: string;
   given_name?: string;
   family_name?: string;
-  email?: string;
   nationalId?: string;
   passportId?: string;
   systemId?: number
@@ -619,19 +619,7 @@ interface teacher_registrations {
   reg_number: string | null;
   reg_status: string | null;
   endorsement_status: string;
-  work_status: string | null;
-  draft_id: string | null;
-  submitted_via: string | null;
-  recite: string | null;
-  invoice: string | null;
-  charges: string | null;
-  paid_at: string | null;
-  payment_link: string | null;
   rejection_reason: string | null;
-  subscription_due_date: string | null;
-  license_expiry_date: string | null;
-  assigned_to: string | null;
-  submission_id: string | null;
   service_code: string | null;
   payment_ref: string | null;
   payment_amount: string | null;
