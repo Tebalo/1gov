@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap, Coins} from 'lucide-react'
+import { Info, FileCheck, File, Briefcase, School, AlertTriangle, GraduationCap, Coins, ShieldAlert} from 'lucide-react'
 import { Role } from '@/app/lib/store';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import InfoCard from '@/app/components/InfoCard';
@@ -44,6 +44,8 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Gender" value={data.bio_datas?.gender}/>
       <InfoItem label="Email" value={data.bio_datas?.email}/>
       <InfoItem label="Mobile" value={data.bio_datas?.mobile}/>
+      <InfoItem label="Disability" value={data.bio_datas?.disability}/>
+      <InfoItem label="Disability Description" value={data.bio_datas?.disability_description}/>
     </InfoCard>
   );
 
@@ -61,19 +63,24 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
 
   const renderRegistrationInfo = () => (
     <InfoCard title='Registration Information' icon={<FileCheck className="w-6 h-6 text-blue-500"/>} columns={2}>
+      <InfoItem label="Registration Number" value={data.teacher_registrations?.reg_number}/>
       <InfoItem label="Registration Status" value={data.teacher_registrations?.reg_status}/>
       <InfoItem label="Endorsement Status" value={data.teacher_registrations?.endorsement_status}/>
+      <InfoItem label="License Status" value={data.teacher_registrations?.license_status}/>
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
-      <InfoItem label="Payment Amount" value={String(Number(data.teacher_registrations?.payment_amount)/100)}/>
+      <InfoItem label="Payment Amount" value={'P '+String(Number(data.teacher_registrations?.payment_amount)/100)+'.00'}/>
       <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name || "Teacher Registration and License"}/>
       <InfoLink label="Payment Link" paymentUrl={data.teacher_registrations?.paid_at ?? ''} className=""/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
+      <InfoItem label="Citizen Status" value={data.teacher_preliminary_infos?.citizen_status}/>
       <InfoItem label="SLA" value={data.teacher_registrations?.created_at} isSLA/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
       <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
       <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
-      {isEndorsementComplete() && <InfoItem label='License Status' value={getLicenseStatus()} isLicenseStatus/>}
+      <InfoItem label="License Expiry Date" value={data.teacher_registrations?.license_expiry_date} isDate/>
+      <InfoItem label="Subscription Due Date" value={data.teacher_registrations?.subscription_due_date} isDate/>
+      {isEndorsementComplete() && <InfoItem label='Computed License Status' value={getLicenseStatus()} isLicenseStatus/>}
     </InfoCard>
   );
 
@@ -128,32 +135,32 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   );
 
   const renderQualifications = () => (
-    <InfoCard title='Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
+    <InfoCard title='Additional Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
       {data?.other_qualifications && data.other_qualifications.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Level</TableHead>
+              {/* <TableHead>Level</TableHead> */}
               <TableHead>Qualification</TableHead>
               <TableHead>Attachment</TableHead>
-              <TableHead>Institution</TableHead>
+              {/* <TableHead>Institution</TableHead> */}
               <TableHead>Year</TableHead>
-              <TableHead>Subjects</TableHead>
+              {/* <TableHead>Subjects</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.other_qualifications.map((qual, index) => (
               <TableRow key={index}>
-                <TableCell>{qual.level ?? '-'}</TableCell>
+                {/* <TableCell>{qual.level ?? '-'}</TableCell> */}
                 <TableCell>{qual.qualification ?? '-'}</TableCell>
                 <TableCell>
                   {qual.attachments ? (
                     <InfoItem label="" value={qual.attachments}/>
                   ) : '-'}
                 </TableCell>
-                <TableCell>{qual.institution ?? '-'}</TableCell>
+                {/* <TableCell>{qual.institution ?? '-'}</TableCell> */}
                 <TableCell>{qual.qualification_year ?? '-'}</TableCell>
-                <TableCell>{qual.major_subjects ?? '-'}</TableCell>
+                {/* <TableCell>{qual.major_subjects ?? '-'}</TableCell> */}
               </TableRow>
             ))}
           </TableBody>
@@ -161,6 +168,78 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       ) : (
         <div className="flex items-center justify-center p-4 text-muted-foreground">
           No qualifications data available
+        </div>
+      )}
+    </InfoCard>
+  );
+
+  const renderOffenceConvictions = () => (
+    <InfoCard title='Offence & Convictions' icon={<ShieldAlert className="w-6 h-6 text-red-500"/>} columns={1}>
+      {data?.offence_convictions ? (
+        <>
+          <InfoItem 
+            label="Student Related Offence" 
+            value={data.offence_convictions.student_related_offence === 'yes' ? 'Yes' : 'No'}
+          />
+          {data.offence_convictions.student_related_offence === 'yes' && (
+            <>
+              <InfoItem 
+                label="Student Offence Details" 
+                value={data.offence_convictions.student_related_offence_details}
+              />
+              <InfoItem 
+                label="Student Offence Attachments" 
+                isAttachment
+                value={data.offence_convictions.student_related_offence_attachments}
+              />
+            </>
+          )}
+          
+          <InfoItem 
+            label="Drug Related Offence" 
+            value={data.offence_convictions.drug_related_offence === 'yes' ? 'Yes' : 'No'}
+          />
+          {data.offence_convictions.drug_related_offence?.toLowerCase() === 'yes' && (
+            <>
+              <InfoItem 
+                label="Drug Offence Details" 
+                value={data.offence_convictions.drug_related_offence_details}
+              />
+              <InfoItem 
+                label="Drug Offence Attachments" 
+                isAttachment
+                value={data.offence_convictions.drug_related_offence_attachments}
+              />
+            </>
+          )}
+          
+          <InfoItem 
+            label="License Flag" 
+            value={data.offence_convictions.license_flag === 'yes' ? 'Yes' : 'No'}
+          />
+          {data.offence_convictions.license_flag?.toLowerCase() === 'yes' && (
+            <InfoItem 
+              label="License Flag Details" 
+              isAttachment
+              value={data.offence_convictions.license_flag_details}
+            />
+          )}
+          
+          <InfoItem 
+            label="Misconduct Flag" 
+            value={data.offence_convictions.misconduct_flag === 'yes' ? 'Yes' : 'No'}
+          />
+          {data.offence_convictions.misconduct_flag?.toLowerCase() === 'yes' && (
+            <InfoItem 
+              label="Misconduct Flag Details" 
+              isAttachment
+              value={data.offence_convictions.misconduct_flag_details}
+            />
+          )}
+        </>
+      ) : (
+        <div className="flex items-center justify-center p-4 text-muted-foreground col-span-2">
+          No offence or conviction data available
         </div>
       )}
     </InfoCard>
@@ -202,6 +281,9 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy}/>
       <InfoItem label="Qualification Documents" value={data.attachments?.qualification_copy}/>
       <InfoItem label="Proof of Payment" value={data.attachments?.proof_of_payment}/>
+      <InfoItem label="License Certificate" value={data.teacher_registrations?.license_link}/>
+      <InfoItem label="Receipt" value={data.teacher_registrations?.recite}/>
+      <InfoItem label="Invoice" value={data.teacher_registrations?.invoice}/>
     </InfoCard>
   );
 
@@ -236,6 +318,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
           {renderSection(renderEmploymentInfo())}
           {renderSection(renderMandatoryQualifications())}
           {renderSection(renderQualifications())}
+          {renderSection(renderOffenceConvictions())}
           {renderSection(renderBackgroundChecks())}
           {renderSection(renderDocuments())}
           {renderSection(renderComments())}

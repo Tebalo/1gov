@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FaFilePdf } from 'react-icons/fa';
-import { RefreshCw, Shield } from 'lucide-react'; // Add Shield icon for anonymous data
+import { RefreshCw, Shield, FileText } from 'lucide-react'; // Add Shield icon for anonymous data
 import Link from 'next/link';
 
 
@@ -132,7 +132,8 @@ function getLicenseStatus(reg_status: string){
             variant="link" 
             className="text-blue-500 hover:underline mr-2 p-0">
             <FaFilePdf className="text-red-500 mr-2 h-5 w-5" />
-            Open
+            {/* <FileText className="h-4 w-4 text-green-600" /> */}
+            View Document
           </Button>):(<p className='font-medium mt-1'>--</p>)}
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-4xl">
