@@ -65,6 +65,7 @@ interface EduProQualification {
     institution?: string | null;
     attachments?: string | null;
     qualification_year?: string | null;
+    subjects?: string | null;
     minor_subjects?: string | null;
     major_subjects?: string | null;
     created_at?: string | null;
