@@ -343,15 +343,19 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
       persona: personas,
       current: currentPersona,
       username: decodedToken.name,
-      userid: decodedToken.preferred_username,
+      userid: decodedToken.preferred_username ?? decodedToken.national_id,
       nationalId: decodedToken.national_id,
       passportId: decodedToken.passport_id,
       gender: decodedToken.gender,
-      preferred_username: decodedToken.preferred_username,
+      preferred_username: decodedToken.preferred_username ?? decodedToken.national_id,
       given_name: decodedToken.given_name,
       family_name: decodedToken.family_name,
       email: decodedToken.email,
       systemId: Number(decodedToken.client_id),
+      postal_address: decodedToken.postal_address || null,
+      physical_address: decodedToken.physical_address || null,
+      phone: decodedToken.phone || null,
+      date_of_birth: decodedToken.date_of_birth || null,
     }
 
     const encryptedAccessGroup = await encrypt(access_group);

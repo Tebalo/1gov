@@ -124,6 +124,10 @@ export interface DecodedToken {
   };
   scope: string;
   sid: string;
+  postal_address?: string | null;
+  physical_address?: string | null;
+  phone?: string | null;
+  date_of_birth?: string | null;
   client_id: string;
   username: string;
   active: boolean;
@@ -142,6 +146,10 @@ export interface AccessGroup {
   userid: string;
   gender?: string;
   preferred_username?: string;
+  postal_address?: string | null;
+  physical_address?: string | null;
+  phone?: string | null;
+  date_of_birth?: string | null;
   email?: string;
   given_name?: string;
   family_name?: string;

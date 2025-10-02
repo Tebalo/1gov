@@ -3,6 +3,8 @@ export interface Payload {
     exp: number
     roles: string[]
     baskets: any[] // You may want to define a specific type for basket items
+    email: string
+    username: string
     profile: {
       personal_info: {
         first_name: string
