@@ -24,8 +24,7 @@ import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { format } from "date-fns"
-import { DayPicker } from "react-day-picker"
-import "react-day-picker/dist/style.css"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
   PopoverContent,
@@ -189,6 +188,16 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         return true
 
       case 3: // Contact information
+        // CHANGED: Added validation for required contact fields
+        const stepThreeErrors: string[] = []
+        if (!formData.phone.trim()) stepThreeErrors.push("Phone number is required")
+        if (!formData.postalAddress.trim()) stepThreeErrors.push("Postal address is required")
+        if (!formData.physicalAddress.trim()) stepThreeErrors.push("Physical address is required")
+        
+        if (stepThreeErrors.length > 0) {
+          setErrors(stepThreeErrors)
+          return false
+        }
         return true
 
       case 4: // Professional information
@@ -594,11 +603,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <DayPicker
+                      <Calendar
                         mode="single"
                         selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined}
                         onSelect={handleDateSelect}
-                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                        disabled={(date) => 
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
                         initialFocus
                         captionLayout="dropdown"
                         fromYear={1900}
@@ -752,7 +763,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                 
+                  <Label htmlFor="phone">Phone Number *</Label>
                   <Input
                     id="phone"
                     placeholder="+267xxxxxxxx"
@@ -760,6 +772,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     disabled={isLoading}
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="grid gap-2">
@@ -776,7 +789,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="postalAddress">Postal Address</Label>
+                
+                <Label htmlFor="postalAddress">Postal Address *</Label>
                 <Textarea
                   id="postalAddress"
                   placeholder="P.O. Box 123, City"
@@ -784,11 +798,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.postalAddress}
                   onChange={(e) => handleInputChange("postalAddress", e.target.value)}
                   rows={2}
+                  required
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="physicalAddress">Physical Address</Label>
+                
+                <Label htmlFor="physicalAddress">Physical Address *</Label>
                 <Textarea
                   id="physicalAddress"
                   placeholder="123 Street Name, Area"
@@ -796,6 +812,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.physicalAddress}
                   onChange={(e) => handleInputChange("physicalAddress", e.target.value)}
                   rows={2}
+                  required
                 />
               </div>
 
