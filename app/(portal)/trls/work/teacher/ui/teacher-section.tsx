@@ -279,9 +279,9 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   const renderDocuments = () => (
     <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy}/>
-      <InfoItem label="License Certificate" value={data.teacher_registrations?.license_link}/>
-      <InfoItem label="Receipt" value={data.teacher_registrations?.recite}/>
-      <InfoItem label="Invoice" value={data.teacher_registrations?.invoice}/>
+      <InfoItem label="License Certificate" value={data.teacher_registrations?.license_link} isAttachment/>
+      <InfoItem label="Receipt" value={data.teacher_registrations?.recite} isAttachment/>
+      <InfoItem label="Invoice" value={data.teacher_registrations?.invoice} isAttachment/>
     </InfoCard>
   );
 
