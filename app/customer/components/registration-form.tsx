@@ -18,11 +18,18 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, Check, Eye, EyeOff } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Eye, EyeOff, CalendarIcon } from "lucide-react"
 // import { toast } from "sonner"
 import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
+import { format } from "date-fns"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 interface RegistrationFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -50,6 +57,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   const [citizenship, setCitizenship] = useState<string>("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [dateOfBirthOpen, setDateOfBirthOpen] = useState(false)
   const [formData, setFormData] = useState({
     // Basic credentials
     username: "",
@@ -180,6 +188,16 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         return true
 
       case 3: // Contact information
+        // CHANGED: Added validation for required contact fields
+        const stepThreeErrors: string[] = []
+        if (!formData.phone.trim()) stepThreeErrors.push("Phone number is required")
+        if (!formData.postalAddress.trim()) stepThreeErrors.push("Postal address is required")
+        if (!formData.physicalAddress.trim()) stepThreeErrors.push("Physical address is required")
+        
+        if (stepThreeErrors.length > 0) {
+          setErrors(stepThreeErrors)
+          return false
+        }
         return true
 
       case 4: // Professional information
@@ -284,6 +302,14 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
       setFormData(prev => ({ ...prev, passportId: "" }))
     } else if (value === "Non-citizen") {
       setFormData(prev => ({ ...prev, nationalId: "" }))
+    }
+  }
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      const formattedDate = format(date, "yyyy-MM-dd")
+      handleInputChange("dateOfBirth", formattedDate)
+      setDateOfBirthOpen(false)
     }
   }
 
@@ -559,13 +585,39 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    disabled={isLoading}
-                    value={formData.dateOfBirth}
-                    onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
-                  />
+                  <Popover open={dateOfBirthOpen} onOpenChange={setDateOfBirthOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.dateOfBirth && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.dateOfBirth ? (
+                          format(new Date(formData.dateOfBirth), "PPP")
+                        ) : (
+                          <span>Enter your date of birth</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined}
+                        onSelect={handleDateSelect}
+                        disabled={(date) => 
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                        captionLayout="dropdown"
+                        fromYear={1900}
+                        toYear={new Date().getFullYear()}
+                        className="rounded-md border"
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="gender">Gender *</Label>
@@ -711,7 +763,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                 
+                  <Label htmlFor="phone">Phone Number *</Label>
                   <Input
                     id="phone"
                     placeholder="+267xxxxxxxx"
@@ -719,6 +772,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     disabled={isLoading}
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="grid gap-2">
@@ -735,7 +789,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="postalAddress">Postal Address</Label>
+                
+                <Label htmlFor="postalAddress">Postal Address *</Label>
                 <Textarea
                   id="postalAddress"
                   placeholder="P.O. Box 123, City"
@@ -743,11 +798,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.postalAddress}
                   onChange={(e) => handleInputChange("postalAddress", e.target.value)}
                   rows={2}
+                  required
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="physicalAddress">Physical Address</Label>
+                
+                <Label htmlFor="physicalAddress">Physical Address *</Label>
                 <Textarea
                   id="physicalAddress"
                   placeholder="123 Street Name, Area"
@@ -755,6 +812,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.physicalAddress}
                   onChange={(e) => handleInputChange("physicalAddress", e.target.value)}
                   rows={2}
+                  required
                 />
               </div>
 
