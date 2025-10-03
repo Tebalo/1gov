@@ -23,23 +23,31 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Save, Edit, X, AlertTriangle } from 'lucide-react';
+import { Loader2, Save, Edit, X, AlertTriangle, CalendarIcon } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { format } from "date-fns"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 
 // Types for the user profile data
 interface PersonalInfo {
-  first_name: string;
-  middle_name: string;
-  last_name: string;
-  date_of_birth: string;
-  gender: string;
-  profile_picture: string | null;
-  bio: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  date_of_birth?: string;
+  gender?: string;
+  profile_picture?: string | null;
+  bio?: string;
   national_id: string;
-  passport_id: string;
-  next_of_kin_name: string;
-  next_of_kin_relation: string;
-  next_of_kin_contacts: string;
+  passport_id?: string;
+  next_of_kin_name?: string;
+  next_of_kin_relation?: string;
+  next_of_kin_contacts?: string;
 }
 
 interface ContactInfo {
@@ -98,6 +106,8 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<UserProfileData>>({});
+  const [dateOfBirthOpen, setDateOfBirthOpen] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const { toast } = useToast();
 
   // Fetch user profile data
@@ -144,18 +154,133 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
         [field]: value
       }
     }));
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+
+    // Validate National ID input (only allow digits)
+    if (field === "national_id" && typeof value === "string") {
+      // Remove any non-digit characters
+      const digitsOnly = value.replace(/\D/g, '')
+      // Limit to 9 digits
+      const limitedDigits = digitsOnly.slice(0, 9)
+      setFormData(prev => ({
+        ...prev,
+        personal_info: {
+          ...prev.personal_info,
+          national_id: limitedDigits
+        }
+      }));
+    }
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      const formattedDate = format(date, "yyyy-MM-dd")
+      handleInputChange("personal_info", "date_of_birth", formattedDate)
+      setDateOfBirthOpen(false)
+    }
+  };
+
+  const validateSection = (section: string): boolean => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (section === 'personal_info') {
+      if (!formData.personal_info?.first_name?.trim()) {
+        newErrors.first_name = "First name is required";
+      }
+      if (!formData.personal_info?.last_name?.trim()) {
+        newErrors.last_name = "Last name is required";
+      }
+      if (!formData.personal_info?.date_of_birth?.trim()) {
+        newErrors.date_of_birth = "Date of birth is required";
+      } else {
+        // Validate Date of Birth is in the past (not today or future)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+        const birthDate = new Date(formData.personal_info.date_of_birth);
+        
+        // Check if date is valid
+        if (isNaN(birthDate.getTime())) {
+          newErrors.date_of_birth = "Please enter a valid date of birth";
+        } else {
+          // Check if birth date is today or in the future
+          if (birthDate >= today) {
+            newErrors.date_of_birth = "Date of birth must be in the past";
+          }
+        }
+      }
+      if (!formData.personal_info?.gender?.trim()) {
+        newErrors.gender = "Gender is required";
+      }
+      if (!formData.personal_info?.national_id?.trim()) {
+        newErrors.national_id = "National ID is required";
+      } else {
+        // Validate National ID format (9 digits, 5th digit must be 1 or 2)
+        const nationalIdRegex = /^\d{9}$/
+        if (!nationalIdRegex.test(formData.personal_info.national_id)) {
+          newErrors.national_id = "National ID must be exactly 9 digits"
+        } else {
+          const fifthDigit = formData.personal_info.national_id.charAt(4) // 5th digit (index 4)
+          if (fifthDigit !== '1' && fifthDigit !== '2') {
+            newErrors.national_id = "National ID must have 1 or 2 as the 5th digit"
+          }
+        }
+      }
+    }
+
+    if (section === 'contact_info') {
+      if (!formData.contact_info?.phone?.trim()) {
+        newErrors.phone = "Phone number is required";
+      }
+      if (!formData.contact_info?.physical_address?.trim()) {
+        newErrors.physical_address = "Physical address is required";
+      }
+      if (!formData.contact_info?.postal_address?.trim()) {
+        newErrors.postal_address = "Postal address is required";
+      }
+    }
+
+    if (section === 'social_info') {
+      if (!formData.social_info?.job_title?.trim()) {
+        newErrors.job_title = "Job title is required";
+      }
+      if (!formData.social_info?.organization?.trim()) {
+        newErrors.organization = "Organization is required";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const startEditing = (section: string) => {
     setEditingSection(section);
+    setErrors({});
   };
 
   const cancelEditing = () => {
     setEditingSection(null);
     setFormData(userData as UserProfileData);
+    setErrors({});
   };
 
   const saveChanges = async (section: string) => {
+    if (!validateSection(section)) {
+      toast({
+        title: "Unfortunately!",
+        description: "You can't leave this blank.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
       
@@ -186,6 +311,7 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
       // Refresh the user data
       await fetchUserProfile();
       setEditingSection(null);
+      setErrors({});
       
       toast({
         title: "Success",
@@ -259,11 +385,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="first_name">First Name</Label>
                   {editingSection === 'personal_info' ? (
-                    <Input
-                      id="first_name"
-                      value={formData.personal_info?.first_name || ''}
-                      onChange={(e) => handleInputChange('personal_info', 'first_name', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="first_name"
+                        value={formData.personal_info?.first_name || ''}
+                        onChange={(e) => handleInputChange('personal_info', 'first_name', e.target.value)}
+                        className={errors.first_name ? "border-destructive" : ""}
+                      />
+                      {errors.first_name && (
+                        <p className="text-sm text-destructive">{errors.first_name}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.personal_info.first_name}</p>
                   )}
@@ -285,11 +417,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="last_name">Last Name</Label>
                   {editingSection === 'personal_info' ? (
-                    <Input
-                      id="last_name"
-                      value={formData.personal_info?.last_name || ''}
-                      onChange={(e) => handleInputChange('personal_info', 'last_name', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="last_name"
+                        value={formData.personal_info?.last_name || ''}
+                        onChange={(e) => handleInputChange('personal_info', 'last_name', e.target.value)}
+                        className={errors.last_name ? "border-destructive" : ""}
+                      />
+                      {errors.last_name && (
+                        <p className="text-sm text-destructive">{errors.last_name}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.personal_info.last_name}</p>
                   )}
@@ -298,12 +436,45 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="date_of_birth">Date of Birth</Label>
                   {editingSection === 'personal_info' ? (
-                    <Input
-                      id="date_of_birth"
-                      type="date"
-                      value={formData.personal_info?.date_of_birth || ''}
-                      onChange={(e) => handleInputChange('personal_info', 'date_of_birth', e.target.value)}
-                    />
+                    <div>
+                      <Popover open={dateOfBirthOpen} onOpenChange={setDateOfBirthOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !formData.personal_info?.date_of_birth && "text-muted-foreground",
+                              errors.date_of_birth ? "border-destructive" : ""
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formData.personal_info?.date_of_birth ? (
+                              format(new Date(formData.personal_info.date_of_birth), "PPP")
+                            ) : (
+                              <span>Enter your date of birth</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={formData.personal_info?.date_of_birth ? new Date(formData.personal_info.date_of_birth) : undefined}
+                            onSelect={handleDateSelect}
+                            disabled={(date) => 
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                            captionLayout="dropdown"
+                            fromYear={1900}
+                            toYear={new Date().getFullYear()}
+                            className="rounded-md border"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      {errors.date_of_birth && (
+                        <p className="text-sm text-destructive">{errors.date_of_birth}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.personal_info.date_of_birth}</p>
                   )}
@@ -312,19 +483,25 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="gender">Gender</Label>
                   {editingSection === 'personal_info' ? (
-                    <Select
-                      value={formData.personal_info?.gender || ''}
-                      onValueChange={(value) => handleInputChange('personal_info', 'gender', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div>
+                      <Select
+                        value={formData.personal_info?.gender || ''}
+                        onValueChange={(value) => handleInputChange('personal_info', 'gender', value)}
+                      >
+                        <SelectTrigger className={errors.gender ? "border-destructive" : ""}>
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                          <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.gender && (
+                        <p className="text-sm text-destructive">{errors.gender}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.personal_info.gender}</p>
                   )}
@@ -346,12 +523,20 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                         id="national_id"
                         value={formData.personal_info?.national_id || ''}
                         onChange={(e) => handleInputChange('personal_info', 'national_id', e.target.value)}
-                        className={editingSection === 'personal_info' ? 'border-amber-300 focus:border-amber-500' : ''}
+                        className={cn(
+                          editingSection === 'personal_info' ? 'border-amber-300 focus:border-amber-500' : '',
+                          errors.national_id ? "border-destructive" : ""
+                        )}
+                        maxLength={9}
                       />
-                      <p className="text-xs text-amber-600 flex items-center gap-1">
-                        <AlertTriangle className="h-3 w-3" />
-                        Ensure this is correct to see accurate account information
-                      </p>
+                      {errors.national_id ? (
+                        <p className="text-sm text-destructive">{errors.national_id}</p>
+                      ) : (
+                        <p className="text-xs text-amber-600 flex items-center gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          Ensure this is correct to see accurate account information
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <p>{userData.personal_info.national_id}</p>
@@ -405,11 +590,22 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="next_of_kin_relation">Relation</Label>
                   {editingSection === 'personal_info' ? (
-                    <Input
-                      id="next_of_kin_relation"
+                    <Select
                       value={formData.personal_info?.next_of_kin_relation || ''}
-                      onChange={(e) => handleInputChange('personal_info', 'next_of_kin_relation', e.target.value)}
-                    />
+                      onValueChange={(value) => handleInputChange('personal_info', 'next_of_kin_relation', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select relation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Parent">Parent</SelectItem>
+                        <SelectItem value="Spouse">Spouse</SelectItem>
+                        <SelectItem value="Sibling">Sibling</SelectItem>
+                        <SelectItem value="Child">Child</SelectItem>
+                        <SelectItem value="Friend">Friend</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p>{userData.personal_info.next_of_kin_relation}</p>
                   )}
@@ -468,11 +664,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
                   {editingSection === 'contact_info' ? (
-                    <Input
-                      id="phone"
-                      value={formData.contact_info?.phone || ''}
-                      onChange={(e) => handleInputChange('contact_info', 'phone', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="phone"
+                        value={formData.contact_info?.phone || ''}
+                        onChange={(e) => handleInputChange('contact_info', 'phone', e.target.value)}
+                        className={errors.phone ? "border-destructive" : ""}
+                      />
+                      {errors.phone && (
+                        <p className="text-sm text-destructive">{errors.phone}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.contact_info.phone}</p>
                   )}
@@ -494,11 +696,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="physical_address">Physical Address</Label>
                   {editingSection === 'contact_info' ? (
-                    <Input
-                      id="physical_address"
-                      value={formData.contact_info?.physical_address || ''}
-                      onChange={(e) => handleInputChange('contact_info', 'physical_address', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="physical_address"
+                        value={formData.contact_info?.physical_address || ''}
+                        onChange={(e) => handleInputChange('contact_info', 'physical_address', e.target.value)}
+                        className={errors.physical_address ? "border-destructive" : ""}
+                      />
+                      {errors.physical_address && (
+                        <p className="text-sm text-destructive">{errors.physical_address}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.contact_info.physical_address}</p>
                   )}
@@ -507,11 +715,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="postal_address">Postal Address</Label>
                   {editingSection === 'contact_info' ? (
-                    <Input
-                      id="postal_address"
-                      value={formData.contact_info?.postal_address || ''}
-                      onChange={(e) => handleInputChange('contact_info', 'postal_address', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="postal_address"
+                        value={formData.contact_info?.postal_address || ''}
+                        onChange={(e) => handleInputChange('contact_info', 'postal_address', e.target.value)}
+                        className={errors.postal_address ? "border-destructive" : ""}
+                      />
+                      {errors.postal_address && (
+                        <p className="text-sm text-destructive">{errors.postal_address}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.contact_info.postal_address}</p>
                   )}
@@ -533,11 +747,33 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="state">State/Province</Label>
                   {editingSection === 'contact_info' ? (
-                    <Input
-                      id="state"
+                    <Select
                       value={formData.contact_info?.state || ''}
-                      onChange={(e) => handleInputChange('contact_info', 'state', e.target.value)}
-                    />
+                      onValueChange={(value) => handleInputChange('contact_info', 'state', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Central">Central</SelectItem>
+                        <SelectItem value="Chobe">Chobe </SelectItem>
+                        <SelectItem value="Ghanzi">Ghanzi</SelectItem>
+                        <SelectItem value="Kgalagadi">Kgalagadi</SelectItem>
+                        <SelectItem value="Kgatleng">Kgatleng</SelectItem>
+                        <SelectItem value="Kweneng">Kweneng </SelectItem>
+                        <SelectItem value="North-East">North-East</SelectItem>
+                        <SelectItem value="North-West">North-West</SelectItem>
+                        <SelectItem value="South-East">South-East</SelectItem>
+                        <SelectItem value="Southern ">Southern</SelectItem>
+                        <SelectItem value="Gaborone">Gaborone</SelectItem>
+                        <SelectItem value="Francistown">Francistown</SelectItem>
+                        <SelectItem value="Lobatse">Lobatse</SelectItem>
+                        <SelectItem value="Jwaneng">Jwaneng</SelectItem>
+                        <SelectItem value="Orapa">Orapa</SelectItem>
+                        <SelectItem value="Sowa">Sowa</SelectItem>
+                        <SelectItem value="Selebi-Phikwe">Selebi-Phikwe</SelectItem>
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p>{userData.contact_info.state}</p>
                   )}
@@ -546,11 +782,20 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="country">Country</Label>
                   {editingSection === 'contact_info' ? (
-                    <Input
-                      id="country"
+                    <Select
                       value={formData.contact_info?.country || ''}
-                      onChange={(e) => handleInputChange('contact_info', 'country', e.target.value)}
-                    />
+                      onValueChange={(value) => handleInputChange('contact_info', 'country', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Botswana">Botswana</SelectItem>
+                        <SelectItem value="South Africa">South Africa</SelectItem>
+                        <SelectItem value="Namibia">Namibia</SelectItem>
+                        <SelectItem value="Zimbabwe">Zimbabwe</SelectItem>
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p>{userData.contact_info.country}</p>
                   )}
@@ -609,11 +854,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="job_title">Job Title</Label>
                   {editingSection === 'social_info' ? (
-                    <Input
-                      id="job_title"
-                      value={formData.social_info?.job_title || ''}
-                      onChange={(e) => handleInputChange('social_info', 'job_title', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="job_title"
+                        value={formData.social_info?.job_title || ''}
+                        onChange={(e) => handleInputChange('social_info', 'job_title', e.target.value)}
+                        className={errors.job_title ? "border-destructive" : ""}
+                      />
+                      {errors.job_title && (
+                        <p className="text-sm text-destructive">{errors.job_title}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.social_info.job_title}</p>
                   )}
@@ -622,11 +873,17 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="organization">Organization</Label>
                   {editingSection === 'social_info' ? (
-                    <Input
-                      id="organization"
-                      value={formData.social_info?.organization || ''}
-                      onChange={(e) => handleInputChange('social_info', 'organization', e.target.value)}
-                    />
+                    <div>
+                      <Input
+                        id="organization"
+                        value={formData.social_info?.organization || ''}
+                        onChange={(e) => handleInputChange('social_info', 'organization', e.target.value)}
+                        className={errors.organization ? "border-destructive" : ""}
+                      />
+                      {errors.organization && (
+                        <p className="text-sm text-destructive">{errors.organization}</p>
+                      )}
+                    </div>
                   ) : (
                     <p>{userData.social_info.organization}</p>
                   )}
