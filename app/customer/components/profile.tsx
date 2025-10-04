@@ -207,15 +207,33 @@ export function Profile({ isOpen, onClose, userId }: ProfileProps) {
         const birthDate = new Date(formData.personal_info.date_of_birth);
         
         // Check if date is valid
-        if (isNaN(birthDate.getTime())) {
-          newErrors.date_of_birth = "Please enter a valid date of birth";
+      if (isNaN(birthDate.getTime())) {
+        newErrors.date_of_birth = "Please enter a valid date of birth";
+      } else {
+        // Check if birth date is today or in the future
+        if (birthDate >= today) {
+          newErrors.date_of_birth = "Date of birth must be in the past";
         } else {
-          // Check if birth date is today or in the future
-          if (birthDate >= today) {
-            newErrors.date_of_birth = "Date of birth must be in the past";
+          // Calculate age and check if at least 18 years old
+          const age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          
+          // Check if birthday hasn't occurred yet this year
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            // Subtract 1 from age if birthday hasn't occurred yet
+            if (age - 1 < 18) {
+              newErrors.date_of_birth = "You must be at least 18 years old";
+            }
+          } else {
+            // Birthday has occurred this year
+            if (age < 18) {
+              newErrors.date_of_birth = "You must be at least 18 years old";
+            }
           }
         }
       }
+      }
+
       if (!formData.personal_info?.gender?.trim()) {
         newErrors.gender = "Gender is required";
       }

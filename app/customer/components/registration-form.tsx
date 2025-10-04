@@ -146,10 +146,10 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         
         // Validate Date of Birth is in the past (not today or future)
         if (formData.dateOfBirth.trim()) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
-          const birthDate = new Date(formData.dateOfBirth);
-          
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+        const birthDate = new Date(formData.dateOfBirth);
+  
           // Check if date is valid
           if (isNaN(birthDate.getTime())) {
             stepTwoErrors.push("Please enter a valid date of birth");
@@ -157,10 +157,27 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             // Check if birth date is today or in the future
             if (birthDate >= today) {
               stepTwoErrors.push("Date of birth must be in the past");
+            } else {
+              // Calculate age and check if at least 18 years old
+              const age = today.getFullYear() - birthDate.getFullYear();
+              const monthDiff = today.getMonth() - birthDate.getMonth();
+              
+              // Check if birthday hasn't occurred yet this year
+              if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                // Subtract 1 from age if birthday hasn't occurred yet
+                if (age - 1 < 18) {
+                  stepTwoErrors.push("You must be at least 18 years old");
+                }
+              } else {
+                // Birthday has occurred this year
+                if (age < 18) {
+                  stepTwoErrors.push("You must be at least 18 years old");
+                }
+              }
             }
           }
         }
-        
+                
         // Validate National ID or Passport ID based on citizenship
         if (citizenship === "Citizen") {
           if (!formData.nationalId.trim()) stepTwoErrors.push("National ID is required")
