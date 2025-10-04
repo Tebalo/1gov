@@ -3937,7 +3937,7 @@ export default function Form() {
                             <AlertDialogTitle>Application Submission Failed</AlertDialogTitle>
                             <AlertDialogDescription>
                               We encountered an error while submitting your application. Please check your internet connection and try again.
-                              If the problem persists, contact support with the following error message: <strong>{submissionResult.error}</strong>.
+                              If the problem persists, contact support.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
