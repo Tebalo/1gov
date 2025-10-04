@@ -12,7 +12,8 @@ import {
   DollarSign,
   GraduationCap,
   Shield,
-  Coins
+  Coins,
+  Loader
 } from 'lucide-react';
 import {
   Accordion,
@@ -25,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { searchRecord } from '@/app/lib/actions';
 import { ResendPayment } from './resend-payment-link';
-import { getAccessGroups } from '@/app/auth/auth';
 
 interface RegistrationData {
   national_id: string;
@@ -41,6 +41,7 @@ interface RegistrationData {
   application_id: string;
   submission_id: string;
   license_link: string | null;
+  payment_link: string | null;
   draft_id: string | null;
   submitted_via: string;
   education_bg_checks: string | null;
@@ -61,13 +62,150 @@ interface RegistrationData {
   updated_at: string;
 }
 
+// Define types
+interface StatusInfo {
+  display: string;
+  description: string;
+  action: string | null;
+  color: string | null // Tailwind CSS color classes;
+  icon: string;
+}
+
+type SystemStatus = 
+  | 'Pending-Screening'
+  | 'Pending-Assessment'
+  | 'Pending-Manager-Approval'
+  | 'Manager-Approved'
+  | 'Manager-Rejected'
+  | 'Pending-Manager-Rejection'
+  | 'Pending-Endorsement'
+  | 'Endorsement-Complete';
+
+// Define the status map outside the function
+const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
+  'Pending-Screening': {
+    display: 'Application Received',
+    description: 'Your application is being reviewed by our team.',
+    action: null,
+    color: 'bg-green-50 text-green-700 border-green-200',
+    icon: 'clock'
+  },
+  'Pending-Assessment': {
+    display: 'Under Evaluation',
+    description: 'Your qualifications and credentials are being assessed.',
+    action: null,
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    icon: 'clipboard'
+  },
+  'Pending-Manager-Approval': {
+    display: 'Pending Approval',
+    description: 'Your application is in final review pending management approval.',
+    action: null,
+    color: 'bg-orange-50 text-orange-700 border-orange-200',
+    icon: 'hourglass'
+  },
+  'Pending-Manager-Rejection': {
+    display: 'Under Evaluation',
+    description: 'Your application is in final review pending management approval.',
+    action: null,
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    icon: 'hourglass'
+  },
+  'Manager-Approved': {
+    display: 'Approved - Payment Required',
+    description: 'Congratulations! Your application has been approved. Please complete payment to finalize your registration.',
+    action: 'Make Payment',
+    color: 'bg-green-50 text-green-700 border-green-200',
+    icon: 'check-circle'
+  },
+  'Manager-Rejected': {
+    display: 'Rejected',
+    description: 'We regret to inform you that your application has been rejected. Please contact support for further assistance.',
+    action: 'Contact Support',
+    color: 'bg-red-50 text-red-700 border-red-200',
+    icon: 'alert-circle'
+  },
+  'Pending-Endorsement': {
+    display: 'Processing Endorsement',
+    description: 'Your payment has been received. Your registration is being finalized.',
+    action: null,
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    icon: 'file-check'
+  },
+  'Endorsement-Complete': {
+    display: 'Registration Complete',
+    description: 'Your teacher registration is active and complete.',
+    action: 'View Certificate',
+    color: 'bg-green-50 text-green-700 border-green-200',
+    icon: 'check-circle'
+  }
+};
+
+
+function getCustomerStatus(systemStatus: string): StatusInfo {
+  return STATUS_MAP[systemStatus as SystemStatus] || {
+    display: 'Unknown Status',
+    description: 'Please contact support for more information.',
+    action: 'Contact Support',
+    color: 'gray',
+    icon: 'help-circle'
+  };
+}
+
+const SAMPLE_DATA: RegistrationData = {
+  "national_id": "436415528",
+  "reg_number": "BOT000135",
+  "reg_status": "Manager-Approved",
+  "work_status": "Employed",
+  "endorsement_status": "Pending-Endorsement",
+  "rejection_reason": null,
+  "service_code": "MESD_006_08_054",
+  "payment_ref": null,
+  "payment_amount": null,
+  "payment_name": null,
+  "application_id": "5f6662b4-84ec-4684-983d-149c0e23f9ey",
+  "submission_id": "5f6662b4149c0e23879y",
+  "license_link": null,
+  "draft_id": "cmezyuufe0000h0c4rmkoxpti",
+  "submitted_via": "TRLS Portal",
+  "education_bg_checks": null,
+  "flags_no": "0",
+  "recite": null,
+  "invoice": null,
+  "charges": null,
+  "paid_at": null,
+  "payment_link": null,
+  "subscription_due_date": null,
+  "license_expiry_date": null,
+  "assigned_to": null,
+  "institution_verification": "Verified",
+  "course_verification": "Verified",
+  "license_status": "New",
+  "pending_customer_action": "false",
+  "registration_type": "Teacher",
+  "created_at": "2025-10-04 06:57:56",
+  "updated_at": "2025-10-04 06:57:56"
+};
+
+
 const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const fetchRegistrationData = async () => {
     try {
       setLoading(true);
+
+      const USE_SAMPLE_DATA = true; // Set to true to use sample data for testing
+
+      if (USE_SAMPLE_DATA) {
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setRegistrationData(SAMPLE_DATA);
+        setError(null);
+        return;
+      }
 
       const response = await searchRecord(userId);
 
@@ -148,18 +286,21 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto p-4 md:p-6">
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-            <div className="space-y-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-12 bg-gray-100 rounded"></div>
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="flex justify-center items-center p-8">
+        <div className="text-gray-500"><Loader className="w-10 h-10 animate-spin"/></div>
       </div>
+      // <div className="max-w-5xl mx-auto p-4 md:p-6">
+      //   <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      //     <div className="animate-pulse space-y-4">
+      //       <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+      //       <div className="space-y-3">
+      //         {[...Array(6)].map((_, i) => (
+      //           <div key={i} className="h-12 bg-gray-100 rounded"></div>
+      //         ))}
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
     );
   }
 
@@ -185,9 +326,9 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                 {registrationData.registration_type} Registration • {registrationData.reg_number}
               </p>
             </div>
-            <div className={`inline-flex items-center px-3 py-1 rounded-lg border text-sm font-medium ${getStatusColor(registrationData.reg_status)}`}>
+            <div className={`inline-flex items-center px-3 py-1 rounded-lg border text-sm font-medium ${getCustomerStatus(registrationData.reg_status).color}`}>
               <CheckCircle className="h-4 w-4 mr-1.5" />
-              {registrationData.reg_status}
+              {registrationData.reg_status=='Manager-Approved' && registrationData.payment_amount ? getCustomerStatus(registrationData.endorsement_status).display : getCustomerStatus(registrationData.reg_status).display}
             </div>
           </div>
         </div>
@@ -204,7 +345,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                   className="inline-flex items-center px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
                 >
                   <CreditCard className="h-4 w-4 mr-2" />
-                  Make Payment ({registrationData.payment_amount ? formatCurrency(registrationData.payment_amount) : 'BWP 0'})
+                  Make Payment ({registrationData.payment_amount ? formatCurrency(registrationData.payment_amount) : 'BWP 50.00'})
                 </a>
               )}
 

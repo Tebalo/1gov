@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react"
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -206,6 +206,7 @@ export default function Form() {
   const [isLoadingForm, setIsLoadingForm] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const router = useRouter()
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [userId, setUserId] = useState('');
 
@@ -306,23 +307,23 @@ export default function Form() {
       const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
       setSubmissionResult(result)
       if (submissionResult?.success==true || result.success==true) {  
-      let draft;
-      if(draft_Id) {
-        draft = await updateDraft(draft_Id, processedFormData, currentStep);
-        /**
-         * If submission is successful, update draft status to 'submitted'
-         */
-        await updateDraftStatus(draft_Id || '', 'submitted')
-      }else {
-        draft = await saveDraft(processedFormData);
-      }
+        let draft;
+        if(draft_Id) {
+          draft = await updateDraft(draft_Id, processedFormData, currentStep);
+          /**
+           * If submission is successful, update draft status to 'submitted'
+           */
+          await updateDraftStatus(draft_Id || '', 'submitted')
+        }else {
+          draft = await saveDraft(processedFormData);
+        }
 
-      if(draft && draft.id) {
-        // If draft saved successfully, refresh the page to load the draft
-        router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
-      }
- 
-      setSubmitting(false)
+        if(draft && draft.id) {
+          // If draft saved successfully, refresh the page to load the draft
+          router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
+        }
+        
+        setSubmitting(false)
         // reset()
       } else {
         setSubmitting(false)
@@ -332,6 +333,7 @@ export default function Form() {
       console.error('Error submitting form:', error);
     }finally {
       setSubmitting(false)
+      router.push(`/customer/dashboard`) 
     }
   }
   /**
@@ -612,7 +614,9 @@ export default function Form() {
     if (currentStep < steps.length - 1) {
       setPreviousStep(currentStep)
       setCurrentStep(step => step + 1)
+      
       processDraft(getValues()) 
+      scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -620,7 +624,9 @@ export default function Form() {
     if (currentStep > 0) {
       setPreviousStep(currentStep)
       setCurrentStep(step => step - 1)
+      
       processDraft(getValues()) 
+      scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -790,7 +796,7 @@ export default function Form() {
               <p className='text-sm text-gray-600'>Complete your application</p>
             </div>
           </div>
-          <ScrollArea className='md:h-[500px] p-4'>
+          <ScrollArea ref={scrollContainerRef} className='md:h-[500px] p-4'>
             <form onSubmit={handleSubmit(processForm)}>
               {/* Step 1: Personal Information */}
               {currentStep === 0 && (
@@ -1143,7 +1149,6 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
-                            disabled={disabled}
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
@@ -1265,7 +1270,12 @@ export default function Form() {
                         <div className="space-y-2">
                           <Label htmlFor='work_status'>Employment Status *</Label>
                           <Select 
-                          onValueChange={(value) => setValue('work_status', value)}
+                          onValueChange={(value: string) => {
+                            setValue('work_status', value);
+                            setValue('institution_type', "");
+                            setValue('school_level', "");
+                            setValue('district', "");
+                          }}
                           value={watch('work_status')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select practice category' />
@@ -1280,7 +1290,6 @@ export default function Form() {
                           )}
                         </div>
                         
-                        {/* Practice Category */}
                         <div className="space-y-2">
                           <Label htmlFor='practice_category'>Practice Category *</Label>
                           <Select 
@@ -1301,7 +1310,7 @@ export default function Form() {
                           )}
                         </div>
 
-                        { /* Sub Category */}           
+                        { /* Sub Category */}         
                         <div className="space-y-2">
                           <Label htmlFor='sub_category'>Sub Category *</Label>
                           <Select 
@@ -1324,7 +1333,6 @@ export default function Form() {
                           )}
                         </div>
                         
-
                         {/* Experience Duration */}
                         <div className="space-y-2">
                           <Label htmlFor='experience_years'>Experience *</Label>
@@ -1346,6 +1354,9 @@ export default function Form() {
                           )}
                         </div>
 
+                        {/* Practice Category */}
+                        {watch('work_status') == "Employed" && (
+                          <>
                         {/* Region */}
                         <div className="space-y-2">
                           <Label htmlFor='district'>Region *</Label>
@@ -1424,7 +1435,7 @@ export default function Form() {
                         </div>}
 
                         {/* Private school */}
-                        {watch('institution_type') === 'private' && <div className='space-y-2'>
+                        {watch('institution_type')?.toLowerCase() === 'private' && <div className='space-y-2'>
                             <Label htmlFor='private_schools' className="text-sm font-medium text-gray-700">
                               Private School <span className="text-red-500">*</span>
                             </Label>
@@ -1446,7 +1457,7 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {watch('school_level')?.toLowerCase() === 'primary' && watch('district').toLowerCase() === 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase() == 'primary' && watch('district')?.toLowerCase() == 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label || watch('private_schools')}
@@ -1464,7 +1475,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase()  == 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1482,7 +1493,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'ghanzi' && ghanziPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase()  == 'ghanzi' && ghanziPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1500,7 +1511,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kgalagadi' && kgalagadiPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase()  == 'kgalagadi' && kgalagadiPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1518,7 +1529,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kgatleng' && kgatlengPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase()  == 'kgatleng' && kgatlengPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1536,7 +1547,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kweneng' && kwenengPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase()  == 'kweneng' && kwenengPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1554,7 +1565,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'north-east' && northEastPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase()  == 'north-east' && northEastPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1572,7 +1583,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'north-west' && northWestPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase() == 'north-west' && northWestPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1590,7 +1601,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'south-east' && southEastPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase() == 'south-east' && southEastPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1608,7 +1619,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'southern' && southernPrivatePrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase()  == 'primary' && watch('district')?.toLowerCase() == 'southern' && southernPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1626,7 +1637,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'central' && centralPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'central' && centralPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1644,7 +1655,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'chobe' && chobePrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'chobe' && chobePrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1662,7 +1673,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'ghanzi' && ghanziPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'ghanzi' && ghanziPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1680,7 +1691,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'kgalagadi' && kgalagadiPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'kgalagadi' && kgalagadiPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1698,7 +1709,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'kgatleng' && kgatlengPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'kgatleng' && kgatlengPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1716,7 +1727,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'kweneng' && kwenengPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'kweneng' && kwenengPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1734,7 +1745,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'north-east' && northEastPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'north-east' && northEastPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1752,7 +1763,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'north-west' && northWestPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'north-west' && northWestPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1770,7 +1781,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'south-east' && southEastPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'south-east' && southEastPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1788,7 +1799,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {(watch('school_level')?.toLowerCase() === 'junior school' || watch('school_level')?.toLowerCase() === 'senior school') && watch('district')?.toLowerCase() === 'southern' && southernPrivateSecondarySchoolsForSelect.map((school) => (
+                                      {(watch('school_level')?.toLowerCase() == 'junior secondary' || watch('school_level')?.toLowerCase() == 'senior secondary') && watch('district')?.toLowerCase() == 'southern' && southernPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1820,7 +1831,7 @@ export default function Form() {
                         </div>}
 
                         {/* Primary school */}
-                        {watch('school_level') === 'Primary' && watch('institution_type') === 'public' && <div className='space-y-2'>
+                        {watch('school_level')?.toLowerCase()  === 'primary' && watch('institution_type')?.toLowerCase()  === 'public' && <div className='space-y-2'>
                             <Label htmlFor='primary_schools' className="text-sm font-medium text-gray-700">
                               Primary School <span className="text-red-500">*</span>
                             </Label>
@@ -1842,7 +1853,7 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No school found.</CommandEmpty>
                                     <CommandGroup>
-                                      {watch('school_level') === 'Primary' && watch('district') === 'central' && centralPrimarySchoolsForSelect.map((school) => (
+                                      {watch('school_level')?.toLowerCase() === 'primary' && watch('district')?.toLowerCase()  === 'central' && centralPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label || watch('primary_schools')}
@@ -1860,7 +1871,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'chobe' && chobePrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === 'chobe' && chobePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1878,7 +1889,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'ghanzi' && ghanziPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === 'ghanzi' && ghanziPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1896,7 +1907,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'kgalagadi' && kgalagadiPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === 'kgalagadi' && kgalagadiPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1914,7 +1925,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'kgatleng' && kgatlengPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === 'kgatleng' && kgatlengPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1932,7 +1943,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'kweneng' && kwenengPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === 'kweneng' && kwenengPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1950,7 +1961,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'north-east' && northEastPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === 'north-east' && northEastPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1968,7 +1979,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      { watch('district') === 'north-west' && northWestPrimarySchoolsForSelect.map((school) => (
+                                      { watch('district')?.toLowerCase() === 'north-west' && northWestPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -1986,7 +1997,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'south-east' && southEastPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase() === 'south-east' && southEastPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -2004,7 +2015,7 @@ export default function Form() {
                                         />
                                       </CommandItem>
                                       ))}
-                                      {watch('district') === 'southern' && southernPrimarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase() === 'southern' && southernPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
                                         value={school.label}
@@ -2036,7 +2047,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Primary Schools */}
-                        {watch('other_primary_schools') === 'Other' && watch('institution_type') === 'public' && <div className="space-y-2">
+                        {watch('other_primary_schools')?.toLowerCase()  === 'other' && watch('institution_type')?.toLowerCase()  === 'public' && <div className="space-y-2">
                           <Label htmlFor='other_primary_schools'>Other Primary School *</Label>
                           <Input
                             id='other_primary_schools'
@@ -2049,7 +2060,7 @@ export default function Form() {
                         </div>}
 
                         {/* Junior school */}
-                        {watch('school_level') === 'Junior Secondary' && watch('institution_type') === 'public' && <div className='space-y-2'>
+                        {watch('school_level')?.toLowerCase()  === 'junior secondary' && watch('institution_type')?.toLowerCase()  === 'public' && <div className='space-y-2'>
                             <Label htmlFor='junior_schools' className="text-sm font-medium text-gray-700">
                               Junior School <span className="text-red-500">*</span>
                             </Label>
@@ -2265,7 +2276,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Junior Schools */}
-                        {watch('other_junior_schools') === 'Other' && watch('institution_type') === 'public' && <div className="space-y-2">
+                        {watch('other_junior_schools')?.toLowerCase()  === 'other' && watch('institution_type')?.toLowerCase()  === 'public' && <div className="space-y-2">
                           <Label htmlFor='other_junior_schools'>Other Junior School *</Label>
                           <Input
                             id='other_junior_schools'
@@ -2278,7 +2289,7 @@ export default function Form() {
                         </div>}
 
                         {/* Senior school */}
-                        {watch('school_level') === 'Senior Secondary' && watch('institution_type') === 'public' && <div className='space-y-2'>
+                        {watch('school_level')?.toLowerCase()  === 'senior secondary' && watch('institution_type')?.toLowerCase()  === 'public' && <div className='space-y-2'>
                             <Label htmlFor='senior_schools' className="text-sm font-medium text-gray-700">
                               Senior School <span className="text-red-500">*</span>
                             </Label>
@@ -2512,7 +2523,7 @@ export default function Form() {
                         </div>}
 
                         {/* Other Senior Schools */}
-                        {watch('senior_schools') === 'Other' && watch('institution_type') === 'public' && <div className="space-y-2">
+                        {watch('senior_schools')?.toLowerCase() === 'other' && watch('institution_type')?.toLowerCase()  === 'public' && <div className="space-y-2">
                           <Label htmlFor='other_senior_schools'>Other Senior School *</Label>
                           <Input
                             id='other_senior_schools'
@@ -2523,6 +2534,8 @@ export default function Form() {
                             <p className='text-sm text-red-500 mt-1'>{errors.other_senior_schools.message}</p>
                           )}
                         </div>}
+                        </>
+                        )}
 
                       </div>
 
@@ -3073,14 +3086,44 @@ export default function Form() {
 
                         <div className='space-y-2'>
                           <Label htmlFor='qualification_year'>Qualification Year *</Label>
-                          <Input
+                          {/* <Input
                             id='qualification_year'
                             type='number'
                             min='1950'
                             max='2026'
                             {...register('qualification_year')}
                             className='mt-1'
-                          />
+                          /> */}
+                          <div>
+                            <Select
+                              onValueChange={(value) => setValue('qualification_year', value)}
+                              defaultValue={watch('qualification_year')}
+                            >
+                              <SelectTrigger className='mt-1'>
+                                <SelectValue placeholder="Select a year" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Array.from({ length: 2026 - 1950 + 1 }, (_, i) => 2026 - i).map((year) => (
+                                  <SelectItem key={year} value={year.toString()}>
+                                    {year}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <input
+                              type="hidden"
+                              {...register('qualification_year', {
+                                required: 'Qualification year is required',
+                                validate: (value) => {
+                                  const year = parseInt(value);
+                                  if (isNaN(year) || year < 1950 || year > 2026) {
+                                    return 'Please select a year between 1950 and 2026';
+                                  }
+                                  return true;
+                                }
+                              })}
+                            />
+                          </div>
                           {errors.qualification_year && (
                             <p className='text-sm text-red-500 mt-1'>{errors.qualification_year.message}</p>
                           )}

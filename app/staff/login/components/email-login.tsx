@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from 'axios'
-
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,7 +14,6 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import {
@@ -30,7 +29,9 @@ import { authUrl, DeTokenizeUrl, validateUrl } from "@/app/lib/store"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
 import { jwtDecode } from 'jwt-decode';
- 
+import Image from 'next/image'; 
+import { LoginForm } from "./trls-login"
+
 // Create axios instance with default config
 const axiosInstance = axios.create({
     headers: {
@@ -518,6 +519,35 @@ export const Email: React.FC = () => {
                             </Button>
                         </div>
                     </form>
+                    <div className="space-y-4">
+                      <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                        <span className="bg-background text-muted-foreground relative z-10 px-2">
+                          Or continue with
+                        </span>
+                      </div>
+
+                      {/* Login with 1Gov1Citizen */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="w-full">
+                            <div className="w-6 h-6 items-center justify-center flex mr-2">
+                              <Image
+                                  src="/botepco.png"
+                                  alt='Botepco Logo'
+                                  width={24}
+                                  height={24}
+                                  className="w-full h-full object-contain"
+                                  priority
+                                  />
+                            </div>
+                            Login with TRLS
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <LoginForm/>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                     <div className="mt-4 text-center text-sm">
                         <span>Don&lsquo;t have an account?</span>{" "}
                         <a 

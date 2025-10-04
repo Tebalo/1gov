@@ -224,8 +224,6 @@ async function fetchWithAuth2(url: string, options: RequestInit = {}, timeoutMs:
       const currentTime = Math.floor(Date.now() / 1000);
       const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
 
-      console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
-
       if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
         const refreshSuccessful = await refreshToken();
         if (refreshSuccessful) {
@@ -288,7 +286,6 @@ async function fetchWithAuth3(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       controller.abort();
-      console.log(`Request aborted due to timeout after ${timeoutMs}ms`);
     }, timeoutMs);
 
     try {
@@ -297,8 +294,6 @@ async function fetchWithAuth3(
       if (session && session.auth) {
         const currentTime = Math.floor(Date.now() / 1000);
         const decodedToken: DecodedToken = await decryptAccessToken(session.auth);
-
-        console.log("Difference: ", decodedToken.exp - currentTime, 'Threshold: ', TOKEN_REFRESH_THRESHOLD);
 
         if (decodedToken.exp - currentTime < TOKEN_REFRESH_THRESHOLD) {
           const refreshSuccessful = await refreshToken();
@@ -345,7 +340,6 @@ async function fetchWithAuth3(
         if (retryCount < maxRetries) {
           retryCount++;
           const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 10000); // Max 10 seconds
-          console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
           await new Promise(resolve => setTimeout(resolve, backoffDelay));
           return attemptFetch();
         }
@@ -451,7 +445,6 @@ async function fetchWithAuth4(
         if (retryCount < maxRetries) {
           retryCount++;
           const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 10000);
-          console.log(`Retry attempt ${retryCount} after ${backoffDelay}ms`);
           await new Promise(resolve => setTimeout(resolve, backoffDelay));
           return attemptFetch();
         }
@@ -491,8 +484,6 @@ export async function createComplaint(payload: ComplaintPayload): Promise<{succe
       },
       body: stringifiedPayload
     });
-
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
     // Get the raw response text first
     const responseText = await response.text();
@@ -695,7 +686,6 @@ export async function updateAppealsStatus(ID: string, status: string): Promise<{
 
 export async function updateRenewalStatus(ID: string, status: string, bearer?:string): Promise<{code: number; message: string}> {
   try {
-    // console.log('Bearer:', bearer);
     let param_key='reg_status';
     if(status == "Endorsement-Complete" || status == "Endorsement-Recommendation"){
       param_key='endorsement_status';
@@ -1183,7 +1173,6 @@ export async function searchComplaintByInquiry(ID: string): Promise<ComplaintSea
 
     });
 
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
     const responseText = await response.text();
 
     if (!response.ok) {
@@ -1235,8 +1224,6 @@ export async function createTipOff(payload: TipOffPayload): Promise<TipOffRespon
       },
       body: stringifiedPayload
     });
-
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
     // Get the raw response text first
     const responseText = await response.text();
@@ -2043,7 +2030,6 @@ export async function getTeacherList(status: string, count: number, assigned_to?
       param_key='endorsement_status';
     }
     const assignedTo = assigned_to || '';
-    console.log(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assignedTo}&count=${count}`);
     
     const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assignedTo}&count=${count}`, {
       method: 'GET',
@@ -2120,7 +2106,6 @@ export const searchRecord = async (query: string): Promise<SearchRecordResponse 
     }
 
     const result: SearchRecordResponse = await response.json();
-    console.log('Search successful:', result);
     
     return result;
     
@@ -3230,7 +3215,6 @@ export async function getStudentTeacherById(Id: string): Promise<StudentTeacherR
 export async function getTeacherRegistrationById(Id: string, assigned_to?:string): Promise<TeacherResponse> {
   try {
     const assignedTo = assigned_to ? `?assigned_to=${assigned_to}` : '';
-    console.log(`${apiUrl}/teacher_registrations/${Id}${assignedTo}`)
     const response = await fetch(`${apiUrl}/teacher_registrations/${Id}${assignedTo}`, {
       method: 'GET',
       headers: {
@@ -3568,7 +3552,6 @@ export async function GetStudentStats() {
       // If JSON parsing fails, try to get text content for debugging
       console.error('Failed to parse JSON:', parseError);
       const textContent = await responseClone.text();
-      console.log('Response text content:', textContent);
       throw new Error('Invalid JSON response from server');
     }
   } catch (error) {
