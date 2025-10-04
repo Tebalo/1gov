@@ -3,49 +3,41 @@
 import { useState, useEffect } from "react"
 import { Menu, X, ChevronDown, ChevronRight, Home, FileText, Plus, Bell, User, Settings } from "lucide-react"
 import { NotificationCounter } from "./notification-count";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import Notifications from "./notifications";
+
 
 const components: { title: string; href: string; description: string; icon?: React.ReactNode }[] = [
   {
-    title: "Teacher Application",
+    title: "Application For Teacher Registration & Licensing",
     href: "/customer/dashboard/teacher-application",
     description: "A form for teachers to apply for a registration, including personal details, qualifications, and experience.",
     icon: <User className="h-4 w-4" />
   },
-  {
-    title: "Student Application", 
+ {
+    title: "Application For Student Teacher Registration", 
     href: "/customer/dashboard/student-application",
     description: "A form for students to apply for a registration, including personal details, educational background, and interests.",
     icon: <User className="h-4 w-4" />
   },
   {
-    title: "Renewal Application",
+    title: "Application For Renewal Of Teaching License",
     href: "/customer/dashboard/renewal-application", 
     description: "A form for renewing an existing registration, allowing users to update their information and confirm their continued eligibility.",
     icon: <FileText className="h-4 w-4" />
   },
   {
-    title: "Restoration Application",
+    title: "Application Of Restoration Of Name To The Register",
     href: "/customer/dashboard/restoration-application",
     description: "A form for restoring a previous registration, enabling users to reactivate your account and update any necessary details.",
     icon: <Settings className="h-4 w-4" />
   },
   {
-    title: "Tip-Off",
+    title: "Report A Misconduct Or A Case",
     href: "/customer/dashboard/tip-off",
     description: "A form for submitting a tip-off, allowing users to report concerns or issues related to the registration process or other relevant matters.",
     icon: <FileText className="h-4 w-4" />
   },
   {
-    title: "Change of Category", 
+    title: "Application For Change of Category ", 
     href: "/customer/dashboard/change-of-category",
     description: "A form for changing the category of an existing registration, enabling users to update your status or classification based on new qualifications or circumstances.",
     icon: <Settings className="h-4 w-4" />
@@ -119,7 +111,7 @@ export function CustomerNavigationMenu() {
               >
                 <button className="group flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50/50 rounded-lg transition-all duration-200">
                   <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                  Create
+                  Submit An Application
                   <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${isCreateMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
