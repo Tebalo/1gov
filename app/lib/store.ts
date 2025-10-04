@@ -28,7 +28,7 @@ const baseURLs = {
         fileUploadUrl: 'https://twosixdigitalbw.com/api/v2/document',
         iamBaseUrl: 'https://gateway-cus-acc.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus-acc.gov.bw/v2',
-        trlsAuthBaseURL: 'http://'
+        trlsAuthBaseURL: 'https://twosixdigitalbw.com'
     },
     production: {
         trls: 'http://10.0.26.174',
@@ -38,7 +38,7 @@ const baseURLs = {
         fileUploadUrl: 'https://twosixdigitalbw.com/api/v2/document',
         iamBaseUrl: 'https://gateway-cus.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus.gov.bw',
-        trlsAuthBaseURL: 'http://'
+        trlsAuthBaseURL: 'https://twosixdigitalbw.com'
     }
 }
 // const currentBaseURLs = baseURLs[env as 'uat' | 'production'];
@@ -82,6 +82,7 @@ export const fileUploadUrl = currentBaseURLs.fileUploadUrl;
 export const licUrl = 'http://66.179.253.57:8081/api';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';
 export const otpUrl = 'https://dev-gateway.example.com/auth/login/sms';
+export const trlsIAM = currentBaseURLs.trlsAuthBaseURL;
 
 export const secretKey = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJsLU1xN0RmZ3pmanhWYnYyMk9EdTVySkswakpLNUZxb0Raa3BFLVFraVdZIn0.eyJleHAiOjE3NDExMTQ3NjAsImlhdCI6MTc0MTExMjk2MCwianRpIjoiYThhMzYzNDctZWZlZC00OGQ4LWJkMDktNjMxNzUyZmYwNTBiIiwiaXNzIjoiaHR0cHM6Ly9pYW0tYWNjLmdvdi5idy9yZWFsbXMvY3VzdG9tZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNzFhYjY3YWItZDk3Yi00YmIzLWI0NTEtZGQ5N2ExNzNkMTgzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY3VzdG9tZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjkxZWUxNGM2LWRiMmMtNGVjYi1hNj';
 

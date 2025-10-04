@@ -1,3 +1,4 @@
+"use client"
 import Form from "@/app/components/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
