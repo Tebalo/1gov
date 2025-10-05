@@ -84,6 +84,8 @@ export async function transformFormData(formData: any, profile: Profile, draft_i
         other_qualification: formData.other_qualification || null,
         qualification_doctoral_degree: formData.qualification_doctoral_degree || null,
         institution: formData.institution,
+        other_subject_specialization: formData.other_subject_specialization || null,
+        subject_specialization: formData.subject_specialization || null,
         other_institution: formData.other_institution || null,
         qualification_year: formData.qualification_year,
         attachments: formData.attachments || {},
@@ -180,12 +182,8 @@ export async function submitTeacherRegistration(
   draft_id:string
 ): Promise<TeacherRegistrationResponse> {
   try {
-    // Transform the form data to match the API structure
     const requestPayload = await transformFormData(formData, profile, draft_id)
-    // console.log('Url:', TEACHER_REGISTRATION_ENDPOINT)
-    // console.log('Submitting teacher registration:', JSON.stringify(requestPayload))
-    
-    // Make the API request
+
     const response = await fetch(TEACHER_REGISTRATION_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -194,14 +192,14 @@ export async function submitTeacherRegistration(
       },
       body: JSON.stringify(requestPayload)
     })
-    
+
     if (!response.ok) {
       const errorText = await response.text()
-      // console.error('API Error:', response.status, errorText)
       
       return {
         success: false,
-        error: `API Error: ${response.status} - ${errorText}`
+        error: `API Error: ${response.status} - ${errorText}`,
+        code: response.status
       }
     }
     // Check if the json is valid
@@ -210,7 +208,8 @@ export async function submitTeacherRegistration(
         success: true,
         application_id: (await requestPayload).reference.application_id,
         response_id: '',
-        message: 'Application submitted successfully'
+        message: 'Application submitted successfully',
+        code: response.status
       }
     }
     const responseData = await response.json()
@@ -220,7 +219,8 @@ export async function submitTeacherRegistration(
       success: true,
       application_id: (await requestPayload).reference.application_id,
       response_id: responseData.response_id || responseData.id,
-      message: responseData.message || 'Application submitted successfully'
+      message: responseData.message || 'Application submitted successfully',
+      code: response.status
     }
     
   } catch (error) {
@@ -228,8 +228,8 @@ export async function submitTeacherRegistration(
     
     return {
       success: false,
-      // error: 'Error submitting application',
-      error: error instanceof Error ? extractErrorMessage(error.message) : 'Unknown error occurred'
+      error: error instanceof Error ? extractErrorMessage(error.message) : 'Unknown error occurred',
+      code: 500
     }
   }
 }

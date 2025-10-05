@@ -68,7 +68,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Endorsement Status" value={data.teacher_registrations?.endorsement_status}/>
       <InfoItem label="License Status" value={data.teacher_registrations?.license_status}/>
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
-      <InfoItem label="Payment Amount" value={'P '+String(Number(data.teacher_registrations?.payment_amount)/100)+'.00'}/>
+      <InfoItem label="Payment Amount" value={'P '+String(data.teacher_registrations?.payment_amount)+'.00'}/>
       <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name || "Teacher Registration and License"}/>
       <InfoLink label="Payment Link" paymentUrl={data.teacher_registrations?.paid_at ?? ''} className=""/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>

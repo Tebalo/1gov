@@ -141,55 +141,68 @@ export const professionalQualifications = [
   "Certified Information Systems Auditor (CISA)"
 ];
 
-export const diplomas = [
-  "Diploma in Early Childhood Education",     
-  "Diploma in Educational Management and Administration",
-  "Diploma in Lifelong Learning and Community Development",
-  "Diploma in Non-Governmental Organisation Management",
-  "Diploma in Primary Education",
-  "Diploma in Secondary Education",
-  "Post Graduate Diploma in Education",
-  "Post Graduate Diploma in Educational Leadership and Management",
-  "Post Graduate Diploma in Educational Technology",
-  "Post Graduate Diploma in Higher Education",
-  "Post Graduate Diploma in Tertiary Education",
-  "Postgraduate Diploma in Technology Enhance Teaching and Learning",
-  "Diploma in Graphic Design",
-  "Diploma in Interior Architecture",
-  "Diploma in Fashion Design",
-  "Diploma in Digital Media Design",
-  "Diploma in Business Administration",
-  "Diploma in Agriculture",
-  "Diploma in Animal Science",
-  "Diploma in Environmental Science",
-  "Diploma in Natural Resources Management",
-  "Diploma in Engineering",
-  "Diploma in Education",
-  "Diploma in Agricultural Extension",
-  "Diploma in Computer Science",
-  "Diploma in Nursing",
-  "Diploma in Social Work",
-  "National Diploma"
+export const certificates = [
+  "Certificate in Integrated Early Childhood Development",
+  "Certificate in Early Childhood Education",
+  "Certificate V Distance Education",
+  "Certificate V in Botswana Sign Language",
+  "Certificate V in Early Childhood Education",
+  "Certificate V in English for Professional Purposes",
+  "Certificate V in Vocational Education and Training",
+  "Certificate V in Vocational Education and Training Practice",
+  "Postgraduate Certificate in Quality Assurance in Education",
+  "Post Graduate Certificate in Curriculum Development"
 ];
 
-export const degrees = [
+export const diplomas = [ // Corrected
+    "Diploma in Secondary Education",
+    "Diploma in Primary Education",
+    "Diploma in Education",
+    "Diploma in Lifelong Learning and Community Development",
+    "Diploma in Integrated Early Childhood Development",
+    "National Professional Diploma in Education (NPDE)",
+    "Diploma in Science (Agricultural Education)",
+    "Diploma in Early Childhood Education"
+];
+
+export const postgraduateDiplomas = [ // Corrected
+  "Postgraduate Diploma in Education (PGDE)",
+  "Post Graduate Diploma in Higher Education",
+  "Post Graduate Diploma in Educational Technology",
+  "Post Graduate Diploma in Education",
+  "Post Graduate Diploma in Educational Leadership and Management",
+  "Post Graduate Diploma in Tertiary Education",
+  "Postgraduate Diploma in Technology Enhance Teaching and Learning"
+]
+
+export const degrees = [ // Corrected
+ "Bachelor of Education in Early Childhood Education",
+  "Bachelor of Education (B.Ed) in Primary Education",
+  "Bachelor of education in Early Childhood education",
+  "Bachelor of Education (B.Ed) in various specializations (Art and Design, Educational Management, Secondary Education, Early Childhood Development, Special Education, etc.)",
+  "Bachelor of Science (Education) majors: Biology, Environmental Science, Physics, Chemistry, Mathematics",
+  "Bachelor of Education (B.Ed) in Early Childhood Education, Primary Education, Secondary Education",
+  "Bachelor of Arts in Counselling",
+  "Bachelor of Arts in Special & Inclusive Education",
+  "Bachelor of Education in Integrated Early Childhood Development (B.Ed-IECD)",
+  "Bachelor of Science in Agricultural Education",
   "Bachelor of Arts in Early Childhood Development & Education",
   "Bachelor of Child Development & Family Studies",
   "Bachelor of Design and Technology Education",
-  "Bachelor of Education ( Music Education)",
+  "Bachelor of Education (Music Education)",
   "Bachelor of Education (Chemistry)",
   "Bachelor of Education (Computer Science)",
   "Bachelor of Education (Early Childhood Development and Education)",
   "Bachelor of Education (Educational and Leadership Management)",
   "Bachelor of Education (Educational Management)",
   "Bachelor of Education (Lifelong Learning and Community Development)",
-  "Bachelor of Education (Mathematics) * Bachelor of Education (Physics)",
+  "Bachelor of Education (Mathematics)",
+  "Bachelor of Education (Physics)",
   "Bachelor of Education (Primary Education)",
   "Bachelor of Education (Secondary Education: Humanities)",
   "Bachelor of Education in Art and Design (BEAD)",
   "Bachelor of Education in Biology",
   "Bachelor of Education in Business Education",
-  "Bachelor of Education in Early Childhood Education",
   "Bachelor of Education in Family and Consumer Sciences",
   "Bachelor of Education in Guidance and Counselling",
   "Bachelor of Education in Social Studies",
@@ -201,27 +214,33 @@ export const degrees = [
   "Bachelor of Science in Physical Education and Sport Coaching"
 ];
 
-export const masters = [
+export const honours = [ // Corrected
+  "B.Ed (Hons) in Primary Education"
+];
+
+export const masters = [ // Corrected
+  "Master of Education in Educational Leadership (M.Ed-EL)",
+  "Master of Education in Higher Education",
+  "Master of Education in Curriculum Design and Instruction",
+  "Master of Education in Educational Leadership and Management",
+  "Master of Science in Agricultural Education",
+  "Master of Education in Early Childhood Development",
   "Master of Arts in History",
   "Master of Arts in Library and Information Studies",
-  "Master of Education (Early Childhood Education )",
+  "Master of Education (Early Childhood Education)",
   "Master of Education (Leadership, Planning, Policy and Management)",
   "Master of Education (Lifelong Learning and Community Development)",
   "Master of Education (Mathematics)",
   "Master of Education (Primary Education)",
   "Master of Education (Science Education)",
   "Master of Education in Curriculum and Instruction",
-  "Master of Education in Curriculum Design and Instruction",
-  "Master of Education in Early Childhood Development",
   "Master of Education in Early Childhood Special Education",
-  "Master of Education in Educational Leadership and Management",
   "Master of Education in Educational Technology",
   "Master of Education in Environmental Education",
-  "Master of Education in Higher Education",
   "Master of Education in Religious Education",
   "Master of Education in Social Studies Education",
-  "Master of Education( Research and Evaluation)",
-  "Master of Education(Language Education)",
+  "Master of Education (Research and Evaluation)",
+  "Master of Education (Language Education)",
   "Master of Educational Management and Leadership",
   "Master of Educational Measurement and Evaluation",
   "Master of Philosophy in Physics",
@@ -229,7 +248,7 @@ export const masters = [
 ];
 
 export const doctorates = [
-  "Doctor of Philosophy (Mathematics Education)", 
+  "Doctor of Philosophy (Mathematics Education)",
   "Doctor of Philosophy in Curriculum and Instruction",
   "Doctor of Philosophy in Design and Technology Education",
   "Doctor of Philosophy in Early Childhood Education",
@@ -264,15 +283,19 @@ export const allBotswanaQualifications = [
   ...professionalQualifications
 ];
 
-// Formatted for Select components
-export const doctorateForSelect = doctorates.map((doctorate) => ({
-  value: doctorate.replace(/\s+/g, '-').replace(/[()]/g, ''),
-  label: doctorate
+export const certificatesForSelect = certificates.map((certificate) => ({
+  value: certificate.replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: certificate
 }));
 
-export const mastersForSelect = masters.map((master) => ({
-  value: master.replace(/\s+/g, '-').replace(/[()]/g, ''),
-  label: master
+export const diplomasForSelect = diplomas.map((diploma) => ({
+  value: diploma.replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: diploma,
+}));
+
+export const postGraduateDiplomasForSelect = postgraduateDiplomas.map((diploma) => ({
+  value: diploma.replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: diploma,
 }));
 
 export const degreeForSelect = degrees.map((degree) => ({
@@ -280,10 +303,25 @@ export const degreeForSelect = degrees.map((degree) => ({
   label: degree
 }));
 
-export const diplomasForSelect = diplomas.map((diploma) => ({
-  value: diploma.replace(/\s+/g, '-').replace(/[()]/g, ''),
-  label: diploma,
+export const honoursForSelect = honours.map((honour) => ({
+  value: honour.replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: honour
 }));
+
+export const mastersForSelect = masters.map((master) => ({
+  value: master.replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: master
+}));
+
+// Formatted for Select components
+export const doctorateForSelect = doctorates.map((doctorate) => ({
+  value: doctorate.replace(/\s+/g, '-').replace(/[()]/g, ''),
+  label: doctorate
+}));
+
+
+
+
 
 export const allBotswanaQualificationsForSelect = allBotswanaQualifications.map((qualification) => ({
   value: qualification.replace(/\s+/g, '-').replace(/[()]/g, ''),

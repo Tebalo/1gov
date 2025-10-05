@@ -32,7 +32,7 @@ export default function LoginPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/myth_fact_1.jpg"
+          src="/landing.jpg"
           alt="Image"
           fill
           className="object-cover dark:brightness-[0.2] dark:grayscale"

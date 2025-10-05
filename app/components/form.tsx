@@ -72,7 +72,9 @@ import {
   allBotswanaQualificationsForSelect, 
   degreeForSelect, diplomasForSelect, 
   doctorateForSelect, 
-  mastersForSelect } from "@/types/qualifications"
+  honoursForSelect, 
+  mastersForSelect, 
+  postGraduateDiplomasForSelect} from "@/types/qualifications"
 import { institutionForSelect } from "@/types/institution"
 import { 
   Accordion, 
@@ -134,7 +136,7 @@ const steps = [
   {
     id: 'Step 2',
     name: 'Contact Information',
-    fields: ['primary_phone', 'primary_physical', 'primary_postal']
+    fields: ['primary_phone', 'primary_physical', 'primary_postal','primary_email']
   },
   {
     id: 'Step 3',
@@ -196,6 +198,7 @@ export default function Form() {
   const [submitting, setSubmitting] = useState(false)
   const [submittingDraft,setSubmittingDraft] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<TeacherRegistrationResponse | null>(null)
+  const [submissionError, setSubmissionError] = useState<string | null>(null)
   const { toast } = useToast();
   const [isLoadingForm, setIsLoadingForm] = useState(true);
   const [disabled, setDisabled] = useState(false);
@@ -301,6 +304,9 @@ export default function Form() {
        */
       const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
       setSubmissionResult(result)
+      if(submissionResult?.code==405){
+        setSubmissionError("You have an existing application under review. You cannot submit a new application at this time.")
+      }
       if (submissionResult?.success==true || result.success==true) {  
         let draft;
         if(draft_Id) {
@@ -343,7 +349,7 @@ export default function Form() {
       if(formData.citizenship.toLowerCase() === 'citizen'){
         formData.nationality = 'Botswana'
       }
-      
+
       const profile: Profile = {
         username: formData.username,
         first_name: formData.first_name,
@@ -971,7 +977,7 @@ export default function Form() {
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national/passport ID number"
                             inputMode="numeric"
-                            disabled={disabled}
+                            // disabled={disabled}
                           />
                           {errors.username && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -1021,6 +1027,7 @@ export default function Form() {
                                   } else {
                                     setValue('date_of_birth', '');
                                   }
+                                  trigger('date_of_birth');
                                 }}
                                 className="rounded-md border shadow-sm"
                                 captionLayout="dropdown"
@@ -1073,24 +1080,24 @@ export default function Form() {
                               {watch("citizenship") == 'citizen' ? 'National ID Copy':'Passport Copy'} <span className="text-red-500">*</span>
                             </Label>
                             <div className="">
-<FileUpload
-  name="national_id_copy"
-  label="Attach a Copy"
-  description="national-id-documents"
-  acceptedTypes=".pdf,.jpg,.jpeg,.png"
-  maxSize={5}
-  required={true}
-  value={nationalIdDoc}
-  onChange={(file) => {
-    setNationalIdDoc(file);
-    if (file) {
-      setValue('national_id_copy', file);
-      trigger('national_id_copy');
-    }
-  }}
-  error={errors.national_id_copy?.message as string | undefined}
-  compact
-/>
+                              <FileUpload
+                                name="national_id_copy"
+                                label="Attach a Copy"
+                                description="national-id-documents"
+                                acceptedTypes=".pdf,.jpg,.jpeg,.png"
+                                maxSize={5}
+                                required={true}
+                                value={nationalIdDoc}
+                                onChange={(file) => {
+                                  setNationalIdDoc(file);
+                                  if (file) {
+                                    setValue('national_id_copy', file);
+                                    trigger('national_id_copy');
+                                  }
+                                }}
+                                error={errors.national_id_copy?.message as string | undefined}
+                                compact
+                              />
                             </div>
                           </div>
                         </div>}
@@ -2558,6 +2565,15 @@ export default function Form() {
                             setValue('qualification_masters_degree', '');
                             setValue('qualification_doctoral_degree', '');
                             setValue('other_qualification', '');
+
+                            trigger('qualification_certificate');
+                            trigger('qualification_diploma');
+                            trigger('qualification_post_grad_diploma');
+                            trigger('qualification_degree');
+                            trigger('qualification_degree_honours');
+                            trigger('qualification_masters_degree');
+                            trigger('qualification_doctoral_degree');
+                            setValue('other_qualification', '');
                           }}
                           value={watch('level')}>
                             <SelectTrigger className='mt-1'>
@@ -2716,7 +2732,7 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No Honour&apos;s degree found.</CommandEmpty>
                                     <CommandGroup>
-                                      {degreeForSelect.map((degree) => (
+                                      {honoursForSelect.map((degree) => (
                                         <CommandItem
                                           key={degree.value}
                                           value={degree.label || watch('qualification_degree_honours')}
@@ -2828,7 +2844,7 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No post grad diploma found.</CommandEmpty>
                                     <CommandGroup>
-                                      {allBotswanaQualificationsForSelect.map((school) => (
+                                      {postGraduateDiplomasForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label || watch('qualification_post_grad_diploma')}
@@ -3200,7 +3216,6 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('disability', value)
                             setValue('disability_description', undefined); // Reset disability description
-                            trigger('disability'); 
                             }}
                           className="mt-3"
                         >
@@ -3259,6 +3274,8 @@ export default function Form() {
                             setValue('student_related_offence', value)
                             setValue('student_related_offence_details', ''); // Reset details
                             setStudentRelatedOffenceAttachmentDoc(null); // Reset details
+                            trigger('student_related_offence_details');
+                            trigger('student_related_offence_attachments');
                           }}
                           className="mt-3"
                         >
@@ -3322,6 +3339,8 @@ export default function Form() {
                             setValue('drug_related_offence', value);
                             setValue('drug_related_offence_details', ''); // Reset details
                             setDrugRelatedOffenceAttachmentsDoc(null); // Reset attachments
+                            trigger('drug_related_offence_details');
+                            trigger('drug_related_offence_attachments');
                           }}
                           className="mt-3"
                         >
@@ -3384,6 +3403,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('license_flag', value)
                             setLicenseFlagDetailsDoc(null); // Reset details
+                            trigger('license_flag_details')
                           }}
                           className="mt-3"
                         >
@@ -3432,6 +3452,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('misconduct_flag', value)
                             setMisconductFlagDetailsDoc(null); // Reset details
+                            trigger('misconduct_flag_details')
                           }}
                           className="mt-3"
                         >
@@ -3729,7 +3750,7 @@ export default function Form() {
 
                           {/* Step 5: Background Check */}
                           <AccordionItem value="item-5">
-                            <AccordionTrigger>Step 5: Background Check</AccordionTrigger>
+                            <AccordionTrigger>Step 5: Declarations & Disclosures</AccordionTrigger>
                             <AccordionContent className="flex flex-col gap-4 text-balance">
                               <div className="grid grid-cols-1 gap-4">
                                 <InfoItem label="Disability" value={watch('disability')} />
@@ -4004,8 +4025,16 @@ export default function Form() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Application Submission Failed</AlertDialogTitle>
                             <AlertDialogDescription>
-                              We encountered an error while submitting your application. Please check your internet connection and try again.
-                              If the problem persists, contact support.
+                              {submissionError ? (
+                                <>
+                                  {submissionError}
+                                </>
+                              ):(
+                                <>
+                                  We encountered an error while submitting your application. Please check your internet connection and try again.
+                                  If the problem persists, contact support.
+                                </>
+                              )}      
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
