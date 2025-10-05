@@ -74,20 +74,28 @@ interface StatusInfo {
 type SystemStatus = 
   | 'Pending-Screening'
   | 'Pending-Assessment'
-  | 'Pending-Manager-Approval'
+  | 'Recommended-For-Approval'
+  | 'Recommended-For-Rejection'
   | 'Manager-Approved'
   | 'Manager-Rejected'
-  | 'Pending-Manager-Rejection'
   | 'Pending-Endorsement'
+  | 'Pending-Customer-Action'
   | 'Endorsement-Complete';
 
 // Define the status map outside the function
 const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
+  'Pending-Customer-Action': {
+      display: 'Action Required',
+      description: 'Please complete the required steps to proceed with your application.',
+      action: null,
+      color: 'bg-purple-50 text-purple-700 border-purple-200',
+      icon: 'alert-circle'
+    },
   'Pending-Screening': {
-    display: 'Application Received',
+    display: 'Under Evaluation',
     description: 'Your application is being reviewed by our team.',
     action: null,
-    color: 'bg-green-50 text-green-700 border-green-200',
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     icon: 'clock'
   },
   'Pending-Assessment': {
@@ -97,22 +105,22 @@ const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
     color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     icon: 'clipboard'
   },
-  'Pending-Manager-Approval': {
-    display: 'Pending Approval',
-    description: 'Your application is in final review pending management approval.',
-    action: null,
-    color: 'bg-orange-50 text-orange-700 border-orange-200',
-    icon: 'hourglass'
-  },
-  'Pending-Manager-Rejection': {
+  'Recommended-For-Approval': {
     display: 'Under Evaluation',
     description: 'Your application is in final review pending management approval.',
     action: null,
     color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     icon: 'hourglass'
   },
+  'Recommended-For-Rejection': {
+    display: 'Under Evaluation',
+    description: 'Your application is in final review pending management approval.',
+    action: null,
+    color: 'bg-orange-50 text-orange-700 border-orange-200',
+    icon: 'hourglass'
+  },
   'Manager-Approved': {
-    display: 'Approved - Payment Required',
+    display: 'Payment Required',
     description: 'Congratulations! Your application has been approved. Please complete payment to finalize your registration.',
     action: 'Make Payment',
     color: 'bg-green-50 text-green-700 border-green-200',
@@ -126,7 +134,7 @@ const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
     icon: 'alert-circle'
   },
   'Pending-Endorsement': {
-    display: 'Processing Endorsement',
+    display: 'Pending Approval',
     description: 'Your payment has been received. Your registration is being finalized.',
     action: null,
     color: 'bg-blue-50 text-blue-700 border-blue-200',

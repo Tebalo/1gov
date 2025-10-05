@@ -84,7 +84,7 @@ export interface FormData {
   other_institution?: string | null
   qualification_year: string
   attachments: AttachmentObject | {}
-  //subject_specialization: string
+  subject_specialization: string | null
   other_subject_specialization?: string | null
   qualifications: QualificationEntry[] | null
   disability: string
@@ -123,4 +123,5 @@ export interface TeacherRegistrationResponse {
   response_id?: string
   message?: string
   error?: string
+  code?: number
 }
