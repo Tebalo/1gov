@@ -320,6 +320,21 @@ const NotificationPage = () => {
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }, []);
 
+    // "September 27, 2025 11:36 AM"
+    function simpleFormatDate(dateString: string): string {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }) + ' ' + date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+
+
     // Calculate pagination info
     const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -695,7 +710,8 @@ const NotificationPage = () => {
                                 {notification.payload.title}
                               </h3>
                               <span className="text-xs text-gray-500 flex-shrink-0">
-                                {formatDate(notification.createdAt)}
+                                {/* {formatDate(notification.createdAt)}  */}
+                                {simpleFormatDate(notification.createdAt || '')}
                               </span>
                             </div>
 
@@ -714,10 +730,10 @@ const NotificationPage = () => {
                                 {notification.reference.status}
                               </span>
 
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                              {/* <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
                                 <Hash className="h-3 w-3 mr-1" />
                                 {notification.reference.service_code}
-                              </span>
+                              </span> */}
                             </div>
                             
                             {/* Message */}
