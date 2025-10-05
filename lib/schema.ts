@@ -290,7 +290,7 @@ export const FormDataSchema = z.object({
   // ============================================
   // QUALIFICATION LEVEL-SPECIFIC VALIDATIONS
   // ============================================
-  if (data.level === 'Certificate' && !data.qualification_certificate) {
+  if (data.level?.toLowerCase() === 'certificate' && !data.qualification_certificate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your certificate qualification',
@@ -298,7 +298,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === 'Diploma' && !data.qualification_diploma) {
+  if (data.level?.toLowerCase() === 'diploma' && !data.qualification_diploma) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your diploma qualification',
@@ -306,7 +306,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === 'Post-Graduate Diploma' && !data.qualification_post_grad_diploma) {
+  if (data.level?.toLowerCase() === 'post-graduate diploma' && !data.qualification_post_grad_diploma) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your post-graduate diploma',
@@ -314,7 +314,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === "Bachelor's Degree" && !data.qualification_degree) {
+  if (data.level?.toLowerCase() === "bachelor's degree" && !data.qualification_degree) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your bachelor\'s degree',
@@ -322,7 +322,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === "Bachelor's Degree Honours" && !data.qualification_degree_honours) {
+  if (data.level?.toLowerCase() === "bachelor's degree honours" && !data.qualification_degree_honours) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your honours degree',
@@ -330,7 +330,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === "Master's Degree" && !data.qualification_masters_degree) {
+  if (data.level?.toLowerCase() === "master's degree" && !data.qualification_masters_degree) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your master\'s degree',
@@ -338,7 +338,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === "Doctoral Degree" && !data.qualification_doctoral_degree) {
+  if (data.level?.toLowerCase() === "doctoral degree" && !data.qualification_doctoral_degree) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please select your doctoral degree',
@@ -346,7 +346,7 @@ export const FormDataSchema = z.object({
     });
   }
   
-  if (data.level === "Other" && (!data.other_qualification || data.other_qualification.trim().length === 0)) {
+  if (data.level?.toLowerCase() === "other" && (!data.other_qualification || data.other_qualification.trim().length === 0)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Please specify your qualification',

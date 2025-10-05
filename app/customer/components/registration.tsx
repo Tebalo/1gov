@@ -137,7 +137,7 @@ const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
     display: 'Pending Approval',
     description: 'Your payment has been received. Your registration is being finalized.',
     action: null,
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    color: 'bg-orange-50 text-orange-700 border-orange-200',
     icon: 'file-check'
   },
   'Endorsement-Complete': {
@@ -163,14 +163,14 @@ function getCustomerStatus(systemStatus: string): StatusInfo {
 const SAMPLE_DATA: RegistrationData = {
   "national_id": "436415528",
   "reg_number": "BOT000135",
-  "reg_status": "Manager-Approved",
+  "reg_status": "Manager-Rejected",
   "work_status": "Employed",
-  "endorsement_status": "Pending-Endorsement",
+  "endorsement_status": "Endorsement-Complete",
   "rejection_reason": null,
   "service_code": "MESD_006_08_054",
-  "payment_ref": null,
-  "payment_amount": null,
-  "payment_name": null,
+  "payment_ref": "jj",
+  "payment_amount": "jj",
+  "payment_name": "jj",
   "application_id": "5f6662b4-84ec-4684-983d-149c0e23f9ey",
   "submission_id": "5f6662b4149c0e23879y",
   "license_link": null,

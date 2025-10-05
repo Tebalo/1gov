@@ -18,9 +18,7 @@ export const dynamic = 'force-dynamic';
 export default async function Work(){
     const userRole = await getRole()  as Role;
 
-    if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
-        return <TeacherHome/>
-    } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
+    if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
         return <RegistrationWorkPage userRole={"registration_officer"}/>
     } else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerWork/>

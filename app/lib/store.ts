@@ -4,6 +4,7 @@ import { InvestigationStatuses } from "./types";
  */
 // const env = 'uat';
 const env = process.env.environment ?? 'uat';
+export const secretKey = process.env.SECRET_KEY || 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJsLU1xN0RmZ3pmanhWYnYyMk9EdTVySkswakpLNUZxb0Raa3BFLVFraVdZIn0.eyJleHAiOjE3NDExMTQ3NjAsImlhdCI6MTc0MTExMjk2MCwianRpIjoiYThhMzYzNDctZWZlZC00OGQ4LWJkMDktNjMxNzUyZmYwNTBiIiwiaXNzIjoiaHR0cHM6Ly9pYW0tYWNjLmdvdi5idy9yZWFsbXMvY3VzdG9tZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNzFhYjY3YWItZDk3Yi00YmIzLWI0NTEtZGQ5N2ExNzNkMTgzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY3VzdG9tZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjkxZWUxNGM2LWRiMmMtNGVjYi1hNj';
 /**
  * TRLS Base URL
  */
@@ -83,8 +84,6 @@ export const licUrl = 'http://66.179.253.57:8081/api';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';
 export const otpUrl = 'https://dev-gateway.example.com/auth/login/sms';
 export const trlsIAM = currentBaseURLs.trlsAuthBaseURL;
-
-export const secretKey = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJsLU1xN0RmZ3pmanhWYnYyMk9EdTVySkswakpLNUZxb0Raa3BFLVFraVdZIn0.eyJleHAiOjE3NDExMTQ3NjAsImlhdCI6MTc0MTExMjk2MCwianRpIjoiYThhMzYzNDctZWZlZC00OGQ4LWJkMDktNjMxNzUyZmYwNTBiIiwiaXNzIjoiaHR0cHM6Ly9pYW0tYWNjLmdvdi5idy9yZWFsbXMvY3VzdG9tZXIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNzFhYjY3YWItZDk3Yi00YmIzLWI0NTEtZGQ5N2ExNzNkMTgzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiY3VzdG9tZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjkxZWUxNGM2LWRiMmMtNGVjYi1hNj';
 
 
 export interface StatusTransition {

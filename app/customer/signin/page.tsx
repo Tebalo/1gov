@@ -8,18 +8,14 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="/" className="flex items-center gap-2 font-medium">
-            {/* <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
-            </div> */}
-            <div className="w-6 h-6 items-center justify-center">
+            <div className="relative w-6 h-6">
               <Image
                 src="/botepco.png"
                 alt='Coat-of-arms'
-                width={100}
-                height={100}
-                className="w-full h-full object-contain"
+                fill
+                className="object-contain"
                 priority
-                />
+              />
             </div>
             Botepco BW.
           </a>
