@@ -9,6 +9,7 @@ import { RegistrarDashboard } from "@/app/components/dashboard/RegistrarDashboar
 import { RegistrationOfficerDashboard } from "@/app/components/dashboard/RegistrationOfficerDashboard";
 import { SnrRegistrationOfficerDashboard } from "@/app/components/dashboard/SnrRegistrationOfficerDashboard";
 import { TeacherDashboard } from "@/app/components/dashboard/TeacherDashboard";
+import { redirect } from "next/navigation";
 
 export default async function Dashboard(){
     const userRole = await getRole()
@@ -29,6 +30,6 @@ export default async function Dashboard(){
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminDashboard/>
     } else {
-        return <AccessDenied/>
+        return redirect('/welcome')
     }
 }

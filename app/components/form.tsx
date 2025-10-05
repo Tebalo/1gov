@@ -2573,7 +2573,7 @@ export default function Form() {
                             trigger('qualification_degree_honours');
                             trigger('qualification_masters_degree');
                             trigger('qualification_doctoral_degree');
-                            setValue('other_qualification', '');
+                            trigger('other_qualification');
                           }}
                           value={watch('level')}>
                             <SelectTrigger className='mt-1'>
@@ -2974,7 +2974,9 @@ export default function Form() {
                             <Label htmlFor='institution' className="text-sm font-medium text-gray-700">
                               Name of Institution <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={institutionOpen} onOpenChange={setInstitutionOpen}>
+                            <Popover open={institutionOpen} onOpenChange={
+                              setInstitutionOpen
+                              }>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
@@ -3001,6 +3003,7 @@ export default function Form() {
                                           onSelect={(currentValue) => {
                                             setValue('institution', currentValue === watch('institution') ? "" : currentValue)
                                             setInstitutionOpen(false)
+                                            trigger('other_institution')
                                           }}
                                         >
                                           {institution.label}
@@ -3025,7 +3028,7 @@ export default function Form() {
                           )}
                         </div>
                         {/* Other Institution  */}
-                        {watch('institution') === "Other" && <div className='space-y-2'>
+                        {watch('institution').toLowerCase() === "other" && <div className='space-y-2'>
                           <Label htmlFor='other_institution'>Institution Name *</Label>
                           <Input
                             id='other_institution'

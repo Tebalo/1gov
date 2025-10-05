@@ -28,10 +28,7 @@ import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
 export default async function Work(){
     const userRole = await getRole() as Role;
-
-    if(userRole?.includes('CUSTOMER') || userRole?.startsWith('CUSTOMER')){
-        return <TeacherHome/>
-    } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
+    if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
         return <RegistrationOfficerWork/>
     } else if(userRole?.toUpperCase() === 'SNR_REGISTRATION_OFFICER'){
         return <SnrRegistrationOfficerWork/>
