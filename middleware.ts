@@ -22,6 +22,9 @@ export async function middleware(request: NextRequest) {
     if(isAdminRoute){
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
+    if(request.nextUrl.pathname.startsWith('/customer/dashboard')){
+      return NextResponse.redirect(new URL('/customer/signin', request.url));
+    }
     if (isProtectedRoute) {
       // Redirect to welcome page if there's no session and trying to access a protected route
       return NextResponse.redirect(new URL('/welcome', request.url));

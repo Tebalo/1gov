@@ -917,7 +917,9 @@ export default function Form() {
                                   aria-expanded={countryOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('nationality') || "Select your nationality"}
+                                  <span className="truncate">
+                                    {watch('nationality') || "Select your nationality"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -995,7 +997,9 @@ export default function Form() {
                                 )}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
+                                <span className="truncate">
                                 {watch('date_of_birth') ? format(new Date(watch('date_of_birth')), "PPP") : <span>Pick a date</span>}
+                                </span>
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
@@ -1408,7 +1412,9 @@ export default function Form() {
                                   aria-expanded={privateOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('private_schools') || "Select your school"}
+                                  <span className="truncate">
+                                    {watch('private_schools') || "Select your school"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -1804,7 +1810,9 @@ export default function Form() {
                                   aria-expanded={primaryOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('primary_schools') || "Select your school"}
+                                  <span className="truncate">
+                                    {watch('primary_schools') || "Select your school"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2033,7 +2041,9 @@ export default function Form() {
                                   aria-expanded={juniorOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('junior_schools') || "Select your school"}
+                                  <span className="truncate">
+                                    {watch('junior_schools') || "Select your school"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2262,7 +2272,9 @@ export default function Form() {
                                   aria-expanded={seniorOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('senior_schools') || "Select your school"}
+                                  <span className="truncate">
+                                    {watch('senior_schools') || "Select your school"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2580,7 +2592,9 @@ export default function Form() {
                                   aria-expanded={doctoralDegreeOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_doctoral_degree') || "Select your Degree"}
+                                  <span className="truncate">
+                                    {watch('qualification_doctoral_degree') || "Select your Degree"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2634,7 +2648,9 @@ export default function Form() {
                                   aria-expanded={mastersOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_masters_degree') || "Search your master's degree"}
+                                  <span className="truncate">
+                                    {watch('qualification_masters_degree') || "Search your master's degree"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2688,7 +2704,9 @@ export default function Form() {
                                   aria-expanded={honoursOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_degree_honours') || "Select your Degree"}
+                                  <span className="truncate">
+                                    {watch('qualification_degree_honours') || "Select your Degree"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2742,7 +2760,9 @@ export default function Form() {
                                   aria-expanded={diplomaOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_diploma') || "Select your diploma"}
+                                  <span className="truncate">
+                                    {watch('qualification_diploma') || "Select your diploma"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2796,7 +2816,9 @@ export default function Form() {
                                   aria-expanded={postGradDiplomaOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_post_grad_diploma') || "Select your diploma"}
+                                  <span className="truncate">
+                                    {watch('qualification_post_grad_diploma') || "Select your diploma"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2850,7 +2872,9 @@ export default function Form() {
                                   aria-expanded={degreeOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                 >
-                                  {watch('qualification_degree') || "Select your Bachelor's Degree"}
+                                  <span className="truncate">
+                                    {watch('qualification_degree') || "Select your Bachelor's Degree"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -2941,8 +2965,10 @@ export default function Form() {
                                   role="combobox"
                                   aria-expanded={institutionOpen}
                                   className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                                >
-                                  {watch('institution') || "Select your institution"}
+                                >                            
+                                  <span className="truncate">
+                                    {watch('institution') || "Select your institution"}
+                                  </span>
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </PopoverTrigger>
@@ -3047,8 +3073,10 @@ export default function Form() {
                                 aria-expanded={subjectOpen}
                                 className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                               >
-                                {watch('subject_specialization') || "Select your specialization"}
-                                <ChevronsUpDown className="opacity-50" />
+                                <span className="truncate">
+                                  {watch('subject_specialization') || "Select your specialization"}
+                                </span>
+                                <ChevronsUpDown className="opacity-50 ml-2 flex-shrink-0" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-full p-0">
@@ -3060,17 +3088,18 @@ export default function Form() {
                                     {subjectSpecializationForSelect.map((subject_specialization) => (
                                       <CommandItem
                                         key={subject_specialization.value}
-                                        value={subject_specialization.label || watch('subject_specialization')}
+                                        value={subject_specialization.value}
                                         onSelect={(currentValue) => {
                                           setValue('subject_specialization', currentValue === watch('subject_specialization') ? "" : currentValue)
                                           setSubjectOpen(false)
                                         }}
+                                        className="flex items-center justify-between"
                                       >
-                                        {subject_specialization.label}
+                                        <span className="truncate flex-1 mr-2">{subject_specialization.label}</span>
                                         <Check
                                           className={cn(
-                                            "ml-auto",
-                                            watch('subject_specialization') === subject_specialization.label ? "opacity-100" : "opacity-0"
+                                            "flex-shrink-0",
+                                            watch('subject_specialization') === subject_specialization.value ? "opacity-100" : "opacity-0"
                                           )}
                                         />
                                       </CommandItem>
@@ -3815,7 +3844,7 @@ export default function Form() {
                   Back
                 </Button>
                 
-                <div className='flex items-center gap-2'>
+                <div className='md:block hidden items-center gap-2'>
                   <span className='text-sm text-gray-500'>
                     Step {currentStep + 1} of {steps.length}
                   </span>
