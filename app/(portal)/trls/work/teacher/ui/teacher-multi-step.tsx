@@ -80,13 +80,6 @@ const scrollContainerRef = useRef<HTMLDivElement>(null);
             scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
-//     const examples: Stages[] = [
-//         { stage: 0, label: 'Just created account' },
-//         { stage: 1, label: 'Currently in screening' },
-//         { stage: 2, label: 'Under assessment' },
-//         { stage: 3, label: 'Awaiting approval' },
-//         { stage: 4, label: 'Being endorsed' }
-//   ];
 
     return (
         <section className="w-full h-screen overflow-hidden bg-gray-50">

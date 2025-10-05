@@ -7,16 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Plus, Edit, Trash2, FileText, AlertCircle, CheckCircle } from 'lucide-react'
-import FileUpload from './file-upload'
+import FileUpload, { UploadResponse } from './file-upload'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-
-
-interface UploadResponse {
-  bucket: string
-  extension: string
-  'original-name': string
-  key: string
-}
 
 interface FileUploadProps {
   name: string
@@ -224,12 +216,13 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
     }
   }
 
-  const handleAttachmentChange = (attachment: UploadResponse | null) => {
-    setFormData(prev => ({ ...prev, alt_attachments: attachment }))
-    if (formErrors.alt_attachments) {
-      setFormErrors(prev => ({ ...prev, alt_attachments: '' }))
-    }
+const handleAttachmentChange = (attachment: UploadResponse | null) => {
+  setFormData(prev => ({ ...prev, alt_attachments: attachment }))
+  if (attachment) {
+    // Clear error when file is successfully uploaded
+    setFormErrors(prev => ({ ...prev, alt_attachments: '' }))
   }
+}
 
   return (
     <Card>
@@ -354,7 +347,7 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                   )}
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="year" className="text-sm font-medium text-gray-700">
                     Year Completed <span className="text-red-500">*</span>
                   </Label>
@@ -375,23 +368,39 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                       {formErrors.alt_qualification_year}
                     </p>
                   )}
+                </div> */}
+
+                {/* Year Dropdown */}
+                <div className='space-y-2'>
+                  <Label htmlFor='alt_qualification_year'>Qualification Year *</Label>
+                  <Select
+                    onValueChange={(value) => handleInputChange('alt_qualification_year', value)}
+                    value={formData.alt_qualification_year}
+                  >
+                    <SelectTrigger className='mt-1'>
+                      <SelectValue placeholder="Select a year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 2026 - 1950 + 1 }, (_, i) => 2026 - i).map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {formErrors.alt_qualification_year && (
+                    <p className='text-sm text-red-500 mt-1'>{formErrors.alt_qualification_year}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">
-                    Qualification Certificate <span className="text-red-500">*</span>
+                    Upload Qualification Document  <span className="text-red-500">*</span>
                   </Label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-400 transition-colors">
-                    {/* <SimpleFileUpload
-                      name="qualification_cert"
-                      label="Qualification Certificate"
-                      value={formData.alt_attachments}
-                      onChange={handleAttachmentChange}
-                      error={formErrors.alt_attachments}
-                    /> */}
+                  <div className="">
                     <FileUpload
                       name="qualification_cert"
-                      label="Qualification Certificate"
+                      label="Attach a pdf copy of your qualification document"
                       description="Qualification certificate"
                       acceptedTypes=".pdf,.jpg,.jpeg,.png"
                       maxSize={5}
@@ -399,6 +408,7 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
                       value={formData.alt_attachments}
                       onChange={handleAttachmentChange}
                       error={formErrors.alt_attachments}
+                      compact
                     />
                   </div>
                 </div>

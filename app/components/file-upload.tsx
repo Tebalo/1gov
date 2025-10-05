@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,12 +10,14 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Upload, File, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { fileUploadUrl } from '../lib/store'
 
-interface UploadResponse {
+export interface UploadResponse {
   bucket: string
   extension: string
   'original-name': string
   key: string
+  [k: string]: unknown
 }
+
 interface FileUploadProps {
   name: string
   label: string
@@ -25,7 +28,9 @@ interface FileUploadProps {
   value?: UploadResponse | null
   onChange: (value: UploadResponse | null) => void
   error?: string
+  compact?: boolean
 }
+
 const FileUpload: React.FC<FileUploadProps> = ({
   name,
   label,
@@ -35,13 +40,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
   required = false,
   value,
   onChange,
-  error
+  error,
+  compact = false
 }) => {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -49,35 +56,43 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
+
   const validateFile = (file: File): string | null => {
     // Check file size
     if (file.size > maxSize * 1024 * 1024) {
       return `File size must be less than ${maxSize}MB`
     }
+
     // Check file type
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
     const allowedTypes = acceptedTypes.split(',').map(type => type.trim().toLowerCase())
+
     if (!allowedTypes.includes(fileExtension)) {
       return `File type not allowed. Accepted types: ${acceptedTypes}`
     }
+
     return null
   }
+
   const uploadFile = async (file: File) => {
     setUploading(true)
     setUploadProgress(0)
     setUploadError(null)
+
     try {
       // Validate file before upload
       const validationError = validateFile(file)
       if (validationError) {
         throw new Error(validationError)
       }
+
       // Create FormData
       const formData = new FormData()
       formData.append('file', file)
       formData.append('type', file.type || 'document')
       formData.append('name', file.name)
-      formData.append('description', description || '')
+      formData.append('description', 'TRLS')
+
       // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
@@ -88,6 +103,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           return prev + 10
         })
       }, 200)
+
       // Upload file
       const response = await fetch(fileUploadUrl, {
         method: 'POST',
@@ -96,15 +112,20 @@ const FileUpload: React.FC<FileUploadProps> = ({
         },
         body: formData,
       })
+
       clearInterval(progressInterval)
       setUploadProgress(100)
+
       if (!response.ok) {
         const errorText = await response.text()
         throw new Error(`Upload failed: ${response.status} ${errorText}`)
       }
+
       const result: UploadResponse = await response.json()
+
       // Call onChange with the upload response
       onChange(result)
+
       // Reset progress after a brief delay
       setTimeout(() => setUploadProgress(0), 1000)
     } catch (error) {
@@ -115,31 +136,38 @@ const FileUpload: React.FC<FileUploadProps> = ({
       setUploading(false)
     }
   }
+
   const handleFileSelect = (file: File) => {
     uploadFile(file)
   }
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       handleFileSelect(file)
     }
   }
+
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setDragOver(false)
+
     const file = event.dataTransfer.files[0]
     if (file) {
       handleFileSelect(file)
     }
   }
+
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setDragOver(true)
   }
+
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     setDragOver(false)
   }
+
   const removeFile = () => {
     onChange(null)
     setUploadError(null)
@@ -147,14 +175,81 @@ const FileUpload: React.FC<FileUploadProps> = ({
       fileInputRef.current.value = ''
     }
   }
+
   const openFileDialog = () => {
     fileInputRef.current?.click()
   }
+
+  if (compact) {
+    return (
+      <div className="space-y-1.5">
+        {!value && !uploading && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={openFileDialog}
+            className={`w-full py-5 justify-start ${error ? 'border-red-300' : ''}`}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            <span className="text-sm">{label}</span>
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </Button>
+        )}
+
+        {uploading && (
+          <div className="border rounded-md p-2">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-4 w-4 animate-spin text-primary flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <Progress value={uploadProgress} className="h-1" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {value && !uploading && (
+          <div className="border rounded-md p-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center space-x-2 min-w-0 flex-1">
+                <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <p className="text-sm truncate">{value['original-name']}</p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={removeFile}
+                className="text-gray-500 hover:text-red-500 h-6 w-6 p-0 flex-shrink-0"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {(uploadError || error) && (
+          <p className="text-xs text-red-500">{uploadError || error}</p>
+        )}
+
+        <Input
+          ref={fileInputRef}
+          type="file"
+          accept={acceptedTypes}
+          onChange={handleInputChange}
+          className="hidden"
+          id={name}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="text-sm font-medium">
         {label} {required && <span className="text-red-500">*</span>}
       </Label>
+
       {!value && !uploading && (
         <Card
           className={`border-2 border-dashed transition-colors cursor-pointer hover:border-primary/50 ${
@@ -176,6 +271,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </CardContent>
         </Card>
       )}
+
       {uploading && (
         <Card>
           <CardContent className="p-4">
@@ -189,6 +285,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </CardContent>
         </Card>
       )}
+
       {value && !uploading && (
         <Card>
           <CardContent className="p-4">
@@ -222,6 +319,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </CardContent>
         </Card>
       )}
+
       {(uploadError || error) && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -230,6 +328,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </AlertDescription>
         </Alert>
       )}
+
       <Input
         ref={fileInputRef}
         type="file"
@@ -238,10 +337,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
         className="hidden"
         id={name}
       />
+
       {description && !error && !uploadError && (
         <p className="text-xs text-gray-500">{description}</p>
       )}
     </div>
   )
 }
+
 export default FileUpload
