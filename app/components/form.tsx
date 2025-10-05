@@ -15,14 +15,14 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FormDataSchema } from '@/lib/schema'
-import FileUpload from './file-upload'
+import FileUpload, { UploadResponse } from './file-upload'
 import { processAttachments, submitTeacherRegistration } from '@/lib/teacher-registration'
 import { Profile, TeacherRegistrationResponse} from '@/types/teacher-registration'
 import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Check, ChevronsUpDown, FileText, Loader2 } from 'lucide-react'
+import { Check, ChevronsUpDown, FileText, Loader2, BriefcaseBusiness, GraduationCap, Star, FileCheck, AlertCircle } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
 import {  
@@ -117,8 +117,8 @@ import { subjectSpecializationForSelect } from "@/types/subjects_specialization"
 import { getAccessGroups } from "../auth/auth"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-
+import { format, set } from "date-fns"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -129,7 +129,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Personal Information',
-    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'middle_name', 'date_of_birth', 'username', 'gender'] // 'surname',
+    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'username', 'gender','national_id_copy'] // 'surname',
   },
   {
     id: 'Step 2',
@@ -139,17 +139,17 @@ const steps = [
   {
     id: 'Step 3',
     name: 'Professional Details',
-    fields: ['practice_category', 'sub_category', 'experience_years', 'district', 'institution_type', 'school_level']
+    fields: ['practice_category', 'work_status', 'sub_category', 'experience_years', 'district', 'institution_type', 'school_level']
   },
   {
     id: 'Step 4',
     name: 'Qualifications',
-    fields: ['qualification_certificate', 'institution', 'qualification_year', 'major_subjects', 'qualifications', 'level']
+    fields: ['qualification_certificate', 'attachments', 'subject_specialization', 'institution', 'qualification_year', 'major_subjects', 'qualifications', 'level']
   },
   {
     id: 'Step 5',
     name: 'Declarations & Disclosures',
-    fields: ['disability', 'student_related_offence', 'drug_related_offence', 'license_flag', 'misconduct_flag', 'national_id_copy']
+    fields: ['disability', 'student_related_offence', 'drug_related_offence', 'license_flag', 'misconduct_flag']
   },
   { 
     id: 'Step 6', 
@@ -158,12 +158,6 @@ const steps = [
   }
 ]
 
-interface UploadResponse {
-  bucket: string
-  extension: string
-  'original-name': string
-  key: string
-}
 
 const countries = countryList.map((country) => ({
   value: country,
@@ -249,6 +243,7 @@ export default function Form() {
     trigger,
     setValue,
     getValues,
+    clearErrors,
     formState: { errors }
   } = useForm<FormInputs>({
     resolver: zodResolver(FormDataSchema),
@@ -324,16 +319,16 @@ export default function Form() {
         }
         
         setSubmitting(false)
+        router.push(`/customer/dashboard`) 
         // reset()
       } else {
         setSubmitting(false)
-        //alert('Registration failed. Please try again.')
       }
     } catch (error) {
       console.error('Error submitting form:', error);
     }finally {
       setSubmitting(false)
-      router.push(`/customer/dashboard`) 
+      
     }
   }
   /**
@@ -390,13 +385,13 @@ export default function Form() {
         // If draft saved successfully, refresh the page to load the draft
         router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
       }
-      toast({
-        title: "Draft saved successfully",
-        description: "You can continue your application later.",
-        action: (
-          <ToastAction altText="Ok">Ok</ToastAction>
-        ),
-      });
+      // toast({
+      //   title: "Draft saved successfully",
+      //   description: "You can continue your application later.",
+      //   action: (
+      //     <ToastAction altText="Ok">Ok</ToastAction>
+      //   ),
+      // });
 
       setSubmittingDraft(false)
     } catch (error) {
@@ -418,12 +413,6 @@ export default function Form() {
   const gender = watch("gender")
   const nationality = watch("nationality")
 
-  /**
-   * Load draft if draftId is present in URL
-   * This effect runs only once on component mount
-   */
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(window.location.search);
   //   const draftIdFromUrl = urlParams.get('draftId');
     
   //   if (draftIdFromUrl) {
@@ -494,7 +483,6 @@ export default function Form() {
   //   }
   // // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [loadDraft, reset, setValue, updateDraft]);
-
   useEffect(() => {
     const initializeForm = async () => {
       try {
@@ -607,7 +595,12 @@ export default function Form() {
     const output = await trigger(fields as FieldName[], { shouldFocus: true })
 
     if (!output) {
-      console.log('Validation failed for step:', currentStep)
+      setTimeout(() => {
+        const scrollViewport = scrollContainerRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollViewport) {
+          scrollViewport.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 0);
       return
     }
 
@@ -615,8 +608,15 @@ export default function Form() {
       setPreviousStep(currentStep)
       setCurrentStep(step => step + 1)
       
+      // Scroll to top after state update
+      setTimeout(() => {
+        const scrollViewport = scrollContainerRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollViewport) {
+          scrollViewport.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 0);
+      
       processDraft(getValues()) 
-      scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -625,8 +625,15 @@ export default function Form() {
       setPreviousStep(currentStep)
       setCurrentStep(step => step - 1)
       
+      // Scroll to top after state update
+      setTimeout(() => {
+        const scrollViewport = scrollContainerRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollViewport) {
+          scrollViewport.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 0);
+      
       processDraft(getValues()) 
-      scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -638,12 +645,20 @@ export default function Form() {
     setSubmitting(true)
     // Validate all fields before submitting
     const isValid = await trigger()
-    if (isValid || true) {
+    
+    if (isValid) {
       const formData = getValues()
       processForm(formData) 
     } else {
       setSubmitting(false)
-      alert('Please fill in all required fields correctly')
+      
+      // Scroll to top to show errors
+      setTimeout(() => {
+        const scrollViewport = scrollContainerRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollViewport) {
+          scrollViewport.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 0);
     }
   }
 
@@ -659,144 +674,136 @@ export default function Form() {
   }
 
   return (
-    <section className='bg-gray-50 md:p-2 max-h-screen'>
+    <section className='bg-gray-50 md:p-2 max-h-screen space-y-4'>
+      {/* Case Header - Fixed */}
+      <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden">
+          <CardHeader className="p-4">
+              <div className="flex justify-between items-center gap-3">
+                  {/* Left Items */}
+                  <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      {/* Icon */}
+                      <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                          <BriefcaseBusiness className="w-6 h-6 text-gray-700"/>
+                      </div>
+                      {/* Case Title */}
+                      <div className="flex-1 min-w-0">
+                          <h1 className="text-lg font-semibold text-gray-900 truncate">
+                              Application For Teacher Registration & Licensing
+                          </h1>
+                      </div>
+                  </div>
+                  {/* Right Items */}
+                  <div className="flex-shrink-0">
+                      <Button 
+                          className="rounded-full h-8 w-8" 
+                          variant="ghost"
+                          size="icon"
+                      >
+                          <Star className="w-4 h-4 text-gray-600"/>
+                      </Button>
+                  </div>
+              </div>
+          </CardHeader>
+      </Card>
       <div className='max-w-9xl mx-auto flex gap-6'>
-        {/* Left Sidebar - Header */}
-        {/* <div className='w-80 flex-shrink-0 md:block hidden'>
-          <div className='sticky top-4'>
-            <TeacherRegistrationHeader />
-          </div>
-        </div> */}
-
-
-        {/* Main Content */}
-        <div className='flex-1 bg-white rounded-lg shadow-lg'>
-          {fields.length > 0 && (
-            <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
-              <p className="text-sm text-red-800">
-                <span className="font-medium">Please correct these fields:</span>
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {fields.map((field, index) => (
-                  <span 
-                    key={index} 
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200"
-                  >
-                    {field.replace(/_/g, ' ')}
-                  </span>
+          {/* Main Content */}
+          <div className='flex-1 bg-white rounded-lg shadow-lg'>
+            <ScrollArea ref={scrollContainerRef} className='md:h-[500px] p-4'>
+            {fields.length > 0 && (
+              <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
+                <p className="text-sm text-red-800">
+                  <span className="font-medium">Please correct these fields:</span>
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {fields.map((field, index) => (
+                    <span 
+                      key={index} 
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200"
+                    >
+                      {field.replace(/_/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Progress Steps */}
+            <nav aria-label='Progress' className='md:px-6 py-6 md:block hidden'>
+              <ol role='list' className='space-y-4 md:flex md:space-x-0 md:space-y-0'>
+                {steps.map((step, index) => (
+                    <li key={step.name} className='md:flex-1'>
+                    {currentStep > index ? (
+                        <div>
+                            <div className="flex justify-center mt-2">
+                                <span className="text-xs font-light text-blue-600">{step.name}</span>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                {index > 0 ? (
+                                <div className="w-full h-0.5 bg-blue-600"></div>
+                                ) : (
+                                <div className="w-full"></div>
+                                )}
+                                <div className="w-4 h-4 bg-blue-600 rounded-full flex-shrink-0"></div>
+                                {index < steps.length - 1 ? (
+                                <div className="w-full h-0.5 bg-blue-600"></div>
+                                ) : (
+                                <div className="w-full"></div>
+                                )}
+                            </div>
+                        </div>
+                    ) : currentStep === index ? (
+                        <div>
+                            <div className="flex justify-center mt-2">
+                                <span className="text-xs font-light text-blue-600">{step.name}</span>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                {index > 0 ? (
+                                <div className="w-full h-0.5 bg-blue-600"></div>
+                                ) : (
+                                <div className="w-full"></div>
+                                )}
+                                <div className="w-4 h-4 border-2 border-blue-600 bg-white rounded-full flex-shrink-0 hover:cursor-pointer"></div>
+                                {index < steps.length - 1 ? (
+                                <div className="w-full h-0.5 bg-gray-300"></div>
+                                ) : (
+                                <div className="w-full"></div>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            <div className="flex justify-center mt-2">
+                                <span className="text-xs font-light text-gray-500">{step.name}</span>
+                            </div>
+                            <div className="flex items-center justify-center">
+                                {index > 0 ? (
+                                <div className="w-full h-0.5 bg-gray-300"></div>
+                                ) : (
+                                <div className="w-full"></div>
+                                )}
+                                <div className="w-4 h-4 border-2 border-gray-300 bg-white rounded-full flex-shrink-0 hover:cursor-pointer"></div>
+                                {index < steps.length - 1 ? (
+                                <div className="w-full h-0.5 bg-gray-300"></div>
+                                ) : (
+                                <div className="w-full"></div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    </li>
                 ))}
+              </ol>
+            </nav>
+
+            {/* Mobile Header */}
+            <div className='md:hidden block w-full mb-4'>
+              <div className='bg-white shadow-sm border-b p-4'>
+                <h1 className='text-lg font-semibold text-gray-900'>
+                  Teacher Registration
+                </h1>
+                <p className='text-sm text-gray-600'>Complete your application</p>
               </div>
             </div>
-          )}
-          {/* Progress Steps */}
-          <nav aria-label='Progress' className='md:px-6 py-6 border-b md:block hidden'>
-            {/* <ol role='list' className='space-y-4 md:flex md:space-x-8 md:space-y-0'>
-              {steps.map((step, index) => (
-                <li key={step.name} className='md:flex-1'>
-                  {currentStep > index ? (
-                    <div className='group flex w-full flex-col border-l-4 border-emerald-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4'>
-                      <span className='text-sm font-medium text-emerald-600 transition-colors'>
-                        {step.id}
-                      </span>
-                      <span className='text-sm font-medium'>{step.name}</span>
-                    </div>
-                  ) : currentStep === index ? (
-                    <div
-                      className='flex w-full flex-col border-l-4 border-blue-600 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4'
-                      aria-current='step'
-                    >
-                      <span className='text-sm font-medium text-blue-600'>
-                        {step.id}
-                      </span>
-                      <span className='text-sm font-medium'>{step.name}</span>
-                    </div>
-                  ) : (
-                    <div className='group flex w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4'>
-                      <span className='text-sm font-medium text-gray-500 transition-colors'>
-                        {step.id}
-                      </span>
-                      <span className='text-sm font-medium'>{step.name}</span>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ol> */}
-            <ol role='list' className='space-y-4 md:flex md:space-x-0 md:space-y-0'>
-              {steps.map((step, index) => (
-                  <li key={step.name} className='md:flex-1'>
-                  {currentStep > index ? (
-                      <div>
-                          <div className="flex justify-center mt-2">
-                              <span className="text-xs font-light text-blue-600">{step.name}</span>
-                          </div>
-                          <div className="flex items-center justify-center">
-                              {index > 0 ? (
-                              <div className="w-full h-0.5 bg-blue-600"></div>
-                              ) : (
-                              <div className="w-full"></div>
-                              )}
-                              <div className="w-4 h-4 bg-blue-600 rounded-full flex-shrink-0"></div>
-                              {index < steps.length - 1 ? (
-                              <div className="w-full h-0.5 bg-blue-600"></div>
-                              ) : (
-                              <div className="w-full"></div>
-                              )}
-                          </div>
-                      </div>
-                  ) : currentStep === index ? (
-                      <div>
-                          <div className="flex justify-center mt-2">
-                              <span className="text-xs font-light text-blue-600">{step.name}</span>
-                          </div>
-                          <div className="flex items-center justify-center">
-                              {index > 0 ? (
-                              <div className="w-full h-0.5 bg-blue-600"></div>
-                              ) : (
-                              <div className="w-full"></div>
-                              )}
-                              <div className="w-4 h-4 border-2 border-blue-600 bg-white rounded-full flex-shrink-0 hover:cursor-pointer"></div>
-                              {index < steps.length - 1 ? (
-                              <div className="w-full h-0.5 bg-gray-300"></div>
-                              ) : (
-                              <div className="w-full"></div>
-                              )}
-                          </div>
-                      </div>
-                  ) : (
-                      <div>
-                          <div className="flex justify-center mt-2">
-                              <span className="text-xs font-light text-gray-500">{step.name}</span>
-                          </div>
-                          <div className="flex items-center justify-center">
-                              {index > 0 ? (
-                              <div className="w-full h-0.5 bg-gray-300"></div>
-                              ) : (
-                              <div className="w-full"></div>
-                              )}
-                              <div className="w-4 h-4 border-2 border-gray-300 bg-white rounded-full flex-shrink-0 hover:cursor-pointer"></div>
-                              {index < steps.length - 1 ? (
-                              <div className="w-full h-0.5 bg-gray-300"></div>
-                              ) : (
-                              <div className="w-full"></div>
-                              )}
-                          </div>
-                      </div>
-                  )}
-                  </li>
-              ))}
-            </ol>
-          </nav>
-
-          {/* Mobile Header */}
-          <div className='md:hidden block w-full mb-4'>
-            <div className='bg-white shadow-sm border-b p-4'>
-              <h1 className='text-lg font-semibold text-gray-900'>
-                Teacher Registration
-              </h1>
-              <p className='text-sm text-gray-600'>Complete your application</p>
-            </div>
-          </div>
-          <ScrollArea ref={scrollContainerRef} className='md:h-[500px] p-4'>
+          
             <form onSubmit={handleSubmit(processForm)}>
               {/* Step 1: Personal Information */}
               {currentStep === 0 && (
@@ -805,7 +812,7 @@ export default function Form() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <Card>
+                  <Card className='border-0 shadow-none'>
                     <CardHeader>
                       <CardTitle>Personal Information</CardTitle>
                       <CardDescription>
@@ -877,7 +884,7 @@ export default function Form() {
                             value={citizenship}
                             onValueChange={(value) => {
                             setValue('citizenship', value);
-                            setValue('nationality', value === 'citizen' ? 'botswana' : ''); // Reset
+                            setValue('nationality', value === 'citizen' ? 'Botswana' : ''); // Reset
                             }}>
                             <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your citizenship' />
@@ -901,8 +908,7 @@ export default function Form() {
                             </Label>
                             <Popover 
                               open={countryOpen} 
-                              onOpenChange={setCountryOpen}
-                              
+                              onOpenChange={setCountryOpen}                            
                             >
                               <PopoverTrigger asChild>
                                 <Button
@@ -944,9 +950,6 @@ export default function Form() {
                                 </Command>
                               </PopoverContent>
                             </Popover>
-                            {/* {countries.map((country) => (
-                              <li key={country.value}>{country.value}-{country.label}</li>
-                            ))} */}
                             {errors.nationality && (
                               <p className='text-sm text-red-500 flex items-center gap-1'>
                                 <span className="text-xs">⚠</span>
@@ -976,25 +979,7 @@ export default function Form() {
                           )}
                         </div>
 
-                        {/* Date of Birth - Full width on mobile for better date picker */}
-                        {/* <div className="space-y-2 col-span-1 sm:col-span-1">
-                          <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
-                            Date of Birth <span className="text-red-500">*</span>
-                          </Label>
-                          <Input
-                            id='date_of_birth'
-                            type='date'
-                            {...register('date_of_birth')}
-                            className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                          />
-                          {errors.date_of_birth && (
-                            <p className='text-sm text-red-500 flex items-center gap-1'>
-                              <span className="text-xs">⚠</span>
-                              {errors.date_of_birth.message}
-                            </p>
-                          )}
-                        </div> */}
- 
+                        {/* Date of Birth with date picker */}
                         <div className="space-y-2 col-span-1 sm:col-span-1">
                           <Label htmlFor='date_of_birth' className="text-sm font-medium text-gray-700">
                             Date of Birth <span className="text-red-500">*</span>
@@ -1016,7 +1001,13 @@ export default function Form() {
                             <PopoverContent className="w-auto p-0" align="start">
                               <Calendar
                                 mode="single"
-                                selected={watch('date_of_birth') ? new Date(watch('date_of_birth')) : undefined}
+                                selected={(() => {
+                                  try {
+                                    return watch('date_of_birth') ? new Date(watch('date_of_birth')) : undefined;
+                                  } catch {
+                                    return undefined;
+                                  }
+                                })()}
                                 onSelect={(newDate) => {
                                   if (newDate) {
                                     const year = newDate.getFullYear();
@@ -1072,26 +1063,33 @@ export default function Form() {
                         </div>
 
                         {/* File Upload - Full width */}
-                        <div className='col-span-1 sm:col-span-2 mt-4'>
+                        {watch('citizenship') && <div className='col-span-1 sm:col-span-1'>
                           <div className="space-y-2">
                             <Label className="text-sm font-medium text-gray-700">
-                              National ID Copy <span className="text-red-500">*</span>
+                              {watch("citizenship") == 'citizen' ? 'National ID Copy':'Passport Copy'} <span className="text-red-500">*</span>
                             </Label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-400 transition-colors">
-                              <FileUpload
-                                name="national_id_copy"
-                                label="National ID Copy"
-                                description="Omang copy"
-                                acceptedTypes=".pdf,.jpg,.jpeg,.png"
-                                maxSize={5}
-                                required={true}
-                                value={nationalIdDoc}
-                                onChange={setNationalIdDoc}
-                                error={errors.national_id_copy?.message}
-                              />
+                            <div className="">
+<FileUpload
+  name="national_id_copy"
+  label="Attach a Copy"
+  description="national-id-documents"
+  acceptedTypes=".pdf,.jpg,.jpeg,.png"
+  maxSize={5}
+  required={true}
+  value={nationalIdDoc}
+  onChange={(file) => {
+    setNationalIdDoc(file);
+    if (file) {
+      setValue('national_id_copy', file);
+      trigger('national_id_copy');
+    }
+  }}
+  error={errors.national_id_copy?.message as string | undefined}
+  compact
+/>
                             </div>
                           </div>
-                        </div>
+                        </div>}
                       </div>
 
                       {/* Progress indicator for mobile */}
@@ -1116,7 +1114,7 @@ export default function Form() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <Card>
+                  <Card className='border-0 shadow-none'>
                     <CardHeader>
                       <CardTitle>Contact Information</CardTitle>
                       <CardDescription>
@@ -1145,7 +1143,7 @@ export default function Form() {
                           <Label htmlFor='primary_email'>Primary Email *</Label>
                           <Input
                             id='primary_email'
-                            type='tel'
+                            type='email'
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
@@ -1208,7 +1206,7 @@ export default function Form() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <Card>
+                  <Card className='border-0 shadow-none'>
                     <CardHeader>
                       <CardTitle>Professional Details</CardTitle>
                       <CardDescription>
@@ -1216,55 +1214,6 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
-                      {/* {Object.keys(errors).length > 0 && (
-                        <div className="relative bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                          <div className="flex items-start">
-                            <div className="flex-shrink-0">
-                              <svg 
-                                className="h-5 w-5 text-red-400" 
-                                viewBox="0 0 20 20" 
-                                fill="currentColor"
-                              >
-                                <path 
-                                  fillRule="evenodd" 
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
-                                  clipRule="evenodd" 
-                                />
-                              </svg>
-                            </div>
-                            <div className="ml-3 flex-1">
-                              <h3 className="text-sm font-medium text-red-800 mb-2">
-                                Please correct the following errors:
-                              </h3>
-                              <div className="space-y-1">
-                                {Object.entries(errors).map(([field, error]) => (
-                                  <div key={field} className="flex items-center text-sm text-red-700">
-                                    <span className="inline-block w-2 h-2 bg-red-400 rounded-full mr-2 flex-shrink-0"></span>
-                                    <span className="font-medium capitalize">
-                                      {field.replace(/_/g, ' ')}:
-                                    </span>
-                                    <span className="ml-1">
-                                      {error?.message || 'This field is required'}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <button 
-                            onClick={() => { Add logic to clear errors or scroll to first error }}
-                            className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors"
-                          >
-                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path 
-                                fillRule="evenodd" 
-                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" 
-                                clipRule="evenodd" 
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      )} */}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
                         <div className="space-y-2">
@@ -1275,10 +1224,15 @@ export default function Form() {
                             setValue('institution_type', "");
                             setValue('school_level', "");
                             setValue('district', "");
+
+                            setValue('private_schools', "");
+                            setValue('primary_schools', "");
+                            setValue('junior_schools', "");
+                            setValue('senior_schools', "");
                           }}
                           value={watch('work_status')}>
                             <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select practice category' />
+                              <SelectValue placeholder='Select employment status' />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value='Employed'>Employed</SelectItem>
@@ -1417,7 +1371,14 @@ export default function Form() {
                         {<div className="space-y-2">
                           <Label htmlFor='school_level'>School Level *</Label>
                           <Select 
-                          onValueChange={(value) => setValue('school_level', value)}
+                          onValueChange={(value) => {
+                            setValue('school_level', value);
+                                setValue('private_schools', "");
+                                setValue('primary_schools', "");
+                                setValue('junior_schools', "");
+                                setValue('senior_schools', "");
+                            }
+                            }
                           value={watch('school_level')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select school level' />
@@ -2347,7 +2308,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {/* {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.label || watch('senior_schools')}
@@ -2364,7 +2325,7 @@ export default function Form() {
                                             )}
                                           />
                                         </CommandItem>
-                                      ))}
+                                      ))} */}
                                       {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
@@ -2561,7 +2522,7 @@ export default function Form() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <Card>
+                  <Card className='border-0 shadow-none'>
                     <CardHeader>
                       <CardTitle>Qualifications</CardTitle>
                       <CardDescription>
@@ -2569,55 +2530,6 @@ export default function Form() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
-                      {/* {Object.keys(errors).length > 0 && (
-                        <div className="relative bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                          <div className="flex items-start">
-                            <div className="flex-shrink-0">
-                              <svg 
-                                className="h-5 w-5 text-red-400" 
-                                viewBox="0 0 20 20" 
-                                fill="currentColor"
-                              >
-                                <path 
-                                  fillRule="evenodd" 
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
-                                  clipRule="evenodd" 
-                                />
-                              </svg>
-                            </div>
-                            <div className="ml-3 flex-1">
-                              <h3 className="text-sm font-medium text-red-800 mb-2">
-                                Please correct the following errors:
-                              </h3>
-                              <div className="space-y-1">
-                                {Object.entries(errors).map(([field, error]) => (
-                                  <div key={field} className="flex items-center text-sm text-red-700">
-                                    <span className="inline-block w-2 h-2 bg-red-400 rounded-full mr-2 flex-shrink-0"></span>
-                                    <span className="font-medium capitalize">
-                                      {field.replace(/_/g, ' ')}:
-                                    </span>
-                                    <span className="ml-1">
-                                      {error?.message || 'This field is required'}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <button 
-                            // onClick={() => {Add logic to clear errors or scroll to first error }}
-                            className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors"
-                          >
-                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path 
-                                fillRule="evenodd" 
-                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" 
-                                clipRule="evenodd" 
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      )} */}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         
                         {/* Level */}
@@ -3084,16 +2996,9 @@ export default function Form() {
                           )}
                         </div>}
 
+                        {/* Qualification Year */}
                         <div className='space-y-2'>
                           <Label htmlFor='qualification_year'>Qualification Year *</Label>
-                          {/* <Input
-                            id='qualification_year'
-                            type='number'
-                            min='1950'
-                            max='2026'
-                            {...register('qualification_year')}
-                            className='mt-1'
-                          /> */}
                           <div>
                             <Select
                               onValueChange={(value) => setValue('qualification_year', value)}
@@ -3131,59 +3036,59 @@ export default function Form() {
 
                         {/* Subject Specialization */}
                         <div className='space-y-2'>
-                            <Label htmlFor='subject_specialization' className="text-sm font-medium text-gray-700">
-                              Subject Specialization <span className="text-red-500">*</span>
-                            </Label>
-                            <Popover open={subjectOpen} onOpenChange={setSubjectOpen}>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  aria-expanded={subjectOpen}
-                                  className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                                >
-                                  {watch('subject_specialization') || "Select your specialization"}
-                                  <ChevronsUpDown className="opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0">
-                                <Command>
-                                  <CommandInput placeholder="Search subject..." />
-                                  <CommandList>
-                                    <CommandEmpty>No specialization found.</CommandEmpty>
-                                    <CommandGroup>
-                                      {subjectSpecializationForSelect.map((subject_specialization) => (
-                                        <CommandItem
-                                          key={subject_specialization.value}
-                                          value={subject_specialization.label || watch('subject_specialization')}
-                                          onSelect={(currentValue) => {
-                                            setValue('subject_specialization', currentValue === watch('subject_specialization') ? "" : currentValue)
-                                            setSubjectOpen(false)
-                                          }}
-                                        >
-                                          {subject_specialization.label}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              watch('subject_specialization') === subject_specialization.label ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
-                            {errors.subject_specialization && (
-                              <p className='text-sm text-red-500 flex items-center gap-1'>
-                                <span className="text-xs">⚠</span>
-                                {errors.subject_specialization.message}
-                              </p>
+                          <Label htmlFor='subject_specialization' className="text-sm font-medium text-gray-700">
+                            Subject Specialization <span className="text-red-500">*</span>
+                          </Label>
+                          <Popover open={subjectOpen} onOpenChange={setSubjectOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={subjectOpen}
+                                className="w-full justify-between text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                              >
+                                {watch('subject_specialization') || "Select your specialization"}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandInput placeholder="Search subject..." />
+                                <CommandList>
+                                  <CommandEmpty>No specialization found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {subjectSpecializationForSelect.map((subject_specialization) => (
+                                      <CommandItem
+                                        key={subject_specialization.value}
+                                        value={subject_specialization.label || watch('subject_specialization')}
+                                        onSelect={(currentValue) => {
+                                          setValue('subject_specialization', currentValue === watch('subject_specialization') ? "" : currentValue)
+                                          setSubjectOpen(false)
+                                        }}
+                                      >
+                                        {subject_specialization.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            watch('subject_specialization') === subject_specialization.label ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          {errors.subject_specialization && (
+                            <p className='text-sm text-red-500 flex items-center gap-1'>
+                              <span className="text-xs">⚠</span>
+                              {errors.subject_specialization.message}
+                            </p>
                           )}
                         </div>
 
-                        {watch('subject_specialization') === "Other" && (
+                        {watch('subject_specialization')?.toLowerCase() === "other" && (
                           <div className='space-y-2'>
                             <Label htmlFor='other_subject_specialization'>Other Subject Specialization</Label>
                             <Input
@@ -3196,18 +3101,30 @@ export default function Form() {
                               <p className='text-sm text-red-500 mt-1'>{errors.other_subject_specialization.message}</p>
                             )}
                           </div>)}
+                        {/* Mandatory Qualification Document Upload */}
+                        <div className='space-y-2'>
+                          <Label className="text-sm font-medium text-gray-700">Upload Qualification Document <span className="text-red-500">*</span></Label>
+                          <FileUpload
+                            name="attachments"
+                            label="Attach a pdf copy of your qualification document"
+                            description="Attach a pdf copy of your qualification document"
+                            acceptedTypes=".pdf,.jpg,.jpeg,.png"
+                            maxSize={5}
+                            required={true}
+                            value={mandatoryDoc}
+                            onChange={(file) => {
+                              setMandatoryDoc(file);
+                              if (file) {
+                                setValue('attachments', file);
+                                trigger('attachments');
+                              }
+                            }}
+                            error={errors.attachments?.message as string | undefined}
+                            compact
+                          />
+                        </div>
                       </div>  
-                        <FileUpload
-                          name="attachments"
-                          label="Attach a pdf copy of your qualification document"
-                          description="Mandatory Qualification"
-                          acceptedTypes=".pdf,.jpg,.jpeg,.png"
-                          maxSize={5}
-                          required={true}
-                          value={mandatoryDoc}
-                          onChange={setMandatoryDoc}
-                          error={errors.attachments?.message}
-                        />
+
                         
                       <div>
                           <QualificationsTable
@@ -3238,7 +3155,7 @@ export default function Form() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <Card>
+                  <Card className='border-0 shadow-none'>
                     <CardHeader>
                       <CardTitle>Declarations & Disclosures</CardTitle>
                       <CardDescription>
@@ -3254,6 +3171,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('disability', value)
                             setValue('disability_description', undefined); // Reset disability description
+                            trigger('disability'); 
                             }}
                           className="mt-3"
                         >
@@ -3266,11 +3184,13 @@ export default function Form() {
                             <Label htmlFor="disability-no">No</Label>
                           </div>
                         </RadioGroup>
-                        
+                        {errors.disability && (
+                          <p className='text-sm text-red-500 mt-1'>{errors.disability.message}</p>
+                        )}
                         {watch('disability') === 'yes' && (
                           <div className="mt-4">
                             <Label htmlFor="disability_description">Choose all that apply</Label>
-                            <div className="mt-2 space-y-2">
+                            <div className="mt-2 space-y-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                               {[
                                 "Physical disabilities (Wheel chaired, crunches, short limbs, facial)",
                                 "Sensory impairments (Hearing, vision, Low vision)",
@@ -3294,6 +3214,9 @@ export default function Form() {
                                 </div>
                               ))}
                             </div>
+                              {errors.disability_description && (
+                                <p className='text-sm text-red-500 mt-1'>{errors.disability_description.message}</p>
+                              )}
                           </div>
                         )}
                       </div>
@@ -3306,7 +3229,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('student_related_offence', value)
                             setValue('student_related_offence_details', ''); // Reset details
-                            setValue('student_related_offence_attachments', undefined); // Reset attachments
+                            setStudentRelatedOffenceAttachmentDoc(null); // Reset details
                           }}
                           className="mt-3"
                         >
@@ -3319,7 +3242,9 @@ export default function Form() {
                             <Label htmlFor="student-offence-no">No</Label>
                           </div>
                         </RadioGroup>
-                        
+                        {errors.student_related_offence && (
+                          <p className='text-sm text-red-500 mt-1'>{errors.student_related_offence.message}</p>
+                        )}
                         {watch('student_related_offence') === 'yes' && (
                           <div className="mt-4 space-y-4">
                             <div>
@@ -3330,19 +3255,29 @@ export default function Form() {
                                 {...register('student_related_offence_details')}
                                 className="mt-1"
                               />
+                              {errors.student_related_offence_details && (
+                                <p className='text-sm text-red-500 mt-1'>{errors.student_related_offence_details.message}</p>
+                              )}
                             </div>
                             {/* watch('student_related_offence') === 'yes' ? true : false */}
                             <div className='col-span-2'>
                               <FileUpload
                                 name="student_related_offence_attachments"
                                 label="Attachments (optional)"
-                                description="Upload a clear copy of your National ID"
+                                description="Upload a clear copy"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
                                 required={false}
                                 value={studentRelatedOffenceAttachmentDoc}
-                                onChange={setStudentRelatedOffenceAttachmentDoc}
-                                error={errors.student_related_offence_attachments?.message}
+                                onChange={(file) => {
+                                  setStudentRelatedOffenceAttachmentDoc(file);
+                                  if (file) {
+                                    setValue('student_related_offence_attachments', file);
+                                    trigger('student_related_offence_attachments');
+                                  }
+                                }}
+                                error={errors.student_related_offence_attachments?.message as string | undefined}
+                                compact
                               />
                             </div>
                           </div>
@@ -3357,7 +3292,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('drug_related_offence', value);
                             setValue('drug_related_offence_details', ''); // Reset details
-                            setValue('drug_related_offence_attachments', undefined); // Reset attachments
+                            setDrugRelatedOffenceAttachmentsDoc(null); // Reset attachments
                           }}
                           className="mt-3"
                         >
@@ -3370,7 +3305,9 @@ export default function Form() {
                             <Label htmlFor="drug-offence-no">No</Label>
                           </div>
                         </RadioGroup>
-                        
+                        {errors.drug_related_offence && (
+                          <p className='text-sm text-red-500 mt-1'>{errors.drug_related_offence.message}</p>
+                        )}
                         {watch('drug_related_offence') === 'yes' && (
                           <div className="mt-4 space-y-4">
                             <div>
@@ -3381,6 +3318,9 @@ export default function Form() {
                                 {...register('drug_related_offence_details')}
                                 className="mt-1"
                               />
+                              {errors.drug_related_offence_details && (
+                                <p className='text-sm text-red-500 mt-1'>{errors.drug_related_offence_details.message}</p>
+                              )}
                             </div>
                             <div>
                               <Label htmlFor="drug_related_offence_details">Provide supporting evidence/documentation if any (Upload in pdf format)</Label>
@@ -3392,8 +3332,15 @@ export default function Form() {
                                 maxSize={5}
                                 required={false}
                                 value={drugRelatedOffenceAttachmentsDoc}
-                                onChange={setDrugRelatedOffenceAttachmentsDoc}
-                                error={errors.drug_related_offence_attachments?.message}
+                                onChange={(file) => {
+                                  setDrugRelatedOffenceAttachmentsDoc(file);
+                                  if (file) {
+                                    setValue('drug_related_offence_attachments', file);
+                                    trigger('drug_related_offence_attachments');
+                                  }
+                                }}
+                                error={errors.drug_related_offence_attachments?.message as string | undefined}
+                                compact
                               />
                             </div>
                           </div>
@@ -3407,7 +3354,7 @@ export default function Form() {
                           value={watch('license_flag')} 
                           onValueChange={(value) => {
                             setValue('license_flag', value)
-                            setValue('license_flag_details', undefined); // Reset details
+                            setLicenseFlagDetailsDoc(null); // Reset details
                           }}
                           className="mt-3"
                         >
@@ -3420,20 +3367,29 @@ export default function Form() {
                             <Label htmlFor="license-flag-no">No</Label>
                           </div>
                         </RadioGroup>
-                        
+                        {errors.license_flag && (
+                          <p className='text-sm text-red-500 mt-1'>{errors.license_flag.message}</p>
+                        )}
                         {watch('license_flag') === 'yes' && (
                           <div className="mt-4">
                               <Label>If yes, please attach a letter giving full details and official documentation of the action taken.</Label>
                               <FileUpload
                                 name="license_flag_details"
                                 label="Attachments (optional)"
-                                description="Upload a clear copy of your National ID"
+                                description="Upload a clear copy"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
                                 required={false}
                                 value={licenseFlagDetailsDoc}
-                                onChange={setLicenseFlagDetailsDoc}
-                                error={errors.license_flag_details?.message}
+                                onChange={(file) => {
+                                  setLicenseFlagDetailsDoc(file);
+                                  if (file) {
+                                    setValue('license_flag_details', file);
+                                    trigger('license_flag_details');
+                                  }
+                                }}
+                                error={errors.license_flag_details?.message as string | undefined}
+                                compact
                               />
                           </div>
                         )}
@@ -3446,7 +3402,7 @@ export default function Form() {
                           value={watch('misconduct_flag')} 
                           onValueChange={(value) => {
                             setValue('misconduct_flag', value)
-                            setValue('misconduct_flag_details', undefined); // Reset details
+                            setMisconductFlagDetailsDoc(null); // Reset details
                           }}
                           className="mt-3"
                         >
@@ -3459,7 +3415,9 @@ export default function Form() {
                             <Label htmlFor="misconduct-flag-no">No</Label>
                           </div>
                         </RadioGroup>
-                        
+                        {errors.misconduct_flag && (
+                          <p className='text-sm text-red-500 mt-1'>{errors.misconduct_flag.message}</p>
+                        )}
                         {watch('misconduct_flag') === 'yes' && (
                           <div className="mt-4">
                               <Label htmlFor="misconduct_flag_details">If yes, please attach a letter giving full details and any official documentation available regarding the matter.</Label>
@@ -3471,8 +3429,15 @@ export default function Form() {
                                 maxSize={5}
                                 required={false}
                                 value={misconductFlagDetailsDoc}
-                                onChange={setMisconductFlagDetailsDoc}
-                                error={errors.misconduct_flag_details?.message}
+                                onChange={(file) => {
+                                  setMisconductFlagDetailsDoc(file);
+                                  if (file) {
+                                    setValue('misconduct_flag_details', file);
+                                    trigger('misconduct_flag_details');
+                                  }
+                                }}
+                                error={errors.misconduct_flag_details?.message as string | undefined}
+                                compact
                               />
                           </div>
                         )}
@@ -3500,7 +3465,7 @@ export default function Form() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <Card>
+                  <Card className='border-0 shadow-none'>
                     <CardHeader>
                       <CardTitle>Review & Complete</CardTitle>
                       <CardDescription>
@@ -3510,11 +3475,41 @@ export default function Form() {
                     <CardContent className='space-y-6'>
                       {/* Summary Section */}
                       <div className='bg-gray-50 p-4 rounded-lg'>
+                        {/* {Object.keys(errors).length > 0 && (
+                          <Alert variant="destructive" className="mb-4">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle className="text-base font-semibold">
+                              {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
+                            </AlertTitle>
+                            <AlertDescription>
+                              <p className="text-sm mb-3">Please review and correct the following:</p>
+                              <div className="max-h-48 overflow-y-auto">
+                                <ul className="space-y-2">
+                                  {Object.entries(errors).map(([field, error]) => (
+                                    <li key={field} className="flex items-start gap-2 text-sm">
+                                      <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
+                                      <span className="font-medium text-red-900">
+                                        {field
+                                          .replace(/_/g, ' ')
+                                          .replace(/\b\w/g, l => l.toUpperCase())
+                                          .replace(/Id/g, 'ID')
+                                          .replace(/Pdf/g, 'PDF')
+                                          .replace(/Alt /g, '')
+                                          .replace(/Primary /g, '')
+                                        }
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </AlertDescription>
+                          </Alert>
+                        )} */}
                         <Accordion
                           type="single"
                           collapsible
                           className="w-full"
-                          defaultValue="item-1"
+                          defaultValue=""
                         >
                           {/* Step 1: Personal Information */}
                           <AccordionItem value="item-1">
@@ -3524,7 +3519,7 @@ export default function Form() {
                                 <InfoItem label="First Name" value={watch('first_name')} />
                                 <InfoItem label="Last Name" value={watch('last_name')} />
                                 <InfoItem label="Middle Name" value={watch('middle_name')} />
-                                <InfoItem label="Surname" value={watch('surname')} />
+                                {/* <InfoItem label="Surname" value={watch('surname')} /> */}
                                 <InfoItem label="Date of Birth" value={watch('date_of_birth')} />
                                 <InfoItem label="Gender" value={watch('gender')} />
                                 <InfoItem label="Citizenship" value={watch('citizenship')} />
@@ -3724,10 +3719,13 @@ export default function Form() {
 
                       {/* Declaration and Consent */}
                       <div className='space-y-4'>
+                        {/* Declaration */}
                         <div className='flex items-start space-x-3'>
                           <Checkbox 
                             id='declaration'
+                            checked={watch('declaration')}
                             onCheckedChange={(checked) => setValue('declaration', checked as boolean)}
+                            required
                           />
                           <div className='grid gap-1.5 leading-none'>
                             <Label 
@@ -3748,10 +3746,13 @@ export default function Form() {
                           <p className='text-sm text-red-500'>{errors.declaration.message}</p>
                         )}
 
+                        {/* Data Consent */}
                         <div className='flex items-start space-x-3'>
                           <Checkbox 
                             id='profile_data_consent'
+                            checked={watch('profile_data_consent')}
                             onCheckedChange={(checked) => setValue('profile_data_consent', checked as boolean)}
+                            required
                           />
                           <div className='grid gap-1.5 leading-none'>
                             <Label 
@@ -3874,9 +3875,39 @@ export default function Form() {
                     <AlertDialogTrigger asChild>
                       <Button                       
                       type='button'                    
-                      className='bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2'>Submit Application</Button>
+                      className='bg-blue-600 hover:bg-blue-700 flex items-center gap-2'>Submit Application</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
+                      {Object.keys(errors).length > 0 && (
+                                        <Alert variant="destructive" className="mb-4">
+                                          <AlertCircle className="h-4 w-4" />
+                                          <AlertTitle className="text-base font-semibold">
+                                            {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
+                                          </AlertTitle>
+                                          <AlertDescription>
+                                            <p className="text-sm mb-3">Please review and correct the following:</p>
+                                            <div className="max-h-48 overflow-y-auto">
+                                              <ul className="space-y-2">
+                                                {Object.entries(errors).map(([field, error]) => (
+                                                  <li key={field} className="flex items-start gap-2 text-sm">
+                                                    <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
+                                                    <span className="font-medium text-red-900">
+                                                      {field
+                                                        .replace(/_/g, ' ')
+                                                        .replace(/\b\w/g, l => l.toUpperCase())
+                                                        .replace(/Id/g, 'ID')
+                                                        .replace(/Pdf/g, 'PDF')
+                                                        .replace(/Alt /g, '')
+                                                        .replace(/Primary /g, '')
+                                                      }
+                                                    </span>
+                                                  </li>
+                                                ))}
+                                              </ul>
+                                            </div>
+                                          </AlertDescription>
+                                        </Alert>
+                      )}
                       {!submitting && !submissionResult && (
                         <>
                           <AlertDialogHeader>
@@ -3890,7 +3921,15 @@ export default function Form() {
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel 
+                              onClick={() => {
+                                setSubmitting(false);
+                                setSubmissionResult(null);
+                                clearErrors();  // Clears all errors at once
+                              }}
+                            >
+                              Cancel
+                            </AlertDialogCancel>
                             <Button onClick={submitForm}>Continue</Button>
                           </AlertDialogFooter>
                         </>
@@ -3917,7 +3956,7 @@ export default function Form() {
                           </AlertDialogFooter>
                         </>
                       )}
-                      {submissionResult?.success==true && (
+                      {submissionResult?.success==true && !submitting && (
                         <>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Application Submitted Successfully!</AlertDialogTitle>
@@ -3937,7 +3976,7 @@ export default function Form() {
                             <AlertDialogTitle>Application Submission Failed</AlertDialogTitle>
                             <AlertDialogDescription>
                               We encountered an error while submitting your application. Please check your internet connection and try again.
-                              If the problem persists, contact support with the following error message: <strong>{submissionResult.error}</strong>.
+                              If the problem persists, contact support.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -3952,7 +3991,7 @@ export default function Form() {
                 </div>
               </div>
             </div>
-          </ScrollArea>
+            </ScrollArea>
         </div>
       </div>
     </section>

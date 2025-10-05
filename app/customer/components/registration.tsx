@@ -197,7 +197,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
     try {
       setLoading(true);
 
-      const USE_SAMPLE_DATA = true; // Set to true to use sample data for testing
+      const USE_SAMPLE_DATA = false; // Set to true to use sample data for testing
 
       if (USE_SAMPLE_DATA) {
         // Simulate network delay
@@ -597,7 +597,7 @@ const QuickActions = () => {
                             <BookOpenText className="w-6 h-6 text-gray-600"/>
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">Teacher Registration</h3>
+                            <h3 className="text-base font-semibold text-gray-900 mb-1">Application For Teacher Registration & Licensing</h3>
                             <p className="text-sm text-gray-600 leading-relaxed">Submit your application for teacher registration and licensing</p>
                         </div> 
                     </div>

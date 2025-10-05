@@ -406,20 +406,10 @@ export function LoginForm({
       // Set user data cookie 
       document.cookie = `user_data=${encodeURIComponent(JSON.stringify(userData))}; path=/; max-age=${cookieOptions.maxAge}; ${cookieOptions.secure ? 'secure;' : ''} samesite=${cookieOptions.sameSite}`
 
-      // Step 6: 🔥 SYNC USER BEFORE REDIRECT
-    //   console.log('🚀 Starting user sync...')
-
-      try {
-        
-      } catch (syncError) {
-        console.error('💥 User sync error:', syncError)
-      }
-
       // Step 8: 🔥 FIXED - Role-based redirect with fallbacks
       const userRoles = sessionData.roles || []
       let redirectPath = "/trls/dashboard" // Default fallback
       
-      console.log('🚀 Redirecting to:', redirectPath)
       router.push(redirectPath)
       router.refresh()
 
