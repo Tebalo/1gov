@@ -716,7 +716,7 @@ export default function Form() {
           <div className='flex-1 bg-white rounded-lg shadow-lg'>
             <ScrollArea 
             ref={scrollContainerRef} 
-            className='md:h-[500px] p-4 [&_[data-radix-scroll-area-scrollbar]]:bg-gray-200 [&_[data-radix-scroll-area-thumb]]:bg-gray-600' 
+            className='md:h-[500px] p-4' 
             type="always">
             {fields.length > 0 && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
