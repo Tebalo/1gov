@@ -633,6 +633,16 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                         toYear={new Date().getFullYear()}
                         className="rounded-md border"
                       />
+                      <div className="flex justify-end p-3 border-t">
+                        <Button 
+                          type="button" 
+                          size="sm"
+                          onClick={() => setDateOfBirthOpen(false)}
+                          className="bg-blue-800 hover:bg-blue-900 text-white"
+                        >
+                          Close
+                        </Button>
+                      </div>
                     </PopoverContent>
                   </Popover>
                 </div>
