@@ -45,7 +45,10 @@ export type AuthenticateResult =
   | { status: 'success' }
   | { status: 'failed'; message: string };
 
-export type UserRole = 'CUSTOMER' | 'MANAGER' | 
+export type UserRole = 
+'default-roles-customer' |
+'CUSTOMER' | 
+'MANAGER' | 
 'REGISTRATION_OFFICER' | 
 'SNR_REGISTRATION_OFFICER' | 
 'DIRECTOR' | 

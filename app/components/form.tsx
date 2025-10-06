@@ -131,7 +131,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Personal Information',
-    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'username', 'gender','national_id_copy'] // 'surname',
+    fields: ['first_name', 'last_name', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'gender','national_id_copy'] // 'surname',
   },
   {
     id: 'Step 2',
@@ -714,7 +714,10 @@ export default function Form() {
       <div className='max-w-9xl mx-auto flex gap-6'>
           {/* Main Content */}
           <div className='flex-1 bg-white rounded-lg shadow-lg'>
-            <ScrollArea ref={scrollContainerRef} className='md:h-[500px] p-4'>
+            <ScrollArea 
+            ref={scrollContainerRef} 
+            className='md:h-[500px] p-4 [&_[data-radix-scroll-area-scrollbar]]:bg-gray-200 [&_[data-radix-scroll-area-thumb]]:bg-gray-600' 
+            type="always">
             {fields.length > 0 && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
                 <p className="text-sm text-red-800">

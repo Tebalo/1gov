@@ -201,6 +201,7 @@ export const degrees = [ // Corrected
   "Bachelor of Education (Primary Education)",
   "Bachelor of Education (Secondary Education: Humanities)",
   "Bachelor of Education in Art and Design (BEAD)",
+  "Bachelor of Arts",
   "Bachelor of Education in Biology",
   "Bachelor of Education in Business Education",
   "Bachelor of Education in Family and Consumer Sciences",
