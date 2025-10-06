@@ -39,6 +39,6 @@ export default async function Work(){
     } else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrarWork/>
     }else {
-        return redirect('/welcome')
+        return redirect('/customer/dashboard')
     }
 }

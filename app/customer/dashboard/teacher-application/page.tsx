@@ -1,5 +1,4 @@
 import Form from "@/app/components/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function TeacherApplicationPage() {
   return (

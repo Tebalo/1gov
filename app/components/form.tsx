@@ -131,7 +131,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Personal Information',
-    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'username', 'gender','national_id_copy'] // 'surname',
+    fields: ['first_name', 'last_name', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'gender','national_id_copy'] // 'surname',
   },
   {
     id: 'Step 2',
@@ -714,7 +714,10 @@ export default function Form() {
       <div className='max-w-9xl mx-auto flex gap-6'>
           {/* Main Content */}
           <div className='flex-1 bg-white rounded-lg shadow-lg'>
-            <ScrollArea ref={scrollContainerRef} className='md:h-[500px] p-4'>
+            <ScrollArea 
+            ref={scrollContainerRef} 
+            className='md:h-[500px] p-4' 
+            type="always">
             {fields.length > 0 && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
                 <p className="text-sm text-red-800">
@@ -1036,6 +1039,22 @@ export default function Form() {
                                   date < new Date("1900-01-01")
                                 }
                               />
+                              <div className="flex justify-end p-3 border-t">
+                                <Button 
+                                  type="button" 
+                                  size="sm"
+                                  onClick={() => {
+                                    // Close the popover by finding and clicking the trigger
+                                    const trigger = document.querySelector('[data-state="open"]');
+                                    if (trigger) {
+                                      (trigger as HTMLElement).click();
+                                    }
+                                  }}
+                                  className="bg-blue-800 hover:bg-blue-900 text-white"
+                                >
+                                  Close
+                                </Button>
+                              </div>
                             </PopoverContent>
                           </Popover>
 
@@ -1462,7 +1481,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1480,7 +1499,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1498,7 +1517,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1516,7 +1535,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1534,7 +1553,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1552,7 +1571,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1570,7 +1589,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1588,7 +1607,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1606,7 +1625,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1624,7 +1643,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1642,7 +1661,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1660,7 +1679,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1678,7 +1697,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1696,7 +1715,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1714,7 +1733,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1732,7 +1751,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1750,7 +1769,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1768,7 +1787,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
@@ -1786,7 +1805,7 @@ export default function Form() {
                                           className={cn(
                                             "ml-auto",
                                             watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
-                                          )}
+                                            )}
                                         />
                                       </CommandItem>
                                       ))}
