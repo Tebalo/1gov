@@ -331,10 +331,34 @@ function findFirstValidPersona(personas: string[], userRoles: string[]): string 
   throw new Error('No valid persona found in user roles');
 }
 
-export async function storeAccessGroups(decodedToken: DecodedToken){
-  try{
+// export async function storeAccessGroups(decodedToken: DecodedToken){
+//   try{
+//     const expires = new Date(Date.now() + 30 * 60 * 1000);
+//     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+
+//     const currentPersona = findFirstValidPersona(personas, ROLES);
+
+//     const access_group: AccessGroup = {
+//       persona: personas,
+//       current: currentPersona,
+//       username: decodedToken.name,
+//       userid: decodedToken.preferred_username,
+//     }
+
+//     const encryptedAccessGroup = await encrypt(access_group);
+//     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
+//   } catch(error){
+//     throw error;
+//   }
+// }
+
+export async function storeAccessGroups(decodedToken: DecodedToken) {
+  try {
     const expires = new Date(Date.now() + 30 * 60 * 1000);
-    const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+    
+    // Safely extract roles - handle tokens without realm_access
+    const roles = decodedToken?.realm_access?.roles || [];
+    const personas = await getTrlsPersonas(roles);
 
     const currentPersona = findFirstValidPersona(personas, ROLES);
 
@@ -346,8 +370,9 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
     }
 
     const encryptedAccessGroup = await encrypt(access_group);
-    cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
-  } catch(error){
+    cookies().set('access', encryptedAccessGroup, { expires, httpOnly: true });
+  } catch (error) {
+    console.error('Error in storeAccessGroups:', error);
     throw error;
   }
 }
