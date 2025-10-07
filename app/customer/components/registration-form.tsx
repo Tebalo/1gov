@@ -24,7 +24,8 @@ import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { format } from "date-fns"
-import { Calendar } from "@/components/ui/calendar"
+import { DayPicker } from "react-day-picker"
+import "react-day-picker/dist/style.css"
 import {
   Popover,
   PopoverContent,
@@ -146,10 +147,10 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         
         // Validate Date of Birth is in the past (not today or future)
         if (formData.dateOfBirth.trim()) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
-        const birthDate = new Date(formData.dateOfBirth);
-  
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+          const birthDate = new Date(formData.dateOfBirth);
+          
           // Check if date is valid
           if (isNaN(birthDate.getTime())) {
             stepTwoErrors.push("Please enter a valid date of birth");
@@ -157,27 +158,10 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             // Check if birth date is today or in the future
             if (birthDate >= today) {
               stepTwoErrors.push("Date of birth must be in the past");
-            } else {
-              // Calculate age and check if at least 18 years old
-              const age = today.getFullYear() - birthDate.getFullYear();
-              const monthDiff = today.getMonth() - birthDate.getMonth();
-              
-              // Check if birthday hasn't occurred yet this year
-              if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                // Subtract 1 from age if birthday hasn't occurred yet
-                if (age - 1 < 18) {
-                  stepTwoErrors.push("You must be at least 18 years old");
-                }
-              } else {
-                // Birthday has occurred this year
-                if (age < 18) {
-                  stepTwoErrors.push("You must be at least 18 years old");
-                }
-              }
             }
           }
         }
-                
+        
         // Validate National ID or Passport ID based on citizenship
         if (citizenship === "Citizen") {
           if (!formData.nationalId.trim()) stepTwoErrors.push("National ID is required")
@@ -205,16 +189,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         return true
 
       case 3: // Contact information
-        // CHANGED: Added validation for required contact fields
-        const stepThreeErrors: string[] = []
-        if (!formData.phone.trim()) stepThreeErrors.push("Phone number is required")
-        if (!formData.postalAddress.trim()) stepThreeErrors.push("Postal address is required")
-        if (!formData.physicalAddress.trim()) stepThreeErrors.push("Physical address is required")
-        
-        if (stepThreeErrors.length > 0) {
-          setErrors(stepThreeErrors)
-          return false
-        }
         return true
 
       case 4: // Professional information
@@ -620,29 +594,17 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
+                      <DayPicker
                         mode="single"
                         selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined}
                         onSelect={handleDateSelect}
-                        disabled={(date) => 
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                         initialFocus
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={new Date().getFullYear()}
                         className="rounded-md border"
                       />
-                      <div className="flex justify-end p-3 border-t">
-                        <Button 
-                          type="button" 
-                          size="sm"
-                          onClick={() => setDateOfBirthOpen(false)}
-                          className="bg-blue-800 hover:bg-blue-900 text-white"
-                        >
-                          Close
-                        </Button>
-                      </div>
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -659,8 +621,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     <SelectContent>
                       <SelectItem value="Male">Male</SelectItem>
                       <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                      <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                     {/* <SelectItem value="Other">Other</SelectItem>*/}
+                    {/* <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>*/}
                     </SelectContent>
                   </Select>
                 </div>
@@ -717,8 +679,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 </div>
               )}
 
-              <div className="grid gap-2">
-                <Label htmlFor="bio">Bio</Label>
+             {/* <div className="grid gap-2">
+               <Label htmlFor="bio">Bio</Label>
                 <Textarea
                   id="bio"
                   placeholder="Tell us a bit about yourself"
@@ -727,7 +689,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   onChange={(e) => handleInputChange("bio", e.target.value)}
                   rows={3}
                 />
-              </div>
+              </div>*/}
 
               {/* Next of Kin Information */}
               <div className="grid gap-4 pt-4 border-t">
@@ -790,8 +752,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                 
-                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Label htmlFor="phone">Phone Number</Label>
                   <Input
                     id="phone"
                     placeholder="+267xxxxxxxx"
@@ -799,7 +760,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     disabled={isLoading}
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    required
                   />
                 </div>
                 <div className="grid gap-2">
@@ -816,8 +776,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid gap-2">
-                
-                <Label htmlFor="postalAddress">Postal Address *</Label>
+                <Label htmlFor="postalAddress">Postal Address</Label>
                 <Textarea
                   id="postalAddress"
                   placeholder="P.O. Box 123, City"
@@ -825,13 +784,11 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.postalAddress}
                   onChange={(e) => handleInputChange("postalAddress", e.target.value)}
                   rows={2}
-                  required
                 />
               </div>
 
               <div className="grid gap-2">
-                
-                <Label htmlFor="physicalAddress">Physical Address *</Label>
+                <Label htmlFor="physicalAddress">Physical Address</Label>
                 <Textarea
                   id="physicalAddress"
                   placeholder="123 Street Name, Area"
@@ -839,7 +796,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.physicalAddress}
                   onChange={(e) => handleInputChange("physicalAddress", e.target.value)}
                   rows={2}
-                  required
                 />
               </div>
 
@@ -966,7 +922,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         return (
           <Card>
             <CardHeader>
-              <CardTitle>Professional & Social Information</CardTitle>
+              <CardTitle>Professional Information</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -994,7 +950,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 </div>
               </div>
 
-              <div className="grid gap-2">
+              {/*<div className="grid gap-2">
                 <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
                 <Input
                   id="linkedinUrl"
@@ -1004,9 +960,9 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.linkedinUrl}
                   onChange={(e) => handleInputChange("linkedinUrl", e.target.value)}
                 />
-              </div>
+              </div>*/}
 
-              <div className="grid gap-2">
+              {/*<div className="grid gap-2">
                 <Label htmlFor="websiteUrl">Website URL</Label>
                 <Input
                   id="websiteUrl"
@@ -1016,7 +972,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   value={formData.websiteUrl}
                   onChange={(e) => handleInputChange("websiteUrl", e.target.value)}
                 />
-              </div>
+              </div>*/}
 
               <div className="mt-6">
                 <p className="text-sm text-muted-foreground">
