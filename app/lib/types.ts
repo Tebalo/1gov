@@ -118,7 +118,7 @@ export interface DecodedToken {
   passport_id?:string;
   gender: string;
   acr: string;
-  realm_access: {
+  realm_access?: {
     roles: string[];
   };
   resource_access: {

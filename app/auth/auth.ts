@@ -324,19 +324,59 @@ export async function decryptAccessToken(authResponse: AuthResponse){
 }
 
 function findFirstValidPersona(personas: string[], userRoles: string[]): string {
+  if(!personas){
+    return 'CUSTOMER';
+  }
   for (const persona of personas){
     if(userRoles.includes(persona)){
       return persona;
     }
   }
   // Return default or throw error if no valid persona found
-  throw new Error('No valid persona found in user roles');
+  // throw new Error('No valid persona found in user roles');
+  return 'CUSTOMER';
 }
+
+// export async function storeAccessGroups(decodedToken: DecodedToken){
+//   try{
+//     const expires = new Date(Date.now() + 30 * 60 * 1000);
+//     const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+
+//     const currentPersona = findFirstValidPersona(personas, ROLES);
+
+//     const access_group: AccessGroup = {
+//       persona: personas,
+//       current: currentPersona,
+//       username: decodedToken.name,
+//       userid: decodedToken.preferred_username ?? decodedToken.national_id,
+//       nationalId: decodedToken.national_id,
+//       passportId: decodedToken.passport_id,
+//       gender: decodedToken.gender,
+//       preferred_username: decodedToken.preferred_username ?? decodedToken.national_id,
+//       given_name: decodedToken.given_name,
+//       family_name: decodedToken.family_name,
+//       email: decodedToken.email,
+//       systemId: Number(decodedToken.client_id),
+//       postal_address: decodedToken.postal_address || null,
+//       physical_address: decodedToken.physical_address || null,
+//       phone: decodedToken.phone || null,
+//       date_of_birth: decodedToken.date_of_birth || null,
+//     }
+
+//     const encryptedAccessGroup = await encrypt(access_group);
+//     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
+//   } catch(error){
+//     throw error;
+//   }
+// }
 
 export async function storeAccessGroups(decodedToken: DecodedToken){
   try{
     const expires = new Date(Date.now() + 30 * 60 * 1000);
-    const personas =  await getTrlsPersonas(decodedToken.realm_access.roles);
+    
+    // Safely extract roles - handle tokens without realm_access
+    const roles = decodedToken?.realm_access?.roles || [];
+    const personas = await getTrlsPersonas(roles);
 
     const currentPersona = findFirstValidPersona(personas, ROLES);
 
@@ -362,6 +402,7 @@ export async function storeAccessGroups(decodedToken: DecodedToken){
     const encryptedAccessGroup = await encrypt(access_group);
     cookies().set('access', encryptedAccessGroup, {expires, httpOnly: true});
   } catch(error){
+    console.error('Error in storeAccessGroups:', error);
     throw error;
   }
 }
