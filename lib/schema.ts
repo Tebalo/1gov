@@ -155,25 +155,25 @@ export const FormDataSchema = z.object({
   // ============================================
   // PHONE NUMBER VALIDATION
   // ============================================
-  if (data.citizenship?.toLowerCase() === 'citizen') {
-    // Strict validation for Botswana citizens
-    if (!/^(\+267|267|0)?[0-9]{8}$/.test(data.primary_phone)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Please enter a valid Botswana phone number (e.g., +267 71234567, 71234567, or 071234567)',
-        path: ['primary_phone'],
-      });
-    }
-  } else {
-    // More lenient validation for non-citizens
-    if (data.primary_phone.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Please enter a valid phone number (minimum 8 digits)',
-        path: ['primary_phone'],
-      });
-    }
-  }
+  // if (data.citizenship?.toLowerCase() === 'citizen') {
+  //   // Strict validation for Botswana citizens
+  //   if (!/^(\+267|267|0)?[0-9]{8}$/.test(data.primary_phone)) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: 'Please enter a valid Botswana phone number (e.g., +267 71234567, 71234567, or 071234567)',
+  //       path: ['primary_phone'],
+  //     });
+  //   }
+  // } else {
+  //   // More lenient validation for non-citizens
+  //   if (data.primary_phone.length < 8) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: 'Please enter a valid phone number (minimum 8 digits)',
+  //       path: ['primary_phone'],
+  //     });
+  //   }
+  // }
 
   // ============================================
   // EMPLOYMENT-RELATED VALIDATIONS

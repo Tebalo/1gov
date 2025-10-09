@@ -91,7 +91,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>
       <InfoItem label="Region" value={data.employment_details?.region}/>
       <InfoItem label="District" value={data.employment_details?.district}/>
-      <InfoItem label="Experience" value={`${data.employment_details?.experience_years} years`}/>
+      <InfoItem label="Experience" value={data.employment_details?.experience_years}/>
     </InfoCard>
   );
 

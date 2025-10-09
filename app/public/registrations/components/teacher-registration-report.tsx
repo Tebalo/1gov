@@ -52,10 +52,10 @@ async function getRegistrations() {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: {
-        revalidate: cacheTime, // Revalidate every hour (in seconds)
-        tags: [fetchTag], // Add a tag to enable manual revalidation
-      }
+      // next: {
+      //   revalidate: cacheTime, // Revalidate every hour (in seconds)
+      //   tags: [fetchTag], // Add a tag to enable manual revalidation
+      // }
     });
 
     if (!response.ok) {
@@ -152,7 +152,7 @@ const TeacherRegistrationReport = async () => {
             </div>
             
             {/* Right side - Refresh button and metadata */}
-            <div className="flex flex-col space-y-3 md:space-y-4 md:items-end">
+            {/* <div className="flex flex-col space-y-3 md:space-y-4 md:items-end">
               <div className="flex items-center justify-end">
                 <RefreshButton />
               </div>
@@ -187,7 +187,7 @@ const TeacherRegistrationReport = async () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

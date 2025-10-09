@@ -30,6 +30,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { OneGovAuth } from "./1gov-login"
 
 interface RegistrationFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -659,8 +661,8 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     <SelectContent>
                       <SelectItem value="Male">Male</SelectItem>
                       <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                      <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                      {/* <SelectItem value="Other">Other</SelectItem>
+                      <SelectItem value="Prefer not to say">Prefer not to say</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>
@@ -1096,8 +1098,9 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                       className="font-medium text-primary underline-offset-4 hover:underline"
                       target="_blank"
                     >
-                      Terms of Service
-                    </a>{" "}
+                      Terms and Conditions of Use
+                    </a>
+                    {/* {" "}
                     and{" "}
                     <a 
                       href="/privacy" 
@@ -1105,7 +1108,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                       target="_blank"
                     >
                       Privacy Policy
-                    </a>
+                    </a> */}
                   </Label>
                 </div>
 
@@ -1258,7 +1261,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
           </div>
 
           <div className="mt-4">
-            <Button variant="outline" className="w-full" size="lg">
+            {/* <Button variant="outline" className="w-full" size="lg">
               <div className="w-6 h-6 items-center justify-center">
                 <Image
                   src="/gov_icon.png"
@@ -1270,7 +1273,28 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 />
               </div>
               1Gov1Citizen
+            </Button> */}
+            {/* Login with 1Gov1Citizen */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full">
+              <div className="w-6 h-6 items-center justify-center flex mr-2">
+                <Image
+                    src="/gov_icon.png"
+                    alt='Coat-of-arms'
+                    width={24}
+                    height={24}
+                    className="w-full h-full object-contain"
+                    priority
+                    />
+              </div>
+              1Gov1Citizen
             </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <OneGovAuth/>
+          </DialogContent>
+        </Dialog>
           </div>
         </div>
       )}

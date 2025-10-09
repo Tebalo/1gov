@@ -682,20 +682,20 @@ export default function Form() {
   return (
     <section className='bg-gray-50 md:p-2 max-h-screen space-y-4'>
       {/* Case Header - Fixed */}
-      <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden">
+      <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden bg-blue-50 border border-blue-200">
           <CardHeader className="p-4">
               <div className="flex justify-between items-center gap-3">
                   {/* Left Items */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                       {/* Icon */}
-                      <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
-                          <BriefcaseBusiness className="w-6 h-6 text-gray-700"/>
+                      <div className="p-2 bg-blue-600 rounded-lg flex-shrink-0">
+                          <BriefcaseBusiness className="w-6 h-6 text-gray-100"/>
                       </div>
                       {/* Case Title */}
                       <div className="flex-1 min-w-0">
                           <h1 className="text-lg font-semibold text-gray-900 truncate">
-                              Application For Teacher Registration & Licensing
-                          </h1>
+                              APPLICATION FOR TEACHER REGISTRATION & LICENSING
+                          </h1>                   
                       </div>
                   </div>
                   {/* Right Items */}
@@ -705,7 +705,7 @@ export default function Form() {
                           variant="ghost"
                           size="icon"
                       >
-                          <Star className="w-4 h-4 text-gray-600"/>
+                          <Star className="w-4 h-4 text-orange-500"/>
                       </Button>
                   </div>
               </div>
@@ -716,7 +716,7 @@ export default function Form() {
           <div className='flex-1 bg-white rounded-lg shadow-lg'>
             <ScrollArea 
             ref={scrollContainerRef} 
-            className='md:h-[500px] p-4' 
+            className='md:h-[500px] p-4 overflow-auto border border-blue-200 rounded-lg' 
             type="always">
             {fields.length > 0 && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
@@ -826,6 +826,9 @@ export default function Form() {
                       <CardTitle>Personal Information</CardTitle>
                       <CardDescription>
                         Please provide your personal details for identification purposes.
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-4 sm:space-y-6 p-4 sm:p-6'>
@@ -1148,6 +1151,9 @@ export default function Form() {
                       <CardTitle>Contact Information</CardTitle>
                       <CardDescription>
                         Please provide your contact details and addresses.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -1158,7 +1164,7 @@ export default function Form() {
                           <Input
                             id='primary_phone'
                             type='tel'
-                            placeholder='e.g. +267 123 4567'
+                            placeholder='e.g. +2671234567'
                             {...register('primary_phone')}
                             className='mt-1'
                           />
@@ -1176,6 +1182,9 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
+                            onChange={(e) => {
+                              trigger('primary_email');
+                            }}
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
@@ -1240,6 +1249,9 @@ export default function Form() {
                       <CardTitle>Professional Details</CardTitle>
                       <CardDescription>
                         Please provide your professional and employment information.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -2564,6 +2576,9 @@ export default function Form() {
                       <CardTitle>Qualifications</CardTitle>
                       <CardDescription>
                         Please provide details about your educational qualifications.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3045,6 +3060,7 @@ export default function Form() {
                               </p>
                           )}
                         </div>
+                        
                         {/* Other Institution  */}
                         {watch('institution')?.toLowerCase() === "other" && <div className='space-y-2'>
                           <Label htmlFor='other_institution'>Institution Name *</Label>
@@ -3084,7 +3100,7 @@ export default function Form() {
                                 required: 'Qualification year is required',
                                 validate: (value) => {
                                   const year = parseInt(value);
-                                  if (isNaN(year) || year < 1950 || year > 2026) {
+                                  if (isNaN(year) || year < 1950 || year > 2025) {
                                     return 'Please select a year between 1950 and 2026';
                                   }
                                   return true;
@@ -3226,6 +3242,9 @@ export default function Form() {
                       <CardTitle>Declarations & Disclosures</CardTitle>
                       <CardDescription>
                         Please answer all questions truthfully and provide supporting documentation where required.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3541,6 +3560,9 @@ export default function Form() {
                       <CardTitle>Review & Complete</CardTitle>
                       <CardDescription>
                         Please review your information and agree to the terms before submitting.
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3589,7 +3611,7 @@ export default function Form() {
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <InfoItem label="First Name" value={watch('first_name')} />
                                 <InfoItem label="Last Name" value={watch('last_name')} />
-                                <InfoItem label="Middle Name" value={watch('middle_name')} />
+                                {watch('middle_name') && <InfoItem label="Middle Name" value={watch('middle_name')} />}
                                 {/* <InfoItem label="Surname" value={watch('surname')} /> */}
                                 <InfoItem label="Date of Birth" value={watch('date_of_birth')} />
                                 <InfoItem label="Gender" value={watch('gender')} />
@@ -3619,22 +3641,22 @@ export default function Form() {
                                 <InfoItem label="Work Status" value={watch('work_status')} />
                                 <InfoItem label="Practice Category" value={watch('practice_category')} />
                                 <InfoItem label="Sub Category" value={watch('sub_category')} />
-                                <InfoItem label="Years of Experience" value={watch('experience_years')} />
-                                <InfoItem label="District" value={watch('district')} />
-                                <InfoItem label="Institution Type" value={watch('institution_type')} />
-                                <InfoItem label="School Level" value={watch('school_level')} />
-                                <InfoItem label="Level" value={watch('level')} />
-                                <InfoItem label="Private Schools" value={watch('private_schools')} />
-                                <InfoItem label="Other Private Schools" value={watch('other_private_schools')} />
-                                <InfoItem label="Primary Schools" value={watch('primary_schools')} />
+                                {watch('experience_years') && <InfoItem label="Years of Experience" value={watch('experience_years')} />}
+                                {watch('district') && <InfoItem label="District" value={watch('district')} />}
+                                {watch('institution_type') && <InfoItem label="Institution Type" value={watch('institution_type')} />}
+                                {watch('school_level') && <InfoItem label="School Level" value={watch('school_level')} />}
+                                {watch('private_schools') && <InfoItem label="Level" value={watch('level')} />}
+                                {watch('private_schools') && <InfoItem label="Private Schools" value={watch('private_schools')} />}
+                                {watch('other_private_schools') && <InfoItem label="Other Private Schools" value={watch('other_private_schools')} />}
+                                {watch('primary_schools') && <InfoItem label="Primary Schools" value={watch('primary_schools')} />}
                                 {/* <InfoItem label="Pre-Primary Name" value={watch('pre_primary_name')} /> */}
-                                <InfoItem label="Other Primary Schools" value={watch('other_primary_schools')} />
-                                <InfoItem label="Junior Schools" value={watch('junior_schools')} />
-                                <InfoItem label="Other Junior Schools" value={watch('other_junior_schools')} />
-                                <InfoItem label="Senior Schools" value={watch('senior_schools')} />
-                                <InfoItem label="Other Senior Schools" value={watch('other_senior_schools')} />
-                                {/* <InfoItem label="Major Subjects" value={watch('subject_specialization')} /> */}
-                                <InfoItem label="Subject Specialization" value={watch('other_subject_specialization')} />
+                                {watch('other_primary_schools') && <InfoItem label="Other Primary Schools" value={watch('other_primary_schools')} />}
+                                {watch('junior_schools') && <InfoItem label="Junior Schools" value={watch('junior_schools')} />}
+                                {watch('other_junior_schools') && <InfoItem label="Other Junior Schools" value={watch('other_junior_schools')} />}
+                                {watch('senior_schools') && <InfoItem label="Senior Schools" value={watch('senior_schools')} />}
+                                {watch('other_senior_schools') && <InfoItem label="Other Senior Schools" value={watch('other_senior_schools')} />}
+                                {watch('subject_specialization') && <InfoItem label="Subject Specialization" value={watch('subject_specialization')} /> }
+                                {watch('other_subject_specialization') && <InfoItem label="Subject Specialization" value={watch('other_subject_specialization')} />}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
@@ -3644,17 +3666,17 @@ export default function Form() {
                             <AccordionTrigger>Step 4: Qualifications</AccordionTrigger>
                             <AccordionContent className="flex flex-col gap-4 text-balance">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <InfoItem label="Certificate" value={watch('qualification_certificate')} />
-                                <InfoItem label="Post-Grad Certificate" value={watch('qualification_post_grad_certificate')} />
-                                <InfoItem label="Diploma" value={watch('qualification_diploma')} />
-                                <InfoItem label="Post-Grad Diploma" value={watch('qualification_post_grad_diploma')} />
-                                <InfoItem label="Degree" value={watch('qualification_degree')} />
-                                <InfoItem label="Honours Degree" value={watch('qualification_degree_honours')} />
-                                <InfoItem label="Masters Degree" value={watch('qualification_masters_degree')} />
-                                <InfoItem label="Doctoral Degree" value={watch('qualification_doctoral_degree')} />
-                                <InfoItem label="Other Qualification" value={watch('other_qualification')} />
-                                <InfoItem label="Institution" value={watch('institution')} />
-                                <InfoItem label="Other Institution" value={watch('other_institution')} />
+                                {watch('qualification_certificate') && <InfoItem label="Certificate" value={watch('qualification_certificate')} />}
+                                {watch('qualification_post_grad_certificate') && <InfoItem label="Post-Grad Certificate" value={watch('qualification_post_grad_certificate')} />}
+                                {watch('qualification_diploma') && <InfoItem label="Diploma" value={watch('qualification_diploma')} />}
+                                {watch('qualification_post_grad_diploma')&& <InfoItem label="Post-Grad Diploma" value={watch('qualification_post_grad_diploma')} />}
+                                {watch('qualification_degree') && <InfoItem label="Degree" value={watch('qualification_degree')} />}
+                                {watch('qualification_degree_honours') && <InfoItem label="Honours Degree" value={watch('qualification_degree_honours')} />}
+                                {watch('qualification_masters_degree') && <InfoItem label="Masters Degree" value={watch('qualification_masters_degree')} />}
+                                {watch('qualification_doctoral_degree') && <InfoItem label="Doctoral Degree" value={watch('qualification_doctoral_degree')} />}
+                                {watch('other_qualification') && <InfoItem label="Other Qualification" value={watch('other_qualification')} />}
+                                {watch('institution') && <InfoItem label="Institution" value={watch('institution')} />}
+                                {watch('other_institution') && <InfoItem label="Other Institution" value={watch('other_institution')} />}
                                 <InfoItem label="Qualification Year" value={watch('qualification_year')} />
                               </div>
                               {qualifications && qualifications.length > 0 && (
@@ -3775,13 +3797,13 @@ export default function Form() {
                             <AccordionContent className="flex flex-col gap-4 text-balance">
                               <div className="grid grid-cols-1 gap-4">
                                 <InfoItem label="Disability" value={watch('disability')} />
-                                <InfoItem label="Disability Description" value={watch('disability_description')?.toString()} />
+                                {watch('disability_description') && <InfoItem label="Disability Description" value={watch('disability_description')?.toString()} />}
                                 <InfoItem label="Student Related Offence" value={watch('student_related_offence')} />
-                                <InfoItem label="Student Offence Details" value={watch('student_related_offence_details')} />
+                                {watch('student_related_offence_details') && <InfoItem label="Student Offence Details" value={watch('student_related_offence_details')} />}
                                 <InfoItem label="Drug Related Offence" value={watch('drug_related_offence')} />
-                                <InfoItem label="Drug Offence Details" value={watch('drug_related_offence_details')} />
+                                {watch('drug_related_offence_details') && <InfoItem label="Drug Offence Details" value={watch('drug_related_offence_details')} />}
                                 <InfoItem label="License Flag" value={watch('license_flag')} />
-                                <InfoItem label="Misconduct Flag" value={watch('misconduct_flag')} />
+                                {watch('misconduct_flag') && <InfoItem label="Misconduct Flag" value={watch('misconduct_flag')} />}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
@@ -3858,7 +3880,7 @@ export default function Form() {
                 </motion.div>
               )}
             </form>
-          
+          </ScrollArea>
             {/* Navigation */}
             <div className='md:px-6 py-6 border-t bg-gray-50'>
               <div className='flex justify-between items-center'>
@@ -3950,34 +3972,34 @@ export default function Form() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       {Object.keys(errors).length > 0 && (
-                                        <Alert variant="destructive" className="mb-4">
-                                          <AlertCircle className="h-4 w-4" />
-                                          <AlertTitle className="text-base font-semibold">
-                                            {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
-                                          </AlertTitle>
-                                          <AlertDescription>
-                                            <p className="text-sm mb-3">Please review and correct the following:</p>
-                                            <div className="max-h-48 overflow-y-auto">
-                                              <ul className="space-y-2">
-                                                {Object.entries(errors).map(([field, error]) => (
-                                                  <li key={field} className="flex items-start gap-2 text-sm">
-                                                    <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
-                                                    <span className="font-medium text-red-900">
-                                                      {field
-                                                        .replace(/_/g, ' ')
-                                                        .replace(/\b\w/g, l => l.toUpperCase())
-                                                        .replace(/Id/g, 'ID')
-                                                        .replace(/Pdf/g, 'PDF')
-                                                        .replace(/Alt /g, '')
-                                                        .replace(/Primary /g, '')
-                                                      }
-                                                    </span>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            </div>
-                                          </AlertDescription>
-                                        </Alert>
+                        <Alert variant="destructive" className="mb-4">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertTitle className="text-base font-semibold">
+                            {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
+                          </AlertTitle>
+                          <AlertDescription>
+                            <p className="text-sm mb-3">Please review and correct the following:</p>
+                            <div className="max-h-48 overflow-y-auto">
+                              <ul className="space-y-2">
+                                {Object.entries(errors).map(([field, error]) => (
+                                  <li key={field} className="flex items-start gap-2 text-sm">
+                                    <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span className="font-medium text-red-900">
+                                      {field
+                                        .replace(/_/g, ' ')
+                                        .replace(/\b\w/g, l => l.toUpperCase())
+                                        .replace(/Id/g, 'ID')
+                                        .replace(/Pdf/g, 'PDF')
+                                        .replace(/Alt /g, '')
+                                        .replace(/Primary /g, '')
+                                      }
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </AlertDescription>
+                        </Alert>
                       )}
                       {!submitting && !submissionResult && (
                         <>
@@ -3999,7 +4021,7 @@ export default function Form() {
                                 clearErrors();  // Clears all errors at once
                               }}
                             >
-                              Cancel
+                              Return To Form
                             </AlertDialogCancel>
                             <Button onClick={submitForm}>Continue</Button>
                           </AlertDialogFooter>
@@ -4022,7 +4044,7 @@ export default function Form() {
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>Cancel Submission</AlertDialogCancel>
                             {/* <Button onClick={submitForm}>Re-submit</Button> */}
                           </AlertDialogFooter>
                         </>
@@ -4070,7 +4092,7 @@ export default function Form() {
                 </div>
               </div>
             </div>
-            </ScrollArea>
+            
         </div>
       </div>
     </section>

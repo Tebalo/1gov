@@ -24,10 +24,10 @@ async function getRegistrations(status?: string) {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: {
-        revalidate: cacheTime, // Revalidate every hour (in seconds)
-        tags: [fetchTag], // Add a tag to enable manual revalidation
-      }
+      //next: {
+        //revalidate: cacheTime, // Revalidate every hour (in seconds)
+        //tags: [fetchTag], // Add a tag to enable manual revalidation
+      //}
     });
 
     if (!response.ok) {
