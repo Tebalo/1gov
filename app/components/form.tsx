@@ -676,7 +676,7 @@ export default function Form() {
             ref={scrollContainerRef} 
             className='md:h-[500px] p-4 overflow-auto border border-blue-200 rounded-lg' 
             type="always">
-            {fields.length > 0 && status=="correction" && (
+            {fields.length > 0 && (status=="correction" || status=="correcting") && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
                 <p className="text-sm text-red-800">
                   
