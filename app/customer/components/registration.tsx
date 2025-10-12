@@ -13,7 +13,8 @@ import {
   GraduationCap,
   Shield,
   Coins,
-  Loader
+  Loader,
+  Edit
 } from 'lucide-react';
 import {
   Accordion,
@@ -60,6 +61,21 @@ interface RegistrationData {
   registration_type: string;
   created_at: string;
   updated_at: string;
+}
+
+interface DraftData {
+  id: string;
+  content: any;
+  formType: string;
+  status: string;
+  currentStep: number | null;
+  userId: string;
+  userName: string;
+  userRole: string | null;
+  caseId: string | null;
+  caseType: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Define types
@@ -198,6 +214,7 @@ const SAMPLE_DATA: RegistrationData = {
 
 const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
+  const [draftData, setDraftData] = useState<DraftData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -226,8 +243,27 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
+      // Try to fetch draft even if there's an error
+      await fetchDraftData();
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchDraftData = async () => {
+    try {
+      const response = await fetch(`/api/drafts/v1/recent?userId=${userId}`);
+      
+      if (!response.ok) {
+        // No draft found, that's okay
+        return;
+      }
+      
+      const draft: DraftData = await response.json();
+      setDraftData(draft);
+    } catch (err) {
+      console.error('Error fetching draft:', err);
+      // Silently fail - draft is optional
     }
   };
 
@@ -297,30 +333,18 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
       <div className="flex justify-center items-center p-8">
         <div className="text-gray-500"><Loader className="w-10 h-10 animate-spin"/></div>
       </div>
-      // <div className="max-w-5xl mx-auto p-4 md:p-6">
-      //   <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      //     <div className="animate-pulse space-y-4">
-      //       <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-      //       <div className="space-y-3">
-      //         {[...Array(6)].map((_, i) => (
-      //           <div key={i} className="h-12 bg-gray-100 rounded"></div>
-      //         ))}
-      //       </div>
-      //     </div>
-      //   </div>
-      // </div>
     );
   }
 
   if (error && !registrationData) {
     return (
       <div className="max-w-5xl mx-auto p-4 md:p-6">
-          <QuickActions/>
+          <QuickActions draftData={draftData} />
       </div>
     );
   }
 
-  if (!registrationData) return <QuickActions/>;
+  if (!registrationData) return <QuickActions draftData={draftData} />
 
   return (
     <div className="mx-auto grid">
@@ -590,7 +614,12 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   );
 };
 
-const QuickActions = () => {
+const QuickActions = ({ draftData }: { draftData: DraftData | null }) => {
+    const hasDraft = !!draftData;
+    const applicationUrl = hasDraft 
+      ? `/customer/dashboard/teacher-application?draftId=${draftData.id}`
+      : '/customer/dashboard/teacher-application';
+
     return(
         <div className="space-y-6">
             <div>
@@ -601,17 +630,47 @@ const QuickActions = () => {
             <div className="group border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
                 <div className="flex items-center justify-between">
                     <div className="flex items-start space-x-4">
-                        <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
-                            <BookOpenText className="w-6 h-6 text-gray-600"/>
+                        <div className={`p-2 rounded-lg transition-colors ${
+                          hasDraft 
+                            ? 'bg-blue-100 group-hover:bg-blue-200' 
+                            : 'bg-gray-100 group-hover:bg-gray-200'
+                        }`}>
+                            {hasDraft ? (
+                              <Edit className="w-6 h-6 text-blue-600"/>
+                            ) : (
+                              <BookOpenText className="w-6 h-6 text-gray-600"/>
+                            )}
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">Application For Teacher Registration & Licensing</h3>
-                            <p className="text-sm text-gray-600 leading-relaxed">Submit your application for teacher registration and licensing</p>
+                            <h3 className="text-base font-semibold text-gray-900 mb-1">
+                              {hasDraft 
+                                ? 'Continue Your Application' 
+                                : 'Application For Teacher Registration & Licensing'
+                              }
+                            </h3>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              {hasDraft 
+                                ? `You have a draft saved from ${new Date(draftData.updatedAt).toLocaleDateString()}. Continue where you left off.`
+                                : 'Submit your application for teacher registration and licensing'
+                              }
+                            </p>
+                            {hasDraft && (
+                              <div className="mt-2 flex items-center gap-2">
+                                <span className="inline-flex items-center px-2 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium">
+                                  Draft Available
+                                </span>
+                                {draftData.currentStep && (
+                                  <span className="text-xs text-gray-500">
+                                    Step {draftData.currentStep}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                         </div> 
                     </div>
                     
                     <Button asChild variant="ghost" size="sm" className="ml-4 hover:bg-gray-100">
-                        <Link href="/customer/dashboard/teacher-application" className="flex items-center">
+                        <Link href={applicationUrl} className="flex items-center">
                             <ArrowRight className="w-4 h-4"/>
                         </Link>
                     </Button>
@@ -620,5 +679,36 @@ const QuickActions = () => {
         </div>
     )
 }
+
+// const QuickActions = () => {
+//     return(
+//         <div className="space-y-6">
+//             <div>
+//                 <h2 className="text-lg font-semibold text-gray-900 mb-1">Get Started</h2>
+//                 <p className="text-sm text-gray-600">Use the quick actions below or navigate through the menu</p>
+//             </div>
+            
+//             <div className="group border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
+//                 <div className="flex items-center justify-between">
+//                     <div className="flex items-start space-x-4">
+//                         <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
+//                             <BookOpenText className="w-6 h-6 text-gray-600"/>
+//                         </div>
+//                         <div className="flex-1">
+//                             <h3 className="text-base font-semibold text-gray-900 mb-1">Application For Teacher Registration & Licensing</h3>
+//                             <p className="text-sm text-gray-600 leading-relaxed">Submit your application for teacher registration and licensing</p>
+//                         </div> 
+//                     </div>
+                    
+//                     <Button asChild variant="ghost" size="sm" className="ml-4 hover:bg-gray-100">
+//                         <Link href="/customer/dashboard/teacher-application" className="flex items-center">
+//                             <ArrowRight className="w-4 h-4"/>
+//                         </Link>
+//                     </Button>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
 
 export default RegistrationStatusComponent;

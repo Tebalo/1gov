@@ -419,150 +419,105 @@ export default function Form() {
   const gender = watch("gender")
   const nationality = watch("nationality")
 
-  //   const draftIdFromUrl = urlParams.get('draftId');
-    
-  //   if (draftIdFromUrl) {
-  //     const fetchDraft = async () => {
-  //       const draftData = await loadDraft(draftIdFromUrl);
-  //       setFields(draftData?.fields || [])
-  //       setCurrentStep(draftData.currentStep || 0)
-  //       if (draftData) {
-
-  //         reset(draftData);
-  //         setNationalIdDoc(draftData.national_id_copy || null) 
-  //         setQualifications(draftData.qualifications || [])
-  //         setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null)
-  //         setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
-  //         setLicenseFlagDetailsDoc(draftData.license_flag_details || null)
-  //         setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null)
-  //         setMandatoryDoc(draftData.attachments || null)
-
-  //         /**
-  //          * Clear fields that were requested to be corrected
-  //          */
-  //         if(draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0){
-
-  //           const handleFieldReset = (field: string) => {
-  //             switch (field) {
-  //               case 'national_id_copy':
-  //                 if (draftData.national_id_copy) setNationalIdDoc(null);
-  //                 break;
-  //               case 'qualifications':
-  //                 if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-  //                 break;
-  //               case 'student_related_offence_attachment':
-  //                 if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-  //                 break;
-  //               case 'drug_related_offence_attachments':
-  //                 if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-  //                 break;
-  //               case 'license_flag_details_attachment':
-  //                 if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-  //                 break;
-  //               case 'misconduct_flag_details_attachment':
-  //                 if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-  //                 break;
-  //               default:
-  //                 // Clear the form field value
-  //                 setValue(field as keyof FormInputs, '');
-  //             }
-  //           };
-
-  //           draftData.fields.forEach((field: string) => {
-  //             try {
-  //               handleFieldReset(field);
-  //             } catch (error) {
-  //               console.error(`Error resetting field ${field}:`, error);
-  //             }
-  //           });
-
-  //           // After resetting fields, update the draft to clear the fields array
-  //           await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-
-  //           // Update draft status to 'correction'
-  //           await updateDraftStatus(draftIdFromUrl, 'correction');
-  //         }
-  //       }
-  //     };
-
-  //     fetchDraft();
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [loadDraft, reset, setValue, updateDraft]);
   useEffect(() => {
+    const loadDraftData = async (draftId: string) => {
+      const draftData = await loadDraft(draftId);
+      setFields(draftData?.fields || []);
+      setCurrentStep(draftData.currentStep || 0);
+      
+      if (!draftData) return null;
+      
+      reset(draftData);
+      setNationalIdDoc(draftData.national_id_copy || null);
+      setQualifications(draftData.qualifications || []);
+      setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
+      setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
+      setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
+      setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
+      setMandatoryDoc(draftData.attachments || null);
+
+      /**
+       * Clear fields that were requested to be corrected
+       */
+      if (draftData.status == 'correction' && draftData.fields && draftData.fields.length > 0) {
+        const handleFieldReset = (field: string) => {
+          switch (field) {
+            case 'national_id_copy':
+              if (draftData.national_id_copy) setNationalIdDoc(null);
+              break;
+            case 'qualifications':
+              if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+              break;
+            case 'student_related_offence_attachment':
+              if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+              break;
+            case 'drug_related_offence_attachments':
+              if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+              break;
+            case 'license_flag_details_attachment':
+              if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+              break;
+            case 'misconduct_flag_details_attachment':
+              if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+              break;
+            default:
+              setValue(field as keyof FormInputs, '');
+          }
+        };
+
+        draftData.fields.forEach((field: string) => {
+          try {
+            handleFieldReset(field);
+          } catch (error) {
+            console.error(`Error resetting field ${field}:`, error);
+          }
+        });
+        // console.log('loaded draft',draftData)
+
+        await updateDraft(draftId, draftData, currentStep);
+        await updateDraftStatus(draftId, 'draft');
+      }
+      
+      setDisabled(true);
+      return draftData;
+    };
+
     const initializeForm = async () => {
       try {
         setIsLoadingForm(true);
         
         const urlParams = new URLSearchParams(window.location.search);
         const draftIdFromUrl = urlParams.get('draftId');
-        
-        // Fetch access groups data
         const access_profile = await getAccessGroups();
         
+        // Try to load draft from URL first
         if (draftIdFromUrl) {
-          // If there's a draft, load it
-          const draftData = await loadDraft(draftIdFromUrl);
-          setFields(draftData?.fields || []);
-          setCurrentStep(draftData.currentStep || 0);
-          
-          if (draftData) {
-            reset(draftData);
-            setNationalIdDoc(draftData.national_id_copy || null);
-            setQualifications(draftData.qualifications || []);
-            setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
-            setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
-            setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
-            setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
-            setMandatoryDoc(draftData.attachments || null);
-
-            /**
-             * Clear fields that were requested to be corrected
-             */
-            if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
-              const handleFieldReset = (field: string) => {
-                switch (field) {
-                  case 'national_id_copy':
-                    if (draftData.national_id_copy) setNationalIdDoc(null);
-                    break;
-                  case 'qualifications':
-                    if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-                    break;
-                  case 'student_related_offence_attachment':
-                    if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-                    break;
-                  case 'drug_related_offence_attachments':
-                    if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-                    break;
-                  case 'license_flag_details_attachment':
-                    if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-                    break;
-                  case 'misconduct_flag_details_attachment':
-                    if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-                    break;
-                  default:
-                    // Clear the form field value
-                    setValue(field as keyof FormInputs, '');
-                }
-              };
-
-              draftData.fields.forEach((field: string) => {
-                try {
-                  handleFieldReset(field);
-                } catch (error) {
-                  console.error(`Error resetting field ${field}:`, error);
-                }
-              });
-
-              // After resetting fields, update the draft to clear the fields array
-              await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-              // Update draft status to 'correction'
-              await updateDraftStatus(draftIdFromUrl, 'correction');
+          await loadDraftData(draftIdFromUrl);
+          return;
+        }
+        
+        // Try to load latest draft if no URL param
+        if (access_profile?.preferred_username) {
+          try {
+            const response = await fetch(`/api/drafts/v1/recent?userId=${access_profile.preferred_username}`);
+            
+            if (response.ok) {
+              const latestDraft = await response.json();
+              
+              if (latestDraft?.id) {
+                await loadDraftData(latestDraft.id);
+                
+                // Update URL with draft ID
+                const newUrl = `${window.location.pathname}?draftId=${latestDraft.id}`;
+                window.history.replaceState({}, '', newUrl);
+                return;
+              }
             }
-            setDisabled(true); // Disable fields if draft exists
+          } catch (error) {
+            console.error('Error fetching latest draft:', error);
           }
-        } else if (access_profile) {
-          // No draft, fill form with access profile data
+
+          // No draft found, use access profile data
           const formDefaults = {
             username: access_profile.preferred_username || '',
             first_name: access_profile.given_name?.toUpperCase() || '',
@@ -575,13 +530,12 @@ export default function Form() {
             date_of_birth: access_profile.date_of_birth || null,
           };
           
-          // Set form values
           Object.entries(formDefaults).forEach(([key, value]) => {
             if (value) {
               setValue(key as keyof FormInputs, value);
             }
           });
-          setDisabled(true); // Disable fields if no draft but access profile exists
+          setDisabled(true);
         }
       } catch (error) {
         console.error('Error initializing form:', error);
@@ -593,6 +547,109 @@ export default function Form() {
     initializeForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadDraft, reset, setValue, updateDraft]);
+  //   const initializeForm = async () => {
+  //     try {
+  //       setIsLoadingForm(true);
+        
+  //       const urlParams = new URLSearchParams(window.location.search);
+  //       const draftIdFromUrl = urlParams.get('draftId');
+        
+  //       // Fetch access groups data
+  //       const access_profile = await getAccessGroups();
+        
+  //       if (draftIdFromUrl) {
+  //         // If there's a draft, load it
+  //         const draftData = await loadDraft(draftIdFromUrl);
+  //         setFields(draftData?.fields || []);
+  //         setCurrentStep(draftData.currentStep || 0);
+          
+  //         if (draftData) {
+  //           reset(draftData);
+  //           setNationalIdDoc(draftData.national_id_copy || null);
+  //           setQualifications(draftData.qualifications || []);
+  //           setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
+  //           setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
+  //           setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
+  //           setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
+  //           setMandatoryDoc(draftData.attachments || null);
+
+  //           /**
+  //            * Clear fields that were requested to be corrected
+  //            */
+  //           if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
+  //             const handleFieldReset = (field: string) => {
+  //               switch (field) {
+  //                 case 'national_id_copy':
+  //                   if (draftData.national_id_copy) setNationalIdDoc(null);
+  //                   break;
+  //                 case 'qualifications':
+  //                   if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+  //                   break;
+  //                 case 'student_related_offence_attachment':
+  //                   if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+  //                   break;
+  //                 case 'drug_related_offence_attachments':
+  //                   if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+  //                   break;
+  //                 case 'license_flag_details_attachment':
+  //                   if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+  //                   break;
+  //                 case 'misconduct_flag_details_attachment':
+  //                   if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+  //                   break;
+  //                 default:
+  //                   // Clear the form field value
+  //                   setValue(field as keyof FormInputs, '');
+  //               }
+  //             };
+
+  //             draftData.fields.forEach((field: string) => {
+  //               try {
+  //                 handleFieldReset(field);
+  //               } catch (error) {
+  //                 console.error(`Error resetting field ${field}:`, error);
+  //               }
+  //             });
+
+  //             // After resetting fields, update the draft to clear the fields array
+  //             await updateDraft(draftIdFromUrl, watchedFields, currentStep);
+  //             // Update draft status to 'correction'
+  //             await updateDraftStatus(draftIdFromUrl, 'correction');
+  //           }
+  //           setDisabled(true); // Disable fields if draft exists
+  //         }
+  //       } else if (access_profile) {
+  //         // No draft, fill form with access profile data
+  //         const formDefaults = {
+  //           username: access_profile.preferred_username || '',
+  //           first_name: access_profile.given_name?.toUpperCase() || '',
+  //           last_name: access_profile.family_name?.toUpperCase() || '',
+  //           primary_email: access_profile.email || '',
+  //           gender: access_profile.gender || '',
+  //           primary_postal: access_profile.postal_address || null,
+  //           primary_physical: access_profile.physical_address || null,
+  //           primary_phone: access_profile.phone || null,
+  //           date_of_birth: access_profile.date_of_birth || null,
+  //         };
+          
+  //         // Set form values
+  //         Object.entries(formDefaults).forEach(([key, value]) => {
+  //           if (value) {
+  //             setValue(key as keyof FormInputs, value);
+  //           }
+  //         });
+  //         setDisabled(true); // Disable fields if no draft but access profile exists
+  //       }
+  //     } catch (error) {
+  //       console.error('Error initializing form:', error);
+  //     } finally {
+  //       setIsLoadingForm(false);
+  //     }
+  //   };
+
+  //   initializeForm();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [loadDraft, reset, setValue, updateDraft]);
 
   type FieldName = keyof FormInputs
 
@@ -721,7 +778,7 @@ export default function Form() {
             {fields.length > 0 && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
                 <p className="text-sm text-red-800">
-                  <span className="font-medium">Please correct these fields:</span>
+                  <span className="font-medium">Your teacher application has been rejected at the screening stage because of missing or incorrect information. Please correct these fields:</span>
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {fields.map((field, index) => (
@@ -983,7 +1040,7 @@ export default function Form() {
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national/passport ID number"
                             inputMode="numeric"
-                            // disabled={disabled}
+                            disabled={disabled}
                           />
                           {errors.username && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -3256,6 +3313,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('disability', value)
                             setValue('disability_description', undefined); // Reset disability description
+                            trigger('disability')
                             }}
                           className="mt-3"
                         >
@@ -3314,6 +3372,7 @@ export default function Form() {
                             setValue('student_related_offence', value)
                             setValue('student_related_offence_details', ''); // Reset details
                             setStudentRelatedOffenceAttachmentDoc(null); // Reset details
+                            trigger('student_related_offence')
                             trigger('student_related_offence_details');
                             trigger('student_related_offence_attachments');
                           }}
@@ -3379,6 +3438,7 @@ export default function Form() {
                             setValue('drug_related_offence', value);
                             setValue('drug_related_offence_details', ''); // Reset details
                             setDrugRelatedOffenceAttachmentsDoc(null); // Reset attachments
+                            trigger('drug_related_offence')
                             trigger('drug_related_offence_details');
                             trigger('drug_related_offence_attachments');
                           }}
@@ -3443,6 +3503,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('license_flag', value)
                             setLicenseFlagDetailsDoc(null); // Reset details
+                            trigger('license_flag')
                             trigger('license_flag_details')
                           }}
                           className="mt-3"
@@ -3492,6 +3553,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('misconduct_flag', value)
                             setMisconductFlagDetailsDoc(null); // Reset details
+                            trigger('misconduct_flag')
                             trigger('misconduct_flag_details')
                           }}
                           className="mt-3"

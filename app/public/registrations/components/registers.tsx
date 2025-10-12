@@ -18,7 +18,7 @@ async function getRegistrations(status?: string) {
     if (status) {
       url += `?endorsement_status=${status}`;
     }
-    console.log(`${apiUrl}/teacher_registrations?endorsement_status=${status}`)
+    // console.log(`${apiUrl}/teacher_registrations?endorsement_status=${status}`)
     const response = await fetch(`${apiUrl}/teacher_registrations?endorsement_status=${status}`, {
       method: 'GET',
       headers: {

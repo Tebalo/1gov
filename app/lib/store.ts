@@ -26,7 +26,7 @@ const baseURLs = {
         iam: 'https://gateway-cus-acc.gov.bw',
         cms: 'https://gateway-cus.gov.bw/document/download/MESD_006_28_001/',
         // fileUploadUrl: 'https://gateway-cus.gov.bw/document/upload/MESD_006_28_001',
-        fileUploadUrl: 'https://twosixdigitalbw.com/api/v2/document',
+        fileUploadUrl: 'https://twosixdigitalbw.com/api/v2-uat/document',
         iamBaseUrl: 'https://gateway-cus-acc.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus-acc.gov.bw/v2',
         trlsAuthBaseURL: 'https://twosixdigitalbw.com'
