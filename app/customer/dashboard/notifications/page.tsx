@@ -742,7 +742,7 @@ const NotificationPage = () => {
                             }`}>
                               {notification.payload.message}
                               {notification.draft_id && (
-                                  <Button variant={"link"} onClick={()=>{router.push(`/customer/dashboard/teacher-application?draftId=${notification.draft_id}`)}}>Go to Application</Button>
+                                  <Button variant={"link"} onClick={()=>{router.push(`/customer/dashboard/teacher-application?draftId=${notification.draft_id}`)}}>update your application</Button>
                               )}
                             </p>
 

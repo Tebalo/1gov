@@ -179,14 +179,14 @@ function getCustomerStatus(systemStatus: string): StatusInfo {
 const SAMPLE_DATA: RegistrationData = {
   "national_id": "436415528",
   "reg_number": "BOT000135",
-  "reg_status": "Manager-Rejected",
+  "reg_status": "Pending-Customer-Action",
   "work_status": "Employed",
-  "endorsement_status": "Endorsement-Complete",
+  "endorsement_status": "Pending-Endorsement",
   "rejection_reason": null,
   "service_code": "MESD_006_08_054",
-  "payment_ref": "jj",
-  "payment_amount": "jj",
-  "payment_name": "jj",
+  "payment_ref": null,
+  "payment_amount": null,
+  "payment_name": null,
   "application_id": "5f6662b4-84ec-4684-983d-149c0e23f9ey",
   "submission_id": "5f6662b4149c0e23879y",
   "license_link": null,
@@ -217,6 +217,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   const [draftData, setDraftData] = useState<DraftData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [test, setTestStatus] = useState(false)
 
   const fetchRegistrationData = async () => {
     try {
@@ -225,6 +226,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
       const USE_SAMPLE_DATA = false; // Set to true to use sample data for testing
 
       if (USE_SAMPLE_DATA) {
+        setTestStatus(USE_SAMPLE_DATA)
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         setRegistrationData(SAMPLE_DATA);
@@ -282,6 +284,12 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
     );
   };
 
+  const shouldShowCorrectionButton = (data: RegistrationData): boolean => {
+    return (
+      data.reg_status === "Pending-Customer-Action"
+    );
+  };
+
   const shouldShowLicenseDownload = (data: RegistrationData): boolean => {
     return (
       data.reg_status === "Manager-Approved" &&
@@ -294,7 +302,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
       data.reg_status === "Manager-Approved" &&
       data.endorsement_status === "Pending-Endorsement" &&
       data.payment_ref === null &&
-      data.payment_amount === null 
+      data.payment_amount === null
     )
   }
 
@@ -357,24 +365,36 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
               <p className="text-sm text-gray-600 mt-1">
                 {registrationData.registration_type} Registration • {registrationData.reg_number}
               </p>
+              {test && (
+                <div className={'inline-flex mt-2 items-center px-3 py-1 rounded-lg border text-sm font-medium bg-red-50 text-red-700 border-red-200'}>
+                  <CheckCircle className="h-4 w-4 mr-1.5" />
+                  <span>TEST MODE</span>
+                </div>
+              )}
             </div>
             <div className={`inline-flex items-center px-3 py-1 rounded-lg border text-sm font-medium ${getCustomerStatus(registrationData.reg_status).color}`}>
               <CheckCircle className="h-4 w-4 mr-1.5" />
               {registrationData.reg_status=='Manager-Approved' && registrationData.payment_amount ? getCustomerStatus(registrationData.endorsement_status).display : getCustomerStatus(registrationData.reg_status).display}
             </div>
+
           </div>
         </div>
 
         {/* Action Buttons */}
-        {(shouldShowPaymentButton(registrationData) || shouldShowLicenseDownload(registrationData) || registrationData.invoice) && (
-          <div className="p-6 border-b border-gray-200 bg-gray-50">
+        {(shouldShowPaymentButton(registrationData) || shouldShowCorrectionButton(registrationData) || shouldShowLicenseDownload(registrationData) || registrationData.invoice) && (
+          <div className="p-6 border-b border-gray-200 bg-gray-50 space-y-2">
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-900">
+                {registrationData.reg_status=='Manager-Approved' && registrationData.payment_amount ? getCustomerStatus(registrationData.endorsement_status).description : getCustomerStatus(registrationData.reg_status).description}
+              </p>
+            </div>
             <div className="flex flex-wrap gap-3">
               {shouldShowPaymentButton(registrationData) && (
                 <a
                   href={registrationData.paid_at ?? '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center px-4 py-2 text-sm bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors"
                 >
                   <CreditCard className="h-4 w-4 mr-2" />
                   Make Payment ({registrationData.payment_amount ? formatCurrency(registrationData.payment_amount) : 'BWP 50.00'})
@@ -387,7 +407,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                     href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.license_link ?? '')}&embedded=true`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                    className="inline-flex items-center px-4 py-2 text-sm bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors"
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View License
@@ -407,6 +427,20 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                 <>
                   <ResendPayment caseId={registrationData.national_id}/>
                 </>
+              )}
+
+              {shouldShowCorrectionButton(registrationData) && (
+                <Link 
+                  href={'/customer/dashboard/teacher-application'}
+                  className="inline-block"
+                >
+                  <Button
+                    variant="default"
+                    className="w-full sm:w-auto"
+                  >
+                    Update Information
+                  </Button>
+                </Link>
               )}
 
               {registrationData.invoice && (
@@ -661,7 +695,7 @@ const QuickActions = ({ draftData }: { draftData: DraftData | null }) => {
                                 </span>
                                 {draftData.currentStep && (
                                   <span className="text-xs text-gray-500">
-                                    Step {draftData.currentStep}
+                                    Step {draftData.currentStep+1}
                                   </span>
                                 )}
                               </div>
