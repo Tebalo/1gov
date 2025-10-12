@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+const env = process.env.environment ?? 'uat'; 
 
 export type Draft = {
   id: string
@@ -324,11 +325,11 @@ export function DraftsDataTable({ userId, status, initialData = [] }: DraftsTabl
                 <Edit className="mr-2 h-4 w-4" />
                 Continue editing
               </DropdownMenuItem>
-              {status=="draft" && <DropdownMenuSeparator />}
-              {status=="draft"&&<DropdownMenuItem 
+              {(status=="draft" || env=="uat") && <DropdownMenuSeparator />}
+              {(status=="draft" || env=="uat") &&<DropdownMenuItem 
                 onClick={() => handleDeleteDraft(draft.id)}
                 className="text-red-600 focus:text-red-600"
-                disabled={status !== "draft"}
+                disabled={status == "submitted" && env=="production"}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete draft

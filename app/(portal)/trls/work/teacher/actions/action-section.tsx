@@ -52,13 +52,10 @@ const getStatusDescription = (status: StatusType): string => {
   
   const items = [
     { id: "national_id_copy", label: "National ID copy" },
-    { id: "qualification_copy", label: "BQA Evaluation Report copy" },
     { id: "qualifications", label: "Other Qualification's" },
     { id: "student_related_offence_attachments", label: "Student related offence copy" },
     { id: "drug_related_offence_attachments", label: "Drug related offence copy" },
-    { id: "proof_of_payment", label: "Proof of payment" },
     { id: "attachments", label: "Mandatory qualification's attachment" },
-    { id: "work_permit", label: "Work permit" },
   ] as const;
 
   const formSchema = z.object({

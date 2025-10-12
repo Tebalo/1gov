@@ -22,7 +22,7 @@ import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Check, ChevronsUpDown, FileText, Loader2, BriefcaseBusiness, GraduationCap, Star, FileCheck, AlertCircle } from 'lucide-react'
+import { Check, ChevronsUpDown, FileText, Loader2, BriefcaseBusiness, GraduationCap, Star, FileCheck, AlertCircle, ArrowRight, Info } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
 import {  
@@ -121,6 +121,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { format, set } from "date-fns"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import Link from "next/link"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -206,6 +207,7 @@ export default function Form() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [userId, setUserId] = useState('');
+  const [status, setFormStatus] = useState('')
 
   useEffect(() => {
     const fetchId = async () => {
@@ -465,19 +467,18 @@ export default function Form() {
           }
         };
 
-        // draftData.fields.forEach((field: string) => {
-        //   try {
-        //     handleFieldReset(field);
-        //   } catch (error) {
-        //     console.error(`Error resetting field ${field}:`, error);
-        //   }
-        // });
-        // console.log('loaded draft',draftData)
-
+        draftData.fields.forEach((field: string) => {
+          try {
+            handleFieldReset(field);
+          } catch (error) {
+            console.error(`Error resetting field ${field}:`, error);
+          }
+        });
+        
         await updateDraft(draftId, draftData, currentStep);
-        await updateDraftStatus(draftId, 'draft');
+        await updateDraftStatus(draftId, 'correcting');
       }
-      
+      setFormStatus(draftData.status)
       setDisabled(true);
       return draftData;
     };
@@ -547,109 +548,6 @@ export default function Form() {
     initializeForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadDraft, reset, setValue, updateDraft]);
-  //   const initializeForm = async () => {
-  //     try {
-  //       setIsLoadingForm(true);
-        
-  //       const urlParams = new URLSearchParams(window.location.search);
-  //       const draftIdFromUrl = urlParams.get('draftId');
-        
-  //       // Fetch access groups data
-  //       const access_profile = await getAccessGroups();
-        
-  //       if (draftIdFromUrl) {
-  //         // If there's a draft, load it
-  //         const draftData = await loadDraft(draftIdFromUrl);
-  //         setFields(draftData?.fields || []);
-  //         setCurrentStep(draftData.currentStep || 0);
-          
-  //         if (draftData) {
-  //           reset(draftData);
-  //           setNationalIdDoc(draftData.national_id_copy || null);
-  //           setQualifications(draftData.qualifications || []);
-  //           setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
-  //           setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
-  //           setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
-  //           setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
-  //           setMandatoryDoc(draftData.attachments || null);
-
-  //           /**
-  //            * Clear fields that were requested to be corrected
-  //            */
-  //           if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
-  //             const handleFieldReset = (field: string) => {
-  //               switch (field) {
-  //                 case 'national_id_copy':
-  //                   if (draftData.national_id_copy) setNationalIdDoc(null);
-  //                   break;
-  //                 case 'qualifications':
-  //                   if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-  //                   break;
-  //                 case 'student_related_offence_attachment':
-  //                   if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-  //                   break;
-  //                 case 'drug_related_offence_attachments':
-  //                   if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-  //                   break;
-  //                 case 'license_flag_details_attachment':
-  //                   if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-  //                   break;
-  //                 case 'misconduct_flag_details_attachment':
-  //                   if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-  //                   break;
-  //                 default:
-  //                   // Clear the form field value
-  //                   setValue(field as keyof FormInputs, '');
-  //               }
-  //             };
-
-  //             draftData.fields.forEach((field: string) => {
-  //               try {
-  //                 handleFieldReset(field);
-  //               } catch (error) {
-  //                 console.error(`Error resetting field ${field}:`, error);
-  //               }
-  //             });
-
-  //             // After resetting fields, update the draft to clear the fields array
-  //             await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-  //             // Update draft status to 'correction'
-  //             await updateDraftStatus(draftIdFromUrl, 'correction');
-  //           }
-  //           setDisabled(true); // Disable fields if draft exists
-  //         }
-  //       } else if (access_profile) {
-  //         // No draft, fill form with access profile data
-  //         const formDefaults = {
-  //           username: access_profile.preferred_username || '',
-  //           first_name: access_profile.given_name?.toUpperCase() || '',
-  //           last_name: access_profile.family_name?.toUpperCase() || '',
-  //           primary_email: access_profile.email || '',
-  //           gender: access_profile.gender || '',
-  //           primary_postal: access_profile.postal_address || null,
-  //           primary_physical: access_profile.physical_address || null,
-  //           primary_phone: access_profile.phone || null,
-  //           date_of_birth: access_profile.date_of_birth || null,
-  //         };
-          
-  //         // Set form values
-  //         Object.entries(formDefaults).forEach(([key, value]) => {
-  //           if (value) {
-  //             setValue(key as keyof FormInputs, value);
-  //           }
-  //         });
-  //         setDisabled(true); // Disable fields if no draft but access profile exists
-  //       }
-  //     } catch (error) {
-  //       console.error('Error initializing form:', error);
-  //     } finally {
-  //       setIsLoadingForm(false);
-  //     }
-  //   };
-
-  //   initializeForm();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [loadDraft, reset, setValue, updateDraft]);
 
   type FieldName = keyof FormInputs
 
@@ -752,32 +650,36 @@ export default function Form() {
                       <div className="flex-1 min-w-0">
                           <h1 className="text-lg font-semibold text-gray-900 truncate">
                               APPLICATION FOR TEACHER REGISTRATION & LICENSING
-                          </h1>                   
+                          </h1>                                       
                       </div>
                   </div>
                   {/* Right Items */}
                   <div className="flex-shrink-0">
-                      <Button 
+                      {/* <Button 
                           className="rounded-full h-8 w-8" 
                           variant="ghost"
                           size="icon"
                       >
                           <Star className="w-4 h-4 text-orange-500"/>
-                      </Button>
+                      </Button> */}
+                          <div className="">
+                            <div><Badge className="p-1 rounded-sm bg-purple-300 text-purple-950">{status || 'Draft'}</Badge></div>
+                          </div>   
                   </div>
               </div>
           </CardHeader>
       </Card>
-      <div className='max-w-9xl mx-auto flex gap-6'>
+      <div className='max-w-9xl mx-auto flex gap-6'>      
           {/* Main Content */}
           <div className='flex-1 bg-white rounded-lg shadow-lg'>
             <ScrollArea 
             ref={scrollContainerRef} 
             className='md:h-[500px] p-4 overflow-auto border border-blue-200 rounded-lg' 
             type="always">
-            {fields.length > 0 && (
+            {fields.length > 0 && status=="correction" && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
                 <p className="text-sm text-red-800">
+                  
                   <span className="font-medium">Your teacher application has been rejected at the screening stage because of missing or incorrect information. Please correct these fields:</span>
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -791,6 +693,9 @@ export default function Form() {
                   ))}
                 </div>
               </div>
+            )}
+            {status=="submitted" &&(
+                <ApplicationAlreadySubmitted/>
             )}
             {/* Progress Steps */}
             <nav aria-label='Progress' className='md:px-6 py-6 md:block hidden'>
@@ -4160,3 +4065,33 @@ export default function Form() {
     </section>
   )
 }
+
+const ApplicationAlreadySubmitted = () => {
+  return (
+    <div className="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-r-lg">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="bg-green-100 rounded-full p-2">
+            <Info className="h-6 w-6 text-green-600" />
+          </div>
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Application Already Submitted
+          </h3>
+          <p className="text-gray-700 mb-4">
+            You have already submitted your teacher registration application. 
+            Visit your dashboard to view your application status and take any required actions.
+          </p>
+          <Link 
+            href="/customer/dashboard/home"
+            className="inline-flex items-center gap-2 text-green-700 hover:text-green-800 font-medium group"
+          >
+            Go to Dashboard
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
