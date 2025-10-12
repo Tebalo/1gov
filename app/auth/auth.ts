@@ -11,8 +11,8 @@ import { AccessGroup, AuthResponse, DecodedToken, LoginPayload, OTPPayload, Sess
 // Constants
 const key = new TextEncoder().encode(secretKey);
 const ROLES: UserRole[] = [
-  'default-roles-customer',
-  'CUSTOMER',
+  // 'default-roles-customer',
+  // 'CUSTOMER',
   'REGISTRATION_OFFICER', 
   'MANAGER', 
   'SNR_REGISTRATION_OFFICER', 

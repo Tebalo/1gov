@@ -77,6 +77,24 @@ export const draftService = {
     }
   },
 
+  // Get Draft that was updated recently
+  getDraftByUpdateTime: async(userId: string)=>{
+    try {
+      const draft = await prisma.draft.findFirst({
+        where:{
+          userId: userId
+        },
+        orderBy:{
+          updatedAt: 'desc' // Sort by most recently updated first
+        }
+      });
+      return draft;
+    } catch(error){
+      console.error('Error fecthing draft', error)
+      throw new Error('Failed to fetch draft')
+    }
+  },
+
   // Get a specific draft by ID
   getDraftById: async (draftId: string) => {
     try {
@@ -101,6 +119,7 @@ export const draftService = {
         },
         data:{
           fields: fields,
+          status:"correction",
           updatedAt: new Date()}
       });
       return updatedDraft;

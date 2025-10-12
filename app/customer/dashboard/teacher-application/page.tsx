@@ -2,7 +2,7 @@ import Form from "@/app/components/form";
 
 export default function TeacherApplicationPage() {
   return (
-      <section className='md:px-2 py-4 md:space-y-2'>
+      <section className='md:px-2 py-4 md:space-y-0'>
 
         {/* Main Form Container */}
         <div className='relative'>

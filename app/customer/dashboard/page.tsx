@@ -69,7 +69,7 @@ const UserWelcomeMessage: React.FC<{username: string}> = ({username}) => {
         } else if (hour >= 17 && hour < 21) {
             return 'GOOD EVENING';
         } else {
-            return 'GOOD NIGHT';
+            return 'GOOD DAY';
         }
     };
 
