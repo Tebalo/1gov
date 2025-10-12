@@ -730,10 +730,10 @@ const NotificationPage = () => {
                                 {notification.reference.status}
                               </span>
 
-                              {/* <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
                                 <Hash className="h-3 w-3 mr-1" />
                                 {notification.reference.service_code}
-                              </span> */}
+                              </span>
                             </div>
                             
                             {/* Message */}
