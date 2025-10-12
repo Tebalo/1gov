@@ -465,13 +465,13 @@ export default function Form() {
           }
         };
 
-        draftData.fields.forEach((field: string) => {
-          try {
-            handleFieldReset(field);
-          } catch (error) {
-            console.error(`Error resetting field ${field}:`, error);
-          }
-        });
+        // draftData.fields.forEach((field: string) => {
+        //   try {
+        //     handleFieldReset(field);
+        //   } catch (error) {
+        //     console.error(`Error resetting field ${field}:`, error);
+        //   }
+        // });
         // console.log('loaded draft',draftData)
 
         await updateDraft(draftId, draftData, currentStep);
