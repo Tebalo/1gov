@@ -152,6 +152,7 @@ export const certificates = [
   "Certificate V in Vocational Education and Training Practice",
   "Postgraduate Certificate in Quality Assurance in Education",
   "Post Graduate Certificate in Curriculum Development"
+  
 ];
 
 export const diplomas = [ // Corrected
@@ -162,7 +163,8 @@ export const diplomas = [ // Corrected
     "Diploma in Integrated Early Childhood Development",
     "National Professional Diploma in Education (NPDE)",
     "Diploma in Science (Agricultural Education)",
-    "Diploma in Early Childhood Education"
+    "Diploma in Early Childhood Education",
+    "Other"
 ];
 
 export const postgraduateDiplomas = [ // Corrected
@@ -172,7 +174,8 @@ export const postgraduateDiplomas = [ // Corrected
   "Post Graduate Diploma in Education",
   "Post Graduate Diploma in Educational Leadership and Management",
   "Post Graduate Diploma in Tertiary Education",
-  "Postgraduate Diploma in Technology Enhance Teaching and Learning"
+  "Postgraduate Diploma in Technology Enhance Teaching and Learning",
+  "Other"
 ]
 
 export const degrees = [ // Corrected
@@ -212,11 +215,13 @@ export const degrees = [ // Corrected
   "Bachelor of General Education",
   "Bachelor of Science (BSc) in Rehabilitation Counselling",
   "Bachelor of Science in Counselling Psychotherapy",
-  "Bachelor of Science in Physical Education and Sport Coaching"
+  "Bachelor of Science in Physical Education and Sport Coaching",
+  "Other"
 ];
 
 export const honours = [ // Corrected
-  "B.Ed (Hons) in Primary Education"
+  "B.Ed (Hons) in Primary Education",
+  "Other"
 ];
 
 export const masters = [ // Corrected
@@ -245,7 +250,8 @@ export const masters = [ // Corrected
   "Master of Educational Management and Leadership",
   "Master of Educational Measurement and Evaluation",
   "Master of Philosophy in Physics",
-  "Masters of Education in Gender Studies"
+  "Masters of Education in Gender Studies",
+  "Other"
 ];
 
 export const doctorates = [
@@ -267,7 +273,8 @@ export const doctorates = [
   "Doctor of Philosophy in Science Education",
   "Doctor of Philosophy in Social Studies Education",
   "Doctor of Philosophy in Special Education",
-  "PhD in Education (Religious Education)"
+  "PhD in Education (Religious Education)",
+  "Other"
 ];
 
 // All Qualifications (merged from all categories)
