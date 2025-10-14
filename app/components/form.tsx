@@ -2549,28 +2549,30 @@ export default function Form() {
                         {/* Level */}
                         <div className='space-y-2'>
                           <Label htmlFor='level'>Teaching Qualification Level*</Label>
-                          <Select onValueChange={(value) => {
-                            setValue('level', value);
-                            // Reset all qualification-related fields
-                            setValue('qualification_certificate', '');
-                            setValue('qualification_diploma', '');
-                            setValue('qualification_post_grad_diploma', '');
-                            setValue('qualification_degree', '');
-                            setValue('qualification_degree_honours', '');
-                            setValue('qualification_masters_degree', '');
-                            setValue('qualification_doctoral_degree', '');
-                            setValue('other_qualification', '');
+                          <Select 
+                            onValueChange={(value: string) => {
+                              setValue('level', value);
+                              // Reset all qualification-related fields
+                              setValue('qualification_certificate', '');
+                              setValue('qualification_diploma', '');
+                              setValue('qualification_post_grad_diploma', '');
+                              setValue('qualification_degree', '');
+                              setValue('qualification_degree_honours', '');
+                              setValue('qualification_masters_degree', '');
+                              setValue('qualification_doctoral_degree', '');
+                              setValue('other_qualification', '');
 
-                            trigger('qualification_certificate');
-                            trigger('qualification_diploma');
-                            trigger('qualification_post_grad_diploma');
-                            trigger('qualification_degree');
-                            trigger('qualification_degree_honours');
-                            trigger('qualification_masters_degree');
-                            trigger('qualification_doctoral_degree');
-                            trigger('other_qualification');
-                          }}
-                          value={watch('level')}>
+                              trigger('qualification_certificate');
+                              trigger('qualification_diploma');
+                              trigger('qualification_post_grad_diploma');
+                              trigger('qualification_degree');
+                              trigger('qualification_degree_honours');
+                              trigger('qualification_masters_degree');
+                              trigger('qualification_doctoral_degree');
+                              trigger('other_qualification');
+                            }}
+                            value={watch('level')}
+                          >
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select level' />
                             </SelectTrigger>
@@ -2581,8 +2583,8 @@ export default function Form() {
                               <SelectItem value="Bachelor's Degree">Bachelor&apos;s Degree</SelectItem>
                               <SelectItem value="Bachelor's Degree Honours">Bachelor&apos;s Degree Honours</SelectItem>
                               <SelectItem value="Master's Degree">Master&apos;s Degree</SelectItem>
-                              <SelectItem value="Doctoral Degree">Doctoral&apos;s Degree</SelectItem>
-                              <SelectItem value="Other">Other</SelectItem>
+                              <SelectItem value="Doctoral Degree">Doctoral Degree</SelectItem>
+                              {/* <SelectItem value="Other">Other</SelectItem> */}
                             </SelectContent>
                           </Select>
                           {errors.level && (
@@ -2591,7 +2593,8 @@ export default function Form() {
                         </div>
 
                         {/* Doctoral Degree */}
-                        {watch('level') === "Doctoral Degree" && <div className='space-y-2'>
+                        {watch('level') === "Doctoral Degree" && (
+                          <div className='space-y-2'>
                             <Label htmlFor='qualification_doctoral_degree' className="text-sm font-medium text-gray-700">
                               Doctoral Degree<span className="text-red-500">*</span>
                             </Label>
@@ -2618,10 +2621,13 @@ export default function Form() {
                                       {doctorateForSelect.map((doctorate) => (
                                         <CommandItem
                                           key={doctorate.value}
-                                          value={doctorate.label || watch('qualification_doctoral_degree')}
+                                          value={doctorate.value}
                                           onSelect={(currentValue) => {
-                                            setValue('qualification_doctoral_degree', currentValue === watch('qualification_doctoral_degree') ? "" : currentValue)
-                                            setDoctoralDegreeOpen(false)
+                                            const selectedDoctorate = doctorateForSelect.find(
+                                              (d) => d.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('qualification_doctoral_degree', selectedDoctorate?.label || currentValue);
+                                            setDoctoralDegreeOpen(false);
                                           }}
                                         >
                                           {doctorate.label}
@@ -2643,11 +2649,13 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.qualification_doctoral_degree.message}
                               </p>
-                          )}
-                        </div>}
+                            )}
+                          </div>
+                        )}
 
                         {/* Master's Degree */}
-                        {watch('level') === "Master's Degree" && <div className='space-y-2'>
+                        {watch('level') === "Master's Degree" && (
+                          <div className='space-y-2'>
                             <Label htmlFor='qualification_masters_degree' className="text-sm font-medium text-gray-700">
                               Master&apos;s Degree<span className="text-red-500">*</span>
                             </Label>
@@ -2674,10 +2682,13 @@ export default function Form() {
                                       {mastersForSelect.map((masters) => (
                                         <CommandItem
                                           key={masters.value}
-                                          value={masters.label}
+                                          value={masters.value}
                                           onSelect={(currentValue) => {
-                                            setValue('qualification_masters_degree', currentValue === watch('qualification_masters_degree') ? "" : currentValue)
-                                            setMastersOpen(false)
+                                            const selectedMasters = mastersForSelect.find(
+                                              (m) => m.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('qualification_masters_degree', selectedMasters?.label || currentValue);
+                                            setMastersOpen(false);
                                           }}
                                         >
                                           {masters.label}
@@ -2699,11 +2710,13 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.qualification_masters_degree.message}
                               </p>
-                          )}
-                        </div>}
+                            )}
+                          </div>
+                        )}
 
                         {/* Bachelor's Degree Honours */}
-                        {watch('level') === "Bachelor's Degree Honours" && <div className='space-y-2'>
+                        {watch('level') === "Bachelor's Degree Honours" && (
+                          <div className='space-y-2'>
                             <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
                               Bachelor&apos;s Degree Honours<span className="text-red-500">*</span>
                             </Label>
@@ -2730,10 +2743,13 @@ export default function Form() {
                                       {honoursForSelect.map((degree) => (
                                         <CommandItem
                                           key={degree.value}
-                                          value={degree.label || watch('qualification_degree_honours')}
+                                          value={degree.value}
                                           onSelect={(currentValue) => {
-                                            setValue('qualification_degree_honours', currentValue === watch('qualification_degree_honours') ? "" : currentValue)
-                                            setHonoursOpen(false)
+                                            const selectedHonours = honoursForSelect.find(
+                                              (d) => d.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('qualification_degree_honours', selectedHonours?.label || currentValue);
+                                            setHonoursOpen(false);
                                           }}
                                         >
                                           {degree.label}
@@ -2755,11 +2771,13 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.qualification_degree_honours.message}
                               </p>
-                          )}
-                        </div>}
+                            )}
+                          </div>
+                        )}
 
                         {/* Diploma */}
-                        {watch('level') === 'Diploma' && <div className='space-y-2'>
+                        {watch('level') === 'Diploma' && (
+                          <div className='space-y-2'>
                             <Label htmlFor='qualification_diploma' className="text-sm font-medium text-gray-700">
                               Diploma <span className="text-red-500">*</span>
                             </Label>
@@ -2783,20 +2801,23 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No diploma found.</CommandEmpty>
                                     <CommandGroup>
-                                      {diplomasForSelect.map((school) => (
+                                      {diplomasForSelect.map((diploma) => (
                                         <CommandItem
-                                          key={school.value}
-                                          value={school.label || watch('qualification_diploma')}
+                                          key={diploma.value}
+                                          value={diploma.value}
                                           onSelect={(currentValue) => {
-                                            setValue('qualification_diploma', currentValue === watch('qualification_diploma') ? "" : currentValue)
-                                            setDiplomaOpen(false)
+                                            const selectedDiploma = diplomasForSelect.find(
+                                              (d) => d.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('qualification_diploma', selectedDiploma?.label || currentValue);
+                                            setDiplomaOpen(false);
                                           }}
                                         >
-                                          {school.label}
+                                          {diploma.label}
                                           <Check
                                             className={cn(
                                               "ml-auto",
-                                              watch('qualification_diploma') === school.label ? "opacity-100" : "opacity-0"
+                                              watch('qualification_diploma') === diploma.label ? "opacity-100" : "opacity-0"
                                             )}
                                           />
                                         </CommandItem>
@@ -2811,11 +2832,13 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.qualification_diploma.message}
                               </p>
-                          )}
-                        </div>}
+                            )}
+                          </div>
+                        )}
 
                         {/* Post-Graduate Diploma */}
-                        {watch('level') === 'Post-Graduate Diploma' && <div className='space-y-2'>
+                        {watch('level') === 'Post-Graduate Diploma' && (
+                          <div className='space-y-2'>
                             <Label htmlFor='qualification_post_grad_diploma' className="text-sm font-medium text-gray-700">
                               Post-Graduate Diploma <span className="text-red-500">*</span>
                             </Label>
@@ -2839,20 +2862,23 @@ export default function Form() {
                                   <CommandList>
                                     <CommandEmpty>No post grad diploma found.</CommandEmpty>
                                     <CommandGroup>
-                                      {postGraduateDiplomasForSelect.map((school) => (
+                                      {postGraduateDiplomasForSelect.map((diploma) => (
                                         <CommandItem
-                                          key={school.value}
-                                          value={school.label || watch('qualification_post_grad_diploma')}
+                                          key={diploma.value}
+                                          value={diploma.value}
                                           onSelect={(currentValue) => {
-                                            setValue('qualification_post_grad_diploma', currentValue === watch('qualification_post_grad_diploma') ? "" : currentValue)
-                                            setPostGradDiplomaOpen(false)
+                                            const selectedDiploma = postGraduateDiplomasForSelect.find(
+                                              (d) => d.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('qualification_post_grad_diploma', selectedDiploma?.label || currentValue);
+                                            setPostGradDiplomaOpen(false);
                                           }}
                                         >
-                                          {school.label}
+                                          {diploma.label}
                                           <Check
                                             className={cn(
                                               "ml-auto",
-                                              watch('qualification_post_grad_diploma') === school.label ? "opacity-100" : "opacity-0"
+                                              watch('qualification_post_grad_diploma') === diploma.label ? "opacity-100" : "opacity-0"
                                             )}
                                           />
                                         </CommandItem>
@@ -2867,11 +2893,13 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.qualification_post_grad_diploma.message}
                               </p>
-                          )}
-                        </div>}
+                            )}
+                          </div>
+                        )}
 
                         {/* Bachelor's Degree */}
-                        {watch('level') === "Bachelor's Degree" && <div className='space-y-2'>
+                        {watch('level') === "Bachelor's Degree" && (
+                          <div className='space-y-2'>
                             <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
                               Bachelor&apos;s Degree <span className="text-red-500">*</span>
                             </Label>
@@ -2898,10 +2926,13 @@ export default function Form() {
                                       {degreeForSelect.map((degree) => (
                                         <CommandItem
                                           key={degree.value}
-                                          value={degree.label || watch('qualification_degree')}
+                                          value={degree.value}
                                           onSelect={(currentValue) => {
-                                            setValue('qualification_degree', currentValue === watch('qualification_degree') ? "" : currentValue)
-                                            setDegreeOpen(false)
+                                            const selectedDegree = degreeForSelect.find(
+                                              (d) => d.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('qualification_degree', selectedDegree?.label || currentValue);
+                                            setDegreeOpen(false);
                                           }}
                                         >
                                           {degree.label}
@@ -2923,55 +2954,62 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.qualification_degree.message}
                               </p>
-                          )}
-                        </div>}
+                            )}
+                          </div>
+                        )}
 
                         {/* Certificate */}
-                        {watch('level') === "Certificate" && <div>
-                          <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
-                          <Select 
-                          onValueChange={(value) => setValue('qualification_certificate', value)}
-                          value={watch('qualification_certificate')}>
-                            <SelectTrigger className='mt-1'>
-                              <SelectValue placeholder='Select qualification' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='Certificate V Distance Education'>Certificate V Distance Education</SelectItem>
-                              <SelectItem value='Certificate V in Botswana Sign Language'>Certificate V in Botswana Sign Language</SelectItem>
-                              <SelectItem value='Certificate V in Early Childhood Education'>Certificate V in Early Childhood Education</SelectItem>
-                              <SelectItem value='Certificate V in English for Professional Purposes'>Certificate V in English for Professional Purposes</SelectItem>
-                              <SelectItem value='Certificate V in Vocational Education and Training'>Certificate V in Vocational Education and Training</SelectItem>
-                              <SelectItem value='Certificate V in Vocational Education and Training Practice'> Certificate V in Vocational Education and Training Practice</SelectItem>
-                              <SelectItem value='Postgraduate Certificate in Quality Assurance in Education'>Postgraduate Certificate in Quality Assurance in Education</SelectItem>
-                              <SelectItem value='Post Graduate Certificate in Curriculum Development'>Post Graduate Certificate in Curriculum Development</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.qualification_certificate && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.qualification_certificate.message}</p>
-                          )}
-                        </div>}
+                        {watch('level') === "Certificate" && (
+                          <div>
+                            <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
+                            <Select 
+                              onValueChange={(value) => setValue('qualification_certificate', value)}
+                              value={watch('qualification_certificate')}
+                            >
+                              <SelectTrigger className='mt-1'>
+                                <SelectValue placeholder='Select qualification' />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value='Certificate V Distance Education'>Certificate V Distance Education</SelectItem>
+                                <SelectItem value='Certificate V in Botswana Sign Language'>Certificate V in Botswana Sign Language</SelectItem>
+                                <SelectItem value='Certificate V in Early Childhood Education'>Certificate V in Early Childhood Education</SelectItem>
+                                <SelectItem value='Certificate V in English for Professional Purposes'>Certificate V in English for Professional Purposes</SelectItem>
+                                <SelectItem value='Certificate V in Vocational Education and Training'>Certificate V in Vocational Education and Training</SelectItem>
+                                <SelectItem value='Certificate V in Vocational Education and Training Practice'> Certificate V in Vocational Education and Training Practice</SelectItem>
+                                <SelectItem value='Postgraduate Certificate in Quality Assurance in Education'>Postgraduate Certificate in Quality Assurance in Education</SelectItem>
+                                <SelectItem value='Post Graduate Certificate in Curriculum Development'>Post Graduate Certificate in Curriculum Development</SelectItem>
+                                <SelectItem value='Other'>Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {errors.qualification_certificate && (
+                              <p className='text-sm text-red-500 mt-1'>{errors.qualification_certificate.message}</p>
+                            )}
+                          </div>
+                        )}
 
                         {/* Other qualification */}
-                        {watch('level') === "Other" && <div>
-                          <Label htmlFor='other_qualification'>Other qualification *</Label>
-                          <Input
-                            id='other_qualification'
-                            {...register('other_qualification')}
-                            className='mt-1'
-                          />
-                          {errors.other_qualification && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.other_qualification.message}</p>
-                          )}
-                        </div>}
+                        {(watch('qualification_certificate') || watch('qualification_degree') || 
+                          watch('qualification_masters_degree') || watch('qualification_doctoral_degree' ) || watch('qualification_diploma') || 
+                          watch('qualification_post_grad_diploma') || watch('qualification_degree_honours')) === "Other" && (
+                          <div>
+                            <Label htmlFor='other_qualification'>Other qualification *</Label>
+                            <Input
+                              id='other_qualification'
+                              {...register('other_qualification')}
+                              className='mt-1'
+                            />
+                            {errors.other_qualification && (
+                              <p className='text-sm text-red-500 mt-1'>{errors.other_qualification.message}</p>
+                            )}
+                          </div>
+                        )}
 
                         {/* Institution */}
                         <div className='space-y-2'>
                             <Label htmlFor='institution' className="text-sm font-medium text-gray-700">
                               Name of Institution <span className="text-red-500">*</span>
                             </Label>
-                            <Popover open={institutionOpen} onOpenChange={
-                              setInstitutionOpen
-                              }>
+                            <Popover open={institutionOpen} onOpenChange={setInstitutionOpen}>
                               <PopoverTrigger asChild>
                                 <Button
                                   variant="outline"
@@ -2994,11 +3032,14 @@ export default function Form() {
                                       {institutionForSelect.map((institution) => (
                                         <CommandItem
                                           key={institution.value}
-                                          value={institution.label || watch('institution')}
+                                          value={institution.value}
                                           onSelect={(currentValue) => {
-                                            setValue('institution', currentValue === watch('institution') ? "" : currentValue)
-                                            setInstitutionOpen(false)
-                                            trigger('other_institution')
+                                            const selectedInstitution = institutionForSelect.find(
+                                              (i) => i.value.toLowerCase() === currentValue.toLowerCase()
+                                            );
+                                            setValue('institution', selectedInstitution?.label || currentValue);
+                                            setInstitutionOpen(false);
+                                            trigger('other_institution');
                                           }}
                                         >
                                           {institution.label}
@@ -3020,22 +3061,24 @@ export default function Form() {
                                 <span className="text-xs">⚠</span>
                                 {errors.institution.message}
                               </p>
-                          )}
+                            )}
                         </div>
                         
                         {/* Other Institution  */}
-                        {watch('institution')?.toLowerCase() === "other" && <div className='space-y-2'>
-                          <Label htmlFor='other_institution'>Institution Name *</Label>
-                          <Input
-                            id='other_institution'
-                            {...register('other_institution')}
-                            className='mt-1'
-                            placeholder="Enter your institution name"
-                          />
-                          {errors.other_institution && (
-                            <p className='text-sm text-red-500 mt-1'>{errors.other_institution.message}</p>
-                          )}
-                        </div>}
+                        {watch('institution')?.toLowerCase() === "other" && (
+                          <div className='space-y-2'>
+                            <Label htmlFor='other_institution'>Institution Name *</Label>
+                            <Input
+                              id='other_institution'
+                              {...register('other_institution')}
+                              className='mt-1'
+                              placeholder="Enter your institution name"
+                            />
+                            {errors.other_institution && (
+                              <p className='text-sm text-red-500 mt-1'>{errors.other_institution.message}</p>
+                            )}
+                          </div>
+                        )}
 
                         {/* Qualification Year */}
                         <div className='space-y-2'>
@@ -3105,8 +3148,11 @@ export default function Form() {
                                         key={subject_specialization.value}
                                         value={subject_specialization.value}
                                         onSelect={(currentValue) => {
-                                          setValue('subject_specialization', currentValue === watch('subject_specialization') ? "" : currentValue)
-                                          setSubjectOpen(false)
+                                          const selectedSubject = subjectSpecializationForSelect.find(
+                                            (s) => s.value.toLowerCase() === currentValue.toLowerCase()
+                                          );
+                                          setValue('subject_specialization', selectedSubject?.label || currentValue);
+                                          setSubjectOpen(false);
                                         }}
                                         className="flex items-center justify-between"
                                       >
@@ -3114,7 +3160,7 @@ export default function Form() {
                                         <Check
                                           className={cn(
                                             "flex-shrink-0",
-                                            watch('subject_specialization') === subject_specialization.value ? "opacity-100" : "opacity-0"
+                                            watch('subject_specialization') === subject_specialization.label ? "opacity-100" : "opacity-0"
                                           )}
                                         />
                                       </CommandItem>
@@ -3144,7 +3190,9 @@ export default function Form() {
                             {errors.other_subject_specialization && (
                               <p className='text-sm text-red-500 mt-1'>{errors.other_subject_specialization.message}</p>
                             )}
-                          </div>)}
+                          </div>
+                        )}
+
                         {/* Mandatory Qualification Document Upload */}
                         <div className='space-y-2'>
                           <Label className="text-sm font-medium text-gray-700">Upload Qualification Document <span className="text-red-500">*</span></Label>
