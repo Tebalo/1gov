@@ -19,9 +19,9 @@ import { DecodedTokenResponse } from "@/app/customer/types/auth"
 import { trlsIAM } from "@/app/lib/store"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-const AUTH_API_URL = `${trlsIAM}/v1/api/auth_microservice/login/`
-const DECODE_API_URL = `${trlsIAM}/v1/api/auth_microservice/decode-token/`
-const RESET_PASSWORD_API_URL = `${trlsIAM}/v1/api/auth_microservice/reset-password/`
+const AUTH_API_URL = `${trlsIAM}/api/auth_microservice/login/`
+const DECODE_API_URL = `${trlsIAM}/api/auth_microservice/decode-token/`
+const RESET_PASSWORD_API_URL = `${trlsIAM}/api/auth_microservice/reset-password/`
 
 interface LocalAuthResponse {
   access: string

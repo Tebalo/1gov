@@ -89,7 +89,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       // Create FormData
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('type', file.type || 'document')
+      formData.append('type', file.type || 'pdf')
       formData.append('name', file.name)
       formData.append('description', 'TRLS')
 

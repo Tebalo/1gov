@@ -30,6 +30,6 @@ export default async function Dashboard(){
     } else if(userRole?.toUpperCase() === "ADMIN"){
         return <AdminDashboard/>
     } else {
-        return redirect('/welcome')
+        return redirect('/customer/dashboard')
     }
 }

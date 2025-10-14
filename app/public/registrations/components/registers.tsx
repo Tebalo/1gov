@@ -18,16 +18,16 @@ async function getRegistrations(status?: string) {
     if (status) {
       url += `?endorsement_status=${status}`;
     }
-    console.log(`${apiUrl}/teacher_registrations?endorsement_status=${status}`)
+    // console.log(`${apiUrl}/teacher_registrations?endorsement_status=${status}`)
     const response = await fetch(`${apiUrl}/teacher_registrations?endorsement_status=${status}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      next: {
-        revalidate: cacheTime, // Revalidate every hour (in seconds)
-        tags: [fetchTag], // Add a tag to enable manual revalidation
-      }
+      //next: {
+        //revalidate: cacheTime, // Revalidate every hour (in seconds)
+        //tags: [fetchTag], // Add a tag to enable manual revalidation
+      //}
     });
 
     if (!response.ok) {

@@ -82,7 +82,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 pt-28 sm:pt-10 lg:pt-10">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[calc(100vh-200px)] sm:min-h-[calc(100vh-220px)] lg:min-h-[calc(100vh-220px)] overflow-hidden">
-            <div className="p-4 sm:p-6 lg:p-8 overflow-x-auto">
+            <div className="p-4 sm:p-6 lg:p-2 overflow-x-auto">
               <div className="min-w-0 w-full">
                 {children}
               </div>

@@ -22,7 +22,7 @@ import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Check, ChevronsUpDown, FileText, Loader2, BriefcaseBusiness, GraduationCap, Star, FileCheck, AlertCircle } from 'lucide-react'
+import { Check, ChevronsUpDown, FileText, Loader2, BriefcaseBusiness, GraduationCap, Star, FileCheck, AlertCircle, ArrowRight, Info } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
 import {  
@@ -121,6 +121,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { format, set } from "date-fns"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import Link from "next/link"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -131,7 +132,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Personal Information',
-    fields: ['first_name', 'last_name', 'primary_email', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'username', 'gender','national_id_copy'] // 'surname',
+    fields: ['first_name', 'last_name', 'citizenship', 'nationality', 'middle_name', 'date_of_birth', 'gender','national_id_copy'] // 'surname',
   },
   {
     id: 'Step 2',
@@ -206,6 +207,7 @@ export default function Form() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [userId, setUserId] = useState('');
+  const [status, setFormStatus] = useState('')
 
   useEffect(() => {
     const fetchId = async () => {
@@ -419,150 +421,104 @@ export default function Form() {
   const gender = watch("gender")
   const nationality = watch("nationality")
 
-  //   const draftIdFromUrl = urlParams.get('draftId');
-    
-  //   if (draftIdFromUrl) {
-  //     const fetchDraft = async () => {
-  //       const draftData = await loadDraft(draftIdFromUrl);
-  //       setFields(draftData?.fields || [])
-  //       setCurrentStep(draftData.currentStep || 0)
-  //       if (draftData) {
-
-  //         reset(draftData);
-  //         setNationalIdDoc(draftData.national_id_copy || null) 
-  //         setQualifications(draftData.qualifications || [])
-  //         setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null)
-  //         setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null)
-  //         setLicenseFlagDetailsDoc(draftData.license_flag_details || null)
-  //         setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null)
-  //         setMandatoryDoc(draftData.attachments || null)
-
-  //         /**
-  //          * Clear fields that were requested to be corrected
-  //          */
-  //         if(draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0){
-
-  //           const handleFieldReset = (field: string) => {
-  //             switch (field) {
-  //               case 'national_id_copy':
-  //                 if (draftData.national_id_copy) setNationalIdDoc(null);
-  //                 break;
-  //               case 'qualifications':
-  //                 if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-  //                 break;
-  //               case 'student_related_offence_attachment':
-  //                 if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-  //                 break;
-  //               case 'drug_related_offence_attachments':
-  //                 if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-  //                 break;
-  //               case 'license_flag_details_attachment':
-  //                 if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-  //                 break;
-  //               case 'misconduct_flag_details_attachment':
-  //                 if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-  //                 break;
-  //               default:
-  //                 // Clear the form field value
-  //                 setValue(field as keyof FormInputs, '');
-  //             }
-  //           };
-
-  //           draftData.fields.forEach((field: string) => {
-  //             try {
-  //               handleFieldReset(field);
-  //             } catch (error) {
-  //               console.error(`Error resetting field ${field}:`, error);
-  //             }
-  //           });
-
-  //           // After resetting fields, update the draft to clear the fields array
-  //           await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-
-  //           // Update draft status to 'correction'
-  //           await updateDraftStatus(draftIdFromUrl, 'correction');
-  //         }
-  //       }
-  //     };
-
-  //     fetchDraft();
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [loadDraft, reset, setValue, updateDraft]);
   useEffect(() => {
+    const loadDraftData = async (draftId: string) => {
+      const draftData = await loadDraft(draftId);
+      setFields(draftData?.fields || []);
+      setCurrentStep(draftData.currentStep || 0);
+      
+      if (!draftData) return null;
+      
+      reset(draftData);
+      setNationalIdDoc(draftData.national_id_copy || null);
+      setQualifications(draftData.qualifications || []);
+      setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
+      setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
+      setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
+      setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
+      setMandatoryDoc(draftData.attachments || null);
+
+      /**
+       * Clear fields that were requested to be corrected
+       */
+      if (draftData.status == 'correction' && draftData.fields && draftData.fields.length > 0) {
+        const handleFieldReset = (field: string) => {
+          switch (field) {
+            case 'national_id_copy':
+              if (draftData.national_id_copy) setNationalIdDoc(null);
+              break;
+            case 'qualifications':
+              if (draftData.qualifications) setQualifications(draftData.qualifications || []);
+              break;
+            case 'student_related_offence_attachment':
+              if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
+              break;
+            case 'drug_related_offence_attachments':
+              if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
+              break;
+            case 'license_flag_details_attachment':
+              if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
+              break;
+            case 'misconduct_flag_details_attachment':
+              if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
+              break;
+            default:
+              setValue(field as keyof FormInputs, '');
+          }
+        };
+
+        draftData.fields.forEach((field: string) => {
+          try {
+            handleFieldReset(field);
+          } catch (error) {
+            console.error(`Error resetting field ${field}:`, error);
+          }
+        });
+        
+        await updateDraft(draftId, draftData, currentStep);
+        await updateDraftStatus(draftId, 'correcting');
+      }
+      setFormStatus(draftData.status)
+      setDisabled(true);
+      return draftData;
+    };
+
     const initializeForm = async () => {
       try {
         setIsLoadingForm(true);
         
         const urlParams = new URLSearchParams(window.location.search);
         const draftIdFromUrl = urlParams.get('draftId');
-        
-        // Fetch access groups data
         const access_profile = await getAccessGroups();
         
+        // Try to load draft from URL first
         if (draftIdFromUrl) {
-          // If there's a draft, load it
-          const draftData = await loadDraft(draftIdFromUrl);
-          setFields(draftData?.fields || []);
-          setCurrentStep(draftData.currentStep || 0);
-          
-          if (draftData) {
-            reset(draftData);
-            setNationalIdDoc(draftData.national_id_copy || null);
-            setQualifications(draftData.qualifications || []);
-            setStudentRelatedOffenceAttachmentDoc(draftData.student_related_offence_attachments || null);
-            setDrugRelatedOffenceAttachmentsDoc(draftData.drug_related_offence_attachments || null);
-            setLicenseFlagDetailsDoc(draftData.license_flag_details || null);
-            setMisconductFlagDetailsDoc(draftData.misconduct_flag_details || null);
-            setMandatoryDoc(draftData.attachments || null);
-
-            /**
-             * Clear fields that were requested to be corrected
-             */
-            if (draftData.status != 'correction' && draftData.fields && draftData.fields.length > 0) {
-              const handleFieldReset = (field: string) => {
-                switch (field) {
-                  case 'national_id_copy':
-                    if (draftData.national_id_copy) setNationalIdDoc(null);
-                    break;
-                  case 'qualifications':
-                    if (draftData.qualifications) setQualifications(draftData.qualifications || []);
-                    break;
-                  case 'student_related_offence_attachment':
-                    if (draftData.student_related_offence_attachment) setStudentRelatedOffenceAttachmentDoc(null);
-                    break;
-                  case 'drug_related_offence_attachments':
-                    if (draftData.drug_related_offence_attachments) setDrugRelatedOffenceAttachmentsDoc(null);
-                    break;
-                  case 'license_flag_details_attachment':
-                    if (draftData.license_flag_details_attachment) setLicenseFlagDetailsDoc(null);
-                    break;
-                  case 'misconduct_flag_details_attachment':
-                    if (draftData.misconduct_flag_details_attachment) setMisconductFlagDetailsDoc(null);
-                    break;
-                  default:
-                    // Clear the form field value
-                    setValue(field as keyof FormInputs, '');
-                }
-              };
-
-              draftData.fields.forEach((field: string) => {
-                try {
-                  handleFieldReset(field);
-                } catch (error) {
-                  console.error(`Error resetting field ${field}:`, error);
-                }
-              });
-
-              // After resetting fields, update the draft to clear the fields array
-              await updateDraft(draftIdFromUrl, watchedFields, currentStep);
-              // Update draft status to 'correction'
-              await updateDraftStatus(draftIdFromUrl, 'correction');
+          await loadDraftData(draftIdFromUrl);
+          return;
+        }
+        
+        // Try to load latest draft if no URL param
+        if (access_profile?.preferred_username) {
+          try {
+            const response = await fetch(`/api/drafts/v1/recent?userId=${access_profile.preferred_username}`);
+            
+            if (response.ok) {
+              const latestDraft = await response.json();
+              
+              if (latestDraft?.id) {
+                await loadDraftData(latestDraft.id);
+                
+                // Update URL with draft ID
+                const newUrl = `${window.location.pathname}?draftId=${latestDraft.id}`;
+                window.history.replaceState({}, '', newUrl);
+                return;
+              }
             }
-            setDisabled(true); // Disable fields if draft exists
+          } catch (error) {
+            console.error('Error fetching latest draft:', error);
           }
-        } else if (access_profile) {
-          // No draft, fill form with access profile data
+
+          // No draft found, use access profile data
           const formDefaults = {
             username: access_profile.preferred_username || '',
             first_name: access_profile.given_name?.toUpperCase() || '',
@@ -575,13 +531,12 @@ export default function Form() {
             date_of_birth: access_profile.date_of_birth || null,
           };
           
-          // Set form values
           Object.entries(formDefaults).forEach(([key, value]) => {
             if (value) {
               setValue(key as keyof FormInputs, value);
             }
           });
-          setDisabled(true); // Disable fields if no draft but access profile exists
+          setDisabled(true);
         }
       } catch (error) {
         console.error('Error initializing form:', error);
@@ -682,43 +637,50 @@ export default function Form() {
   return (
     <section className='bg-gray-50 md:p-2 max-h-screen space-y-4'>
       {/* Case Header - Fixed */}
-      <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden">
+      <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden bg-blue-50 border border-blue-200">
           <CardHeader className="p-4">
               <div className="flex justify-between items-center gap-3">
                   {/* Left Items */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                       {/* Icon */}
-                      <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
-                          <BriefcaseBusiness className="w-6 h-6 text-gray-700"/>
+                      <div className="p-2 bg-blue-600 rounded-lg flex-shrink-0">
+                          <BriefcaseBusiness className="w-6 h-6 text-gray-100"/>
                       </div>
                       {/* Case Title */}
                       <div className="flex-1 min-w-0">
                           <h1 className="text-lg font-semibold text-gray-900 truncate">
-                              Application For Teacher Registration & Licensing
-                          </h1>
+                              APPLICATION FOR TEACHER REGISTRATION & LICENSING
+                          </h1>                                       
                       </div>
                   </div>
                   {/* Right Items */}
                   <div className="flex-shrink-0">
-                      <Button 
+                      {/* <Button 
                           className="rounded-full h-8 w-8" 
                           variant="ghost"
                           size="icon"
                       >
-                          <Star className="w-4 h-4 text-gray-600"/>
-                      </Button>
+                          <Star className="w-4 h-4 text-orange-500"/>
+                      </Button> */}
+                          <div className="">
+                            <div><Badge className="p-1 rounded-sm bg-purple-300 text-purple-950">{status || 'Draft'}</Badge></div>
+                          </div>   
                   </div>
               </div>
           </CardHeader>
       </Card>
-      <div className='max-w-9xl mx-auto flex gap-6'>
+      <div className='max-w-9xl mx-auto flex gap-6'>      
           {/* Main Content */}
           <div className='flex-1 bg-white rounded-lg shadow-lg'>
-            <ScrollArea ref={scrollContainerRef} className='md:h-[500px] p-4'>
-            {fields.length > 0 && (
+            <ScrollArea 
+            ref={scrollContainerRef} 
+            className='md:h-[500px] p-4 overflow-auto border border-blue-200 rounded-lg' 
+            type="always">
+            {fields.length > 0 && (status=="correction" || status=="correcting") && (
               <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
                 <p className="text-sm text-red-800">
-                  <span className="font-medium">Please correct these fields:</span>
+                  
+                  <span className="font-medium">Your teacher application has been rejected at the screening stage because of missing or incorrect information. Please correct these fields:</span>
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {fields.map((field, index) => (
@@ -731,6 +693,9 @@ export default function Form() {
                   ))}
                 </div>
               </div>
+            )}
+            {status=="submitted" &&(
+                <ApplicationAlreadySubmitted/>
             )}
             {/* Progress Steps */}
             <nav aria-label='Progress' className='md:px-6 py-6 md:block hidden'>
@@ -823,6 +788,9 @@ export default function Form() {
                       <CardTitle>Personal Information</CardTitle>
                       <CardDescription>
                         Please provide your personal details for identification purposes.
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-4 sm:space-y-6 p-4 sm:p-6'>
@@ -977,7 +945,7 @@ export default function Form() {
                             className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                             placeholder="Enter your national/passport ID number"
                             inputMode="numeric"
-                            // disabled={disabled}
+                            disabled={disabled}
                           />
                           {errors.username && (
                             <p className='text-sm text-red-500 flex items-center gap-1'>
@@ -1145,6 +1113,9 @@ export default function Form() {
                       <CardTitle>Contact Information</CardTitle>
                       <CardDescription>
                         Please provide your contact details and addresses.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -1155,7 +1126,7 @@ export default function Form() {
                           <Input
                             id='primary_phone'
                             type='tel'
-                            placeholder='e.g. +267 123 4567'
+                            placeholder='e.g. +2671234567'
                             {...register('primary_phone')}
                             className='mt-1'
                           />
@@ -1173,6 +1144,9 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
+                            onChange={(e) => {
+                              trigger('primary_email');
+                            }}
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
@@ -1237,6 +1211,9 @@ export default function Form() {
                       <CardTitle>Professional Details</CardTitle>
                       <CardDescription>
                         Please provide your professional and employment information.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -2561,6 +2538,9 @@ export default function Form() {
                       <CardTitle>Qualifications</CardTitle>
                       <CardDescription>
                         Please provide details about your educational qualifications.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3042,6 +3022,7 @@ export default function Form() {
                               </p>
                           )}
                         </div>
+                        
                         {/* Other Institution  */}
                         {watch('institution')?.toLowerCase() === "other" && <div className='space-y-2'>
                           <Label htmlFor='other_institution'>Institution Name *</Label>
@@ -3081,7 +3062,7 @@ export default function Form() {
                                 required: 'Qualification year is required',
                                 validate: (value) => {
                                   const year = parseInt(value);
-                                  if (isNaN(year) || year < 1950 || year > 2026) {
+                                  if (isNaN(year) || year < 1950 || year > 2025) {
                                     return 'Please select a year between 1950 and 2026';
                                   }
                                   return true;
@@ -3223,6 +3204,9 @@ export default function Form() {
                       <CardTitle>Declarations & Disclosures</CardTitle>
                       <CardDescription>
                         Please answer all questions truthfully and provide supporting documentation where required.
+                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3234,6 +3218,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('disability', value)
                             setValue('disability_description', undefined); // Reset disability description
+                            trigger('disability')
                             }}
                           className="mt-3"
                         >
@@ -3292,6 +3277,7 @@ export default function Form() {
                             setValue('student_related_offence', value)
                             setValue('student_related_offence_details', ''); // Reset details
                             setStudentRelatedOffenceAttachmentDoc(null); // Reset details
+                            trigger('student_related_offence')
                             trigger('student_related_offence_details');
                             trigger('student_related_offence_attachments');
                           }}
@@ -3357,6 +3343,7 @@ export default function Form() {
                             setValue('drug_related_offence', value);
                             setValue('drug_related_offence_details', ''); // Reset details
                             setDrugRelatedOffenceAttachmentsDoc(null); // Reset attachments
+                            trigger('drug_related_offence')
                             trigger('drug_related_offence_details');
                             trigger('drug_related_offence_attachments');
                           }}
@@ -3421,6 +3408,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('license_flag', value)
                             setLicenseFlagDetailsDoc(null); // Reset details
+                            trigger('license_flag')
                             trigger('license_flag_details')
                           }}
                           className="mt-3"
@@ -3470,6 +3458,7 @@ export default function Form() {
                           onValueChange={(value) => {
                             setValue('misconduct_flag', value)
                             setMisconductFlagDetailsDoc(null); // Reset details
+                            trigger('misconduct_flag')
                             trigger('misconduct_flag_details')
                           }}
                           className="mt-3"
@@ -3538,6 +3527,9 @@ export default function Form() {
                       <CardTitle>Review & Complete</CardTitle>
                       <CardDescription>
                         Please review your information and agree to the terms before submitting.
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                            Scroll down to continue filling out the form and access the navigation items.
+                          </p>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3586,7 +3578,7 @@ export default function Form() {
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <InfoItem label="First Name" value={watch('first_name')} />
                                 <InfoItem label="Last Name" value={watch('last_name')} />
-                                <InfoItem label="Middle Name" value={watch('middle_name')} />
+                                {watch('middle_name') && <InfoItem label="Middle Name" value={watch('middle_name')} />}
                                 {/* <InfoItem label="Surname" value={watch('surname')} /> */}
                                 <InfoItem label="Date of Birth" value={watch('date_of_birth')} />
                                 <InfoItem label="Gender" value={watch('gender')} />
@@ -3616,22 +3608,22 @@ export default function Form() {
                                 <InfoItem label="Work Status" value={watch('work_status')} />
                                 <InfoItem label="Practice Category" value={watch('practice_category')} />
                                 <InfoItem label="Sub Category" value={watch('sub_category')} />
-                                <InfoItem label="Years of Experience" value={watch('experience_years')} />
-                                <InfoItem label="District" value={watch('district')} />
-                                <InfoItem label="Institution Type" value={watch('institution_type')} />
-                                <InfoItem label="School Level" value={watch('school_level')} />
-                                <InfoItem label="Level" value={watch('level')} />
-                                <InfoItem label="Private Schools" value={watch('private_schools')} />
-                                <InfoItem label="Other Private Schools" value={watch('other_private_schools')} />
-                                <InfoItem label="Primary Schools" value={watch('primary_schools')} />
+                                {watch('experience_years') && <InfoItem label="Years of Experience" value={watch('experience_years')} />}
+                                {watch('district') && <InfoItem label="District" value={watch('district')} />}
+                                {watch('institution_type') && <InfoItem label="Institution Type" value={watch('institution_type')} />}
+                                {watch('school_level') && <InfoItem label="School Level" value={watch('school_level')} />}
+                                {watch('private_schools') && <InfoItem label="Level" value={watch('level')} />}
+                                {watch('private_schools') && <InfoItem label="Private Schools" value={watch('private_schools')} />}
+                                {watch('other_private_schools') && <InfoItem label="Other Private Schools" value={watch('other_private_schools')} />}
+                                {watch('primary_schools') && <InfoItem label="Primary Schools" value={watch('primary_schools')} />}
                                 {/* <InfoItem label="Pre-Primary Name" value={watch('pre_primary_name')} /> */}
-                                <InfoItem label="Other Primary Schools" value={watch('other_primary_schools')} />
-                                <InfoItem label="Junior Schools" value={watch('junior_schools')} />
-                                <InfoItem label="Other Junior Schools" value={watch('other_junior_schools')} />
-                                <InfoItem label="Senior Schools" value={watch('senior_schools')} />
-                                <InfoItem label="Other Senior Schools" value={watch('other_senior_schools')} />
-                                {/* <InfoItem label="Major Subjects" value={watch('subject_specialization')} /> */}
-                                <InfoItem label="Subject Specialization" value={watch('other_subject_specialization')} />
+                                {watch('other_primary_schools') && <InfoItem label="Other Primary Schools" value={watch('other_primary_schools')} />}
+                                {watch('junior_schools') && <InfoItem label="Junior Schools" value={watch('junior_schools')} />}
+                                {watch('other_junior_schools') && <InfoItem label="Other Junior Schools" value={watch('other_junior_schools')} />}
+                                {watch('senior_schools') && <InfoItem label="Senior Schools" value={watch('senior_schools')} />}
+                                {watch('other_senior_schools') && <InfoItem label="Other Senior Schools" value={watch('other_senior_schools')} />}
+                                {watch('subject_specialization') && <InfoItem label="Subject Specialization" value={watch('subject_specialization')} /> }
+                                {watch('other_subject_specialization') && <InfoItem label="Subject Specialization" value={watch('other_subject_specialization')} />}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
@@ -3641,17 +3633,17 @@ export default function Form() {
                             <AccordionTrigger>Step 4: Qualifications</AccordionTrigger>
                             <AccordionContent className="flex flex-col gap-4 text-balance">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <InfoItem label="Certificate" value={watch('qualification_certificate')} />
-                                <InfoItem label="Post-Grad Certificate" value={watch('qualification_post_grad_certificate')} />
-                                <InfoItem label="Diploma" value={watch('qualification_diploma')} />
-                                <InfoItem label="Post-Grad Diploma" value={watch('qualification_post_grad_diploma')} />
-                                <InfoItem label="Degree" value={watch('qualification_degree')} />
-                                <InfoItem label="Honours Degree" value={watch('qualification_degree_honours')} />
-                                <InfoItem label="Masters Degree" value={watch('qualification_masters_degree')} />
-                                <InfoItem label="Doctoral Degree" value={watch('qualification_doctoral_degree')} />
-                                <InfoItem label="Other Qualification" value={watch('other_qualification')} />
-                                <InfoItem label="Institution" value={watch('institution')} />
-                                <InfoItem label="Other Institution" value={watch('other_institution')} />
+                                {watch('qualification_certificate') && <InfoItem label="Certificate" value={watch('qualification_certificate')} />}
+                                {watch('qualification_post_grad_certificate') && <InfoItem label="Post-Grad Certificate" value={watch('qualification_post_grad_certificate')} />}
+                                {watch('qualification_diploma') && <InfoItem label="Diploma" value={watch('qualification_diploma')} />}
+                                {watch('qualification_post_grad_diploma')&& <InfoItem label="Post-Grad Diploma" value={watch('qualification_post_grad_diploma')} />}
+                                {watch('qualification_degree') && <InfoItem label="Degree" value={watch('qualification_degree')} />}
+                                {watch('qualification_degree_honours') && <InfoItem label="Honours Degree" value={watch('qualification_degree_honours')} />}
+                                {watch('qualification_masters_degree') && <InfoItem label="Masters Degree" value={watch('qualification_masters_degree')} />}
+                                {watch('qualification_doctoral_degree') && <InfoItem label="Doctoral Degree" value={watch('qualification_doctoral_degree')} />}
+                                {watch('other_qualification') && <InfoItem label="Other Qualification" value={watch('other_qualification')} />}
+                                {watch('institution') && <InfoItem label="Institution" value={watch('institution')} />}
+                                {watch('other_institution') && <InfoItem label="Other Institution" value={watch('other_institution')} />}
                                 <InfoItem label="Qualification Year" value={watch('qualification_year')} />
                               </div>
                               {qualifications && qualifications.length > 0 && (
@@ -3772,13 +3764,13 @@ export default function Form() {
                             <AccordionContent className="flex flex-col gap-4 text-balance">
                               <div className="grid grid-cols-1 gap-4">
                                 <InfoItem label="Disability" value={watch('disability')} />
-                                <InfoItem label="Disability Description" value={watch('disability_description')?.toString()} />
+                                {watch('disability_description') && <InfoItem label="Disability Description" value={watch('disability_description')?.toString()} />}
                                 <InfoItem label="Student Related Offence" value={watch('student_related_offence')} />
-                                <InfoItem label="Student Offence Details" value={watch('student_related_offence_details')} />
+                                {watch('student_related_offence_details') && <InfoItem label="Student Offence Details" value={watch('student_related_offence_details')} />}
                                 <InfoItem label="Drug Related Offence" value={watch('drug_related_offence')} />
-                                <InfoItem label="Drug Offence Details" value={watch('drug_related_offence_details')} />
+                                {watch('drug_related_offence_details') && <InfoItem label="Drug Offence Details" value={watch('drug_related_offence_details')} />}
                                 <InfoItem label="License Flag" value={watch('license_flag')} />
-                                <InfoItem label="Misconduct Flag" value={watch('misconduct_flag')} />
+                                {watch('misconduct_flag') && <InfoItem label="Misconduct Flag" value={watch('misconduct_flag')} />}
                               </div>
                             </AccordionContent>
                           </AccordionItem>
@@ -3855,7 +3847,7 @@ export default function Form() {
                 </motion.div>
               )}
             </form>
-          
+          </ScrollArea>
             {/* Navigation */}
             <div className='md:px-6 py-6 border-t bg-gray-50'>
               <div className='flex justify-between items-center'>
@@ -3947,34 +3939,34 @@ export default function Form() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       {Object.keys(errors).length > 0 && (
-                                        <Alert variant="destructive" className="mb-4">
-                                          <AlertCircle className="h-4 w-4" />
-                                          <AlertTitle className="text-base font-semibold">
-                                            {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
-                                          </AlertTitle>
-                                          <AlertDescription>
-                                            <p className="text-sm mb-3">Please review and correct the following:</p>
-                                            <div className="max-h-48 overflow-y-auto">
-                                              <ul className="space-y-2">
-                                                {Object.entries(errors).map(([field, error]) => (
-                                                  <li key={field} className="flex items-start gap-2 text-sm">
-                                                    <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
-                                                    <span className="font-medium text-red-900">
-                                                      {field
-                                                        .replace(/_/g, ' ')
-                                                        .replace(/\b\w/g, l => l.toUpperCase())
-                                                        .replace(/Id/g, 'ID')
-                                                        .replace(/Pdf/g, 'PDF')
-                                                        .replace(/Alt /g, '')
-                                                        .replace(/Primary /g, '')
-                                                      }
-                                                    </span>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            </div>
-                                          </AlertDescription>
-                                        </Alert>
+                        <Alert variant="destructive" className="mb-4">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertTitle className="text-base font-semibold">
+                            {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
+                          </AlertTitle>
+                          <AlertDescription>
+                            <p className="text-sm mb-3">Please review and correct the following:</p>
+                            <div className="max-h-48 overflow-y-auto">
+                              <ul className="space-y-2">
+                                {Object.entries(errors).map(([field, error]) => (
+                                  <li key={field} className="flex items-start gap-2 text-sm">
+                                    <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span className="font-medium text-red-900">
+                                      {field
+                                        .replace(/_/g, ' ')
+                                        .replace(/\b\w/g, l => l.toUpperCase())
+                                        .replace(/Id/g, 'ID')
+                                        .replace(/Pdf/g, 'PDF')
+                                        .replace(/Alt /g, '')
+                                        .replace(/Primary /g, '')
+                                      }
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </AlertDescription>
+                        </Alert>
                       )}
                       {!submitting && !submissionResult && (
                         <>
@@ -3996,7 +3988,7 @@ export default function Form() {
                                 clearErrors();  // Clears all errors at once
                               }}
                             >
-                              Cancel
+                              Return To Form
                             </AlertDialogCancel>
                             <Button onClick={submitForm}>Continue</Button>
                           </AlertDialogFooter>
@@ -4019,7 +4011,7 @@ export default function Form() {
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>Cancel Submission</AlertDialogCancel>
                             {/* <Button onClick={submitForm}>Re-submit</Button> */}
                           </AlertDialogFooter>
                         </>
@@ -4067,9 +4059,39 @@ export default function Form() {
                 </div>
               </div>
             </div>
-            </ScrollArea>
+            
         </div>
       </div>
     </section>
   )
 }
+
+const ApplicationAlreadySubmitted = () => {
+  return (
+    <div className="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-r-lg">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="bg-green-100 rounded-full p-2">
+            <Info className="h-6 w-6 text-green-600" />
+          </div>
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Application Already Submitted
+          </h3>
+          <p className="text-gray-700 mb-4">
+            You have already submitted your teacher registration application. 
+            Visit your dashboard to view your application status and take any required actions.
+          </p>
+          <Link 
+            href="/customer/dashboard/home"
+            className="inline-flex items-center gap-2 text-green-700 hover:text-green-800 font-medium group"
+          >
+            Go to Dashboard
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
