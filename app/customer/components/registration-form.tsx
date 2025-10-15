@@ -51,6 +51,75 @@ const STEPS = [
   { id: 5, title: "Review", description: "Review & submit" }
 ]
 
+// Common email domain typos and their corrections
+const COMMON_DOMAIN_TYPOS: Record<string, string> = {
+  // Gmail typos
+  'gmial.com': 'gmail.com',
+  'gmal.com': 'gmail.com',
+  'gmil.com': 'gmail.com',
+  'gmaill.com': 'gmail.com',
+  'gmai.com': 'gmail.com',
+  'gmail.cm': 'gmail.com',
+  'gmail.con': 'gmail.com',
+  'gmail.om': 'gmail.com',
+  'gmail.co': 'gmail.com',
+  'gmail.cmo': 'gmail.com',
+  
+  // Yahoo typos
+  'yaho.com': 'yahoo.com',
+  'yahooo.com': 'yahoo.com',
+  'yahoocom': 'yahoo.com',
+  'yahoo.co': 'yahoo.com',
+  'yahoo.cm': 'yahoo.com',
+  'yahoo.con': 'yahoo.com',
+  
+  // Outlook/Hotmail typos
+  'outlook.cm': 'outlook.com',
+  'outlook.con': 'outlook.com',
+  'outlook.co': 'outlook.com',
+  'hotmail.cm': 'hotmail.com',
+  'hotmail.con': 'hotmail.com',
+  'hotmail.co': 'hotmail.com',
+  'hotmal.com': 'hotmail.com',
+  'hotmial.com': 'hotmail.com',
+  
+  // Botswana domains
+  'gov.bw': 'gov.bw',
+  'ac.bw': 'ac.bw',
+  'co.bw': 'co.bw',
+  'org.bw': 'org.bw',
+  
+  // Common TLD typos
+  '.cmo': '.com',
+  '.con': '.com',
+  '.comm': '.com',
+  '.cm': '.com',
+  '.coom': '.com',
+  '.om': '.com',
+  '.cim': '.com',
+  '.commm': '.com',
+  '.netl': '.net',
+  '.orgn': '.org',
+  '.ed': '.edu',
+  '.eduu': '.edu',
+}
+
+// Popular email domains for validation
+const POPULAR_DOMAINS = [
+  'gmail.com',
+  'yahoo.com',
+  'outlook.com',
+  'hotmail.com',
+  'gov.bw',
+  'ac.bw',
+  'co.bw',
+  'org.bw',
+  'live.com',
+  'icloud.com',
+  'aol.com',
+  'protonmail.com'
+]
+
 export function RegistrationForm({ className, ...props }: RegistrationFormProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
@@ -61,6 +130,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [dateOfBirthOpen, setDateOfBirthOpen] = useState(false)
+  const [emailSuggestion, setEmailSuggestion] = useState<string>("")
   const [formData, setFormData] = useState({
     // Basic credentials
     username: "",
@@ -109,9 +179,105 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
   const { toast } = useToast();
 
+  // Function to validate email domain and check for common typos
+  const validateEmailDomain = (email: string): { isValid: boolean; suggestion: string } => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    
+    if (!emailRegex.test(email)) {
+      return { isValid: false, suggestion: "" }
+    }
+
+    const [localPart, domain] = email.toLowerCase().split('@')
+    
+    // Check if domain exists in common typos
+    if (COMMON_DOMAIN_TYPOS[domain]) {
+      const correctedEmail = `${localPart}@${COMMON_DOMAIN_TYPOS[domain]}`
+      return { 
+        isValid: false, 
+        suggestion: `Did you mean ${correctedEmail}?` 
+      }
+    }
+
+    // Check for common TLD typos in the domain
+    const domainParts = domain.split('.')
+    if (domainParts.length >= 2) {
+      const tld = `.${domainParts[domainParts.length - 1]}`
+      if (COMMON_DOMAIN_TYPOS[tld]) {
+        const correctedDomain = domainParts.slice(0, -1).join('.') + COMMON_DOMAIN_TYPOS[tld]
+        const correctedEmail = `${localPart}@${correctedDomain}`
+        return { 
+          isValid: false, 
+          suggestion: `Did you mean ${correctedEmail}?` 
+        }
+      }
+    }
+
+    // Check if domain is similar to popular domains (Levenshtein distance)
+    let closestDomain = ""
+    let minDistance = Infinity
+
+    for (const popularDomain of POPULAR_DOMAINS) {
+      const distance = levenshteinDistance(domain, popularDomain)
+      if (distance <= 2 && distance < minDistance) { // Allow 1-2 character differences
+        minDistance = distance
+        closestDomain = popularDomain
+      }
+    }
+
+    if (closestDomain && minDistance > 0) {
+      const correctedEmail = `${localPart}@${closestDomain}`
+      return { 
+        isValid: false, 
+        suggestion: `Did you mean ${correctedEmail}?` 
+      }
+    }
+
+    // Check for repeated characters (e.g., gmaill.com, yahoo.com)
+    const repeatedCharRegex = /(.)\1{2,}/
+    if (repeatedCharRegex.test(domain)) {
+      const simplifiedDomain = domain.replace(/(.)\1{2,}/g, '$1$1')
+      if (POPULAR_DOMAINS.includes(simplifiedDomain)) {
+        const correctedEmail = `${localPart}@${simplifiedDomain}`
+        return { 
+          isValid: false, 
+          suggestion: `Did you mean ${correctedEmail}?` 
+        }
+      }
+    }
+
+    return { isValid: true, suggestion: "" }
+  }
+
+  // Levenshtein distance function to measure similarity between strings
+  const levenshteinDistance = (str1: string, str2: string): number => {
+    const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null))
+
+    for (let i = 0; i <= str1.length; i++) {
+      matrix[0][i] = i
+    }
+
+    for (let j = 0; j <= str2.length; j++) {
+      matrix[j][0] = j
+    }
+
+    for (let j = 1; j <= str2.length; j++) {
+      for (let i = 1; i <= str1.length; i++) {
+        const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1, // deletion
+          matrix[j - 1][i] + 1, // insertion
+          matrix[j - 1][i - 1] + indicator // substitution
+        )
+      }
+    }
+
+    return matrix[str2.length][str1.length]
+  }
+
   const validateStep = (step: number): boolean => {
     setErrors([])
     setFieldErrors({})
+    setEmailSuggestion("")
     
     switch (step) {
       case 1: // Account credentials
@@ -127,10 +293,21 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
           stepOneErrors.push("Email and username must be the same")
         }
         
-        // Validate email format
+        // Validate email format and domain
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (formData.email.trim() && !emailRegex.test(formData.email)) {
-          stepOneErrors.push("Please enter a valid email address")
+        if (formData.email.trim()) {
+          if (!emailRegex.test(formData.email)) {
+            stepOneErrors.push("Please enter a valid email address")
+          } else {
+            // Check for domain typos
+            const domainValidation = validateEmailDomain(formData.email)
+            if (!domainValidation.isValid) {
+              stepOneErrors.push("Please check your email for typos")
+              if (domainValidation.suggestion) {
+                setEmailSuggestion(domainValidation.suggestion)
+              }
+            }
+          }
         }
         
         if (stepOneErrors.length > 0) {
@@ -248,6 +425,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     setCurrentStep(prev => Math.max(prev - 1, 1))
     setErrors([])
     setFieldErrors({})
+    setEmailSuggestion("")
   }
 
   const goToStep = (step: number) => {
@@ -258,6 +436,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
       setCurrentStep(step)
       setErrors([])
       setFieldErrors({})
+      setEmailSuggestion("")
     }
   }
 
@@ -286,6 +465,11 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         nationalId: limitedDigits
       }))
     }
+
+    // Clear email suggestion when email field is modified
+    if (field === "email") {
+      setEmailSuggestion("")
+    }
   }
 
   const handleCitizenshipChange = (value: string) => {
@@ -303,6 +487,19 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
       const formattedDate = format(date, "yyyy-MM-dd")
       handleInputChange("dateOfBirth", formattedDate)
       setDateOfBirthOpen(false)
+    }
+  }
+
+  // Function to apply email suggestion
+  const applyEmailSuggestion = () => {
+    if (emailSuggestion) {
+      const suggestedEmail = emailSuggestion.replace('Did you mean ', '').replace('?', '')
+      setFormData(prev => ({
+        ...prev,
+        email: suggestedEmail,
+        username: suggestedEmail
+      }))
+      setEmailSuggestion("")
     }
   }
 
@@ -453,6 +650,20 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className={fieldErrors.email ? "border-destructive" : ""}
                 />
+                {emailSuggestion && (
+                  <div className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-200 rounded-md text-sm">
+                    <span className="text-blue-700 flex-1">{emailSuggestion}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={applyEmailSuggestion}
+                      className="h-7 text-xs"
+                    >
+                      Apply
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="grid gap-2">
