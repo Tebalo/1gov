@@ -647,7 +647,7 @@ export const southEastPrimarySchools = [
   "Mophane",
   "Morula",
   "Notwane",
-  "Phillip Mosotlhe",
+  "Philip Moshotle",
   "Segoditshane",
   "Taung",
   "Tlhabologo",
