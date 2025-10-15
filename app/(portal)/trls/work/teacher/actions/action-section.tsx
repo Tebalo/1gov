@@ -52,7 +52,7 @@ const getStatusDescription = (status: StatusType): string => {
   
   const items = [
     { id: "national_id_copy", label: "National ID copy" },
-    { id: "qualifications", label: "Other Qualification's" },
+    // { id: "qualifications", label: "Other Qualification" },
     { id: "student_related_offence_attachments", label: "Student related offence copy" },
     { id: "drug_related_offence_attachments", label: "Drug related offence copy" },
     { id: "attachments", label: "Mandatory qualification's attachment" },
