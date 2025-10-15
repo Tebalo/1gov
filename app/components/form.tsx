@@ -1489,8 +1489,8 @@ export default function Form() {
                                         {school.label}
                                         <Check
                                           className={cn(
-                                            "ml-auto",
-                                            watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
+                                              "ml-auto",
+                                              watch('private_schools') === school.label ? "opacity-100" : "opacity-0"
                                             )}
                                         />
                                       </CommandItem>
@@ -3118,10 +3118,10 @@ export default function Form() {
                           )}
                         </div>
 
-                        {/* Subject Specialization */}
+                        {/* Subject Specialization - Made Optional */}
                         <div className='space-y-2'>
                           <Label htmlFor='subject_specialization' className="text-sm font-medium text-gray-700">
-                            Subject Specialization <span className="text-red-500">*</span>
+                            Subject Specialization <span className="text-gray-400 text-xs">(Optional)</span>
                           </Label>
                           <Popover open={subjectOpen} onOpenChange={setSubjectOpen}>
                             <PopoverTrigger asChild>

@@ -24,8 +24,6 @@ import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { format } from "date-fns"
-import { DayPicker } from "react-day-picker"
-import "react-day-picker/dist/style.css"
 import {
   Popover,
   PopoverContent,
@@ -33,6 +31,7 @@ import {
 } from "@/components/ui/popover"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { OneGovAuth } from "./1gov-login"
+import { Calendar } from "@/components/ui/calendar"
 
 interface RegistrationFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -787,40 +786,82 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                {/* Date of Birth with shadcn calendar implementation */}
+                <div className="space-y-2">
+                  <Label htmlFor="dateOfBirth" className="text-sm font-medium text-gray-700">
+                    Date of Birth <span className="text-red-500">*</span>
+                  </Label>
+                  
                   <Popover open={dateOfBirthOpen} onOpenChange={setDateOfBirthOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal",
+                          "w-full justify-start text-left font-normal text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500",
                           !formData.dateOfBirth && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {formData.dateOfBirth ? (
-                          format(new Date(formData.dateOfBirth), "PPP")
-                        ) : (
-                          <span>Enter your date of birth</span>
-                        )}
+                        <span className="truncate">
+                          {formData.dateOfBirth ? format(new Date(formData.dateOfBirth), "PPP") : <span>Enter your date of birth</span>}
+                        </span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <DayPicker
+                      <Calendar
                         mode="single"
                         selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined}
-                        onSelect={handleDateSelect}
-                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                        initialFocus
+                        onSelect={(newDate) => {
+                          if (newDate) {
+                            const year = newDate.getFullYear();
+                            const month = String(newDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(newDate.getDate()).padStart(2, '0');
+                            handleInputChange("dateOfBirth", `${year}-${month}-${day}`);
+                          } else {
+                            handleInputChange("dateOfBirth", "");
+                          }
+                          setDateOfBirthOpen(false);
+                        }}
+                        className="rounded-md border shadow-sm"
                         captionLayout="dropdown"
-                        fromYear={1900}
-                        toYear={new Date().getFullYear()}
-                        className="rounded-md border"
+                        disabled={(date) =>
+                          date >= new Date(new Date().setHours(0, 0, 0, 0) + 86400000) || 
+                          date < new Date("1900-01-01")
+                        }
                       />
+                      <div className="flex justify-end p-3 border-t">
+                        <Button 
+                          type="button" 
+                          size="sm"
+                          onClick={() => {
+                            // Close the popover by finding and clicking the trigger
+                            const trigger = document.querySelector('[data-state="open"]');
+                            if (trigger) {
+                              (trigger as HTMLElement).click();
+                            }
+                          }}
+                          className="bg-blue-800 hover:bg-blue-900 text-white"
+                        >
+                          Close
+                        </Button>
+                      </div>
                     </PopoverContent>
                   </Popover>
+
+                  {errors.includes("Date of birth is required") && (
+                    <p className='text-sm text-red-500 flex items-center gap-1'>
+                      <span className="text-xs">⚠</span>
+                      Date of birth is required
+                    </p>
+                  )}
+                  {errors.includes("Date of birth must be in the past") && (
+                    <p className='text-sm text-red-500 flex items-center gap-1'>
+                      <span className="text-xs">⚠</span>
+                      Date of birth must be in the past
+                    </p>
+                  )}
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="gender">Gender *</Label>
                   <Select

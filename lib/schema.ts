@@ -104,7 +104,7 @@ export const FormDataSchema = z.object({
     required_error: 'Qualification document is required',
     invalid_type_error: 'Please upload a valid document'
   }).passthrough(),
-  subject_specialization: z.string().min(1, 'Subject specialization is required'),
+  subject_specialization: z.string().optional(),
   other_subject_specialization: z.string().optional(),
   qualifications: z.array(QualificationSchema).optional(),
 
