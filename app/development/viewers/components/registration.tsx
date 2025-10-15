@@ -33,7 +33,7 @@ const data: TeacherResponse = {
     "teacher_registrations": {
         "national_id": "512927017",
         "reg_number": "BOT000111",
-        "reg_status": "Manager-Approved",
+        "reg_status": "Pending-Screening",
         "work_status": "Unemployed",
         "endorsement_status": "Pending-Endorsement",
         "rejection_reason": null,
