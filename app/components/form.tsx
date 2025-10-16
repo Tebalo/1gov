@@ -1146,9 +1146,6 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
-                            onChange={(e) => {
-                              trigger('primary_email');
-                            }}
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
@@ -3709,7 +3706,7 @@ export default function Form() {
                                 <InfoItem label="Practice Category" value={watch('practice_category')} />
                                 <InfoItem label="Sub Category" value={watch('sub_category')} />
                                 {watch('experience_years') && <InfoItem label="Years of Experience" value={watch('experience_years')} />}
-                                {watch('district') && <InfoItem label="District" value={watch('district')} />}
+                                {watch('district') && <InfoItem label="Region" value={watch('district')} />}
                                 {watch('institution_type') && <InfoItem label="Institution Type" value={watch('institution_type')} />}
                                 {watch('school_level') && <InfoItem label="School Level" value={watch('school_level')} />}
                                 {watch('private_schools') && <InfoItem label="Level" value={watch('level')} />}
