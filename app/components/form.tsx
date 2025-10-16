@@ -122,6 +122,7 @@ import { CalendarIcon } from "lucide-react"
 import { format, set } from "date-fns"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import Link from "next/link"
+import { getFieldLabel } from "../customer/dashboard/lib/get-field-info"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -688,7 +689,8 @@ export default function Form() {
                       key={index} 
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200"
                     >
-                      {field.replace(/_/g, ' ')}
+                      {/* {field.replace(/_/g, ' ')} */}
+                      {getFieldLabel(String(field)).label}
                     </span>
                   ))}
                 </div>
