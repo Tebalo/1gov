@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import RegistrationStatusComponent from "../components/registration";
 import { Loader, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getAccessGroups } from "@/app/auth/auth";
 
 export default function Dashboard() {
     const [userId, setUserId] = useState('');
@@ -15,7 +14,15 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchId = async () => {
             try {
-                const result = await getAccessGroups();
+                const response = await fetch('/api/auth/profile', {
+                    credentials: 'include'
+                })
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch access groups')
+                }
+                
+                const result = await response.json()
 
                 if (result) {
                     const id = result.nationalId || result.passportId || result.userid;
