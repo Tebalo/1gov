@@ -165,7 +165,7 @@ function getLicenseStatus(reg_status: string){
       ): isLicenseStatus ? (
         <div>{value && 
           <div className={`${getLicenseStatus(value).badgeColor} font-semibold px-3 py-1 w-fit hover:bg-slate-300`}>
-              {value || '--'}
+              {value.toUpperCase() || '--'}
           </div>}
         </div>
       ):(

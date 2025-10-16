@@ -4181,7 +4181,7 @@ const ApplicationAlreadySubmitted = () => {
             Visit your dashboard to view your application status and take any required actions.
           </p>
           <Link 
-            href="/customer/dashboard/home"
+            href="/customer/dashboard"
             className="inline-flex items-center gap-2 text-green-700 hover:text-green-800 font-medium group"
           >
             Go to Dashboard

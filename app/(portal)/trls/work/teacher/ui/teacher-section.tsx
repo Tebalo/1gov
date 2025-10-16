@@ -109,7 +109,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
               <TableHead>Qualification</TableHead>
               <TableHead>Institution</TableHead>
               <TableHead>Year</TableHead>
-              <TableHead>Major Subjects</TableHead>
+              <TableHead>Subject Specialisation</TableHead>
               <TableHead>Attachment</TableHead>
             </TableRow>
           </TableHeader>
