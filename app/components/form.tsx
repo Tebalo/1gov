@@ -1357,11 +1357,11 @@ export default function Form() {
                             className="mt-3"
                           >
                             <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="public" id="institution-public" />
+                              <RadioGroupItem value="Public" id="institution-public" />
                               <Label htmlFor="institution-public">Public</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="private" id="institution-private" />
+                              <RadioGroupItem value="Private" id="institution-private" />
                               <Label htmlFor="institution-private">Private</Label>
                             </div>
                           </RadioGroup>
@@ -1426,9 +1426,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase() === 'primary' && watch('district')?.toLowerCase() === 'central' && centralPrivatePrimarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('private_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                            const selectedSchool = centralPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('private_schools', selectedSchool?.label || currentValue);
                                             setPrivateOpen(false)
                                           }}
                                         >
@@ -1444,9 +1445,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'chobe' && chobePrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = chobePrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1462,9 +1464,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'ghanzi' && ghanziPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = ghanziPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1480,9 +1483,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kgalagadi' && kgalagadiPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = kgalagadiPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1498,9 +1502,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kgatleng' && kgatlengPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = kgatlengPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1516,9 +1521,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'kweneng' && kwenengPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = kwenengPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1534,9 +1540,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase()  === 'north-east' && northEastPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = northEastPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1552,9 +1559,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'north-west' && northWestPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = northWestPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1570,9 +1578,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'south-east' && southEastPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = southEastPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1588,9 +1597,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase()  === 'primary' && watch('district')?.toLowerCase() === 'southern' && southernPrivatePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = southernPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1606,9 +1616,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'central' && centralPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = centralPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1624,9 +1635,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'chobe' && chobePrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = chobePrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1642,9 +1654,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'ghanzi' && ghanziPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = ghanziPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1660,9 +1673,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'kgalagadi' && kgalagadiPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = kgalagadiPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1678,9 +1692,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'kgatleng' && kgatlengPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = kgatlengPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1696,9 +1711,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'kweneng' && kwenengPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = kwenengPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1714,9 +1730,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'north-east' && northEastPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = northEastPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1732,9 +1749,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'north-west' && northWestPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = northWestPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1750,9 +1768,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'south-east' && southEastPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = southEastPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1768,9 +1787,10 @@ export default function Form() {
                                       {(watch('school_level')?.toLowerCase() === 'junior secondary' || watch('school_level')?.toLowerCase() === 'senior secondary') && watch('district')?.toLowerCase() === 'southern' && southernPrivateSecondarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('private_schools', currentValue === watch('private_schools') ? "" : currentValue)
+                                          const selectedSchool = southernPrivateSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('private_schools', selectedSchool?.label || currentValue);
                                           setPrivateOpen(false)
                                         }}
                                       >
@@ -1824,9 +1844,10 @@ export default function Form() {
                                       {watch('school_level')?.toLowerCase() === 'primary' && watch('district')?.toLowerCase()  === 'central' && centralPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label || watch('primary_schools')}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = centralPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1842,9 +1863,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase()  === 'chobe' && chobePrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = chobePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1860,9 +1882,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase()  === 'ghanzi' && ghanziPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = ghanziPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1878,9 +1901,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase()  === 'kgalagadi' && kgalagadiPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = kgalagadiPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1896,9 +1920,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase()  === 'kgatleng' && kgatlengPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = kgatlengPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1914,9 +1939,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase()  === 'kweneng' && kwenengPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = kwenengPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1932,9 +1958,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase()  === 'north-east' && northEastPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = northEastPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1950,9 +1977,10 @@ export default function Form() {
                                       { watch('district')?.toLowerCase() === 'north-west' && northWestPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = northWestPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1968,9 +1996,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'south-east' && southEastPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = southEastPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -1986,9 +2015,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'southern' && southernPrimarySchoolsForSelect.map((school) => (
                                       <CommandItem
                                         key={school.value}
-                                        value={school.label}
+                                        value={school.value}
                                         onSelect={(currentValue) => {
-                                          setValue('primary_schools', currentValue === watch('primary_schools') ? "" : currentValue)
+                                          const selectedSchool = southernPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                          setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
                                         }}
                                       >
@@ -2055,9 +2085,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'central' && centralPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('junior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = centralPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2073,9 +2104,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'chobe' && chobePublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = chobePublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2091,9 +2123,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'ghanzi' && ghanziPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = ghanziPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2109,9 +2142,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'kgalagadi' && kgalagadiPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = kgalagadiPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2127,9 +2161,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'kgatleng' && kgatlengPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = kgatlengPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2145,9 +2180,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'kweneng' && kwenengPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = kwenengPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2163,9 +2199,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'north-east' && northEastPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = northEastPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2181,9 +2218,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'north-west' && northWestPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = northWestPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2199,9 +2237,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'south-east' && southEastPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = southEastPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2217,9 +2256,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === 'southern' && southernPublicSchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('junior_schools', currentValue === watch('junior_schools') ? "" : currentValue)
+                                            const selectedSchool = southernPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
                                           }}
                                         >
@@ -2286,9 +2326,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === "central"  && centralSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = centralSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2304,9 +2345,10 @@ export default function Form() {
                                       {watch('district')?.toLowerCase() === "chobe" && chobeSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label  || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = chobeSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2340,9 +2382,10 @@ export default function Form() {
                                       {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = ghanziSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2358,9 +2401,10 @@ export default function Form() {
                                       {watch('district') === "kgalagadi" && kgalagadiSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = kgalagadiSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2376,9 +2420,10 @@ export default function Form() {
                                       {watch('district') === "kgatleng" && kgatlengSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = kgatlengSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2394,9 +2439,10 @@ export default function Form() {
                                       {watch('district') === "kweneng" && kwenengSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = kwenengSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2412,9 +2458,10 @@ export default function Form() {
                                       {watch('district') === "north-east" && northEastSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = northEastSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2430,9 +2477,10 @@ export default function Form() {
                                       {watch('district') === "north-west" && northWestSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = northWestSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2448,9 +2496,10 @@ export default function Form() {
                                       {watch('district') === "south-east" && southEastSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = southEastSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2466,9 +2515,10 @@ export default function Form() {
                                       {watch('district') === "southern" && southernSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
-                                          value={school.label || watch('senior_schools')}
+                                          value={school.value}
                                           onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
+                                            const selectedSchool = southernSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
+                                            setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
                                           }}
                                         >
@@ -2984,7 +3034,7 @@ export default function Form() {
                             {errors.qualification_certificate && (
                               <p className='text-sm text-red-500 mt-1'>{errors.qualification_certificate.message}</p>
                             )}
-                          </div>
+                        </div>
                         )}
 
                         {/* Other qualification */}
