@@ -24,6 +24,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { getFieldLabel } from '../lib/get-field-info';
 
 interface NotificationAttachment {
   link: string;
@@ -63,9 +64,9 @@ interface NotificationResponse {
   hasMore: boolean;
 }
 
-// Keep constants outside component to prevent re-renders
 const BASE_URL = '/api';
 const ITEMS_PER_PAGE = 3;
+
 
 const NotificationPage = () => {
 
@@ -766,7 +767,8 @@ const NotificationPage = () => {
                                           key={index} 
                                           className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
                                         >
-                                          {field.replace(/_/g, ' ')}
+                                          {/* {field.replace(/_/g, ' ')} */}
+                                          {getFieldLabel(String(field)).label}
                                         </span>
                                       </Link>
                                     ))}
