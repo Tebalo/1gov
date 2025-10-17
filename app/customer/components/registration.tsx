@@ -98,7 +98,7 @@ type SystemStatus =
   | 'Pending-Customer-Action'
   | 'Endorsement-Complete';
 
-// Define the status map outside the function
+
 const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
   'Pending-Customer-Action': {
       display: 'Action Required',

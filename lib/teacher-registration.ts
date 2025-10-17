@@ -183,6 +183,7 @@ export async function submitTeacherRegistration(
 ): Promise<TeacherRegistrationResponse> {
   try {
     const requestPayload = await transformFormData(formData, profile, draft_id)
+    console.log('Transformed Payload:', requestPayload)
 
     const response = await fetch(TEACHER_REGISTRATION_ENDPOINT, {
       method: 'POST',
