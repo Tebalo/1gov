@@ -17,7 +17,7 @@ export default function LoginPage() {
                 priority
               />
             </div>
-            Botepco BW.
+            BOTEPCO BW.
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
