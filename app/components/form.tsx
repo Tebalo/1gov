@@ -122,6 +122,7 @@ import { CalendarIcon } from "lucide-react"
 import { format, set } from "date-fns"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import Link from "next/link"
+import { getFieldLabel } from "../customer/dashboard/lib/get-field-info"
 
 //  PROD MESD_006_28_001
 //  UAT MESD_006_08_054
@@ -688,7 +689,8 @@ export default function Form() {
                       key={index} 
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200"
                     >
-                      {field.replace(/_/g, ' ')}
+                      {/* {field.replace(/_/g, ' ')} */}
+                      {getFieldLabel(String(field)).label}
                     </span>
                   ))}
                 </div>
@@ -1144,9 +1146,6 @@ export default function Form() {
                             placeholder='e.g. yourname@gmail.com'
                             {...register('primary_email')}
                             className='mt-1'
-                            onChange={(e) => {
-                              trigger('primary_email');
-                            }}
                           />
                           {errors.primary_email && (
                             <p className='text-sm text-red-500 mt-1'>{errors.primary_email.message}</p>
@@ -3707,7 +3706,7 @@ export default function Form() {
                                 <InfoItem label="Practice Category" value={watch('practice_category')} />
                                 <InfoItem label="Sub Category" value={watch('sub_category')} />
                                 {watch('experience_years') && <InfoItem label="Years of Experience" value={watch('experience_years')} />}
-                                {watch('district') && <InfoItem label="District" value={watch('district')} />}
+                                {watch('district') && <InfoItem label="Region" value={watch('district')} />}
                                 {watch('institution_type') && <InfoItem label="Institution Type" value={watch('institution_type')} />}
                                 {watch('school_level') && <InfoItem label="School Level" value={watch('school_level')} />}
                                 {watch('private_schools') && <InfoItem label="Level" value={watch('level')} />}
@@ -4182,7 +4181,7 @@ const ApplicationAlreadySubmitted = () => {
             Visit your dashboard to view your application status and take any required actions.
           </p>
           <Link 
-            href="/customer/dashboard/home"
+            href="/customer/dashboard"
             className="inline-flex items-center gap-2 text-green-700 hover:text-green-800 font-medium group"
           >
             Go to Dashboard

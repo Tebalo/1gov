@@ -38,14 +38,14 @@ interface FlowActionConfig {
 const getStatusDescription = (status: StatusType): string => {
     const descriptions: Record<StatusType, string> = {
       'PENDING-CUSTOMER-ACTION': 'Customer needs to provide additional information',
-      'PENDING-ASSESSMENT': 'Pass screening',
-      'PENDING-SCREENING': 'Pass screening',
-      'MANAGER-REJECTED': 'Reject and send notification to customer',
-      'MANAGER-APPROVED': 'Approve and send notification to customer',
-      'RECOMMENDED-FOR-APPROVAL': 'Recommend for approval',
-      'RECOMMENDED-FOR-REJECTION': 'Recommend for rejection',
-      'PENDING-ENDORSEMENT': 'Submit for endorsement',
-      'ENDORSEMENT-COMPLETE': 'Close and send notification to customer',
+      'PENDING-ASSESSMENT': 'Pass Screening',
+      'PENDING-SCREENING': 'Pass Screening',
+      'MANAGER-REJECTED': 'Reject and forward to Director',
+      'MANAGER-APPROVED': 'Approve and send notification to Customer',
+      'RECOMMENDED-FOR-APPROVAL': 'Recommend for Approval',
+      'RECOMMENDED-FOR-REJECTION': 'Recommend for Rejection',
+      'PENDING-ENDORSEMENT': 'Submit for Endorsement',
+      'ENDORSEMENT-COMPLETE': 'Close and send notification to Customer',
     };
     return descriptions[status];
   };

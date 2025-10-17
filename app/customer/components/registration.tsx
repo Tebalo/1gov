@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { searchRecord } from '@/app/lib/actions';
 import { ResendPayment } from './resend-payment-link';
+import { isNull } from 'util';
 
 interface RegistrationData {
   national_id: string;
@@ -78,7 +79,6 @@ interface DraftData {
   updatedAt: string;
 }
 
-// Define types
 interface StatusInfo {
   display: string;
   description: string;
@@ -97,7 +97,6 @@ type SystemStatus =
   | 'Pending-Endorsement'
   | 'Pending-Customer-Action'
   | 'Endorsement-Complete';
-
 
 const STATUS_MAP: Record<SystemStatus, StatusInfo> = {
   'Pending-Customer-Action': {
@@ -179,14 +178,14 @@ function getCustomerStatus(systemStatus: string): StatusInfo {
 const SAMPLE_DATA: RegistrationData = {
   "national_id": "436415528",
   "reg_number": "BOT000135",
-  "reg_status": "Pending-Customer-Action",
+  "reg_status": "Manager-Approved",
   "work_status": "Employed",
   "endorsement_status": "Pending-Endorsement",
   "rejection_reason": null,
   "service_code": "MESD_006_08_054",
-  "payment_ref": null,
-  "payment_amount": null,
-  "payment_name": null,
+  "payment_ref": "123",
+  "payment_amount": "50",
+  "payment_name": 'gg',
   "application_id": "5f6662b4-84ec-4684-983d-149c0e23f9ey",
   "submission_id": "5f6662b4149c0e23879y",
   "license_link": null,
@@ -195,7 +194,7 @@ const SAMPLE_DATA: RegistrationData = {
   "education_bg_checks": null,
   "flags_no": "0",
   "recite": null,
-  "invoice": null,
+  "invoice": "Invoice",
   "charges": null,
   "paid_at": null,
   "payment_link": null,
@@ -284,6 +283,14 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
     );
   };
 
+  const shouldInvoiceButton = (data: RegistrationData): boolean => {
+    return (
+      data.reg_status === "Manager-Approved" &&
+      data.endorsement_status === "Pending-Endorsement" &&
+      data.invoice !== null
+    );
+  };
+
   const shouldShowCorrectionButton = (data: RegistrationData): boolean => {
     return (
       data.reg_status === "Pending-Customer-Action"
@@ -333,7 +340,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   };
 
   const formatCurrency = (amount: string): string => {
-    return `BWP ${(parseFloat(amount)/100).toLocaleString()}`;
+    return `BWP ${(parseFloat(amount)).toLocaleString()}.00`;
   };
 
   if (loading) {
@@ -381,7 +388,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
         </div>
 
         {/* Action Buttons */}
-        {(shouldShowPaymentButton(registrationData) || shouldShowCorrectionButton(registrationData) || shouldShowLicenseDownload(registrationData) || registrationData.invoice) && (
+        {(shouldShowPaymentButton(registrationData) || shouldInvoiceButton(registrationData) || shouldShowCorrectionButton(registrationData) || shouldShowLicenseDownload(registrationData) || registrationData.invoice) && (
           <div className="p-6 border-b border-gray-200 bg-gray-50 space-y-2">
             <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
               <p className="text-sm text-green-900">
@@ -443,7 +450,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                 </Link>
               )}
 
-              {registrationData.invoice && (
+              {shouldInvoiceButton(registrationData) && (
                 <a
                   href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.invoice ?? '')}&embedded=true`}
                   target="_blank"

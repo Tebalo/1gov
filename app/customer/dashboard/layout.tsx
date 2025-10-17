@@ -92,7 +92,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 border-t border-gray-800">
+      {/* <footer className="bg-gray-900 border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="text-center text-gray-400">
             <p className="text-xs sm:text-sm">
@@ -100,7 +100,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </p>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
