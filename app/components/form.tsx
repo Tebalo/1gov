@@ -1323,16 +1323,16 @@ export default function Form() {
                               <SelectValue placeholder='Select district' />
                             </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value='central'>Central</SelectItem>
-                                <SelectItem value='chobe'>Chobe</SelectItem>
-                                <SelectItem value='ghanzi'>Ghanzi</SelectItem>
-                                <SelectItem value='kgalagadi'>Kgalagadi</SelectItem>
-                                <SelectItem value='kgatleng'>Kgatleng</SelectItem>
-                                <SelectItem value='kweneng'>Kweneng</SelectItem>
-                                <SelectItem value='north-east'>North East</SelectItem>
-                                <SelectItem value='north-west'>North West</SelectItem>
-                                <SelectItem value='south-east'>South East</SelectItem>
-                                <SelectItem value='southern'>Southern</SelectItem>
+                                <SelectItem value='Central'>Central</SelectItem>
+                                <SelectItem value='Chobe'>Chobe</SelectItem>
+                                <SelectItem value='Ghanzi'>Ghanzi</SelectItem>
+                                <SelectItem value='Kgalagadi'>Kgalagadi</SelectItem>
+                                <SelectItem value='Kgatleng'>Kgatleng</SelectItem>
+                                <SelectItem value='Kweneng'>Kweneng</SelectItem>
+                                <SelectItem value='North-East'>North East</SelectItem>
+                                <SelectItem value='North-West'>North West</SelectItem>
+                                <SelectItem value='South-East'>South East</SelectItem>
+                                <SelectItem value='Southern'>Southern</SelectItem>
                               </SelectContent>
                           </Select>
                           {errors.district && (
