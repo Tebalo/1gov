@@ -10,36 +10,12 @@ import { ClipboardList } from "lucide-react";
 
 export const MyAssignments = async ({status, userRole, assigned_to}: {status: string, userRole: string, assigned_to: string}) => {
     
-    // const [currentUser, setCurrentUser] = useState<UserInfo>({
-    //     name: '',
-    //     role: '',
-    //     id: '',
-    // });
-    // useEffect(() => {
-    //     const initializeUser = async () => {
-    //     try {
-    //         const profile = await getAccessGroups();
-    //         if (profile && profile.current) {  // Add null check
-    //             setCurrentUser(prev => ({
-    //             ...prev,
-    //             name: profile.username || '',
-    //             role: profile.current.toLowerCase() || '',
-    //             id: profile.userid || '',
-    //         }));
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching user profile:', error);
-    //     }
-    // };
-    // initializeUser();
-    // }, []);
-
     return (
         <div className="overflow-auto h-[calc(100vh-4rem-2.5rem)] rounded-lg space-y-6">
             <div className="flex items-center space-x-2">
                 <ClipboardList className="w-6 h-6 text-blue-500" />
                 <h2 className="text-xl font-semibold text-gray-900">
-                    My Assigned Work
+                    My Assignments
                 </h2>
             </div>
             <div className="w-full">
