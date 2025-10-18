@@ -51,10 +51,11 @@ const getStatusDescription = (status: StatusType): string => {
   };
   
   const items = [
-    { id: "national_id_copy", label: "National ID copy" },
-    // { id: "qualifications", label: "Other Qualification" },
-    { id: "student_related_offence_attachments", label: "Student related offence copy" },
-    { id: "drug_related_offence_attachments", label: "Drug related offence copy" },
+    { id: "national_id_copy", label: "National ID attachment" },
+    { id: "misconduct_flag_details", label: "Misconduct flag attachment" },
+    { id: "student_related_offence_attachments", label: "Student related offence attachment" },
+    { id: "drug_related_offence_attachments", label: "Drug related offence attachment" },
+    { id: "license_flag_details", label: "license flag attachment" },
     { id: "attachments", label: "Mandatory qualification's attachment" },
   ] as const;
 

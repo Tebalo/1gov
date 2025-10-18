@@ -32,10 +32,6 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
 
   const fullName = `${data.bio_datas?.forenames} ${data.bio_datas?.surname}`;
 
-  const handleOpenDocument = (key: string | null) => {
-    if (key) window.open(key, '_blank');
-  };
-
   const renderPersonalInfo = () => (
     <InfoCard title='Personal Information' icon={<Info className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Full Name" value={fullName}/>
@@ -68,8 +64,14 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Endorsement Status" value={data.teacher_registrations?.endorsement_status}/>
       <InfoItem label="License Status" value={data.teacher_registrations?.license_status}/>
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
-      <InfoItem label="Payment Amount" value={'P '+data.teacher_registrations?.payment_amount ? data.teacher_registrations?.payment_amount : "0"+'.00'}/>
-      <InfoItem label="Payment Name" value={data.teacher_registrations?.payment_name || "Teacher Registration and License"}/>
+      <InfoItem 
+        label="Payment Amount" 
+        value={`P ${data.teacher_registrations?.payment_amount ?? "0"}.00`}
+      />
+      <InfoItem 
+        label="Payment Name" 
+        value={data.teacher_registrations?.payment_name ?? "Teacher Registration and License"}
+      />
       <InfoLink label="Payment Link" paymentUrl={data.teacher_registrations?.paid_at ?? ''} className=""/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
       <InfoItem label="Citizen Status" value={data.teacher_preliminary_infos?.citizen_status}/>
@@ -90,7 +92,6 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Current Institution" value={data.employment_details?.current_institution}/>
       <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>
       <InfoItem label="Region" value={data.employment_details?.region}/>
-      <InfoItem label="District" value={data.employment_details?.district}/>
       <InfoItem label="Experience" value={data.employment_details?.experience_years}/>
     </InfoCard>
   );
@@ -99,40 +100,63 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
     <InfoCard 
       title='Mandatory Qualification' 
       icon={<GraduationCap className="w-6 h-6 text-blue-500"/>}
-      columns={1}
+      columns={2}
     >
       {data?.edu_pro_qualifications ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Level</TableHead>
-              <TableHead>Qualification</TableHead>
-              <TableHead>Institution</TableHead>
-              <TableHead>Year</TableHead>
-              <TableHead>Subject Specialisation</TableHead>
-              <TableHead>Attachment</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>{data.edu_pro_qualifications.level ?? '-'}</TableCell>
-              <TableCell>{data.edu_pro_qualifications.qualification ?? '-'}</TableCell>
-              <TableCell>{data.edu_pro_qualifications.institution ?? '-'}</TableCell>
-              <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
-              <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
-              <TableCell>
-                <InfoItem label="" value={data.edu_pro_qualifications.attachments ?? ''}/>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <>
+          <InfoItem label="Level" value={data.edu_pro_qualifications.level}/>
+          <InfoItem label="Qualification" value={data.edu_pro_qualifications.qualification}/>
+          <InfoItem label="Institution" value={data.edu_pro_qualifications.institution}/>
+          <InfoItem label="Year" value={data.edu_pro_qualifications.qualification_year}/>
+          <InfoItem label="Subject Specialisation" value={data.edu_pro_qualifications.major_subjects}/>
+          <InfoItem label="Attachment" value={data.edu_pro_qualifications.attachments} isAttachment/>
+        </>
       ) : (
-        <div className="flex items-center justify-center p-4 text-muted-foreground">
+        <div className="flex items-center justify-center p-4 text-muted-foreground col-span-2">
           No mandatory qualification data available
         </div>
       )}
     </InfoCard>
   );
+
+  // const renderMandatoryQualifications = () => (
+  //   <InfoCard 
+  //     title='Mandatory Qualification' 
+  //     icon={<GraduationCap className="w-6 h-6 text-blue-500"/>}
+  //     columns={1}
+  //   >
+  //     {data?.edu_pro_qualifications ? (
+  //       <Table>
+  //         <TableHeader>
+  //           <TableRow>
+  //             <TableHead>Level</TableHead>
+  //             <TableHead>Qualification</TableHead>
+  //             <TableHead>Institution</TableHead>
+  //             <TableHead>Year</TableHead>
+  //             <TableHead>Subject Specialisation</TableHead>
+  //             <TableHead>Attachment</TableHead>
+  //           </TableRow>
+  //         </TableHeader>
+  //         <TableBody>
+  //           <TableRow>
+  //             <TableCell>{data.edu_pro_qualifications.level ?? '-'}</TableCell>
+  //             <TableCell>{data.edu_pro_qualifications.qualification ?? '-'}</TableCell>
+  //             <TableCell>{data.edu_pro_qualifications.institution ?? '-'}</TableCell>
+  //             <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
+  //             <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
+  //             <TableCell>
+  //               <InfoItem label="" value={data.edu_pro_qualifications.attachments ?? ''}/>
+  //             </TableCell>
+  //           </TableRow>
+  //         </TableBody>
+  //       </Table>
+  //     ) : (
+  //       <div className="flex items-center justify-center p-4 text-muted-foreground">
+  //         No mandatory qualification data available
+  //       </div>
+  //     )}
+  //   </InfoCard>
+  // );
 
   const renderQualifications = () => (
     <InfoCard title='Additional Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
@@ -155,7 +179,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
                 <TableCell>{qual.qualification ?? '-'}</TableCell>
                 <TableCell>
                   {qual.attachments ? (
-                    <InfoItem label="" value={qual.attachments}/>
+                    <InfoItem label="" value={qual.attachments} isAttachment/>
                   ) : '-'}
                 </TableCell>
                 {/* <TableCell>{qual.institution ?? '-'}</TableCell> */}
@@ -245,29 +269,34 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
     </InfoCard>
   );
 
+  const hasValidRegistration = data?.teacher_registrations && Object.keys(data.teacher_registrations).length > 0;
+  const hasValidBioData = data?.bio_datas && Object.keys(data.bio_datas).length > 0;
+
   const renderBackgroundChecks = () => (
     <InfoCard title='Background Checks' icon={<AlertTriangle className="w-6 h-6 text-blue-500"/>} columns={1}>
-      {data?.background_checks && data?.background_checks?.length > 0 ? (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Checked By</TableHead>
-            <TableHead>Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.background_checks?.map((check, index) => (
-            <TableRow key={index}>
-              <TableCell>{check.name}</TableCell>
-              <TableCell>{check.description}</TableCell>
-              <TableCell>{check.checked_by}</TableCell>
-              <TableCell>{new Date(check.created_at || '').toLocaleDateString()}</TableCell>
+      {data?.background_checks && Array.isArray(data.background_checks) && data.background_checks.length > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Checked By</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {data.background_checks.map((check, index) => (
+              <TableRow key={check.id || index}>
+                <TableCell>{check.name ?? '-'}</TableCell>
+                <TableCell>{check.description ?? '-'}</TableCell>
+                <TableCell>{check.checked_by ?? '-'}</TableCell>
+                <TableCell>
+                  {check.created_at ? new Date(check.created_at).toLocaleDateString() : '-'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       ) : (
         <div className="flex items-center justify-center p-4 text-muted-foreground">
           No background checks data available
@@ -278,7 +307,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
 
   const renderDocuments = () => (
     <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
-      <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy}/>
+      <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy} isAttachment/>
       <InfoItem label="License Certificate" value={data.teacher_registrations?.license_link} isAttachment/>
       <InfoItem label="Receipt" value={data.teacher_registrations?.recite} isAttachment/>
       <InfoItem label="Invoice" value={data.teacher_registrations?.invoice} isAttachment/>

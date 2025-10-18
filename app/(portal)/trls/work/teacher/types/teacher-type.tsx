@@ -24,6 +24,7 @@ interface TeacherRegistration {
     submitted_via?: string | null;
     recite?: string | null;
     invoice?: string | null;
+    invoice_number?: string | null;
     charges?: string | null;
     payment_link?: string | null;
     subscription_due_date?: string | null;

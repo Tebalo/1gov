@@ -3632,36 +3632,6 @@ export default function Form() {
                     <CardContent className='space-y-6'>
                       {/* Summary Section */}
                       <div className='bg-gray-50 p-4 rounded-lg'>
-                        {/* {Object.keys(errors).length > 0 && (
-                          <Alert variant="destructive" className="mb-4">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle className="text-base font-semibold">
-                              {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
-                            </AlertTitle>
-                            <AlertDescription>
-                              <p className="text-sm mb-3">Please review and correct the following:</p>
-                              <div className="max-h-48 overflow-y-auto">
-                                <ul className="space-y-2">
-                                  {Object.entries(errors).map(([field, error]) => (
-                                    <li key={field} className="flex items-start gap-2 text-sm">
-                                      <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
-                                      <span className="font-medium text-red-900">
-                                        {field
-                                          .replace(/_/g, ' ')
-                                          .replace(/\b\w/g, l => l.toUpperCase())
-                                          .replace(/Id/g, 'ID')
-                                          .replace(/Pdf/g, 'PDF')
-                                          .replace(/Alt /g, '')
-                                          .replace(/Primary /g, '')
-                                        }
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </AlertDescription>
-                          </Alert>
-                        )} */}
                         <Accordion
                           type="single"
                           collapsible
@@ -3927,6 +3897,38 @@ export default function Form() {
                         {errors.profile_data_consent && (
                           <p className='text-sm text-red-500'>{errors.profile_data_consent.message}</p>
                         )}
+
+                        {/* Terms of service and data privacy */}
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="terms_and_conditions_of_use_and_privacy_policy"
+                            checked={watch('terms_and_conditions_of_use_and_privacy_policy')}
+                            onCheckedChange={(checked) => setValue('terms_and_conditions_of_use_and_privacy_policy', checked as boolean)}
+                            disabled={isLoading}
+                          />
+                          <Label
+                            htmlFor="terms"
+                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            I agree to the{" "}
+                            <a 
+                              href="/terms" 
+                              className="font-medium text-primary underline-offset-4 hover:underline"
+                              target="_blank"
+                            >
+                              Terms and Conditions of Use
+                            </a>
+                            {" "}
+                            and{" "}
+                            <a 
+                              href="/privacy" 
+                              className="font-medium text-primary underline-offset-4 hover:underline"
+                              target="_blank"
+                            >
+                              Privacy Policy
+                            </a> 
+                          </Label>
+                        </div>
                       </div>
 
                       {/* Progress indicator for mobile */}
