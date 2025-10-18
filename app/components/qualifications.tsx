@@ -8,6 +8,20 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Plus, Edit, Trash2, FileText, AlertCircle, CheckCircle } from 'lucide-react'
 import FileUpload, { UploadResponse } from './file-upload'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface FileUploadProps {
@@ -113,7 +127,6 @@ const QualificationsTable: React.FC<QualificationsTableProps> = ({
     alt_attachments: null as UploadResponse | null
   })
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
-
   const resetForm = () => {
     setFormData({
       // level: '',
@@ -377,10 +390,10 @@ const handleAttachmentChange = (attachment: UploadResponse | null) => {
                     onValueChange={(value) => handleInputChange('alt_qualification_year', value)}
                     value={formData.alt_qualification_year}
                   >
-                    <SelectTrigger className='mt-1'>
+                    <SelectTrigger className='h-11 text-base'>
                       <SelectValue placeholder="Select a year" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[200px]">
                       {Array.from({ length: 2026 - 1950 + 1 }, (_, i) => 2026 - i).map((year) => (
                         <SelectItem key={year} value={year.toString()}>
                           {year}
@@ -392,6 +405,54 @@ const handleAttachmentChange = (attachment: UploadResponse | null) => {
                     <p className='text-sm text-red-500 mt-1'>{formErrors.alt_qualification_year}</p>
                   )}
                 </div>
+{/* <div className='space-y-2'>
+  <Label htmlFor='alt_qualification_year'>Qualification Year *</Label>
+  <div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          className="w-full justify-between h-11 text-base"
+        >
+          {formData.alt_qualification_year || "Select a year..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-full p-0">
+        <Command>
+          <CommandInput placeholder="Search year..." />
+          <CommandEmpty>No year found.</CommandEmpty>
+          <CommandGroup className="max-h-[200px] overflow-auto">
+            {Array.from({ length: 2026 - 1950 + 1 }, (_, i) => 2026 - i).map((year) => (
+              <CommandItem
+                key={year}
+                value={year.toString()}
+                onSelect={(currentValue) => {
+                  console.log('Command onSelect - currentValue:', currentValue);
+                  console.log('Command onSelect - year:', year);
+                  console.log('Current formData before update:', formData);
+                  handleInputChange('alt_qualification_year', currentValue);
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    formData.alt_qualification_year === year.toString() ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                {year}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  </div>
+  {formErrors.alt_qualification_year && (
+    <p className='text-sm text-red-500 mt-1'>{formErrors.alt_qualification_year}</p>
+  )}
+</div> */}
 
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">

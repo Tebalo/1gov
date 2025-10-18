@@ -636,49 +636,39 @@ export default function Form() {
   }
 
   return (
-    <section className='bg-gray-50 md:p-2 max-h-screen space-y-4'>
+    <section className='bg-gray-50 md:p-2 max-h-auto space-y-4'>
+      {/* <ScrollArea 
+      ref={scrollContainerRef} 
+      className='md:h-[800px] p-4 overflow-auto border border-blue-200 rounded-lg' 
+      type="always"> */}
       {/* Case Header - Fixed */}
-      <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden bg-blue-50 border border-blue-200">
+      {/* <Card className="rounded-lg shadow-sm flex-shrink-0 md:block hidden bg-blue-50 border border-blue-200">
           <CardHeader className="p-4">
               <div className="flex justify-between items-center gap-3">
-                  {/* Left Items */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                      {/* Icon */}
                       <div className="p-2 bg-blue-600 rounded-lg flex-shrink-0">
                           <BriefcaseBusiness className="w-6 h-6 text-gray-100"/>
                       </div>
-                      {/* Case Title */}
                       <div className="flex-1 min-w-0">
                           <h1 className="text-lg font-semibold text-gray-900 truncate">
                               APPLICATION FOR TEACHER REGISTRATION & LICENSING
                           </h1>                                       
                       </div>
                   </div>
-                  {/* Right Items */}
                   <div className="flex-shrink-0">
-                      {/* <Button 
-                          className="rounded-full h-8 w-8" 
-                          variant="ghost"
-                          size="icon"
-                      >
-                          <Star className="w-4 h-4 text-orange-500"/>
-                      </Button> */}
-                          <div className="">
-                            <div><Badge className="p-1 rounded-sm bg-purple-300 text-purple-950">{status || 'Draft'}</Badge></div>
-                          </div>   
+                        <div className="">
+                          <div><Badge className="p-1 rounded-sm bg-purple-300 text-purple-950">{status || 'Draft'}</Badge></div>
+                        </div>   
                   </div>
               </div>
           </CardHeader>
-      </Card>
+      </Card> */}
       <div className='max-w-9xl mx-auto flex gap-6'>      
           {/* Main Content */}
-          <div className='flex-1 bg-white rounded-lg shadow-lg'>
-            <ScrollArea 
-            ref={scrollContainerRef} 
-            className='md:h-[500px] p-4 overflow-auto border border-blue-200 rounded-lg' 
-            type="always">
+          <div className='flex-1 bg-white'>
+
             {fields.length > 0 && (status=="correction" || status=="correcting") && (
-              <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
+              <div className="rounded-md bg-red-50 border border-red-200 p-4 m-4">
                 <p className="text-sm text-red-800">
                   
                   <span className="font-medium">Your teacher application has been rejected at the screening stage because of missing or incorrect information. Please correct these fields:</span>
@@ -700,7 +690,7 @@ export default function Form() {
                 <ApplicationAlreadySubmitted/>
             )}
             {/* Progress Steps */}
-            <nav aria-label='Progress' className='md:px-6 py-6 md:block hidden'>
+            <nav aria-label='Progress' className='md:px-2 py-2 md:block hidden'>
               <ol role='list' className='space-y-4 md:flex md:space-x-0 md:space-y-0'>
                 {steps.map((step, index) => (
                     <li key={step.name} className='md:flex-1'>
@@ -3133,6 +3123,65 @@ export default function Form() {
                         <div className='space-y-2'>
                           <Label htmlFor='qualification_year'>Qualification Year *</Label>
                           <div>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className="w-full justify-between"
+                                >
+                                  {watch('qualification_year') || "Select a year..."}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search year..." />
+                                  <CommandEmpty>No year found.</CommandEmpty>
+                                  <CommandGroup className="max-h-[200px] overflow-auto">
+                                    {Array.from({ length: 2025 - 1950 + 1 }, (_, i) => 2025 - i).map((year) => (
+                                      <CommandItem
+                                        key={year}
+                                        value={year.toString()}
+                                        onSelect={(currentValue) => {
+                                          setValue('qualification_year', currentValue);
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            "mr-2 h-4 w-4",
+                                            watch('qualification_year') === year.toString() ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                        {year}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            
+                            <input
+                              type="hidden"
+                              {...register('qualification_year', {
+                                required: 'Qualification year is required',
+                                validate: (value) => {
+                                  const year = parseInt(value);
+                                  if (isNaN(year) || year < 1950 || year > 2025) {
+                                    return 'Please select a year between 1950 and 2025';
+                                  }
+                                  return true;
+                                }
+                              })}
+                            />
+                          </div>
+                          {errors.qualification_year && (
+                            <p className='text-sm text-red-500 mt-1'>{errors.qualification_year.message}</p>
+                          )}
+                        </div>
+                        {/* <div className='space-y-2'>
+                          <Label htmlFor='qualification_year'>Qualification Year *</Label>
+                          <div>
                             <Select
                               onValueChange={(value) => setValue('qualification_year', value)}
                               defaultValue={watch('qualification_year')}
@@ -3165,12 +3214,12 @@ export default function Form() {
                           {errors.qualification_year && (
                             <p className='text-sm text-red-500 mt-1'>{errors.qualification_year.message}</p>
                           )}
-                        </div>
+                        </div> */}
 
                         {/* Subject Specialization - Made Optional */}
                         <div className='space-y-2'>
                           <Label htmlFor='subject_specialization' className="text-sm font-medium text-gray-700">
-                            Subject Specialization <span className="text-gray-400 text-xs">(Optional)</span>
+                            Subject Specialization 
                           </Label>
                           <Popover open={subjectOpen} onOpenChange={setSubjectOpen}>
                             <PopoverTrigger asChild>
@@ -3946,7 +3995,7 @@ export default function Form() {
                 </motion.div>
               )}
             </form>
-          </ScrollArea>
+          
             {/* Navigation */}
             <div className='md:px-6 py-6 border-t bg-gray-50'>
               <div className='flex justify-between items-center'>
@@ -4161,6 +4210,7 @@ export default function Form() {
             
         </div>
       </div>
+      {/* </ScrollArea> */}
     </section>
   )
 }

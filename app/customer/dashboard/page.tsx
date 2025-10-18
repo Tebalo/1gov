@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import RegistrationStatusComponent from "../components/registration";
 import { Loader, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getAccessGroups } from "@/app/auth/auth";
 
 export default function Dashboard() {
     const [userId, setUserId] = useState('');
@@ -15,7 +14,15 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchId = async () => {
             try {
-                const result = await getAccessGroups();
+                const response = await fetch('/api/auth/profile', {
+                    credentials: 'include'
+                })
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch access groups')
+                }
+                
+                const result = await response.json()
 
                 if (result) {
                     const id = result.nationalId || result.passportId || result.userid;
@@ -32,7 +39,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <main className="min-h-screen bg-gray-50">
+        <main className="min-h-auto bg-gray-50">
             <div className="">
                 <Card className="shadow-sm border-gray-200">
                     <CardHeader className="pb-4">
@@ -87,17 +94,3 @@ const UserWelcomeMessage: React.FC<{username: string}> = ({username}) => {
         </div>
     );
 };
-
-// const UserWelcomeMessage: React.FC<{username:string}> = ({username}) => {
-//     return (
-//         <div className="flex items-center space-x-4">
-//             <div className="p-3 bg-gray-100 rounded-full">
-//                 <UserRound className="w-6 h-6 text-gray-600" />
-//             </div>
-//             <div>
-//                 <h1 className="text-xl font-semibold text-gray-900">GOOD DAY, {username.toUpperCase()}</h1>
-//                 <p className="text-sm text-gray-500 mt-1">Welcome to your dashboard</p>
-//             </div>
-//         </div>
-//     )
-// }

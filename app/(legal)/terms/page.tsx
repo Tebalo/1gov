@@ -1,18 +1,21 @@
 "use client";
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import React from "react";
 
 export default function TermsPage() {
   return (
     <main className="max-w-5xl mx-auto p-8 text-gray-800">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        Terms and Conditions of Use
-      </h1>
-      <p className="text-sm text-gray-500 mb-10 text-center">
-        Effective Date: 06 October 2025 <br />
-        Applicable to: All users of the Botswana Teaching Professionals Council TRLS Portal
-      </p>
+      <Card>
+      <CardHeader className="text-3xl font-bold mb-6 text-center">
+        <CardTitle>Terms and Conditions of Use</CardTitle>
+        <CardDescription>        
+          Effective Date: 06 October 2025 <br />
+          Applicable to: All users of the Botswana Teaching Professionals Council TRLS Portal
+        </CardDescription>
+      </CardHeader>
 
+      <CardContent className="space-y-6">
       <section className="space-y-10">
         {/* 1. Interpretation and Application */}
         <div>
@@ -205,6 +208,8 @@ export default function TermsPage() {
           </p>
         </div>
       </section>
+      </CardContent>
+      </Card>
     </main>
   );
 }
