@@ -1308,7 +1308,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     >
                       Terms and Conditions of Use
                     </a>
-                    {/* {" "}
+                     {" "}
                     and{" "}
                     <a 
                       href="/privacy" 
@@ -1316,7 +1316,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                       target="_blank"
                     >
                       Privacy Policy
-                    </a> */}
+                    </a> 
                   </Label>
                 </div>
 

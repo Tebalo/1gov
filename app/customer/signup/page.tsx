@@ -19,7 +19,7 @@ export default function UserRegistrationPage() {
             priority
           />
         </div>
-        Botepco BW.
+        BOTEPCO BW.
       </a>
     </div>
 
@@ -31,7 +31,7 @@ export default function UserRegistrationPage() {
             Create your account
           </h1>
           <p className="text-muted-foreground mt-4 text-lg">
-            Join Botepco to access teacher registration and licensing services
+            Join BOTEPCO to access teacher registration and licensing services
           </p>
         </div>
 
@@ -87,7 +87,7 @@ export default function UserRegistrationPage() {
           professional development opportunities&#34;
         </p>
         <footer className="mt-4 text-sm opacity-80">
-          — Botepco Teacher Registration & Licensing Services
+          — BOTEPCO Teacher Registration & Licensing Services
         </footer>
       </blockquote>
     </div>
