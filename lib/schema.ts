@@ -137,6 +137,9 @@ export const FormDataSchema = z.object({
   profile_data_consent: z.boolean().refine(value => value === true, {
     message: 'You must consent to the use of your profile data to proceed'
   }),
+  terms_and_conditions_of_use_and_privacy_policy: z.boolean().refine(value => value === true, {
+    message: 'You must agree to the Terms and Conditions of Use and Privacy Policy'
+  }),
 }).superRefine((data, ctx) => {
   
   // ============================================

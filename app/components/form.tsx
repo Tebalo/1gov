@@ -3897,6 +3897,38 @@ export default function Form() {
                         {errors.profile_data_consent && (
                           <p className='text-sm text-red-500'>{errors.profile_data_consent.message}</p>
                         )}
+
+                        {/* Terms of service and data privacy */}
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="terms_and_conditions_of_use_and_privacy_policy"
+                            checked={watch('terms_and_conditions_of_use_and_privacy_policy')}
+                            onCheckedChange={(checked) => setValue('terms_and_conditions_of_use_and_privacy_policy', checked as boolean)}
+                            disabled={isLoading}
+                          />
+                          <Label
+                            htmlFor="terms"
+                            className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            I agree to the{" "}
+                            <a 
+                              href="/terms" 
+                              className="font-medium text-primary underline-offset-4 hover:underline"
+                              target="_blank"
+                            >
+                              Terms and Conditions of Use
+                            </a>
+                            {" "}
+                            and{" "}
+                            <a 
+                              href="/privacy" 
+                              className="font-medium text-primary underline-offset-4 hover:underline"
+                              target="_blank"
+                            >
+                              Privacy Policy
+                            </a> 
+                          </Label>
+                        </div>
                       </div>
 
                       {/* Progress indicator for mobile */}
