@@ -32,7 +32,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <main className="min-h-screen bg-gray-50">
+        <main className="min-h-auto bg-gray-50">
             <div className="">
                 <Card className="shadow-sm border-gray-200">
                     <CardHeader className="pb-4">
@@ -87,17 +87,3 @@ const UserWelcomeMessage: React.FC<{username: string}> = ({username}) => {
         </div>
     );
 };
-
-// const UserWelcomeMessage: React.FC<{username:string}> = ({username}) => {
-//     return (
-//         <div className="flex items-center space-x-4">
-//             <div className="p-3 bg-gray-100 rounded-full">
-//                 <UserRound className="w-6 h-6 text-gray-600" />
-//             </div>
-//             <div>
-//                 <h1 className="text-xl font-semibold text-gray-900">GOOD DAY, {username.toUpperCase()}</h1>
-//                 <p className="text-sm text-gray-500 mt-1">Welcome to your dashboard</p>
-//             </div>
-//         </div>
-//     )
-// }

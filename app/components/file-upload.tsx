@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -48,6 +48,20 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const uploadControllerRef = useRef<AbortController | null>(null)
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+      }
+      if (uploadControllerRef.current) {
+        uploadControllerRef.current.abort()
+      }
+    }
+  }, [])
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes'
@@ -60,7 +74,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const validateFile = (file: File): string | null => {
     // Check file size
     if (file.size > maxSize * 1024 * 1024) {
-      return `File size must be less than ${maxSize}MB`
+      return `File size must be less than ${maxSize}MB (current: ${formatFileSize(file.size)})`
     }
 
     // Check file type
@@ -68,72 +82,150 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const allowedTypes = acceptedTypes.split(',').map(type => type.trim().toLowerCase())
 
     if (!allowedTypes.includes(fileExtension)) {
-      return `File type not allowed. Accepted types: ${acceptedTypes}`
+      return `File type "${fileExtension}" not supported. Accepted types: ${acceptedTypes}`
+    }
+
+    // Check for empty file
+    if (file.size === 0) {
+      return 'File appears to be empty'
     }
 
     return null
   }
 
   const uploadFile = async (file: File) => {
+    // Clear any previous errors
+    setUploadError(null)
+    
+    // Validate file before upload
+    const validationError = validateFile(file)
+    if (validationError) {
+      setUploadError(validationError)
+      return
+    }
+
     setUploading(true)
     setUploadProgress(0)
-    setUploadError(null)
+
+    // Create abort controller for this upload
+    uploadControllerRef.current = new AbortController()
 
     try {
-      // Validate file before upload
-      const validationError = validateFile(file)
-      if (validationError) {
-        throw new Error(validationError)
-      }
-
       // Create FormData
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('type', file.type || 'pdf')
+      formData.append('type', file.type || 'application/octet-stream')
       formData.append('name', file.name)
       formData.append('description', 'TRLS')
 
-      // Simulate progress for better UX
-      const progressInterval = setInterval(() => {
+      // Start progress simulation (more conservative)
+      progressIntervalRef.current = setInterval(() => {
         setUploadProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(progressInterval)
-            return 90
+          if (prev >= 80) {
+            if (progressIntervalRef.current) {
+              clearInterval(progressIntervalRef.current)
+              progressIntervalRef.current = null
+            }
+            return 80
           }
-          return prev + 10
+          return prev + Math.random() * 15 + 5 // More realistic progress increments
         })
-      }, 200)
+      }, 300)
 
-      // Upload file
+      // Upload file with timeout and abort signal
+      const timeoutId = setTimeout(() => {
+        if (uploadControllerRef.current) {
+          uploadControllerRef.current.abort()
+        }
+      }, 30000) // 30 second timeout
+
       const response = await fetch(fileUploadUrl, {
         method: 'POST',
         headers: {
           'Accept': 'application/json'
         },
         body: formData,
+        signal: uploadControllerRef.current.signal
       })
 
-      clearInterval(progressInterval)
+      clearTimeout(timeoutId)
+
+      // Clear progress interval
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+        progressIntervalRef.current = null
+      }
+      
       setUploadProgress(100)
 
       if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Upload failed: ${response.status} ${errorText}`)
+        let errorMessage = `Upload failed (${response.status})`
+        
+        try {
+          const errorText = await response.text()
+          if (errorText) {
+            errorMessage += `: ${errorText}`
+          }
+        } catch {
+          // If we can't read the error text, use status-based message
+          switch (response.status) {
+            case 413:
+              errorMessage = `File too large. Maximum size is ${maxSize}MB`
+              break
+            case 415:
+              errorMessage = `File type not supported by server`
+              break
+            case 500:
+              errorMessage = 'Server error occurred during upload'
+              break
+            case 503:
+              errorMessage = 'Upload service temporarily unavailable'
+              break
+            default:
+              errorMessage = `Upload failed with error ${response.status}`
+          }
+        }
+        
+        throw new Error(errorMessage)
       }
 
       const result: UploadResponse = await response.json()
+
+      // Validate response structure
+      if (!result || !result['original-name'] || !result.key) {
+        throw new Error('Invalid response from upload server')
+      }
 
       // Call onChange with the upload response
       onChange(result)
 
       // Reset progress after a brief delay
-      setTimeout(() => setUploadProgress(0), 1000)
+      setTimeout(() => setUploadProgress(0), 1500)
+      
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Upload failed'
+      // Clear progress interval on error
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+        progressIntervalRef.current = null
+      }
+      
+      let errorMessage = 'Upload failed'
+      
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorMessage = 'Upload was cancelled or timed out'
+        } else if (error.message.includes('fetch')) {
+          errorMessage = 'Network error occurred during upload'
+        } else {
+          errorMessage = error.message
+        }
+      }
+      
       setUploadError(errorMessage)
       console.error('Upload error:', error)
     } finally {
       setUploading(false)
+      uploadControllerRef.current = null
     }
   }
 
@@ -142,6 +234,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault() // Prevent form submission
     const file = event.target.files?.[0]
     if (file) {
       handleFileSelect(file)
@@ -150,6 +243,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+    event.stopPropagation() // Prevent event bubbling
     setDragOver(false)
 
     const file = event.dataTransfer.files[0]
@@ -160,24 +254,44 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+    event.stopPropagation()
     setDragOver(true)
   }
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+    event.stopPropagation()
     setDragOver(false)
   }
 
   const removeFile = () => {
+    // Cancel any ongoing upload
+    if (uploadControllerRef.current) {
+      uploadControllerRef.current.abort()
+    }
+    
     onChange(null)
     setUploadError(null)
+    setUploading(false)
+    setUploadProgress(0)
+    
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
 
-  const openFileDialog = () => {
+  const openFileDialog = (event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation() // Prevent form submission
+    }
     fileInputRef.current?.click()
+  }
+
+  const handleCardClick = (event: React.MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    openFileDialog()
   }
 
   if (compact) {
@@ -189,7 +303,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             variant="outline"
             size="sm"
             onClick={openFileDialog}
-            className={`w-full py-5 justify-start ${error ? 'border-red-300' : ''}`}
+            className={`w-full py-5 justify-start ${error || uploadError ? 'border-red-300' : ''}`}
           >
             <Upload className="h-4 w-4 mr-2" />
             <span className="text-sm">{label}</span>
@@ -203,7 +317,18 @@ const FileUpload: React.FC<FileUploadProps> = ({
               <Loader2 className="h-4 w-4 animate-spin text-primary flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <Progress value={uploadProgress} className="h-1" />
+                <p className="text-xs text-gray-500 mt-1">Uploading... {Math.round(uploadProgress)}%</p>
               </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={removeFile}
+                className="h-6 w-6 p-0 flex-shrink-0"
+                title="Cancel upload"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
             </div>
           </div>
         )}
@@ -213,7 +338,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center space-x-2 min-w-0 flex-1">
                 <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                <p className="text-sm truncate">{value['original-name']}</p>
+                <p className="text-sm truncate" title={value['original-name']}>
+                  {value['original-name']}
+                </p>
               </div>
               <Button
                 type="button"
@@ -221,6 +348,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 size="sm"
                 onClick={removeFile}
                 className="text-gray-500 hover:text-red-500 h-6 w-6 p-0 flex-shrink-0"
+                title="Remove file"
               >
                 <X className="h-3.5 w-3.5" />
               </Button>
@@ -254,11 +382,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
         <Card
           className={`border-2 border-dashed transition-colors cursor-pointer hover:border-primary/50 ${
             dragOver ? 'border-primary bg-primary/5' : 'border-gray-300'
-          } ${error ? 'border-red-300' : ''}`}
+          } ${error || uploadError ? 'border-red-300' : ''}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onClick={openFileDialog}
+          onClick={handleCardClick}
         >
           <CardContent className="flex flex-col items-center justify-center py-8 text-center">
             <Upload className="h-10 w-10 text-gray-400 mb-3" />
@@ -275,12 +403,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
       {uploading && (
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center space-x-3">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">Uploading...</p>
-                <Progress value={uploadProgress} className="mt-2" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3 flex-1">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Uploading... {Math.round(uploadProgress)}%</p>
+                  <Progress value={uploadProgress} className="mt-2" />
+                </div>
               </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={removeFile}
+                className="text-gray-500 hover:text-red-500 ml-2"
+                title="Cancel upload"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -295,7 +435,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">{value['original-name']}</p>
+                  <p className="text-sm font-medium" title={value['original-name']}>
+                    {value['original-name']}
+                  </p>
                   <div className="flex items-center space-x-2 mt-1">
                     <Badge variant="secondary" className="text-xs">
                       {value.extension.toUpperCase()}
@@ -312,6 +454,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 size="sm"
                 onClick={removeFile}
                 className="text-gray-500 hover:text-red-500"
+                title="Remove file"
               >
                 <X className="h-4 w-4" />
               </Button>

@@ -120,6 +120,7 @@ export const FormDataSchema = z.object({
   license_flag_details: documentSchema.optional(),
   misconduct_flag: z.string().min(1, 'This field is required'),
   misconduct_flag_details: documentSchema.optional(),
+  // selected_decade: z.string().min(1,'Required'),
   national_id_copy: z.object({
     bucket: z.string(),
     extension: z.string(),
