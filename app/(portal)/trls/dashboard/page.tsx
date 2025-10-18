@@ -13,9 +13,7 @@ import { redirect } from "next/navigation";
 
 export default async function Dashboard(){
     const userRole = await getRole()
-    if(userRole === 'teacher'){
-        return <TeacherDashboard/>
-    } else if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
+    if(userRole?.toUpperCase() === 'REGISTRATION_OFFICER'){
         return <RegistrationOfficerDashboard/>
     }else if(userRole?.toUpperCase() === 'INVESTIGATIONS_OFFICER'){
         return <InvestigationsOfficerDashboard/>
@@ -28,7 +26,7 @@ export default async function Dashboard(){
     } else if(userRole?.toUpperCase() === 'REGISTRAR'){
         return <RegistrationOfficerDashboard/>
     } else if(userRole?.toUpperCase() === "ADMIN"){
-        return <AdminDashboard/>
+        return redirect('/admin/app/home')
     } else {
         return redirect('/customer/dashboard')
     }

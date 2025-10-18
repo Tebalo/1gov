@@ -26,8 +26,8 @@ export const ManagerHome = async () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Welcome back {profile?.username}! Here&apos;s what&apos;s happening today.</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Home</h1>
+            <p className="text-gray-600 uppercase">Welcome back {profile?.username.toUpperCase()}! Here&apos;s what&apos;s happening today.</p>
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-500">Last updated</p>

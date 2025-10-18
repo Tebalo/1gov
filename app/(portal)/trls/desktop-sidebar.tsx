@@ -10,6 +10,7 @@ import {
   FolderOpenDot,
   ClipboardSignature,
   ClipboardList,
+  LayoutDashboard,
 } from 'lucide-react';
 import { NavItem } from '@/app/development/components/nav-item';
 import NavUtils from '@/app/components/NavComponents/NavUtilis';
@@ -40,6 +41,19 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
     },
     { 
         path: '/trls/dashboard', 
+        icon: <LayoutDashboard size={20} />, 
+        title: 'Dashboard', 
+        roles: [
+            'MANAGER', 
+            'REGISTRATION_OFFICER', 
+            'SNR_REGISTRATION_OFFICER', 
+            'DIRECTOR', 
+            'REGISTRAR', 
+            'ADMIN'
+        ] 
+    },
+    { 
+        path: '/trls/reports', 
         icon: <BarChart3 size={20} />, 
         title: 'Reports', 
         roles: [
