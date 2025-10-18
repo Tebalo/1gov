@@ -2031,7 +2031,7 @@ export async function getTeacherList(status: string, count: number, assigned_to?
     }
     const assignedTo = assigned_to || '';
     
-    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assignedTo}&count=${count}`, {
+    const response = await fetch(`${apiUrl}/GetRegistrationsByCount?${param_key}=${status}&assigned_to=${assignedTo}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

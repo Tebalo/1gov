@@ -27,42 +27,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { searchRecord } from '@/app/lib/actions';
 import { ResendPayment } from './resend-payment-link';
-import { isNull } from 'util';
-
-interface RegistrationData {
-  national_id: string;
-  reg_number: string;
-  reg_status: string;
-  work_status: string | null;
-  endorsement_status: string;
-  rejection_reason: string | null;
-  service_code: string;
-  payment_ref: string | null;
-  payment_amount: string | null;
-  payment_name: string | null;
-  application_id: string;
-  submission_id: string;
-  license_link: string | null;
-  payment_link: string | null;
-  draft_id: string | null;
-  submitted_via: string;
-  education_bg_checks: string | null;
-  flags_no: string;
-  recite: string | null;
-  invoice: string | null;
-  charges: string | null;
-  paid_at: string | null;
-  subscription_due_date: string | null;
-  license_expiry_date: string | null;
-  assigned_to: string | null;
-  institution_verification: string;
-  course_verification: string;
-  license_status: string;
-  pending_customer_action: string;
-  registration_type: string;
-  created_at: string;
-  updated_at: string;
-}
+import { SearchRecordResponse } from '@/app/lib/types';
 
 interface DraftData {
   id: string;
@@ -175,44 +140,45 @@ function getCustomerStatus(systemStatus: string): StatusInfo {
   };
 }
 
-const SAMPLE_DATA: RegistrationData = {
-  "national_id": "436415528",
-  "reg_number": "BOT000135",
-  "reg_status": "Manager-Approved",
-  "work_status": "Employed",
-  "endorsement_status": "Pending-Endorsement",
-  "rejection_reason": null,
-  "service_code": "MESD_006_08_054",
-  "payment_ref": "123",
-  "payment_amount": "50",
-  "payment_name": 'gg',
-  "application_id": "5f6662b4-84ec-4684-983d-149c0e23f9ey",
-  "submission_id": "5f6662b4149c0e23879y",
-  "license_link": null,
-  "draft_id": "cmezyuufe0000h0c4rmkoxpti",
-  "submitted_via": "TRLS Portal",
-  "education_bg_checks": null,
-  "flags_no": "0",
-  "recite": null,
-  "invoice": "Invoice",
-  "charges": null,
-  "paid_at": null,
-  "payment_link": null,
-  "subscription_due_date": null,
-  "license_expiry_date": null,
-  "assigned_to": null,
-  "institution_verification": "Verified",
-  "course_verification": "Verified",
-  "license_status": "New",
-  "pending_customer_action": "false",
-  "registration_type": "Teacher",
-  "created_at": "2025-10-04 06:57:56",
-  "updated_at": "2025-10-04 06:57:56"
+const SAMPLE_DATA: SearchRecordResponse = {
+    "national_id": "436415528",
+    "reg_number": "BOT000117",
+    "reg_status": "Manager-Approved",
+    "work_status": "Employed",
+    "endorsement_status": "Pending-Endorsement",
+    "rejection_reason": null,
+    "service_code": "TRLS",
+    "payment_ref": "er",
+    "payment_amount": "50",
+    "payment_name": "name",
+    "invoice_number": "INV-000118",
+    "application_id": "5f6662b4-84ec-4684-983d-149c0e23f9ey",
+    "submission_id": "5f6662b4149c0e23879y",
+    "license_link": "https://twosixdigitalbw.com/api/v2-uat/document/AabrXzqi3mkASF4oldf6aHt92YkakH031upPFbB2/download",
+    "draft_id": "cmezyuufe0000h0c4rmkoxpti",
+    "submitted_via": "TRLS Portal",
+    "education_bg_checks": null,
+    "flags_no": "0",
+    "recite": null,
+    "invoice": "https://twosixdigitalbw.com/api/v2-uat/document/AabrXzqi3mkASF4oldf6aHt92YkakH031upPFbB2/download",
+    "charges": null,
+    "paid_at": "https://twosixdigitalbw.com/uat/payment/show/ref_68f3737439aae",
+    "payment_link": "https://twosixdigitalbw.com/api/v2-uat/document/AabrXzqi3mkASF4oldf6aHt92YkakH031upPFbB2/download",
+    "subscription_due_date": "2025-12-18 11:00:33",
+    "license_expiry_date": "2025-12-18 11:00:33",
+    "assigned_to": "Garenosi Motlalepuo",
+    "institution_verification": "Verified",
+    "course_verification": "Verified",
+    "license_status": "New",
+    "pending_customer_action": "false",
+    "registration_type": "Teacher",
+    "created_at": "2025-10-18 11:00:33",
+    "updated_at": "2025-10-18 11:01:07"
 };
 
 
 const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
-  const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
+  const [registrationData, setRegistrationData] = useState<SearchRecordResponse | null>(null);
   const [draftData, setDraftData] = useState<DraftData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -239,7 +205,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
         throw new Error('Failed to fetch registration data');
       }
       
-      const data: RegistrationData = await response;
+      const data: SearchRecordResponse = await response;
       setRegistrationData(data);
       setError(null);
     } catch (err) {
@@ -274,7 +240,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
   },[userId]);
 
   // Helper functions for conditional logic
-  const shouldShowPaymentButton = (data: RegistrationData): boolean => {
+  const shouldShowPaymentButton = (data: SearchRecordResponse): boolean => {
     return (
       data.reg_status === "Manager-Approved" &&
       data.endorsement_status === "Pending-Endorsement" &&
@@ -283,7 +249,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
     );
   };
 
-  const shouldInvoiceButton = (data: RegistrationData): boolean => {
+  const shouldInvoiceButton = (data: SearchRecordResponse): boolean => {
     return (
       data.reg_status === "Manager-Approved" &&
       data.endorsement_status === "Pending-Endorsement" &&
@@ -291,20 +257,20 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
     );
   };
 
-  const shouldShowCorrectionButton = (data: RegistrationData): boolean => {
+  const shouldShowCorrectionButton = (data: SearchRecordResponse): boolean => {
     return (
       data.reg_status === "Pending-Customer-Action"
     );
   };
 
-  const shouldShowLicenseDownload = (data: RegistrationData): boolean => {
+  const shouldShowLicenseDownload = (data: SearchRecordResponse): boolean => {
     return (
       data.reg_status === "Manager-Approved" &&
       data.endorsement_status === "Endorsement-Complete"
     );
   };
 
-  const shouldShowRegeneratePaymentLinkButton = (data: RegistrationData): boolean => {
+  const shouldShowRegeneratePaymentLinkButton = (data: SearchRecordResponse): boolean => {
     return (
       data.reg_status === "Manager-Approved" &&
       data.endorsement_status === "Pending-Endorsement" &&
@@ -410,7 +376,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
 
               {shouldShowLicenseDownload(registrationData) && (
                 <>
-                  <a
+                  <Link
                     href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.license_link ?? '')}&embedded=true`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -418,14 +384,14 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View License
-                  </a>
+                  </Link>
                   <a
                     href={registrationData.license_link ?? '#'}
                     download
                     className="inline-flex items-center px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Download
+                    Download License
                   </a>
                 </>
               )}
@@ -451,15 +417,26 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
               )}
 
               {shouldInvoiceButton(registrationData) && (
-                <a
+                <div className='flex space-x-2'>
+                <Link
                   href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.invoice ?? '')}&embedded=true`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="inline-flex items-center px-4 py-2 text-sm bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Invoice
+                </Link>
+                <Link
+                  href={`${registrationData.invoice ?? ''}`}
+                  target="_self"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <FileText className="h-4 w-4 mr-2" />
-                  View Invoice
-                </a>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Invoice
+                </Link>
+                </div>
               )}
             </div>
           </div>
@@ -492,14 +469,14 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Registration Number</label>
                           <p className="text-sm text-gray-900 font-mono mt-1">{registrationData.reg_number}</p>
                         </div>
-                        <div>
+                        {/* <div>
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Work Status</label>
                           <div className="mt-1">
                             <span className={`inline-flex items-center px-2 py-1 rounded border text-xs font-medium ${getStatusColor(registrationData.work_status ?? 'pending')}`}>
                               {registrationData.work_status}
                             </span>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
@@ -526,14 +503,14 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                             </span>
                           </div>
                         </div>
-                        <div>
+                        {/* <div>
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">License Status</label>
                           <div className="mt-1">
                             <span className={`inline-flex items-center px-2 py-1 rounded border text-xs font-medium ${getStatusColor(registrationData.license_status)}`}>
                               {registrationData.license_status}
                             </span>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
@@ -560,10 +537,10 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                             </span>
                           </div>
                         </div>
-                        <div>
+                        {/* <div>
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Assigned To</label>
                           <p className="text-sm text-gray-900 mt-1">{registrationData.assigned_to}</p>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
@@ -575,6 +552,10 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                       </h3>
                       <div className="space-y-3">
                         <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Invoice Number</label>
+                          <p className="text-sm text-gray-900 font-mono mt-1">{registrationData.invoice_number || 'Not available'}</p>
+                        </div>
+                        <div>
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Payment Reference</label>
                           <p className="text-sm text-gray-900 font-mono mt-1">{registrationData.payment_ref || 'Not available'}</p>
                         </div>
@@ -584,6 +565,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                             {registrationData.payment_amount ? formatCurrency(registrationData.payment_amount) : 'Not available'}
                           </p>
                         </div>
+
                       </div>
                     </div>
 
@@ -616,6 +598,18 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                         Timeline
                       </h3>
                       <div className="space-y-3">
+                        {registrationData.subscription_due_date && (
+                          <div>
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Subscription Due Date</label>
+                            <p className="text-sm text-gray-900 mt-1">{formatDate(registrationData?.subscription_due_date)}</p>
+                          </div>
+                        )}
+                        {registrationData.license_expiry_date && (
+                          <div>
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">License Expiry</label>
+                            <p className="text-sm text-gray-900 mt-1">{formatDate(registrationData.license_expiry_date)}</p>
+                          </div>
+                        )}
                         <div>
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Created</label>
                           <p className="text-sm text-gray-900 mt-1">{formatDate(registrationData.created_at)}</p>
@@ -624,12 +618,6 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Last Updated</label>
                           <p className="text-sm text-gray-900 mt-1">{formatDate(registrationData.updated_at)}</p>
                         </div>
-                        {registrationData.license_expiry_date && (
-                          <div>
-                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">License Expiry</label>
-                            <p className="text-sm text-gray-900 mt-1">{formatDate(registrationData.license_expiry_date)}</p>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -720,36 +708,5 @@ const QuickActions = ({ draftData }: { draftData: DraftData | null }) => {
         </div>
     )
 }
-
-// const QuickActions = () => {
-//     return(
-//         <div className="space-y-6">
-//             <div>
-//                 <h2 className="text-lg font-semibold text-gray-900 mb-1">Get Started</h2>
-//                 <p className="text-sm text-gray-600">Use the quick actions below or navigate through the menu</p>
-//             </div>
-            
-//             <div className="group border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
-//                 <div className="flex items-center justify-between">
-//                     <div className="flex items-start space-x-4">
-//                         <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
-//                             <BookOpenText className="w-6 h-6 text-gray-600"/>
-//                         </div>
-//                         <div className="flex-1">
-//                             <h3 className="text-base font-semibold text-gray-900 mb-1">Application For Teacher Registration & Licensing</h3>
-//                             <p className="text-sm text-gray-600 leading-relaxed">Submit your application for teacher registration and licensing</p>
-//                         </div> 
-//                     </div>
-                    
-//                     <Button asChild variant="ghost" size="sm" className="ml-4 hover:bg-gray-100">
-//                         <Link href="/customer/dashboard/teacher-application" className="flex items-center">
-//                             <ArrowRight className="w-4 h-4"/>
-//                         </Link>
-//                     </Button>
-//                 </div>
-//             </div>
-//         </div>
-//     )
-// }
 
 export default RegistrationStatusComponent;

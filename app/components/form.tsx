@@ -3632,36 +3632,6 @@ export default function Form() {
                     <CardContent className='space-y-6'>
                       {/* Summary Section */}
                       <div className='bg-gray-50 p-4 rounded-lg'>
-                        {/* {Object.keys(errors).length > 0 && (
-                          <Alert variant="destructive" className="mb-4">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle className="text-base font-semibold">
-                              {Object.keys(errors).length} {Object.keys(errors).length === 1 ? 'error' : 'errors'} found
-                            </AlertTitle>
-                            <AlertDescription>
-                              <p className="text-sm mb-3">Please review and correct the following:</p>
-                              <div className="max-h-48 overflow-y-auto">
-                                <ul className="space-y-2">
-                                  {Object.entries(errors).map(([field, error]) => (
-                                    <li key={field} className="flex items-start gap-2 text-sm">
-                                      <span className="inline-block w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
-                                      <span className="font-medium text-red-900">
-                                        {field
-                                          .replace(/_/g, ' ')
-                                          .replace(/\b\w/g, l => l.toUpperCase())
-                                          .replace(/Id/g, 'ID')
-                                          .replace(/Pdf/g, 'PDF')
-                                          .replace(/Alt /g, '')
-                                          .replace(/Primary /g, '')
-                                        }
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </AlertDescription>
-                          </Alert>
-                        )} */}
                         <Accordion
                           type="single"
                           collapsible

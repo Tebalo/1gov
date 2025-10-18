@@ -9,6 +9,7 @@ export interface SearchRecordResponse {
   payment_ref: string | null;
   payment_amount: string | null;
   payment_name: string | null;
+  invoice_number: string | null;
   application_id: string;
   submission_id: string;
   license_link: string | null;
