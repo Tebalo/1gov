@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState, useCallback } from "react";
 import { getStatuses } from "@/app/lib/actions";
@@ -10,27 +10,77 @@ interface DataPoint {
   total: number;
 }
 
+interface ChartDataPoint extends DataPoint {
+  fill: string;
+  formattedStatus: string;
+}
+
 interface ErrorState {
   hasError: boolean;
   message: string;
 }
 
+// Color palette for bars
+const BAR_COLORS = [
+  "#3b82f6", // Blue
+  "#10b981", // Green
+  "#f59e0b", // Amber
+  "#ef4444", // Red
+  "#8b5cf6", // Purple
+  "#06b6d4", // Cyan
+  "#f97316", // Orange
+  "#ec4899", // Pink
+  "#64748b", // Slate
+  "#84cc16", // Lime
+  "#6366f1", // Indigo
+  "#14b8a6", // Teal
+  "#f43f5e", // Rose
+  "#a855f7", // Violet
+  "#22c55e", // Emerald
+];
+
 // Constants for better maintainability
 const CHART_CONFIG = {
   height: 400,
   margins: { top: 20, right: 30, left: 20, bottom: 20 },
-  yAxisWidth: 120,
-  colors: {
-    primary: '#3b82f6',
-    secondary: '#10b981', 
-    gradient: 'url(#barGradient)'
-  }
+  yAxisWidth: 140,
 } as const;
 
 export function HorizontalBarChartStatus() {
-  const [data, setData] = useState<DataPoint[]>([]);
+  const [data, setData] = useState<ChartDataPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<ErrorState>({ hasError: false, message: '' });
+
+  // Format status names for display
+  const formatStatusName = useCallback((status: string) => {
+    return status
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }, []);
+
+  // Smart color assignment based on status type
+  const getStatusColor = (status: string, index: number): string => {
+    // Always use index-based colors for uniqueness, but with smart ordering
+    const lowerStatus = status.toLowerCase();
+    
+    // Determine base color category, then add index offset
+    let colorIndex = index;
+    
+    if (lowerStatus.includes('approved') || lowerStatus.includes('completed') || lowerStatus.includes('active')) {
+      colorIndex = 1; // Green base
+    } else if (lowerStatus.includes('rejected') || lowerStatus.includes('failed') || lowerStatus.includes('declined')) {
+      colorIndex = 3; // Red base
+    } else if (lowerStatus.includes('review') || lowerStatus.includes('verification') || lowerStatus.includes('processing')) {
+      colorIndex = 4; // Purple base
+    } else if (lowerStatus.includes('expired') || lowerStatus.includes('archived') || lowerStatus.includes('cancelled')) {
+      colorIndex = 8; // Slate base
+    }
+    
+    // Add index offset to ensure uniqueness while maintaining semantic meaning
+    const finalIndex = (colorIndex + index) % BAR_COLORS.length;
+    return BAR_COLORS[finalIndex];
+  };
 
   /**
    * Fetches and processes status statistics data
@@ -46,10 +96,19 @@ export function HorizontalBarChartStatus() {
         throw new Error('Invalid data format received');
       }
       
-      // Filter out zero values and sort by total descending
+      // Filter out zero values, endorsement statuses, and sort by total descending
       const processedData = response
-        .filter(item => item && typeof item.total === 'number' && item.total > 0)
-        .sort((a, b) => b.total - a.total);
+        .filter(item => {
+          // Exclude endorsement-related statuses and zero totals
+          const isEndorsementStatus = item.status.toLowerCase().includes('endorsement');
+          return item && typeof item.total === 'number' && item.total > 0 && !isEndorsementStatus;
+        })
+        .sort((a, b) => b.total - a.total)
+        .map((item, index) => ({
+          ...item,
+          fill: getStatusColor(item.status, index),
+          formattedStatus: formatStatusName(item.status)
+        }));
       
       setData(processedData);
     } catch (error) {
@@ -62,7 +121,7 @@ export function HorizontalBarChartStatus() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [formatStatusName]);
 
   useEffect(() => {
     fetchStatusStatistics();
@@ -71,15 +130,18 @@ export function HorizontalBarChartStatus() {
   /**
    * Custom tooltip formatter for better data display
    */
-  const formatTooltip = (value: number, name: string) => [
+  const formatTooltip = (value: number, name: string, props: any) => [
     `${value.toLocaleString()} registrations`,
-    'Total'
+    props.payload?.formattedStatus || 'Total'
   ];
 
   /**
    * Custom label formatter for bars
    */
   const formatLabel = (value: number) => value.toLocaleString();
+
+  // Calculate total registrations
+  const totalRegistrations = data.reduce((sum, item) => sum + item.total, 0);
 
   // Loading state
   if (isLoading) {
@@ -154,11 +216,11 @@ export function HorizontalBarChartStatus() {
           Registration Status Distribution
         </CardTitle>
         <p className="text-sm text-gray-500 mt-1">
-          {data.reduce((sum, item) => sum + item.total, 0).toLocaleString()} total registrations
+          {totalRegistrations.toLocaleString()} total registrations • {data.length} statuses
         </p>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="h-[400px] w-full" role="img" aria-label="Registration status distribution chart">
+        <div className="h-[450px] w-full" role="img" aria-label="Registration status distribution chart">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
@@ -166,13 +228,6 @@ export function HorizontalBarChartStatus() {
               margin={CHART_CONFIG.margins}
               barCategoryGap="15%"
             >
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8} />
-                  <stop offset="100%" stopColor="#1d4ed8" stopOpacity={1} />
-                </linearGradient>
-              </defs>
-              
               <CartesianGrid 
                 strokeDasharray="3 3" 
                 opacity={0.2}
@@ -189,7 +244,7 @@ export function HorizontalBarChartStatus() {
               />
               
               <YAxis 
-                dataKey="status" 
+                dataKey="formattedStatus" 
                 type="category" 
                 width={CHART_CONFIG.yAxisWidth}
                 axisLine={false}
@@ -217,7 +272,6 @@ export function HorizontalBarChartStatus() {
               
               <Bar 
                 dataKey="total" 
-                fill={CHART_CONFIG.colors.gradient}
                 name="Registrations"
                 radius={[0, 6, 6, 0]}
                 label={{ 
@@ -230,10 +284,36 @@ export function HorizontalBarChartStatus() {
                 style={{
                   filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))'
                 }}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
+        
+        {/* Color Legend */}
+        {data.length > 1 && (
+          <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+            {data.slice(0, 6).map((item, index) => (
+              <div key={item.status} className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-sm flex-shrink-0" 
+                  style={{ backgroundColor: item.fill }}
+                />
+                <span className="text-gray-600 truncate">
+                  {item.formattedStatus} ({item.total.toLocaleString()})
+                </span>
+              </div>
+            ))}
+            {data.length > 6 && (
+              <div className="col-span-2 text-center text-gray-500 mt-2">
+                +{data.length - 6} more statuses
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
