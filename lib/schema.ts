@@ -369,13 +369,13 @@ export const FormDataSchema = z.object({
   // ============================================
   // SUBJECT SPECIALIZATION VALIDATION - Reguired if not Primary
   // ============================================
-  if(data.school_level?.toLowerCase() !== 'primary' && data.work_status.toLowerCase() === 'employed'){
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Please specify your subject specialization',
-      path: ['subject_specialization']
-    })
-  }
+  // if(data.school_level?.toLowerCase() !== 'primary' && data.work_status.toLowerCase() === 'employed'){
+  //   ctx.addIssue({
+  //     code: z.ZodIssueCode.custom,
+  //     message: 'Please specify your subject specialization',
+  //     path: ['subject_specialization']
+  //   })
+  // }
 
   // ============================================
   // DISABILITY VALIDATION
