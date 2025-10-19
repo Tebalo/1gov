@@ -55,8 +55,9 @@ const getStatusDescription = (status: StatusType): string => {
     { id: "misconduct_flag_details", label: "Misconduct flag attachment" },
     { id: "student_related_offence_attachments", label: "Student related offence attachment" },
     { id: "drug_related_offence_attachments", label: "Drug related offence attachment" },
-    { id: "license_flag_details", label: "license flag attachment" },
-    { id: "attachments", label: "Mandatory qualification's attachment" },
+    { id: "license_flag_details", label: "Licence flag attachment" },
+    { id: "attachments", label: "Mandatory qualification attachment" },
+    { id: "alt_attachments", label: "Additional qualification attachment" },
   ] as const;
 
   const formSchema = z.object({
@@ -281,7 +282,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                                       <div className="mb-4">
                                         <FormLabel className="text-base">Fields</FormLabel>
                                         <FormDescription>
-                                          Select the fields you want to the customer to edit/fix.
+                                          Select the fields you want the customer to edit/fix.
                                         </FormDescription>
                                       </div>
                                       {items.map((item) => (

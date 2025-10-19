@@ -1,7 +1,7 @@
 "use client"
 import * as React from "react"
 import { TrendingUp, TrendingDown, Minus, AlertCircle, PieChart as PieChartIcon } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart, Cell } from "recharts"
 import { useState, useEffect } from 'react'
 import {
   Card,
@@ -51,13 +51,13 @@ const CHART_COLORS = [
 ];
 
 const LoadingSkeleton = () => (
-  <Card className="flex flex-col">
+  <Card className="flex flex-col h-full">
     <CardHeader className="items-center pb-0">
       <div className="h-6 w-48 bg-muted animate-pulse rounded" />
       <div className="h-4 w-32 bg-muted animate-pulse rounded" />
     </CardHeader>
     <CardContent className="flex-1 pb-0">
-      <div className="mx-auto aspect-square max-h-[250px] bg-muted animate-pulse rounded-full" />
+      <div className="mx-auto aspect-square max-h-[400px] min-h-[300px] bg-muted animate-pulse rounded-full" />
     </CardContent>
     <CardFooter className="flex-col gap-2">
       <div className="h-4 w-full bg-muted animate-pulse rounded" />
@@ -67,8 +67,8 @@ const LoadingSkeleton = () => (
 );
 
 const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
-  <Card className="flex flex-col">
-    <CardContent className="flex flex-col items-center justify-center py-8 min-h-[300px]">
+  <Card className="flex flex-col h-full">
+    <CardContent className="flex flex-col items-center justify-center py-8 min-h-[400px] flex-1">
       <AlertCircle className="h-8 w-8 text-destructive mb-2" />
       <p className="text-sm text-muted-foreground mb-4">
         Failed to load status distribution
@@ -84,7 +84,7 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
 );
 
 const EmptyState = () => (
-  <Card className="flex flex-col">
+  <Card className="flex flex-col h-full">
     <CardHeader className="items-center pb-0">
       <CardTitle className="flex items-center gap-2">
         <PieChartIcon className="h-5 w-5" />
@@ -93,7 +93,7 @@ const EmptyState = () => (
       <CardDescription>Current status breakdown</CardDescription>
     </CardHeader>
     <CardContent className="flex-1 pb-0">
-      <div className="flex flex-col items-center justify-center py-8 min-h-[250px]">
+      <div className="flex flex-col items-center justify-center py-8 min-h-[400px]">
         <PieChartIcon className="h-12 w-12 text-muted-foreground/50 mb-4" />
         <p className="text-sm text-muted-foreground">
           No status data available
@@ -113,7 +113,23 @@ export function StatusDonutChart() {
     setError(null);
     try {
       const response: DataPoint[] = await getStatuses();
-      const filteredData = response.filter((item: DataPoint) => item.total > 0);
+      
+      // Filter out zero totals and exclude endorsement meta-statuses
+      const filteredData = response
+        .filter((item: DataPoint) => {
+          // Exclude endorsement-related statuses and zero totals
+          const isEndorsementStatus = item.status.toLowerCase().includes('endorsement');
+          return item.total > 0 && !isEndorsementStatus;
+        })
+        .reduce((acc: DataPoint[], current: DataPoint) => {
+          // Check if status already exists in accumulator
+          const existingIndex = acc.findIndex(item => item.status === current.status);
+          if (existingIndex === -1) {
+            acc.push(current);
+          }
+          return acc;
+        }, []);
+      
       setData(filteredData);
     } catch (err) {
       console.error("Error fetching statuses:", err);
@@ -129,35 +145,34 @@ export function StatusDonutChart() {
   }, []);
 
   // Format status names for display
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const formatStatusName = (status: string) => {
+  const formatStatusName = React.useCallback((status: string) => {
     return status
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
-  };
+  }, []);
 
-  // Smart color assignment based on status type
+  // Unique color assignment - each status gets its own color
   const getStatusColor = (status: string, index: number): string => {
+    // Always use index-based colors for uniqueness, but with smart ordering
     const lowerStatus = status.toLowerCase();
     
-    // Smart color mapping based on status meaning
+    // Determine base color category, then add index offset
+    let colorIndex = index;
+    
     if (lowerStatus.includes('approved') || lowerStatus.includes('completed') || lowerStatus.includes('active')) {
-      return "#10b981"; // Green
-    } else if (lowerStatus.includes('pending') || lowerStatus.includes('waiting') || lowerStatus.includes('submitted')) {
-      return "#f59e0b"; // Amber
+      colorIndex = 1; // Green base
     } else if (lowerStatus.includes('rejected') || lowerStatus.includes('failed') || lowerStatus.includes('declined')) {
-      return "#ef4444"; // Red
+      colorIndex = 3; // Red base
     } else if (lowerStatus.includes('review') || lowerStatus.includes('verification') || lowerStatus.includes('processing')) {
-      return "#8b5cf6"; // Purple
-    } else if (lowerStatus.includes('draft') || lowerStatus.includes('incomplete') || lowerStatus.includes('started')) {
-      return "#f97316"; // Orange
+      colorIndex = 4; // Purple base
     } else if (lowerStatus.includes('expired') || lowerStatus.includes('archived') || lowerStatus.includes('cancelled')) {
-      return "#64748b"; // Slate
+      colorIndex = 8; // Slate base
     }
     
-    // Fallback to index-based colors
-    return CHART_COLORS[index % CHART_COLORS.length];
+    // Add index offset to ensure uniqueness while maintaining semantic meaning
+    const finalIndex = (colorIndex + index) % CHART_COLORS.length;
+    return CHART_COLORS[finalIndex];
   };
 
   // Calculate total registrations
@@ -175,24 +190,14 @@ export function StatusDonutChart() {
     }));
   }, [data, totalRegistrations, formatStatusName]);
 
-  // Generate dynamic chart config
+  // Simplified chart config - just for tooltip labels
   const chartConfig: ChartConfig = React.useMemo(() => {
-    const config: ChartConfig = {
+    return {
       total: {
         label: "Registrations",
       },
     };
-
-    chartData.forEach((item, index) => {
-      const key = item.status.toLowerCase().replace(/[^a-z0-9]/g, '');
-      config[key] = {
-        label: item.formattedStatus,
-        color: item.fill,
-      };
-    });
-
-    return config;
-  }, [chartData]);
+  }, []);
 
   // Calculate trend information
   const getTrendInfo = (): TrendInfo => {
@@ -260,7 +265,7 @@ export function StatusDonutChart() {
   const trendInfo = getTrendInfo();
 
   return (
-    <Card className="flex flex-col transition-all duration-200 hover:shadow-lg">
+    <Card className="flex flex-col h-full transition-all duration-200 hover:shadow-lg">
       <CardHeader className="items-center pb-0">
         <CardTitle className="flex items-center gap-2">
           <PieChartIcon className="h-5 w-5 text-primary" />
@@ -273,7 +278,7 @@ export function StatusDonutChart() {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[280px]"
+          className="mx-auto aspect-square max-h-[400px] min-h-[300px] w-full"
         >
           <PieChart>
             <ChartTooltip
@@ -281,7 +286,7 @@ export function StatusDonutChart() {
               content={<ChartTooltipContent 
                 hideLabel 
                 formatter={(value, name, props) => [
-                  `${Number(value).toLocaleString()} registrations (${props.payload?.percentage?.toFixed(1)}%)`,
+                  `${Number(value).toLocaleString()} registrations (${props.payload?.percentage?.toFixed(1)}%) `,
                   props.payload?.formattedStatus || name
                 ]}
               />}
@@ -290,14 +295,17 @@ export function StatusDonutChart() {
               data={chartData}
               dataKey="total"
               nameKey="formattedStatus"
-              innerRadius={60}
-              outerRadius={120}
+              innerRadius={80}
+              outerRadius={160}
               strokeWidth={3}
               stroke="var(--background)"
               className="drop-shadow-sm"
               animationBegin={0}
               animationDuration={800}
             >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -313,7 +321,7 @@ export function StatusDonutChart() {
                           y={viewBox.cy}
                           className="fill-foreground text-4xl font-bold"
                         >
-                          {(Number(totalRegistrations)/2).toLocaleString()}
+                          {totalRegistrations.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

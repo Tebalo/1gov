@@ -9,7 +9,11 @@ const documentSchema = z.object({
 
 const QualificationSchema = z.object({
   alt_qualification: z.string(),
-  alt_qualification_year: z.string(),
+  alt_qualification_year: z.string()
+  .min(1, 'Qualification year is required')
+  .transform((val) => parseInt(val))
+  .refine((val) => !isNaN(val) && val >= 1950 && val <= 2026, 
+    'Please enter a year between 1950 and 2026'),
   level: z.string().optional(),
   institution: z.string().optional(),
   major_subjects: z.string().optional(),
@@ -94,7 +98,13 @@ export const FormDataSchema = z.object({
   qualification_doctoral_degree: z.string().optional(),
   institution: z.string().min(1, 'Institution is required'),
   other_institution: z.string().optional(),
-  qualification_year: z.string().min(1, 'Qualification year is required'),
+  qualification_year: z.string()
+    .min(1, 'Qualification year is required')
+    .regex(/^\d{4}$/, 'Please enter a 4-digit year')
+    .refine((val) => {
+      const year = parseInt(val);
+    return year >= 1950 && year <= 2025;
+  }, 'Please enter a year between 1950 and 2025'),
   attachments: z.object({
     bucket: z.string().optional(),
     extension: z.string().optional(),
@@ -157,29 +167,6 @@ export const FormDataSchema = z.object({
   }
 
   // ============================================
-  // PHONE NUMBER VALIDATION
-  // ============================================
-  // if (data.citizenship?.toLowerCase() === 'citizen') {
-  //   // Strict validation for Botswana citizens
-  //   if (!/^(\+267|267|0)?[0-9]{8}$/.test(data.primary_phone)) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: 'Please enter a valid Botswana phone number (e.g., +267 71234567, 71234567, or 071234567)',
-  //       path: ['primary_phone'],
-  //     });
-  //   }
-  // } else {
-  //   // More lenient validation for non-citizens
-  //   if (data.primary_phone.length < 8) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: 'Please enter a valid phone number (minimum 8 digits)',
-  //       path: ['primary_phone'],
-  //     });
-  //   }
-  // }
-
-  // ============================================
   // EMPLOYMENT-RELATED VALIDATIONS
   // ============================================
   if (data.work_status?.toLowerCase() === 'employed') {
@@ -187,7 +174,7 @@ export const FormDataSchema = z.object({
     if (!data.district || data.district.trim().length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'District is required when employed',
+        message: 'Region is required when employed',
         path: ['district'],
       });
     }
@@ -379,6 +366,16 @@ export const FormDataSchema = z.object({
       path: ['other_subject_specialization'],
     });
   }
+  // ============================================
+  // SUBJECT SPECIALIZATION VALIDATION - Reguired if not Primary
+  // ============================================
+  if(data.school_level?.toLowerCase() !== 'primary' && data.work_status.toLowerCase() === 'employed'){
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Please specify your subject specialization',
+      path: ['subject_specialization']
+    })
+  }
 
   // ============================================
   // DISABILITY VALIDATION
@@ -440,7 +437,7 @@ export const FormDataSchema = z.object({
     if (!data.license_flag_details) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Documentation is required when license has been revoked, suspended, or denied',
+        message: 'Documentation is required when licence has been revoked, suspended, or denied',
         path: ['license_flag_details'],
       });
     }

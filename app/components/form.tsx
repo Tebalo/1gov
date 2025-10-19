@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -22,7 +21,7 @@ import QualificationsTable, { QualificationEntry } from './qualifications'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Check, ChevronsUpDown, FileText, Loader2, BriefcaseBusiness, GraduationCap, Star, FileCheck, AlertCircle, ArrowRight, Info } from 'lucide-react'
+import { Check, ChevronsUpDown, FileText, Loader2, AlertCircle, ArrowRight, Info } from 'lucide-react'
 import { countryList } from "@/types/countries"
 import { cn } from "@/lib/utils"
 import {  
@@ -69,7 +68,6 @@ import {
   southEastSeniorSecondarySchoolsForSelect, 
   southernSeniorSecondarySchoolsForSelect } from "@/types/public_senior_school"
 import { 
-  allBotswanaQualificationsForSelect, 
   degreeForSelect, diplomasForSelect, 
   doctorateForSelect, 
   honoursForSelect, 
@@ -119,13 +117,10 @@ import { subjectSpecializationForSelect } from "@/types/subjects_specialization"
 import { getAccessGroups } from "../auth/auth"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
-import { format, set } from "date-fns"
+import { format } from "date-fns"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import Link from "next/link"
 import { getFieldLabel } from "../customer/dashboard/lib/get-field-info"
-
-//  PROD MESD_006_28_001
-//  UAT MESD_006_08_054
 
 type FormInputs = z.infer<typeof FormDataSchema>
 
@@ -143,22 +138,22 @@ const steps = [
   {
     id: 'Step 3',
     name: 'Professional Details',
-    fields: ['practice_category', 'work_status', 'sub_category', 'experience_years', 'district', 'institution_type', 'school_level']
+    fields: ['practice_category', 'work_status', 'sub_category', 'experience_years', 'district', 'institution_type', 'school_level','private_schools','primary_schools','junior_schools','senior_schools']
   },
   {
     id: 'Step 4',
     name: 'Qualifications',
-    fields: ['qualification_certificate', 'attachments', 'subject_specialization', 'institution', 'qualification_year', 'major_subjects', 'qualifications', 'level']
+    fields: ['other_subject_specialization','subject_specialization', 'qualification_certificate', 'qualification_doctoral_degree', 'qualification_masters_degree', 'qualification_degree_honours', 'qualification_post_grad_diploma', 'qualification_degree', 'qualification_diploma', 'attachments', 'subject_specialization', 'institution', 'qualification_year', 'major_subjects', 'qualifications', 'level','other_qualification']
   },
   {
     id: 'Step 5',
     name: 'Declarations & Disclosures',
-    fields: ['disability', 'student_related_offence', 'drug_related_offence', 'license_flag', 'misconduct_flag']
+    fields: ['disability', 'student_related_offence', 'drug_related_offence', 'license_flag', 'misconduct_flag','license_flag_details','misconduct_flag_details','drug_related_offence_details','student_related_offence_attachments','student_related_offence_details','disability_description']
   },
   { 
     id: 'Step 6', 
     name: 'Review & Complete', 
-    fields: ['declaration', 'profile_data_consent'] 
+    fields: ['declaration', 'profile_data_consent','terms_and_conditions_of_use_and_privacy_policy'] 
   }
 ]
 
@@ -169,8 +164,6 @@ const countries = countryList.map((country) => ({
 }));
 
 export default function Form() {
-  // const {nationalId, passportId, userData} = useUserData();
-  // const userId = nationalId || passportId || '';
 
   const [previousStep, setPreviousStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
@@ -249,7 +242,7 @@ export default function Form() {
     trigger,
     setValue,
     getValues,
-    clearErrors,
+   // clearErrors,
     formState: { errors }
   } = useForm<FormInputs>({
     resolver: zodResolver(FormDataSchema),
@@ -303,7 +296,9 @@ export default function Form() {
       const draft_Id = urlParams.get('draftId');
       
       /**
-       * Submit the registration form
+       * =====================================================
+       * SUBMIT THE APPLICATION FOR TEACHER REGISTRATION FORM
+       * =====================================================
        */
       const result = await submitTeacherRegistration(processedFormData, profile, draft_Id || '')
       setSubmissionResult(result)
@@ -341,7 +336,8 @@ export default function Form() {
     }
   }
   /**
-   * Submit draft
+   * ========================================================
+   * CREATE/SAVE DRAFT
    * @param formData 
    */
   const processDraft: SubmitHandler<FormInputs> = async (formData) => {
@@ -394,13 +390,6 @@ export default function Form() {
         // If draft saved successfully, refresh the page to load the draft
         router.push(`/customer/dashboard/teacher-application?draftId=${draft.id}`)
       }
-      // toast({
-      //   title: "Draft saved successfully",
-      //   description: "You can continue your application later.",
-      //   action: (
-      //     <ToastAction altText="Ok">Ok</ToastAction>
-      //   ),
-      // });
 
       setSubmittingDraft(false)
     } catch (error) {
@@ -783,9 +772,13 @@ export default function Form() {
                           <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
                             Scroll down to continue filling out the form and access the navigation items.
                           </p>
+                          <div>
+                            <span className="text-red-500">*</span>
+                            <span className="italic text-xs">=Required</span>
+                          </div>  
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className='space-y-4 sm:space-y-6 p-4 sm:p-6'>
+                    <CardContent className='space-y-4 sm:space-y-6'>
                       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>  
 
                         {/* First Name */}
@@ -851,6 +844,7 @@ export default function Form() {
                             onValueChange={(value) => {
                             setValue('citizenship', value);
                             setValue('nationality', value === 'citizen' ? 'Botswana' : ''); // Reset
+                            trigger('citizenship')
                             }}>
                             <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your citizenship' />
@@ -1030,7 +1024,10 @@ export default function Form() {
                           </Label>
                           <Select 
                           value={gender}
-                          onValueChange={(value) => setValue('gender', value)}
+                          onValueChange={(value) => {
+                            setValue('gender', value)
+                            trigger('gender')
+                          }}
                           >
                             <SelectTrigger className='text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500'>
                               <SelectValue placeholder='Select your gender' />
@@ -1105,16 +1102,20 @@ export default function Form() {
                       <CardTitle>Contact Information</CardTitle>
                       <CardDescription>
                         Please provide your contact details and addresses.
-                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
                             Scroll down to continue filling out the form and access the navigation items.
                           </p>
+                          <div>
+                            <span className="text-red-500">*</span>
+                            <span className="italic text-xs">=Required</span>
+                          </div>  
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                         {/* Primary Phone */}
                         <div className='space-y-2'>
-                          <Label htmlFor='primary_phone'>Primary Phone *</Label>
+                          <Label htmlFor='primary_phone'>Primary Phone <span className="text-red-500">*</span></Label>
                           <Input
                             id='primary_phone'
                             type='tel'
@@ -1129,7 +1130,7 @@ export default function Form() {
 
                         {/* Primary Email */}
                         <div className='space-y-2'>
-                          <Label htmlFor='primary_email'>Primary Email *</Label>
+                          <Label htmlFor='primary_email'>Primary Email <span className="text-red-500">*</span></Label>
                           <Input
                             id='primary_email'
                             type='email'
@@ -1144,7 +1145,7 @@ export default function Form() {
 
                         {/* Primary Physical */} 
                         <div className='space-y-2'>
-                          <Label htmlFor='primary_physical'>Physical Address *</Label>
+                          <Label htmlFor='primary_physical'>Physical Address <span className="text-red-500">*</span></Label>
                           <Textarea
                             id='primary_physical'
                             {...register('primary_physical')}
@@ -1159,7 +1160,7 @@ export default function Form() {
                         
                         {/* Primary Postal */}
                         <div className='space-y-2'>
-                          <Label htmlFor='primary_postal'>Postal Address *</Label>
+                          <Label htmlFor='primary_postal'>Postal Address <span className="text-red-500">*</span></Label>
                           <Textarea
                             id='primary_postal'
                             {...register('primary_postal')}
@@ -1200,16 +1201,20 @@ export default function Form() {
                       <CardTitle>Professional Details</CardTitle>
                       <CardDescription>
                         Please provide your professional and employment information.
-                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
                             Scroll down to continue filling out the form and access the navigation items.
                           </p>
+                          <div>
+                            <span className="text-red-500">*</span>
+                            <span className="italic text-xs">=Required</span>
+                          </div>  
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {/* Employment Status */}
                         <div className="space-y-2">
-                          <Label htmlFor='work_status'>Employment Status *</Label>
+                          <Label htmlFor='work_status'>Employment Status <span className="text-red-500">*</span></Label>
                           <Select 
                           onValueChange={(value: string) => {
                             setValue('work_status', value);
@@ -1221,6 +1226,7 @@ export default function Form() {
                             setValue('primary_schools', "");
                             setValue('junior_schools', "");
                             setValue('senior_schools', "");
+                            trigger('work_status')
                           }}
                           value={watch('work_status')}>
                             <SelectTrigger className='mt-1'>
@@ -1237,10 +1243,13 @@ export default function Form() {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor='practice_category'>Practice Category *</Label>
+                          <Label htmlFor='practice_category'>Practice Category <span className="text-red-500">*</span></Label>
                           <Select 
                           value={watch('practice_category')}
-                          onValueChange={(value) => setValue('practice_category', value)}
+                          onValueChange={(value) => {
+                            setValue('practice_category', value)
+                            trigger('practice_category')
+                          }}
                           >
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select school level that you are teaching e.g Pre-Primary' />
@@ -1258,9 +1267,12 @@ export default function Form() {
 
                         { /* Sub Category */}         
                         <div className="space-y-2">
-                          <Label htmlFor='sub_category'>Sub Category *</Label>
+                          <Label htmlFor='sub_category'>Sub Category <span className="text-red-500">*</span></Label>
                           <Select 
-                          onValueChange={(value) => setValue('sub_category', value)}
+                          onValueChange={(value) => {
+                            setValue('sub_category', value)
+                            trigger('sub_category')
+                          }}
                           value={watch('sub_category')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select sub category' />
@@ -1281,9 +1293,12 @@ export default function Form() {
                         
                         {/* Experience Duration */}
                         <div className="space-y-2">
-                          <Label htmlFor='experience_years'>Experience *</Label>
+                          <Label htmlFor='experience_years'>Experience <span className="text-red-500">*</span></Label>
                           <Select 
-                          onValueChange={(value) => setValue('experience_years', value)}
+                          onValueChange={(value) => {
+                            setValue('experience_years', value)
+                            trigger('experience_years')
+                          }}
                           value={watch('experience_years')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select teaching experience duration' />
@@ -1305,9 +1320,14 @@ export default function Form() {
                           <>
                         {/* Region */}
                         <div className="space-y-2">
-                          <Label htmlFor='district'>Region *</Label>
+                          <Label htmlFor='district'>Region <span className="text-red-500">*</span></Label>
                           <Select 
-                          onValueChange={(value) => setValue('district', value)}
+                          onValueChange={
+                            (value) => {
+                              setValue('district', value)
+                              trigger('district')
+                            }
+                          }
                           value={watch('district')}>
                             <SelectTrigger className='mt-1'>
                               <SelectValue placeholder='Select district' />
@@ -1337,11 +1357,12 @@ export default function Form() {
                             value={watch('institution_type')} 
                             onValueChange={(value) => {
                               setValue('institution_type', value);
-                              setValue('school_level', ""); // Reset school level when changing type
-                              setValue('private_schools', ""); // Reset private schools when changing type
-                              setValue('primary_schools', ""); // Reset primary schools when changing type
-                              setValue('junior_schools', ""); // Reset junior schools when changing type
-                              setValue('senior_schools', ""); // Reset senior schools when changing type
+                              setValue('school_level', ""); 
+                              setValue('private_schools', ""); 
+                              setValue('primary_schools', ""); 
+                              setValue('junior_schools', ""); 
+                              setValue('senior_schools', ""); 
+                              trigger('institution_type')
                             }}
                             className="mt-3"
                           >
@@ -1361,7 +1382,7 @@ export default function Form() {
 
                         {/* School level */}
                         {<div className="space-y-2">
-                          <Label htmlFor='school_level'>School Level *</Label>
+                          <Label htmlFor='school_level'>School Level <span className="text-red-500">*</span></Label>
                           <Select 
                           onValueChange={(value) => {
                             setValue('school_level', value);
@@ -1369,6 +1390,9 @@ export default function Form() {
                                 setValue('primary_schools', "");
                                 setValue('junior_schools', "");
                                 setValue('senior_schools', "");
+                                setValue('subject_specialization', "");
+                                setValue('other_subject_specialization', "");
+                                trigger('school_level');
                             }
                             }
                           value={watch('school_level')}>
@@ -1420,6 +1444,7 @@ export default function Form() {
                                             const selectedSchool = centralPrivatePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('private_schools', selectedSchool?.label || currentValue);
                                             setPrivateOpen(false)
+                                            trigger('private_schools')
                                           }}
                                         >
                                           {school.label}
@@ -1838,6 +1863,7 @@ export default function Form() {
                                           const selectedSchool = centralPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1857,6 +1883,7 @@ export default function Form() {
                                           const selectedSchool = chobePrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1876,6 +1903,7 @@ export default function Form() {
                                           const selectedSchool = ghanziPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1895,6 +1923,7 @@ export default function Form() {
                                           const selectedSchool = kgalagadiPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1914,6 +1943,7 @@ export default function Form() {
                                           const selectedSchool = kgatlengPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1933,6 +1963,7 @@ export default function Form() {
                                           const selectedSchool = kwenengPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1952,6 +1983,7 @@ export default function Form() {
                                           const selectedSchool = northEastPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1971,6 +2003,7 @@ export default function Form() {
                                           const selectedSchool = northWestPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -1990,6 +2023,7 @@ export default function Form() {
                                           const selectedSchool = southEastPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -2009,6 +2043,7 @@ export default function Form() {
                                           const selectedSchool = southernPrimarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                           setValue('primary_schools', selectedSchool?.label || currentValue);
                                           setPrimaryOpen(false)
+                                          trigger('primary_schools')
                                         }}
                                       >
                                         {school.label}
@@ -2035,7 +2070,7 @@ export default function Form() {
 
                         {/* Other Primary Schools */}
                         {watch('other_primary_schools')?.toLowerCase()  === 'other' && watch('institution_type')?.toLowerCase()  === 'public' && <div className="space-y-2">
-                          <Label htmlFor='other_primary_schools'>Other Primary School *</Label>
+                          <Label htmlFor='other_primary_schools'>Other Primary School <span className="text-red-500">*</span></Label>
                           <Input
                             id='other_primary_schools'
                             {...register('other_primary_schools')}
@@ -2079,6 +2114,7 @@ export default function Form() {
                                             const selectedSchool = centralPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2098,6 +2134,7 @@ export default function Form() {
                                             const selectedSchool = chobePublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2117,6 +2154,7 @@ export default function Form() {
                                             const selectedSchool = ghanziPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2136,6 +2174,7 @@ export default function Form() {
                                             const selectedSchool = kgalagadiPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2155,6 +2194,7 @@ export default function Form() {
                                             const selectedSchool = kgatlengPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2174,6 +2214,7 @@ export default function Form() {
                                             const selectedSchool = kwenengPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2193,6 +2234,7 @@ export default function Form() {
                                             const selectedSchool = northEastPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2212,6 +2254,7 @@ export default function Form() {
                                             const selectedSchool = northWestPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2231,6 +2274,7 @@ export default function Form() {
                                             const selectedSchool = southEastPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2250,6 +2294,7 @@ export default function Form() {
                                             const selectedSchool = southernPublicSchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('junior_schools', selectedSchool?.label || currentValue);
                                             setJuniorOpen(false)
+                                            trigger('junior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2276,7 +2321,7 @@ export default function Form() {
 
                         {/* Other Junior Schools */}
                         {watch('other_junior_schools')?.toLowerCase()  === 'other' && watch('institution_type')?.toLowerCase()  === 'public' && <div className="space-y-2">
-                          <Label htmlFor='other_junior_schools'>Other Junior School *</Label>
+                          <Label htmlFor='other_junior_schools'>Other Junior School <span className="text-red-500">*</span></Label>
                           <Input
                             id='other_junior_schools'
                             {...register('other_junior_schools')}
@@ -2320,6 +2365,7 @@ export default function Form() {
                                             const selectedSchool = centralSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2339,6 +2385,7 @@ export default function Form() {
                                             const selectedSchool = chobeSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2350,25 +2397,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {/* {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
-                                        <CommandItem
-                                          key={school.value}
-                                          value={school.label || watch('senior_schools')}
-                                          onSelect={(currentValue) => {
-                                            setValue('senior_schools', currentValue === watch('senior_schools') ? "" : currentValue)
-                                            setSeniorOpen(false)
-                                          }}
-                                        >
-                                          {school.label}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              watch('senior_schools') === school.label ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
-                                      ))} */}
-                                      {watch('district') === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "ghanzi" && ghanziSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2376,6 +2405,7 @@ export default function Form() {
                                             const selectedSchool = ghanziSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2387,7 +2417,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "kgalagadi" && kgalagadiSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "kgalagadi" && kgalagadiSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2395,6 +2425,7 @@ export default function Form() {
                                             const selectedSchool = kgalagadiSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2406,7 +2437,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "kgatleng" && kgatlengSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "kgatleng" && kgatlengSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2414,6 +2445,7 @@ export default function Form() {
                                             const selectedSchool = kgatlengSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2425,7 +2457,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "kweneng" && kwenengSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "kweneng" && kwenengSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2433,6 +2465,7 @@ export default function Form() {
                                             const selectedSchool = kwenengSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2444,7 +2477,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "north-east" && northEastSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "north-east" && northEastSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2452,6 +2485,7 @@ export default function Form() {
                                             const selectedSchool = northEastSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2463,7 +2497,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "north-west" && northWestSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "north-west" && northWestSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2471,6 +2505,7 @@ export default function Form() {
                                             const selectedSchool = northWestSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2482,7 +2517,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "south-east" && southEastSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "south-east" && southEastSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2490,6 +2525,7 @@ export default function Form() {
                                             const selectedSchool = southEastSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2501,7 +2537,7 @@ export default function Form() {
                                           />
                                         </CommandItem>
                                       ))}
-                                      {watch('district') === "southern" && southernSeniorSecondarySchoolsForSelect.map((school) => (
+                                      {watch('district')?.toLowerCase()  === "southern" && southernSeniorSecondarySchoolsForSelect.map((school) => (
                                         <CommandItem
                                           key={school.value}
                                           value={school.value}
@@ -2509,6 +2545,7 @@ export default function Form() {
                                             const selectedSchool = southernSeniorSecondarySchoolsForSelect.find((d) => d.value.toLowerCase() === currentValue.toLowerCase());
                                             setValue('senior_schools', selectedSchool?.label || currentValue);
                                             setSeniorOpen(false)
+                                            trigger('senior_schools')
                                           }}
                                         >
                                           {school.label}
@@ -2535,7 +2572,7 @@ export default function Form() {
 
                         {/* Other Senior Schools */}
                         {watch('senior_schools')?.toLowerCase() === 'other' && watch('institution_type')?.toLowerCase()  === 'public' && <div className="space-y-2">
-                          <Label htmlFor='other_senior_schools'>Other Senior School *</Label>
+                          <Label htmlFor='other_senior_schools'>Other Senior School <span className="text-red-500">*</span></Label>
                           <Input
                             id='other_senior_schools'
                             {...register('other_senior_schools')}
@@ -2577,9 +2614,13 @@ export default function Form() {
                       <CardTitle>Qualifications</CardTitle>
                       <CardDescription>
                         Please provide details about your educational qualifications.
-                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
                             Scroll down to continue filling out the form and access the navigation items.
                           </p>
+                          <div>
+                            <span className="text-red-500">*</span>
+                            <span className="italic text-xs">=Required</span>
+                          </div>  
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -2587,7 +2628,7 @@ export default function Form() {
                         
                         {/* Level */}
                         <div className='space-y-2'>
-                          <Label htmlFor='level'>Teaching Qualification Level*</Label>
+                          <Label htmlFor='level'>Teaching Qualification Level <span className="text-red-500">*</span></Label>
                           <Select 
                             onValueChange={(value: string) => {
                               setValue('level', value);
@@ -2600,15 +2641,7 @@ export default function Form() {
                               setValue('qualification_masters_degree', '');
                               setValue('qualification_doctoral_degree', '');
                               setValue('other_qualification', '');
-
-                              trigger('qualification_certificate');
-                              trigger('qualification_diploma');
-                              trigger('qualification_post_grad_diploma');
-                              trigger('qualification_degree');
-                              trigger('qualification_degree_honours');
-                              trigger('qualification_masters_degree');
-                              trigger('qualification_doctoral_degree');
-                              trigger('other_qualification');
+                              trigger('level')
                             }}
                             value={watch('level')}
                           >
@@ -2667,6 +2700,7 @@ export default function Form() {
                                             );
                                             setValue('qualification_doctoral_degree', selectedDoctorate?.label || currentValue);
                                             setDoctoralDegreeOpen(false);
+                                            trigger('qualification_doctoral_degree')
                                           }}
                                         >
                                           {doctorate.label}
@@ -2728,6 +2762,7 @@ export default function Form() {
                                             );
                                             setValue('qualification_masters_degree', selectedMasters?.label || currentValue);
                                             setMastersOpen(false);
+                                            trigger('qualification_masters_degree')
                                           }}
                                         >
                                           {masters.label}
@@ -2756,7 +2791,7 @@ export default function Form() {
                         {/* Bachelor's Degree Honours */}
                         {watch('level') === "Bachelor's Degree Honours" && (
                           <div className='space-y-2'>
-                            <Label htmlFor='qualification_degree' className="text-sm font-medium text-gray-700">
+                            <Label htmlFor='qualification_degree_honours' className="text-sm font-medium text-gray-700">
                               Bachelor&apos;s Degree Honours<span className="text-red-500">*</span>
                             </Label>
                             <Popover open={honoursOpen} onOpenChange={setHonoursOpen}>
@@ -2789,6 +2824,7 @@ export default function Form() {
                                             );
                                             setValue('qualification_degree_honours', selectedHonours?.label || currentValue);
                                             setHonoursOpen(false);
+                                            trigger('qualification_degree_honours')
                                           }}
                                         >
                                           {degree.label}
@@ -2850,6 +2886,7 @@ export default function Form() {
                                             );
                                             setValue('qualification_diploma', selectedDiploma?.label || currentValue);
                                             setDiplomaOpen(false);
+                                            trigger('qualification_diploma')
                                           }}
                                         >
                                           {diploma.label}
@@ -2911,6 +2948,7 @@ export default function Form() {
                                             );
                                             setValue('qualification_post_grad_diploma', selectedDiploma?.label || currentValue);
                                             setPostGradDiplomaOpen(false);
+                                            trigger('qualification_post_grad_diploma')
                                           }}
                                         >
                                           {diploma.label}
@@ -2972,6 +3010,7 @@ export default function Form() {
                                             );
                                             setValue('qualification_degree', selectedDegree?.label || currentValue);
                                             setDegreeOpen(false);
+                                            trigger('qualification_degree')
                                           }}
                                         >
                                           {degree.label}
@@ -3000,10 +3039,16 @@ export default function Form() {
                         {/* Certificate */}
                         {watch('level') === "Certificate" && (
                           <div>
-                            <Label htmlFor='qualification_certificate'>Qualification Certificate *</Label>
+                            <Label htmlFor='qualification_certificate'>Qualification Certificate <span className="text-red-500">*</span></Label>
                             <Select 
-                              onValueChange={(value) => setValue('qualification_certificate', value)}
-                              value={watch('qualification_certificate')}
+                              onValueChange={(value) => {
+                                setValue('qualification_certificate', value)
+                                trigger('qualification_certificate')
+                               }
+                              }
+                              value={watch('qualification_certificate')
+                                
+                              }
                             >
                               <SelectTrigger className='mt-1'>
                                 <SelectValue placeholder='Select qualification' />
@@ -3031,7 +3076,7 @@ export default function Form() {
                           watch('qualification_masters_degree') || watch('qualification_doctoral_degree' ) || watch('qualification_diploma') || 
                           watch('qualification_post_grad_diploma') || watch('qualification_degree_honours')) === "Other" && (
                           <div>
-                            <Label htmlFor='other_qualification'>Other qualification *</Label>
+                            <Label htmlFor='other_qualification'>Other qualification <span className="text-red-500">*</span></Label>
                             <Input
                               id='other_qualification'
                               {...register('other_qualification')}
@@ -3078,7 +3123,7 @@ export default function Form() {
                                             );
                                             setValue('institution', selectedInstitution?.label || currentValue);
                                             setInstitutionOpen(false);
-                                            trigger('other_institution');
+                                            trigger('institution');
                                           }}
                                         >
                                           {institution.label}
@@ -3106,7 +3151,7 @@ export default function Form() {
                         {/* Other Institution  */}
                         {watch('institution')?.toLowerCase() === "other" && (
                           <div className='space-y-2'>
-                            <Label htmlFor='other_institution'>Institution Name *</Label>
+                            <Label htmlFor='other_institution'>Institution Name <span className="text-red-500">*</span></Label>
                             <Input
                               id='other_institution'
                               {...register('other_institution')}
@@ -3121,58 +3166,24 @@ export default function Form() {
 
                         {/* Qualification Year */}
                         <div className='space-y-2'>
-                          <Label htmlFor='qualification_year'>Qualification Year *</Label>
+                          <Label htmlFor='qualification_year'>Qualification Year <span className="text-red-500">*</span></Label>
                           <div>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  className="w-full justify-between"
-                                >
-                                  {watch('qualification_year') || "Select a year..."}
-                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0">
-                                <Command>
-                                  <CommandInput placeholder="Search year..." />
-                                  <CommandEmpty>No year found.</CommandEmpty>
-                                  <CommandGroup className="max-h-[200px] overflow-auto">
-                                    {Array.from({ length: 2025 - 1950 + 1 }, (_, i) => 2025 - i).map((year) => (
-                                      <CommandItem
-                                        key={year}
-                                        value={year.toString()}
-                                        onSelect={(currentValue) => {
-                                          setValue('qualification_year', currentValue);
-                                        }}
-                                      >
-                                        <Check
-                                          className={cn(
-                                            "mr-2 h-4 w-4",
-                                            watch('qualification_year') === year.toString() ? "opacity-100" : "opacity-0"
-                                          )}
-                                        />
-                                        {year}
-                                      </CommandItem>
-                                    ))}
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
-                            
-                            <input
-                              type="hidden"
-                              {...register('qualification_year', {
-                                required: 'Qualification year is required',
-                                validate: (value) => {
-                                  const year = parseInt(value);
-                                  if (isNaN(year) || year < 1950 || year > 2025) {
-                                    return 'Please select a year between 1950 and 2025';
-                                  }
-                                  return true;
-                                }
-                              })}
+                            <Input
+                              id='qualification_year'
+                              type='text'
+                              placeholder='Enter year (e.g., 2000)'
+                              maxLength={4}
+                              {...register('qualification_year')}
+                              className={errors.qualification_year ? 'border-red-500' : ''}
+                              onChange={(e) => {
+                                // Allow only numbers and limit to 4 characters
+                                const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                                setValue('qualification_year', value);
+                                trigger('qualification_year');
+                              }}
+                              onBlur={() => {
+                                trigger('qualification_year');
+                              }}
                             />
                           </div>
                           {errors.qualification_year && (
@@ -3219,7 +3230,10 @@ export default function Form() {
                         {/* Subject Specialization - Made Optional */}
                         <div className='space-y-2'>
                           <Label htmlFor='subject_specialization' className="text-sm font-medium text-gray-700">
-                            Subject Specialization 
+                            Subject Specialization
+                            <span className="text-gray-500 font-normal ml-1">
+                              (Required when school level is secondary)
+                            </span>
                           </Label>
                           <Popover open={subjectOpen} onOpenChange={setSubjectOpen}>
                             <PopoverTrigger asChild>
@@ -3350,9 +3364,13 @@ export default function Form() {
                       <CardTitle>Declarations & Disclosures</CardTitle>
                       <CardDescription>
                         Please answer all questions truthfully and provide supporting documentation where required.
-                                                  <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
+                          <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
                             Scroll down to continue filling out the form and access the navigation items.
-                          </p>
+                          </p>         
+                          <div>
+                            <span className="text-red-500">*</span>
+                            <span className="italic text-xs">=Required</span>
+                          </div>   
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3424,8 +3442,6 @@ export default function Form() {
                             setValue('student_related_offence_details', ''); // Reset details
                             setStudentRelatedOffenceAttachmentDoc(null); // Reset details
                             trigger('student_related_offence')
-                            trigger('student_related_offence_details');
-                            trigger('student_related_offence_attachments');
                           }}
                           className="mt-3"
                         >
@@ -3459,7 +3475,7 @@ export default function Form() {
                             <div className='col-span-2'>
                               <FileUpload
                                 name="student_related_offence_attachments"
-                                label="Attachments (optional)"
+                                label="Attachments *"
                                 description="Upload a clear copy"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
@@ -3490,8 +3506,6 @@ export default function Form() {
                             setValue('drug_related_offence_details', ''); // Reset details
                             setDrugRelatedOffenceAttachmentsDoc(null); // Reset attachments
                             trigger('drug_related_offence')
-                            trigger('drug_related_offence_details');
-                            trigger('drug_related_offence_attachments');
                           }}
                           className="mt-3"
                         >
@@ -3525,7 +3539,7 @@ export default function Form() {
                               <Label htmlFor="drug_related_offence_details">Provide supporting evidence/documentation if any (Upload in pdf format)</Label>
                               <FileUpload
                                 name="drug_related_offence_attachments"
-                                label="Attachments (optional)"
+                                label="Attachments *"
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
@@ -3555,7 +3569,6 @@ export default function Form() {
                             setValue('license_flag', value)
                             setLicenseFlagDetailsDoc(null); // Reset details
                             trigger('license_flag')
-                            trigger('license_flag_details')
                           }}
                           className="mt-3"
                         >
@@ -3576,7 +3589,7 @@ export default function Form() {
                               <Label>If yes, please attach a letter giving full details and official documentation of the action taken.</Label>
                               <FileUpload
                                 name="license_flag_details"
-                                label="Attachments (optional)"
+                                label="Attachments *"
                                 description="Upload a clear copy"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
@@ -3598,14 +3611,13 @@ export default function Form() {
 
                       {/* Professional misconduct */}
                       <div>
-                        <Label className="text-base font-medium">Are you currently the subject of any review, enquiry or investigations by any Teaching Council or any Authority.?</Label>
+                        <Label className="text-base font-medium">Are you currently the subject of any review, enquiry or investigations by any Teaching Council or any Authority?</Label>
                         <RadioGroup 
                           value={watch('misconduct_flag')} 
                           onValueChange={(value) => {
                             setValue('misconduct_flag', value)
                             setMisconductFlagDetailsDoc(null); // Reset details
                             trigger('misconduct_flag')
-                            trigger('misconduct_flag_details')
                           }}
                           className="mt-3"
                         >
@@ -3626,7 +3638,7 @@ export default function Form() {
                               <Label htmlFor="misconduct_flag_details">If yes, please attach a letter giving full details and any official documentation available regarding the matter.</Label>
                               <FileUpload
                                 name="misconduct_flag_details"
-                                label="Attachments (optional)"
+                                label="Attachments *"
                                 description="Upload a clear copy of your National ID"
                                 acceptedTypes=".pdf,.jpg,.jpeg,.png"
                                 maxSize={5}
@@ -3676,6 +3688,10 @@ export default function Form() {
                           <p className="mt-1 italic text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">
                             Scroll down to continue filling out the form and access the navigation items.
                           </p>
+                          <div>
+                            <span className="text-red-500">*</span>
+                            <span className="italic text-xs">=Required</span>
+                          </div>  
                       </CardDescription>
                     </CardHeader>
                     <CardContent className='space-y-6'>
@@ -3885,7 +3901,7 @@ export default function Form() {
                                 {watch('student_related_offence_details') && <InfoItem label="Student Offence Details" value={watch('student_related_offence_details')} />}
                                 <InfoItem label="Drug Related Offence" value={watch('drug_related_offence')} />
                                 {watch('drug_related_offence_details') && <InfoItem label="Drug Offence Details" value={watch('drug_related_offence_details')} />}
-                                <InfoItem label="License Flag" value={watch('license_flag')} />
+                                <InfoItem label="Licence Flag" value={watch('license_flag')} />
                                 {watch('misconduct_flag') && <InfoItem label="Misconduct Flag" value={watch('misconduct_flag')} />}
                               </div>
                             </AccordionContent>
@@ -3900,7 +3916,12 @@ export default function Form() {
                           <Checkbox 
                             id='declaration'
                             checked={watch('declaration')}
-                            onCheckedChange={(checked) => setValue('declaration', checked as boolean)}
+                            onCheckedChange={
+                              (checked) => {
+                                setValue('declaration', checked as boolean);
+                                trigger('declaration');
+                              }
+                            }
                             required
                           />
                           <div className='grid gap-1.5 leading-none'>
@@ -3927,7 +3948,10 @@ export default function Form() {
                           <Checkbox 
                             id='profile_data_consent'
                             checked={watch('profile_data_consent')}
-                            onCheckedChange={(checked) => setValue('profile_data_consent', checked as boolean)}
+                            onCheckedChange={(checked) => {
+                              setValue('profile_data_consent', checked as boolean);
+                              trigger('profile_data_consent');
+                            }}
                             required
                           />
                           <div className='grid gap-1.5 leading-none'>
@@ -3952,7 +3976,11 @@ export default function Form() {
                           <Checkbox
                             id="terms_and_conditions_of_use_and_privacy_policy"
                             checked={watch('terms_and_conditions_of_use_and_privacy_policy')}
-                            onCheckedChange={(checked) => setValue('terms_and_conditions_of_use_and_privacy_policy', checked as boolean)}
+                            onCheckedChange={(checked) => {
+                              setValue('terms_and_conditions_of_use_and_privacy_policy', checked as boolean);
+                              trigger('terms_and_conditions_of_use_and_privacy_policy')
+                            }}
+                            required
                             disabled={isLoading}
                           />
                           <Label
@@ -3978,6 +4006,9 @@ export default function Form() {
                             </a> 
                           </Label>
                         </div>
+                        {errors.terms_and_conditions_of_use_and_privacy_policy && (
+                          <p className='text-sm text-red-500'>{errors.terms_and_conditions_of_use_and_privacy_policy.message}</p>
+                        )}
                       </div>
 
                       {/* Progress indicator for mobile */}
@@ -4119,13 +4150,33 @@ export default function Form() {
                       {!submitting && !submissionResult && (
                         <>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Submit Teacher Registration Application?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              You are about to submit your teacher registration application. Please review all the information you have provided carefully before proceeding.
-                              
-                              Once submitted, your application will be sent for review and you will not be able to make changes until the review process is complete. You will receive a confirmation email with your application reference number.
-                              
-                              Are you ready to submit your application?
+                            <AlertDialogTitle className="text-center text-blue-600">
+                              Submit Teacher Registration Application?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-center">
+                              <div className="space-y-4">
+                                <div className="flex items-center justify-center">
+                                  <svg className="w-12 h-12 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                                <div className="space-y-3 text-left">
+                                  <p>
+                                    You are about to submit your teacher registration application. Please review all the information you have provided carefully before proceeding.
+                                  </p>
+                                  <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+                                    <p className="text-amber-800 text-sm">
+                                      <strong>Important:</strong> Once submitted, your application will be sent for review and you will not be able to make changes until the review process is complete.
+                                    </p>
+                                  </div>
+                                  <p>
+                                    You will receive a confirmation notification and sms with your application reference number.
+                                  </p>
+                                </div>
+                                <p className="font-medium text-blue-700">
+                                  Are you ready to submit your application?
+                                </p>
+                              </div>
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -4133,56 +4184,89 @@ export default function Form() {
                               onClick={() => {
                                 setSubmitting(false);
                                 setSubmissionResult(null);
-                                clearErrors();  // Clears all errors at once
+                                // clearErrors();  // Clears all errors at once
                               }}
                             >
                               Return To Form
                             </AlertDialogCancel>
-                            <Button onClick={submitForm}>Continue</Button>
+                            <Button 
+                              onClick={submitForm}
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              Continue Submission
+                            </Button>
                           </AlertDialogFooter>
                         </>
                       )}
                       {submitting && (
                         <>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Submitting...</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            <div className="items-center space-y-2">
-                              <div className="flex items-center justify-center">
-                                <Loader2 className="animate-spin h-6 w-6 text-blue-600 mr-2 inline-block" />
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-center">Submitting Application...</AlertDialogTitle>
+                            <AlertDialogDescription className="text-center">
+                              <div className="space-y-4">
+                                <div className="flex items-center justify-center">
+                                  <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+                                </div>
+                                <div>
+                                  Your application is being submitted. This may take a few moments depending on the size of your attachments and the current server load.
+                                  Please wait while we process your application.
+                                </div>
                               </div>
-                              <div>
-                                Your application is being submitted. This may take a few moments depending on the size of your attachments and the current server load.
-                                Please wait while we process your application.
-                              </div>
-                            </div>
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel Submission</AlertDialogCancel>
-                            {/* <Button onClick={submitForm}>Re-submit</Button> */}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel 
+                              onClick={() => setSubmitting(false)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              Cancel Submission
+                            </AlertDialogCancel>
                           </AlertDialogFooter>
                         </>
                       )}
                       {submissionResult?.success==true && !submitting && (
                         <>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Application Submitted Successfully!</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Your teacher registration application has been submitted successfully. 
-                              You will receive a confirmation email shortly with your application reference number: <strong>{submissionResult.application_id}</strong>.
+                            <AlertDialogTitle className="text-center text-green-600">
+                              Application Submitted Successfully!
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-center">
+                              <div className="space-y-4">
+                                <div className="flex items-center justify-center">
+                                  <svg className="w-12 h-12 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                                <div className="text-green-700">
+                                  Your teacher registration application has been submitted successfully. 
+                                  You will receive a confirmation email shortly with your application reference number:
+                                  <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+                                    <strong className="text-green-800 text-lg">{submissionResult.application_id}</strong>
+                                  </div>
+                                </div>
+                              </div>
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogAction onClick={() => setSubmissionResult(null)}>Close</AlertDialogAction>
+                            <AlertDialogAction 
+                              onClick={() => setSubmissionResult(null)}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              Close
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </>
                       )}
                       {submissionResult?.success==false && (
                         <>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Application Submission Failed</AlertDialogTitle>
-                            <AlertDialogDescription>
+                            <AlertDialogTitle className="text-red-600 flex items-center gap-2">
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                              </svg>
+                              Application Submission Failed
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-red-700 bg-red-50 p-3 rounded-md border border-red-200">
                               {submissionError ? (
                                 <>
                                   {submissionError}
@@ -4196,7 +4280,12 @@ export default function Form() {
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogAction onClick={() => setSubmissionResult(null)}>Close</AlertDialogAction>
+                            <AlertDialogAction 
+                              onClick={() => setSubmissionResult(null)}
+                              className="bg-red-600 hover:bg-red-700 text-white"
+                            >
+                              Close
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </>
                       )}

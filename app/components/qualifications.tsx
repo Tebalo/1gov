@@ -382,78 +382,33 @@ const handleAttachmentChange = (attachment: UploadResponse | null) => {
                     </p>
                   )}
                 </div> */}
-
-                {/* Year Dropdown */}
+                
+                {/* Qualification Year  */}
                 <div className='space-y-2'>
                   <Label htmlFor='alt_qualification_year'>Qualification Year *</Label>
-                  <Select
-                    onValueChange={(value) => handleInputChange('alt_qualification_year', value)}
+                  <Input
+                    id='alt_qualification_year'
+                    type='text'
+                    placeholder='Enter year (e.g., 2000)'
+                    maxLength={4}
                     value={formData.alt_qualification_year}
-                  >
-                    <SelectTrigger className='h-11 text-base'>
-                      <SelectValue placeholder="Select a year" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      {Array.from({ length: 2026 - 1950 + 1 }, (_, i) => 2026 - i).map((year) => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    className={`h-11 text-base ${formErrors.alt_qualification_year ? 'border-red-500' : ''}`}
+                    onChange={(e) => {
+                      // Allow only numbers and limit to 4 characters
+                      const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                      handleInputChange('alt_qualification_year', value);
+                      // If you have a validation trigger function, add it here:
+                      // validateField('alt_qualification_year');
+                    }}
+                    onBlur={() => {
+                      // Optional: trigger validation on blur
+                      // validateField('alt_qualification_year');
+                    }}
+                  />
                   {formErrors.alt_qualification_year && (
                     <p className='text-sm text-red-500 mt-1'>{formErrors.alt_qualification_year}</p>
                   )}
                 </div>
-{/* <div className='space-y-2'>
-  <Label htmlFor='alt_qualification_year'>Qualification Year *</Label>
-  <div>
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-full justify-between h-11 text-base"
-        >
-          {formData.alt_qualification_year || "Select a year..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandInput placeholder="Search year..." />
-          <CommandEmpty>No year found.</CommandEmpty>
-          <CommandGroup className="max-h-[200px] overflow-auto">
-            {Array.from({ length: 2026 - 1950 + 1 }, (_, i) => 2026 - i).map((year) => (
-              <CommandItem
-                key={year}
-                value={year.toString()}
-                onSelect={(currentValue) => {
-                  console.log('Command onSelect - currentValue:', currentValue);
-                  console.log('Command onSelect - year:', year);
-                  console.log('Current formData before update:', formData);
-                  handleInputChange('alt_qualification_year', currentValue);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    formData.alt_qualification_year === year.toString() ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {year}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  </div>
-  {formErrors.alt_qualification_year && (
-    <p className='text-sm text-red-500 mt-1'>{formErrors.alt_qualification_year}</p>
-  )}
-</div> */}
-
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">
                     Upload Qualification Document  <span className="text-red-500">*</span>

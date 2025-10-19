@@ -606,7 +606,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                         )}
                         {registrationData.license_expiry_date && (
                           <div>
-                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">License Expiry</label>
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Licence Expiry</label>
                             <p className="text-sm text-gray-900 mt-1">{formatDate(registrationData.license_expiry_date)}</p>
                           </div>
                         )}

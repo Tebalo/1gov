@@ -62,7 +62,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Registration Number" value={data.teacher_registrations?.reg_number}/>
       <InfoItem label="Registration Status" value={data.teacher_registrations?.reg_status}/>
       <InfoItem label="Endorsement Status" value={data.teacher_registrations?.endorsement_status}/>
-      <InfoItem label="License Status" value={data.teacher_registrations?.license_status}/>
+      <InfoItem label="Licence Status" value={data.teacher_registrations?.license_status}/>
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
       <InfoItem 
         label="Payment Amount" 
@@ -80,9 +80,9 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
       <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
       <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
-      <InfoItem label="License Expiry Date" value={data.teacher_registrations?.license_expiry_date} isDate/>
+      <InfoItem label="Licence Expiry Date" value={data.teacher_registrations?.license_expiry_date} isDate/>
       <InfoItem label="Subscription Due Date" value={data.teacher_registrations?.subscription_due_date} isDate/>
-      {isEndorsementComplete() && <InfoItem label='Computed License Status' value={getLicenseStatus()} isLicenseStatus/>}
+      {isEndorsementComplete() && <InfoItem label='Computed Licence Status' value={getLicenseStatus()} isLicenseStatus/>}
     </InfoCard>
   );
 
@@ -238,12 +238,12 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
           )}
           
           <InfoItem 
-            label="License Flag" 
+            label="Licence Flag" 
             value={data.offence_convictions.license_flag === 'yes' ? 'Yes' : 'No'}
           />
           {data.offence_convictions.license_flag?.toLowerCase() === 'yes' && (
             <InfoItem 
-              label="License Flag Details" 
+              label="Licence Flag Details" 
               isAttachment
               value={data.offence_convictions.license_flag_details}
             />
@@ -308,7 +308,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   const renderDocuments = () => (
     <InfoCard title='Documents' icon={<File className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="National ID Copy" value={data.attachments?.national_id_copy} isAttachment/>
-      <InfoItem label="License Certificate" value={data.teacher_registrations?.license_link} isAttachment/>
+      <InfoItem label="Licence Certificate" value={data.teacher_registrations?.license_link} isAttachment/>
       <InfoItem label="Receipt" value={data.teacher_registrations?.recite} isAttachment/>
       <InfoItem label="Invoice" value={data.teacher_registrations?.invoice} isAttachment/>
     </InfoCard>
