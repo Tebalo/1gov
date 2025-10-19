@@ -15,11 +15,10 @@ interface ErrorState {
   message: string;
 }
 
-// Constants for better maintainability
 const CHART_CONFIG = {
   height: 400,
-  margins: { top: 20, right: 30, left: 20, bottom: 20 },
-  yAxisWidth: 120,
+  margins: { top: 20, right: 30, left: 30, bottom: 20 },
+  yAxisWidth: 200, 
   colors: {
     primary: '#3b82f6',
     secondary: '#10b981', 
@@ -33,7 +32,7 @@ export function HorizontalBarChartStatus() {
   const [error, setError] = useState<ErrorState>({ hasError: false, message: '' });
 
   /**
-   * Fetches and processes status statistics data
+   * Fetches status statistics using the existing getStatuses function
    */
   const fetchStatusStatistics = useCallback(async () => {
     setIsLoading(true);
@@ -49,15 +48,21 @@ export function HorizontalBarChartStatus() {
       // Filter out zero values and sort by total descending
       const processedData = response
         .filter(item => item && typeof item.total === 'number' && item.total > 0)
+        .map(item => ({
+          ...item,
+          status: formatStatusName(item.status) // Format status names for display
+        }))
         .sort((a, b) => b.total - a.total);
       
       setData(processedData);
     } catch (error) {
       console.error("Error fetching status statistics:", error);
+      
       setError({
         hasError: true,
         message: error instanceof Error ? error.message : 'Failed to load data'
       });
+      
       setData([]);
     } finally {
       setIsLoading(false);
@@ -67,6 +72,16 @@ export function HorizontalBarChartStatus() {
   useEffect(() => {
     fetchStatusStatistics();
   }, [fetchStatusStatistics]);
+
+  /**
+   * Format status names for better display
+   */
+  const formatStatusName = (status: string): string => {
+    return status
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
 
   /**
    * Custom tooltip formatter for better data display
@@ -80,6 +95,13 @@ export function HorizontalBarChartStatus() {
    * Custom label formatter for bars
    */
   const formatLabel = (value: number) => value.toLocaleString();
+
+  /**
+   * Retry function for error state
+   */
+  const handleRetry = useCallback(() => {
+    fetchStatusStatistics();
+  }, [fetchStatusStatistics]);
 
   // Loading state
   if (isLoading) {
@@ -116,7 +138,7 @@ export function HorizontalBarChartStatus() {
                 <p className="text-xs text-gray-500 mt-1">{error.message}</p>
               </div>
               <button
-                onClick={fetchStatusStatistics}
+                onClick={handleRetry}
                 className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Try Again
@@ -154,7 +176,7 @@ export function HorizontalBarChartStatus() {
           Registration Status Distribution
         </CardTitle>
         <p className="text-sm text-gray-500 mt-1">
-          {data.reduce((sum, item) => sum + item.total, 0).toLocaleString()} total registrations
+          {/* {data.reduce((sum, item) => sum + item.total, 0).toLocaleString()} Total registrations */}
         </p>
       </CardHeader>
       <CardContent className="pt-0">

@@ -1,13 +1,8 @@
 "use client"
-
 import { ColumnDef } from "@tanstack/react-table"
-
-import { labels, statuses, endorsementStatuses } from "../data/data"
 import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
 import { Registration } from "../data/schema"
+import { CheckCircle, XCircle } from "lucide-react"
 
 export const columns: ColumnDef<Registration>[] = [
   {
@@ -38,98 +33,19 @@ export const columns: ColumnDef<Registration>[] = [
     enableSorting: true,
   },
   {
-    accessorKey: "registration_type",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Type" />
-    ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.registration_type)
-
-      return (
-        <div className="flex space-x-2">
-          {label ? (
-            <Badge variant="outline">{label.label}</Badge>
-          ) : (
-            <Badge variant="outline">{row.getValue("registration_type")}</Badge>
-          )}
-        </div>
-      )
-    },
-  },
-  {
     accessorKey: "reg_status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("reg_status")
-      )
-
-      let badgeVariant = "outline";
-      const statusValue = row.getValue("reg_status") as string;
-      
-      if (statusValue === "Manager-Approved" || statusValue === "Recommended-For-Approval") {
-        badgeVariant = "success";
-      } else if (statusValue === "Manager-Rejected" || statusValue === "Recommended-For-Rejection") {
-        badgeVariant = "destructive";
-      } else if (statusValue === "Pending-Customer-Action") {
-        badgeVariant = "warning";
-      } else {
-        badgeVariant = "secondary";
-      }
-
       return (
         <div className="flex w-full items-center">
-          {status ? (
-            <>
-              {status.icon && (
-                <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-              )}
-              <Badge variant={badgeVariant as any}>
-                {status.label}
-              </Badge>
-            </>
-          ) : (
-            <Badge variant={badgeVariant as any}>
-              {statusValue}
-            </Badge>
-          )}
+          {row.getValue("reg_status")}
         </div>
       )
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    },
-  },
-  {
-    accessorKey: "endorsement_status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Endorsement" />
-    ),
-    cell: ({ row }) => {
-      const endorsementStatus = endorsementStatuses.find(
-        (status) => status.value === row.getValue("endorsement_status")
-      )
-      
-      return (
-        <div className="flex w-full items-center">
-          {endorsementStatus ? (
-            <>
-              {endorsementStatus.icon && (
-                <endorsementStatus.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-              )}
-              <Badge variant={endorsementStatus.variant as any}>
-                {endorsementStatus.label}
-              </Badge>
-            </>
-          ) : (
-            <Badge variant="outline">
-              {row.getValue("endorsement_status")}
-            </Badge>
-          )}
-        </div>
-      )
     },
   },
   {
@@ -180,44 +96,21 @@ export const columns: ColumnDef<Registration>[] = [
       const licenseLink = row.original.license_link;
       
       const licenseStatus = isManagerApproved && isEndorsementComplete ? 'Valid' : 'Invalid';
-      const badgeVariant = licenseStatus === 'Valid' ? 'default' : 'destructive';
       
       // If license is valid and has a link
       if (licenseStatus === 'Valid' && licenseLink) {
         return (
           <div className="flex w-full items-center">
-              <Badge variant={badgeVariant as any} className="inline-flex items-center space-x-1">
-                <span>{licenseStatus}</span>
-                {/* <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="ml-1 h-3.5 w-3.5"
-                >
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg> */}
-              </Badge>
+              <CheckCircle className="h-5 w-5 text-green-600" />
           </div>
         )
       }
       
-      // Default case (no link or invalid license)
       return (
         <div className="flex w-full items-center">
-          <Badge variant={badgeVariant as any}>
-            {licenseStatus}
-          </Badge>
+          <XCircle className="h-5 w-5 text-red-600" />
         </div>
       )
     },
-  },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  }
 ]

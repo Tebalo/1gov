@@ -65,9 +65,9 @@ export default async function DashboardLayout({
         )}
         
         <div className="flex flex-col flex-grow relative md:pl-16">
-          <main className="flex-grow overflow-auto md:p-6">
-            <div className="max-w-full mx-auto p-4 lg:p-0">
-              <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-sm p-6">
+          <main className="flex-grow overflow-auto md:py-2 md:px-6">
+            <div className="max-w-full mx-auto">
+              <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-sm px-6 py-4">
                 <Suspense fallback={<LoadingSkeleton />}>
                   {children}
                 </Suspense>

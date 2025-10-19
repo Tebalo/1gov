@@ -85,7 +85,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     { 
         path: '/trls/work', 
         icon: <FolderOpenDot size={24} color="#FFFFFF" />, 
-        title: 'Work', 
+        title: 'My Work', 
         roles: ['*'] 
     },
     // { 

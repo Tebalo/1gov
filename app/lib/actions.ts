@@ -3471,36 +3471,155 @@ export async function UpdateLicenseStatus(id: string, status: string) {
   return res.status;
 }
 
-// export async function GetReports() {
-//   const res = await fetchWithAuth4(`${apiUrl}/StatisticalReports/`);
-//   return res.json();
-// }
+const REPORTS_CACHE_DURATION = 1* 60 * 1000; // 1 minutes in milliseconds
 
-// export async function getMonthlyTeacherRegistrations() {
-//   const res = await fetchWithAuth4(`${apiUrl}/Monthly-Statistics/`);
-//   return res.json();
-// }
-
-// export async function getStatuses() {
-//   const res = await fetchWithAuth4(`${apiUrl}/Status-Statistics-Graph/`);
-//   return res.json();
-// }
-
-// export async function getTeacherRegistrationsByStatus() {
-//   const res = await fetchWithAuth4(`${apiUrl}/Status-Statistics/`);
-//   return res.json();
-// }
+// Cache storage for reports
+let reportsCachedData: {
+  data: any | null;
+  timestamp: number;
+} = {
+  data: null,
+  timestamp: 0
+};
 
 export async function GetReports() {
-  const res = await fetch(
-    `${apiUrl}/StatisticalReports/`,
-    {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
+  const now = Date.now();
+  
+  // Check if cached data exists and is still valid (less than 5 minutes old)
+  if (reportsCachedData.data && (now - reportsCachedData.timestamp) < REPORTS_CACHE_DURATION) {
+    return reportsCachedData.data;
+  }
+
+  try {
+    console.log('Fetching fresh reports from API');
+    const res = await fetch(
+      `${apiUrl}/StatisticalReports/`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-  );
-  return res.json();
- }
+
+    const data = await res.json();
+    
+    // Update cache with fresh data
+    reportsCachedData = {
+      data: data,
+      timestamp: now
+    };
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    
+    // If we have cached data, return it even if it's expired (fallback)
+    if (reportsCachedData.data) {
+      console.warn('API call failed, returning expired cached reports data');
+      return reportsCachedData.data;
+    }
+    
+    throw new Error('Failed to fetch reports');
+  }
+}
+
+
+// export async function GetReports() {
+//   const res = await fetch(
+//     `${apiUrl}/StatisticalReports/`,
+//     {
+//       method: 'GET',
+//       headers: { 'Content-Type': 'application/json' }
+//     }
+//   );
+//   return res.json();
+//  }
+
+export interface InstitutionData {
+  month: string;
+  public: number;
+  private: number;
+}
+
+// Cache configuration
+const CACHE_DURATION = 1 * 60 * 1000; // 5 minutes in milliseconds
+
+// Cache storage
+let cachedData: {
+  data: InstitutionData[] | null;
+  timestamp: number;
+} = {
+  data: null,
+  timestamp: 0
+};
+
+export async function getInstitutionTypeStatistics(): Promise<InstitutionData[]> {
+  const now = Date.now();
+  
+  // Check if cached data exists and is still valid (less than 5 minutes old)
+  if (cachedData.data && (now - cachedData.timestamp) < CACHE_DURATION) {
+    return cachedData.data;
+  }
+
+  try {
+    const response = await fetch(`${apiUrl}/Institution-Type-Statistics/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: InstitutionData[] = await response.json();
+    
+    // Update cache with fresh data
+    cachedData = {
+      data: data,
+      timestamp: now
+    };
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching institution type statistics:', error);
+    
+    // If we have cached data, return it even if it's expired (fallback)
+    if (cachedData.data) {
+      console.warn('API call failed, returning expired cached data');
+      return cachedData.data;
+    }
+    
+    throw new Error('Failed to fetch institution type statistics');
+  }
+}
+
+
+
+// export async function getInstitutionTypeStatistics() {
+//   try {
+//     const response = await fetch(`${apiUrl}/Institution-Type-Statistics/`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data: InstitutionData[] = await response.json();
+//     return data;
+//   } catch (error) {
+//     console.error('Error fetching institution type statistics:', error);
+//     throw new Error('Failed to fetch institution type statistics');
+//   }
+// }
 
  export async function GetStudentReports() {
   const res = await fetch(
@@ -3520,7 +3639,7 @@ let cache = {
 };
 
 // Cache duration in milliseconds (e.g., 5 minutes = 300000 ms)
-const CACHE_DURATION = 300000; // 5 minutes
+// const CACHE_DURATION = 300000; // 5 minutes
 
 
 export async function GetStudentStats() {
@@ -3531,7 +3650,7 @@ export async function GetStudentStats() {
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        cache: 'no-store' // Disable caching to ensure fresh data
+        cache: 'no-store' 
       }
     );
 
@@ -3587,17 +3706,71 @@ export async function GetStudentStats() {
   );
   return res.json();
  }
- 
+ const STATUS_CACHE_DURATION = 1 * 60 * 1000;
+
+ let statusCachedData: {
+  data: any | null;
+  timestamp: number;
+} = {
+  data: null,
+  timestamp: 0
+};
+
  export async function getStatuses() {
-  const res = await fetch(
-    `${apiUrl}/Status-Statistics-Graph/`,
-    {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
+  const now = Date.now();
+  
+  // Check if cached data exists and is still valid (less than 5 minutes old)
+  if (statusCachedData.data && (now - statusCachedData.timestamp) < STATUS_CACHE_DURATION) {
+    console.log('Returning cached status statistics');
+    return statusCachedData.data;
+  }
+
+  try {
+    console.log('Fetching fresh status statistics from API');
+    const res = await fetch(
+      `${apiUrl}/Status-Statistics-Graph/`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-  );
-  return res.json();
- }
+
+    const data = await res.json();
+    
+    // Update cache with fresh data
+    statusCachedData = {
+      data: data,
+      timestamp: now
+    };
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching status statistics:', error);
+    
+    // If we have cached data, return it even if it's expired (fallback)
+    if (statusCachedData.data) {
+      console.warn('API call failed, returning expired cached status data');
+      return statusCachedData.data;
+    }
+    
+    throw new Error('Failed to fetch status statistics');
+  }
+}
+ 
+//  export async function getStatuses() {
+//   const res = await fetch(
+//     `${apiUrl}/Status-Statistics-Graph/`,
+//     {
+//       method: 'GET',
+//       headers: { 'Content-Type': 'application/json' }
+//     }
+//   );
+//   return res.json();
+//  }
  
  export async function getTeacherRegistrationsByStatus() {
   const res = await fetch(
