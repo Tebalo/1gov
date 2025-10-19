@@ -1,9 +1,8 @@
 import { PageTitle } from "../PageTitle";
 import { RegistrationStats } from "./components/RegistrationStats ";
-import { StatusDonutChart } from "./components/status-donut-chart";
-import InstitutionTypeBarChart from "./components/institution-type-bar-chart";
 import { HorizontalBarChartStatus } from "./components/horizontal-bar-chart";
-import { MixedBarChartStatuses } from "./components/bar-chart-mixed-statuses";
+import InstitutionTypeBarChart from "./components/institution-type-bar-chart";
+import { StatusDonutChart } from "./components/status-donut-chart";
 
 
 
@@ -31,9 +30,6 @@ export const RegistrationOfficerDashboard = () => {
                         <div className="bg-card rounded-xl shadow-sm col-span-2">
                             <HorizontalBarChartStatus />
                         </div>                                      
-                        <div className="bg-card rounded-xl shadow-sm col-span-2">
-                            <MixedBarChartStatuses />
-                        </div>   
                     </div>
                 </div>
             </div>
