@@ -40,6 +40,12 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
         roles: ['*'] 
     },
     { 
+        path: '/trls/work', 
+        icon: <FolderOpenDot size={20} />, 
+        title: 'My Work', 
+        roles: ['*'] 
+    },
+    { 
         path: '/trls/dashboard', 
         icon: <LayoutDashboard size={20} />, 
         title: 'Dashboard', 
@@ -64,12 +70,6 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ currentPersona, access_profile 
             'REGISTRAR', 
             'ADMIN'
         ] 
-    },
-    { 
-        path: '/trls/work', 
-        icon: <FolderOpenDot size={20} />, 
-        title: 'Work', 
-        roles: ['*'] 
     },
     { 
         path: '/trls/registers', 
