@@ -60,9 +60,19 @@ export default function UserRegistrationPage() {
         <a
           href="/terms"
           target="_blank"
-          className="underline underline-offset-2 hover:text-primary"
+          className="font-medium text-primary underline-offset-4 hover:underline"
         >
           Terms and Conditions of Use
+        </a>{" "}
+
+        and{" "}
+
+        <a
+          href="/privacy"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+          target="_blank"
+        >
+          Privacy Policy
         </a>
         . Your information is securely protected and will only be used for
         registration purposes.
