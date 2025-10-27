@@ -47,7 +47,7 @@ const data: TeacherResponse = {
     "teacher_registrations": {
         "national_id": "436415528",
         "reg_number": "BOT000117",
-        "reg_status": "Pending-Screening",
+        "reg_status": "Recommended-For-Approval",
         "work_status": "Employed",
         "endorsement_status": "Pending-Endorsement",
         "rejection_reason": null,
@@ -191,7 +191,7 @@ export default function RegistrationContent() {
     <Card className="p-4">
       <TeacherRegistrationViewer 
         data={data}
-        userRole="registration_officer"
+        userRole="manager"
       />
     </Card>
   );
