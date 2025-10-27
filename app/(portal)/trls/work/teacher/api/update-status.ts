@@ -6,7 +6,8 @@ export async function updateTeacherStatus(
     status: string,
     rejection_reason?: string,
     items?: (string | undefined)[],
-    bearer?: string
+    bearer?: string,
+    qr_link?: string
    ): Promise<{code: number; message: string}> {
     // console.log(items)
     try {
@@ -35,9 +36,8 @@ export async function updateTeacherStatus(
           //params.append('endorsement_status', status);
           key='endorsement_status'
         } 
-
         const response = await fetch(
-          `${apiUrl}/teacher_registrations/${id}?${key}=${status}&rejection_reason=${rejection_reason}`,
+          `${apiUrl}/teacher_registrations/${id}?${key}=${status}&qr_link=${qr_link}&rejection_reason=${rejection_reason}`,
           {
             method: 'PUT',
             headers: {

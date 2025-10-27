@@ -20,6 +20,8 @@ import ProgressIndicator from "../../student-teacher/actions/progress-indicator"
 import { useAuditTrail } from "@/lib/hooks/useAuditTrail";
 import { AuditActionType, UserInfo } from "@/lib/audit-trail-service";
 import { getAccessGroups } from "@/app/auth/auth";
+import { generateTeacherLicenseQR } from "./generate-teacher-license";
+import { saveQRCodeToRepository } from "./save-qr-code-to-repository";
 
 interface ActionSectionProps {
     recordId: string;
@@ -152,63 +154,61 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
     const [error, setError] = useState<string | null>(null);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-
+        let uploadResult
         setIsSubmitting(true);
-        setProgress("Submitting your request...");
+        setProgress("Submitting...");
         try {
           const latestStatusChange = await getLatestStatusChange(recordId, 'teacher');
           setAuditEntries(latestStatusChange);
-                  if(current_status.toUpperCase() == latestStatusChange?.oldValue?.toUpperCase()){
-          if (latestStatusChange?.newValue?.toUpperCase() !== 'PENDING-CUSTOMER-ACTION') {      
-            setError(`Status has already been changed by ${latestStatusChange?.userName.toUpperCase()}. Please refresh the record to see the latest updates.`);
-            toast({
-              title: "Error",
-              variant: "destructive",
-              description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
-            });
-            return; // Uncomment this line to stop the submission if the status has already been changed
+          if(current_status.toUpperCase() == latestStatusChange?.oldValue?.toUpperCase()){
+            if (latestStatusChange?.newValue?.toUpperCase() !== 'PENDING-CUSTOMER-ACTION') {      
+              setError(`Status has already been changed by ${latestStatusChange?.userName.toUpperCase()}. Please refresh the record to see the latest updates.`);
+              toast({
+                title: "Error",
+                variant: "destructive",
+                description: `Status has already been changed by ${latestStatusChange?.userName}. Please refresh the record to see the latest updates.`
+              });
+              return; // Uncomment this line to stop the submission if the status has already been changed
+            }
           }
-        }
-        if(!error){
-          const authData = getAuthData();
-          const bearer = authData?.access_token;
-          const status = values.status;
-          const items = values.items ? [...values.items] : [];
-          const rejection_reason = values.comments || '';
-          const result = await updateTeacherStatus(recordId, status, rejection_reason, items, bearer || '');
-          if (result.code === 200 || result.code === 201) {
-            toast({
-              title: "Success",
-              description: `Status updated to: ${status}`
-            });
-            await logStatusChange(
-              recordId,           // Case ID
-              'teacher',  // Case type
-              currentUser,        // User info
-              current_status,     // Old status
-              status,             // New status
-              `Status changed from ${current_status} to ${status}` // Description
-            )
-            setOpen(false); // Close dialog on success
-            router.push('/trls/work');
-          } 
-          // else {
-          //   await logStatusChange(
-          //     recordId,           // Case ID
-          //     'teacher',  // Case type
-          //     currentUser,        // User info
-          //     current_status,     // Old status
-          //     status,             // New status
-          //     `Status changed from ${current_status} to ${status}` // Description
-          //   )
-          //   toast({
-          //     title: "Success",
-          //     description: `Status updated to: ${status}`
-          //   });
-          //   setOpen(false); // Close dialog on success
-          //   router.push('/trls/work');
-          // }
-        }
+          if(values.status.toUpperCase() == "MANAGER-APPROVED"){
+            setProgress("Generating QR Code...");
+            // Generate QR-CODE
+            const qrResult = await generateTeacherLicenseQR(recordId)
+
+            if(qrResult.qrBuffer){
+              setProgress("Saving QR Code to repository...");
+              // Send QR-CODE TO THE DOC REPO
+              uploadResult = await saveQRCodeToRepository(qrResult.qrBuffer, recordId)
+            }
+          }
+          if(!error){
+            if(values.status.toUpperCase() == "MANAGER-APPROVED"){
+              setProgress("Generating teacher license...");
+            }
+            const authData = getAuthData();
+            const bearer = authData?.access_token;
+            const status = values.status;
+            const items = values.items ? [...values.items] : [];
+            const rejection_reason = values.comments || '';
+            const result = await updateTeacherStatus(recordId, status, rejection_reason, items, bearer || '', uploadResult?.uploadResponse?.key);
+            if (result.code === 200 || result.code === 201) {
+              toast({
+                title: "Success",
+                description: `Status updated to: ${status}`
+              });
+              await logStatusChange(
+                recordId,           // Case ID
+                'teacher',  // Case type
+                currentUser,        // User info
+                current_status,     // Old status
+                status,             // New status
+                `Status changed from ${current_status} to ${status}` // Description
+              )
+              setOpen(false); // Close dialog on success
+              router.push('/trls/work');
+            } 
+          }
         } catch (error) {
           console.error("Error updating status:", error);
           toast({
@@ -334,7 +334,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
                                         className="w-full" 
                                         disabled={isSubmitting}
                                     >
-                                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                                        {isSubmitting ? progress : 'Submit'}
                                     </Button>
                                 </DialogFooter>
                             </form> 
