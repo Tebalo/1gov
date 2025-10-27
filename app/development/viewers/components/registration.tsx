@@ -191,7 +191,7 @@ export default function RegistrationContent() {
     <Card className="p-4">
       <TeacherRegistrationViewer 
         data={data}
-        userRole="registration_officer"
+        userRole="manager"
       />
     </Card>
   );
