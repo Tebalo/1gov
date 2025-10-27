@@ -171,7 +171,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
               return; // Uncomment this line to stop the submission if the status has already been changed
             }
           }
-          if(values.status.toUpperCase() == "MANAGER-APPROVED"){
+          if(values.status == "Endorsement-Complete"){
             setProgress("Generating QR Code...");
             // Generate QR-CODE
             const qrResult = await generateTeacherLicenseQR(recordId)
@@ -183,7 +183,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
             }
           }
           if(!error){
-            if(values.status.toUpperCase() == "MANAGER-APPROVED"){
+            if(values.status == "Endorsement-Complete"){
               setProgress("Generating teacher license...");
             }
             const authData = getAuthData();
