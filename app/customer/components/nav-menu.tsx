@@ -33,7 +33,7 @@ const components: { title: string; href: string; description: string; icon?: Rea
   },
   {
     title: "Report A Misconduct Or A Case",
-    href: "/customer/dashboard/tip-off",
+    href: "/customer/dashboard/misconduct",
     description: "A form for submitting a tip-off, allowing users to report concerns or issues related to the registration process or other relevant matters.",
     icon: <FileText className="h-4 w-4" />
   },
