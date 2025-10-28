@@ -890,23 +890,25 @@ export default function Form() {
                                     <CommandEmpty>No nationality found.</CommandEmpty>
                                     <CommandGroup>
                                       {countries.map((country) => (
-                                        <CommandItem
-                                          key={country.value}
-                                          value={country.label || nationality}
-                                          onSelect={(currentValue) => {
-                                            setValue('nationality', currentValue === watch('nationality') ? "" : currentValue)
-                                            setCountryOpen(false)
-                                          }}
-                                        >
-                                          {country.label}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              watch('nationality') === country.label ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
-                                      ))}
+  <CommandItem
+    key={country.value}
+    value={country.label || nationality}
+    onSelect={() => {
+      // Use country.label directly instead of relying on currentValue
+      const selectedValue = watch('nationality') === country.label ? "" : country.label;
+      setValue('nationality', selectedValue)
+      setCountryOpen(false)
+    }}
+  >
+    {country.label}
+    <Check
+      className={cn(
+        "ml-auto",
+        watch('nationality') === country.label ? "opacity-100" : "opacity-0"
+      )}
+    />
+  </CommandItem>
+))}
                                     </CommandGroup>
                                   </CommandList>
                                 </Command>
