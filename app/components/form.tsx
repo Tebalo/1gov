@@ -893,8 +893,10 @@ export default function Form() {
                                         <CommandItem
                                           key={country.value}
                                           value={country.label || nationality}
-                                          onSelect={(currentValue) => {
-                                            setValue('nationality', currentValue === watch('nationality') ? "" : currentValue)
+                                          onSelect={() => {
+                                            // Use country.label directly instead of relying on currentValue
+                                            const selectedValue = watch('nationality') === country.label ? "" : country.label;
+                                            setValue('nationality', selectedValue)
                                             setCountryOpen(false)
                                           }}
                                         >
