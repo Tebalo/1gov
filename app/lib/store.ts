@@ -29,7 +29,8 @@ const baseURLs = {
         fileUploadUrl: 'https://twosixdigitalbw.com/api/v2-uat/document',
         iamBaseUrl: 'https://gateway-cus-acc.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus-acc.gov.bw/v2',
-        trlsAuthBaseURL: 'https://twosixdigitalbw.com/v1-uat'
+        trlsAuthBaseURL: 'https://twosixdigitalbw.com/v1-uat',
+        baseUrl: 'https://trls-uat.gov.bw/'
     },
     production: {
         trls: 'http://10.0.26.174',
@@ -39,7 +40,8 @@ const baseURLs = {
         fileUploadUrl: 'https://twosixdigitalbw.com/api/v2/document',
         iamBaseUrl: 'https://gateway-cus.gov.bw',
         iamAuthBaseURL: 'https://gateway-cus.gov.bw',
-        trlsAuthBaseURL: 'https://twosixdigitalbw.com/v1'
+        trlsAuthBaseURL: 'https://twosixdigitalbw.com/v1',
+        baseUrl: 'https://trls.gov.bw/'
     }
 }
 // const currentBaseURLs = baseURLs[env as 'uat' | 'production'];
@@ -57,6 +59,7 @@ export const revocationUrl = `${currentBaseURLs.trls}:8097/trls-97`;
 export const restorationUrl = `${currentBaseURLs.trls}:8094/trls-94`;
 export const deltaCategoryUrl = `${currentBaseURLs.trls}:7071/trls-71`;
 export const studentTeacherUrl = `${currentBaseURLs.trls}:7072/trls-72`;
+
 
 /**
  * IAM URLs
@@ -84,6 +87,7 @@ export const licUrl = 'http://66.179.253.57:8081/api';
 export const iamURL = 'https://gateway-cus-acc.gov.bw';
 export const otpUrl = 'https://dev-gateway.example.com/auth/login/sms';
 export const trlsIAM = currentBaseURLs.trlsAuthBaseURL;
+export const baseURL = currentBaseURLs.baseUrl;
 
 
 export interface StatusTransition {
