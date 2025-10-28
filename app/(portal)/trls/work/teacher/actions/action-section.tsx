@@ -22,6 +22,7 @@ import { AuditActionType, UserInfo } from "@/lib/audit-trail-service";
 import { getAccessGroups } from "@/app/auth/auth";
 import { generateTeacherLicenseQR } from "./generate-teacher-license";
 import { saveQRCodeToRepository } from "./save-qr-code-to-repository";
+import { generateAndUploadTeacherLicenseQR } from "./generate-and-upload-QR";
 
 interface ActionSectionProps {
     recordId: string;
@@ -174,14 +175,10 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
           if(values.status == "Endorsement-Complete"){
             setProgress("Generating QR Code...");
             // Generate QR-CODE
-            const qrResult = await generateTeacherLicenseQR(recordId)
-
-            if(qrResult.qrBuffer){
-              setProgress("Saving QR Code to repository...");
-              // Send QR-CODE TO THE DOC REPO
-              uploadResult = await saveQRCodeToRepository(qrResult.qrBuffer, recordId)
-            }
+            // const qrResult = await generateTeacherLicenseQR(recordId)
+            uploadResult = await generateAndUploadTeacherLicenseQR(recordId)
           }
+    
           if(!error){
             if(values.status == "Endorsement-Complete"){
               setProgress("Generating teacher license...");
