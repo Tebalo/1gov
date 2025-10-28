@@ -8,7 +8,12 @@ export interface QRGenerationResult {
   qrBuffer?: Buffer;
   error?: string;
 }
-
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.host}`;
+  }
+  return process.env.NEXT_PUBLIC_VERIFICATION_BASE_URL || 'https://verify.trls.bw';
+};
 export async function generateTeacherLicenseQR(
   teacherId: string,
   options: {
@@ -20,8 +25,9 @@ export async function generateTeacherLicenseQR(
 ): Promise<QRGenerationResult> {
   try {
     // Generate the verification URL for the license
-    const verificationUrl = `${process.env.NEXT_PUBLIC_VERIFICATION_BASE_URL || 'https://verify.trls.bw'}/license/${teacherId}`;
-    
+    // const verificationUrl = `${process.env.NEXT_PUBLIC_VERIFICATION_BASE_URL || 'https://verify.trls.bw'}/license/${teacherId}`;
+    const verificationUrl = `${getBaseUrl()}/verify/${teacherId}`;
+
     const baseQrOptions = {
       width: options.size || 256,
       margin: 2,
