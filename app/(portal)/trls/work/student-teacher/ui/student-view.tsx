@@ -180,7 +180,7 @@ const StudentTeacherViewer: React.FC<StudentViewerProps> = ({ data, userRole }) 
   return (
     <div className="container mx-auto px-4 py-2 h-screen max-w-full flex flex-col">
       <CaseHeader 
-        caseId={'STR-'+data?.teacher_registrations?.national_id ?? ''} 
+        caseId={'STR-'+data?.teacher_registrations?.national_id} 
         caseTitle={'Student-Teacher Registration Request'} 
         caseStatus={data?.teacher_registrations?.reg_status ?? ''} 
         caseType={'Teacher Registration'} 
