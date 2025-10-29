@@ -325,7 +325,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   return (
     <div className="container mx-auto max-w-full px-4 h-screen flex flex-col">
       <CaseHeader 
-        caseId={'TR-'+data?.teacher_registrations?.national_id ?? ''} 
+        caseId={'TR-'+data?.teacher_registrations?.national_id} 
         caseTitle={'Teacher Registration Request'} 
         caseStatus={(data?.teacher_registrations?.reg_status != "Manager-Approved" ? data?.teacher_registrations?.reg_status: data.teacher_registrations?.endorsement_status) || ''} 
         caseType={'Teacher Registration'} 

@@ -19,7 +19,10 @@ export async function saveQRCodeToRepository(
 ): Promise<DocumentUploadResult> {
   try {
     const filename = `teacher_license_qr_${teacherId}_${Date.now()}.png`;
-    const file = new File([qrBuffer], filename, { type: 'image/png' });
+    // const file = new File([qrBuffer], filename, { type: 'image/png' });
+
+    const uint8Array = new Uint8Array(qrBuffer);
+    const file = new File([uint8Array], filename, { type: 'image/png' });
 
     const formData = new FormData();
     formData.append('file', file);
