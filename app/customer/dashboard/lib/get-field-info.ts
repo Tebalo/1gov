@@ -20,6 +20,7 @@ type FieldName =
   
   // Teacher Preliminary Information
   | 'citizen_status'
+  | 'work_status'
   | 'practice_category'
   | 'sub_category'
   
@@ -27,6 +28,7 @@ type FieldName =
   | 'edu_pro_level'
   | 'edu_pro_qualification'
   | 'edu_pro_institution'
+  | 'edu_pro_attachments'
   | 'edu_pro_qualification_year'
   | 'edu_pro_minor_subjects'
   | 'edu_pro_major_subjects'
@@ -36,6 +38,7 @@ type FieldName =
   | 'other_level'
   | 'other_qualification'
   | 'other_institution'
+  | 'other_attachments'
   | 'other_qualification_year'
   | 'other_minor_subjects'
   | 'other_major_subjects'
@@ -46,11 +49,11 @@ type FieldName =
   
   // Offence Convictions
   | 'student_related_offence'
-  | 'student_related_offence_details'
   | 'student_related_offence_attachments'
+  | 'student_related_offence_details'
   | 'drug_related_offence'
-  | 'drug_related_offence_details'
   | 'drug_related_offence_attachments'
+  | 'drug_related_offence_details'
   | 'license_flag'
   | 'license_flag_details'
   | 'misconduct_flag'
@@ -61,20 +64,12 @@ type FieldName =
   | 'current_institution'
   | 'institution_type'
   | 'region'
-  | 'city_or_town'
   
   // Attachments/Documents
   | 'national_id_copy'
+  | 'education_attachment'
+  | 'name_change_attachment'
   | 'qualification_copy'
-  | 'work_permit'
-  | 'proof_of_payment'
-  | 'invoice'
-  | 'edu_pro_attachments'
-  | 'other_attachments'
-  | 'attachments'
-  
-  // System Fields
-  | 'national_id'
   
   // Legacy fields
   | 'primary_email'
@@ -125,6 +120,9 @@ const FIELD_MAP: Record<FieldName, FieldInfo> = {
   'citizen_status': {
     label: 'Citizen Status'
   },
+  'work_status': {
+    label: 'Work Status'
+  },
   'practice_category': {
     label: 'Practice Category'
   },
@@ -141,6 +139,9 @@ const FIELD_MAP: Record<FieldName, FieldInfo> = {
   },
   'edu_pro_institution': {
     label: 'Educational Professional Institution'
+  },
+  'edu_pro_attachments': {
+    label: 'Educational Professional Qualification Attachment'
   },
   'edu_pro_qualification_year': {
     label: 'Educational Professional Qualification Year'
@@ -165,6 +166,9 @@ const FIELD_MAP: Record<FieldName, FieldInfo> = {
   'other_institution': {
     label: 'Other Qualification Institution'
   },
+  'other_attachments': {
+    label: 'Other Qualification Attachment'
+  },
   'other_qualification_year': {
     label: 'Other Qualification Year'
   },
@@ -187,20 +191,20 @@ const FIELD_MAP: Record<FieldName, FieldInfo> = {
   'student_related_offence': {
     label: 'Student Related Offence'
   },
-  'student_related_offence_details': {
-    label: 'Student Related Offence Details'
-  },
   'student_related_offence_attachments': {
     label: 'Student Related Offence Attachments'
+  },
+  'student_related_offence_details': {
+    label: 'Student Related Offence Details'
   },
   'drug_related_offence': {
     label: 'Drug Related Offence'
   },
-  'drug_related_offence_details': {
-    label: 'Drug Related Offence Details'
-  },
   'drug_related_offence_attachments': {
     label: 'Drug Related Offence Attachments'
+  },
+  'drug_related_offence_details': {
+    label: 'Drug Related Offence Details'
   },
   'license_flag': {
     label: 'License Flag'
@@ -228,39 +232,19 @@ const FIELD_MAP: Record<FieldName, FieldInfo> = {
   'region': {
     label: 'Region'
   },
-  'city_or_town': {
-    label: 'City or Town'
-  },
   
   // Attachments/Documents
   'national_id_copy': {
     label: 'National ID Copy'
   },
+  'education_attachment': {
+    label: 'Education Attachment'
+  },
+  'name_change_attachment': {
+    label: 'Name Change Attachment'
+  },
   'qualification_copy': {
     label: 'Qualification Copy'
-  },
-  'work_permit': {
-    label: 'Work Permit'
-  },
-  'proof_of_payment': {
-    label: 'Proof of Payment'
-  },
-  'invoice': {
-    label: 'Invoice'
-  },
-  'edu_pro_attachments': {
-    label: 'Educational Professional Qualification Attachments'
-  },
-  'other_attachments': {
-    label: 'Other Qualification Attachments'
-  },
-  'attachments': {
-    label: 'Mandatory Qualifications Attachment'
-  },
-  
-  // System Fields
-  'national_id': {
-    label: 'National ID'
   },
   
   // Legacy fields

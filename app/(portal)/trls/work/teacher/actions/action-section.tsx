@@ -62,80 +62,75 @@ const getStatusDescription = (status: StatusType): string => {
   //   { id: "attachments", label: "Mandatory qualification attachment" },
   //   { id: "alt_attachments", label: "Additional qualification attachment" },
   // ] as const;
-const items = [
-  // Bio Data / Personal Information
-  { id: "surname", label: "Surname", category: "bio_data" },
-  { id: "forenames", label: "Forenames", category: "bio_data" },
-  { id: "dob", label: "Date of Birth", category: "bio_data" },
-  { id: "pob", label: "Place of Birth", category: "bio_data" },
-  { id: "gender", label: "Gender", category: "bio_data" },
-  { id: "nationality", label: "Nationality", category: "bio_data" },
-  { id: "postal_address", label: "Postal Address", category: "bio_data" },
-  { id: "physical_address", label: "Physical Address", category: "bio_data" },
-  { id: "email", label: "Email Address", category: "bio_data" },
-  { id: "mobile", label: "Mobile Number", category: "bio_data" },
-  { id: "marital_status", label: "Marital Status", category: "bio_data" },
-  // { id: "next_of_kin_name", label: "Next of Kin Name", category: "bio_data" },
-  // { id: "next_of_kin_relation", label: "Next of Kin Relation", category: "bio_data" },
-  // { id: "next_of_kin_contact", label: "Next of Kin Contact", category: "bio_data" },
-  { id: "disability", label: "Disability Status", category: "bio_data" },
-  { id: "disability_description", label: "Disability Description", category: "bio_data" },
-  
-  // Teacher Preliminary Information
-  { id: "citizen_status", label: "Citizen Status", category: "preliminary_info" },
-  { id: "practice_category", label: "Practice Category", category: "preliminary_info" },
-  { id: "sub_category", label: "Sub Category", category: "preliminary_info" },
-  
-  // Educational Professional Qualifications
-  { id: "edu_pro_level", label: "Educational Professional Level", category: "edu_pro_qualifications" },
-  { id: "edu_pro_qualification", label: "Educational Professional Qualification", category: "edu_pro_qualifications" },
-  { id: "edu_pro_institution", label: "Educational Professional Institution", category: "edu_pro_qualifications" },
-  { id: "edu_pro_qualification_year", label: "Educational Professional Qualification Year", category: "edu_pro_qualifications" },
-  { id: "edu_pro_minor_subjects", label: "Educational Professional Minor Subjects", category: "edu_pro_qualifications" },
-  { id: "edu_pro_major_subjects", label: "Educational Professional Major Subjects", category: "edu_pro_qualifications" },
-  { id: "edu_pro_subjects", label: "Educational Professional Subjects", category: "edu_pro_qualifications" },
-  
-  // Other Qualifications
-  { id: "other_level", label: "Other Qualification Level", category: "other_qualifications" },
-  { id: "other_qualification", label: "Other Qualification", category: "other_qualifications" },
-  { id: "other_institution", label: "Other Qualification Institution", category: "other_qualifications" },
-  { id: "other_qualification_year", label: "Other Qualification Year", category: "other_qualifications" },
-  { id: "other_minor_subjects", label: "Other Minor Subjects", category: "other_qualifications" },
-  { id: "other_major_subjects", label: "Other Major Subjects", category: "other_qualifications" },
-  
-  // Declarations
-  { id: "agreement", label: "Agreement", category: "declarations" },
-  { id: "signature", label: "Signature", category: "declarations" },
-  
-  // Offence Convictions
-  { id: "student_related_offence", label: "Student Related Offence", category: "offence_convictions" },
-  { id: "student_related_offence_details", label: "Student Related Offence Details", category: "offence_convictions" },
-  { id: "drug_related_offence", label: "Drug Related Offence", category: "offence_convictions" },
-  { id: "drug_related_offence_details", label: "Drug Related Offence Details", category: "offence_convictions" },
-  { id: "license_flag", label: "License Flag", category: "offence_convictions" },
-  { id: "license_flag_details", label: "License Flag Details", category: "offence_convictions" },
-  { id: "misconduct_flag", label: "Misconduct Flag", category: "offence_convictions" },
-  { id: "misconduct_flag_details", label: "Misconduct Flag Details", category: "offence_convictions" },
-  
-  // Employment Details
-  { id: "experience_years", label: "Years of Experience", category: "employment_details" },
-  { id: "current_institution", label: "Current Institution", category: "employment_details" },
-  { id: "institution_type", label: "Institution Type", category: "employment_details" },
-  { id: "region", label: "Region", category: "employment_details" },
-  { id: "city_or_town", label: "City or Town", category: "employment_details" },
-  
-  // Attachments/Documents
-  { id: "national_id_copy", label: "National ID Copy", category: "attachments" },
-  { id: "qualification_copy", label: "Qualification Copy", category: "attachments" },
-  { id: "work_permit", label: "Work Permit", category: "attachments" },
-  { id: "student_related_offence_attachments", label: "Student Related Offence Attachments", category: "attachments" },
-  { id: "drug_related_offence_attachments", label: "Drug Related Offence Attachments", category: "attachments" },
-  { id: "edu_pro_attachments", label: "Educational Professional Qualification Attachments", category: "attachments" },
-  { id: "other_attachments", label: "Other Qualification Attachments", category: "attachments" },
-  
-  // System Fields
-  // { id: "national_id", label: "National ID", category: "system" },
-] as const;
+  const items = [
+    // Bio Datas
+    { id: "surname", label: "Surname", category: "bio_datas" },
+    { id: "forenames", label: "Forenames", category: "bio_datas" },
+    { id: "dob", label: "Date of Birth", category: "bio_datas" },
+    { id: "pob", label: "Place of Birth", category: "bio_datas" },
+    { id: "gender", label: "Gender", category: "bio_datas" },
+    { id: "nationality", label: "Nationality", category: "bio_datas" },
+    { id: "postal_address", label: "Postal Address", category: "bio_datas" },
+    { id: "physical_address", label: "Physical Address", category: "bio_datas" },
+    { id: "email", label: "Email Address", category: "bio_datas" },
+    { id: "mobile", label: "Mobile Number", category: "bio_datas" },
+    { id: "marital_status", label: "Marital Status", category: "bio_datas" },
+    { id: "disability", label: "Disability Status", category: "bio_datas" },
+    { id: "disability_description", label: "Disability Description", category: "bio_datas" },
+    
+    // Teacher Preliminary Infos
+    { id: "citizen_status", label: "Citizen Status", category: "teacher_preliminary_infos" },
+    { id: "work_status", label: "Work Status", category: "teacher_preliminary_infos" },
+    { id: "practice_category", label: "Practice Category", category: "teacher_preliminary_infos" },
+    { id: "sub_category", label: "Sub Category", category: "teacher_preliminary_infos" },
+    
+    // Educational Professional Qualifications
+    { id: "edu_pro_level", label: "Educational Professional Level", category: "edu_pro_qualifications" },
+    { id: "edu_pro_qualification", label: "Educational Professional Qualification", category: "edu_pro_qualifications" },
+    { id: "edu_pro_institution", label: "Educational Professional Institution", category: "edu_pro_qualifications" },
+    { id: "edu_pro_qualification_year", label: "Educational Professional Qualification Year", category: "edu_pro_qualifications" },
+    { id: "edu_pro_minor_subjects", label: "Educational Professional Minor Subjects", category: "edu_pro_qualifications" },
+    { id: "edu_pro_major_subjects", label: "Educational Professional Major Subjects", category: "edu_pro_qualifications" },
+    { id: "edu_pro_subjects", label: "Educational Professional Subjects", category: "edu_pro_qualifications" },
+    { id: "edu_pro_attachments", label: "Educational Professional Qualification Attachments", category: "edu_pro_qualifications" },
+    
+    // Other Qualifications
+    { id: "other_level", label: "Other Qualification Level", category: "other_qualifications" },
+    { id: "other_qualification", label: "Other Qualification", category: "other_qualifications" },
+    { id: "other_institution", label: "Other Qualification Institution", category: "other_qualifications" },
+    { id: "other_qualification_year", label: "Other Qualification Year", category: "other_qualifications" },
+    { id: "other_minor_subjects", label: "Other Minor Subjects", category: "other_qualifications" },
+    { id: "other_major_subjects", label: "Other Major Subjects", category: "other_qualifications" },
+    { id: "other_attachments", label: "Other Qualification Attachments", category: "other_qualifications" },
+    
+    // Declarations
+    { id: "agreement", label: "Agreement", category: "declarations" },
+    { id: "signature", label: "Signature", category: "declarations" },
+    
+    // Offence Convictions
+    { id: "student_related_offence", label: "Student Related Offence", category: "offence_convictions" },
+    { id: "student_related_offence_details", label: "Student Related Offence Details", category: "offence_convictions" },
+    { id: "student_related_offence_attachments", label: "Student Related Offence Attachments", category: "offence_convictions" },
+    { id: "drug_related_offence", label: "Drug Related Offence", category: "offence_convictions" },
+    { id: "drug_related_offence_details", label: "Drug Related Offence Details", category: "offence_convictions" },
+    { id: "drug_related_offence_attachments", label: "Drug Related Offence Attachments", category: "offence_convictions" },
+    { id: "license_flag", label: "License Flag", category: "offence_convictions" },
+    { id: "license_flag_details", label: "License Flag Details", category: "offence_convictions" },
+    { id: "misconduct_flag", label: "Misconduct Flag", category: "offence_convictions" },
+    { id: "misconduct_flag_details", label: "Misconduct Flag Details", category: "offence_convictions" },
+    
+    // Employment Details
+    { id: "experience_years", label: "Years of Experience", category: "employment_details" },
+    { id: "current_institution", label: "Current Institution", category: "employment_details" },
+    { id: "institution_type", label: "Institution Type", category: "employment_details" },
+    { id: "region", label: "Region", category: "employment_details" },
+    
+    // Attachments
+    { id: "national_id_copy", label: "National ID Copy", category: "attachments" },
+    { id: "education_attachment", label: "Education Attachment", category: "attachments" },
+    { id: "name_change_attachment", label: "Name Change Attachment", category: "attachments" },
+    { id: "qualification_copy", label: "Qualification Copy", category: "attachments" },
+  ];
 
   const formSchema = z.object({
     status: z.enum([
