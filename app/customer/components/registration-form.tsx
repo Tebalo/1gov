@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, Check, Eye, EyeOff, CalendarIcon } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Eye, EyeOff, CalendarIcon, Search } from "lucide-react"
 // import { toast } from "sonner"
 import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
@@ -32,6 +32,10 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { OneGovAuth } from "./1gov-login"
 import { Calendar } from "@/components/ui/calendar"
+import { trlsIAM } from "@/app/lib/store"
+
+
+const AUTH_API_URL = `${trlsIAM}/api/auth_microservice/register/`
 
 interface RegistrationFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -119,6 +123,44 @@ const POPULAR_DOMAINS = [
   'protonmail.com'
 ]
 
+// Enhanced country list with more African and other countries
+const COUNTRIES = [
+  // Botswana (reserved for citizens)
+  "Botswana",
+  
+  // African countries
+  "Algeria", "Angola", "Benin", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon", 
+  "Central African Republic", "Chad", "Comoros", "Congo", "Côte d'Ivoire", "Djibouti", 
+  "Democratic Republic of the Congo", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", 
+  "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", 
+  "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", 
+  "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda", "São Tomé and Príncipe", "Senegal", 
+  "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", 
+  "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe",
+  
+  // Other major countries
+  "Afghanistan", "Albania", "Andorra", "Antigua and Barbuda", "Argentina", "Armenia", 
+  "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", 
+  "Belarus", "Belgium", "Belize", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Brazil", 
+  "Brunei", "Bulgaria", "Cambodia", "Canada", "Chile", "China", "Colombia", "Costa Rica", 
+  "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Dominica", "Dominican Republic", 
+  "Ecuador", "El Salvador", "Estonia", "Fiji", "Finland", "France", "Georgia", "Germany", 
+  "Greece", "Grenada", "Guatemala", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", 
+  "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", 
+  "Jordan", "Kazakhstan", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", 
+  "Liechtenstein", "Lithuania", "Luxembourg", "Malaysia", "Maldives", "Malta", "Marshall Islands", 
+  "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Myanmar", "Nauru", 
+  "Nepal", "Netherlands", "New Zealand", "Nicaragua", "North Korea", "North Macedonia", "Norway", 
+  "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", 
+  "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Saint Kitts and Nevis", 
+  "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Saudi Arabia", 
+  "Serbia", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "South Korea", "Spain", 
+  "Sri Lanka", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Thailand", 
+  "Timor-Leste", "Tonga", "Trinidad and Tobago", "Turkey", "Turkmenistan", "Tuvalu", "Ukraine", 
+  "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", 
+  "Vatican City", "Venezuela", "Vietnam", "Yemen"
+]
+
 export function RegistrationForm({ className, ...props }: RegistrationFormProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
@@ -130,6 +172,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [dateOfBirthOpen, setDateOfBirthOpen] = useState(false)
   const [emailSuggestion, setEmailSuggestion] = useState<string>("")
+  const [searchQuery, setSearchQuery] = useState("")
   const [formData, setFormData] = useState({
     // Basic credentials
     username: "",
@@ -156,7 +199,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     postalAddress: "",
     physicalAddress: "",
     city: "",
-    state: "South-East",
+    state: "",
     country: "Botswana",
     postalCode: "",
     
@@ -177,6 +220,23 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   })
 
   const { toast } = useToast();
+
+  // Effect to handle country field based on citizenship selection
+  useEffect(() => {
+    if (citizenship === "Citizen") {
+      // Pre-fill with Botswana and lock the field for citizens
+      setFormData(prev => ({
+        ...prev,
+        country: "Botswana"
+      }))
+    } else if (citizenship === "Non-citizen") {
+      // Clear country field for non-citizens to allow selection
+      setFormData(prev => ({
+        ...prev,
+        country: ""
+      }))
+    }
+  }, [citizenship])
 
   // Function to validate email domain and check for common typos
   const validateEmailDomain = (email: string): { isValid: boolean; suggestion: string } => {
@@ -367,6 +427,17 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         return true
 
       case 3: // Contact information
+        const stepThreeErrors: string[] = []
+        // Make required fields
+        if (!formData.phone.trim()) stepThreeErrors.push("Phone number is required")
+        if (!formData.postalAddress.trim()) stepThreeErrors.push("Postal address is required")
+        if (!formData.physicalAddress.trim()) stepThreeErrors.push("Physical address is required")
+        if (!formData.country.trim()) stepThreeErrors.push("Country is required")
+        
+        if (stepThreeErrors.length > 0) {
+          setErrors(stepThreeErrors)
+          return false
+        }
         return true
 
       case 4: // Professional information
@@ -502,6 +573,27 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     }
   }
 
+  // Get available countries based on citizenship
+  const getAvailableCountries = () => {
+    if (citizenship === "Citizen") {
+      return ["Botswana"]
+    } else if (citizenship === "Non-citizen") {
+      return COUNTRIES.filter(country => country !== "Botswana")
+    }
+    return COUNTRIES
+  }
+
+  // Filter countries based on search query for non-citizens
+  const getFilteredCountries = () => {
+    const availableCountries = getAvailableCountries()
+    if (!searchQuery.trim()) {
+      return availableCountries
+    }
+    return availableCountries.filter(country =>
+      country.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }
+
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     
@@ -561,7 +653,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     }
 
     try {
-      const response = await fetch('https://twosixdigitalbw.com/v1/api/auth_microservice/register/', {
+      const response = await fetch(AUTH_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1006,7 +1098,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">Phone Number *</Label>
                   <Input
                     id="phone"
                     placeholder="+267xxxxxxxx"
@@ -1030,7 +1122,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="postalAddress">Postal Address</Label>
+                <Label htmlFor="postalAddress">Postal Address *</Label>
                 <Textarea
                   id="postalAddress"
                   placeholder="P.O. Box 123, City"
@@ -1042,7 +1134,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="physicalAddress">Physical Address</Label>
+                <Label htmlFor="physicalAddress">Physical Address *</Label>
                 <Textarea
                   id="physicalAddress"
                   placeholder="123 Street Name, Area"
@@ -1068,51 +1160,51 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
 
                 <div className="grid gap-2">
                   <Label htmlFor="state">State/District</Label>
-                  <Select
-                    value={formData.state}
-                    onValueChange={(value) => handleInputChange("state", value)}
+                  <Input
+                    id="state"
+                    placeholder="Enter state or district"
+                    type="text"
                     disabled={isLoading}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Central">Central</SelectItem>
-                      <SelectItem value="Chobe">Chobe </SelectItem>
-                      <SelectItem value="Ghanzi">Ghanzi</SelectItem>
-                      <SelectItem value="Kgalagadi">Kgalagadi</SelectItem>
-                      <SelectItem value="Kgatleng">Kgatleng</SelectItem>
-                      <SelectItem value="Kweneng">Kweneng </SelectItem>
-                      <SelectItem value="North-East">North-East</SelectItem>
-                      <SelectItem value="North-West">North-West</SelectItem>
-                      <SelectItem value="South-East">South-East</SelectItem>
-                      <SelectItem value="Southern ">Southern</SelectItem>
-                      <SelectItem value="Gaborone">Gaborone</SelectItem>
-                      <SelectItem value="Francistown">Francistown</SelectItem>
-                      <SelectItem value="Lobatse">Lobatse</SelectItem>
-                      <SelectItem value="Jwaneng">Jwaneng</SelectItem>
-                      <SelectItem value="Orapa">Orapa</SelectItem>
-                      <SelectItem value="Sowa">Sowa</SelectItem>
-                      <SelectItem value="Selebi-Phikwe">Selebi-Phikwe</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    value={formData.state}
+                    onChange={(e) => handleInputChange("state", e.target.value)}
+                  />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="country">Country</Label>
+                  <Label htmlFor="country">Country *</Label>
                   <Select
                     value={formData.country}
                     onValueChange={(value) => handleInputChange("country", value)}
-                    disabled={isLoading}
+                    disabled={isLoading || citizenship === "Citizen"}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Botswana">Botswana</SelectItem>
-                      <SelectItem value="South Africa">South Africa</SelectItem>
-                      <SelectItem value="Namibia">Namibia</SelectItem>
-                      <SelectItem value="Zimbabwe">Zimbabwe</SelectItem>
+                    <SelectContent className="max-h-60">
+                      {citizenship === "Non-citizen" && (
+                        <div className="sticky top-0 bg-background p-2 border-b">
+                          <div className="relative">
+                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Search countries..."
+                              className="pl-8"
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {getFilteredCountries().map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
+                        </SelectItem>
+                      ))}
+                      {citizenship === "Non-citizen" && getFilteredCountries().length === 0 && (
+                        <div className="p-2 text-center text-sm text-muted-foreground">
+                          No countries found
+                        </div>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -1266,12 +1358,16 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                   </div>
                 </div>
 
-                {(formData.phone || formData.city) && (
+                {(formData.phone || formData.city || formData.country) && (
                   <div className="grid gap-2">
                     <h4 className="font-medium">Contact Information</h4>
                     <div className="text-sm text-muted-foreground space-y-1">
                       {formData.phone && <p>Phone: {formData.phone}</p>}
-                      {formData.city && <p>Location: {formData.city}, {formData.country}</p>}
+                      {formData.postalAddress && <p>Postal Address: {formData.postalAddress}</p>}
+                      {formData.physicalAddress && <p>Physical Address: {formData.physicalAddress}</p>}
+                      {formData.city && <p>City: {formData.city}</p>}
+                      {formData.state && <p>State/District: {formData.state}</p>}
+                      {formData.country && <p>Country: {formData.country}</p>}
                     </div>
                   </div>
                 )}
@@ -1469,19 +1565,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
           </div>
 
           <div className="mt-4">
-            {/* <Button variant="outline" className="w-full" size="lg">
-              <div className="w-6 h-6 items-center justify-center">
-                <Image
-                  src="/gov_icon.png"
-                  alt='Coat-of-arms'
-                  width={24}
-                  height={24}
-                  className="w-full h-full object-contain"
-                  priority
-                />
-              </div>
-              1Gov1Citizen
-            </Button> */}
             {/* Login with 1Gov1Citizen */}
         <Dialog>
           <DialogTrigger asChild>
