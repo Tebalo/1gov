@@ -38,6 +38,8 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="National ID" value={data.bio_datas?.national_id}/>
       <InfoItem label="Date of Birth" value={data.bio_datas?.dob} isDate/>
       <InfoItem label="Gender" value={data.bio_datas?.gender}/>
+      <InfoItem label="Citizen Status" value={data.teacher_preliminary_infos?.citizen_status}/>
+      <InfoItem label="Nationality" value={data.bio_datas?.nationality}/>
       <InfoItem label="Email" value={data.bio_datas?.email}/>
       <InfoItem label="Mobile" value={data.bio_datas?.mobile}/>
       <InfoItem label="Disability" value={data.bio_datas?.disability}/>
@@ -74,12 +76,9 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       />
       <InfoLink label="Payment Link" paymentUrl={data.teacher_registrations?.paid_at ?? ''} className=""/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
-      <InfoItem label="Citizen Status" value={data.teacher_preliminary_infos?.citizen_status}/>
       <InfoItem label="SLA" value={data.teacher_registrations?.created_at} isSLA/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
-      <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
-      <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
       <InfoItem label="Licence Expiry Date" value={data.teacher_registrations?.license_expiry_date} isDate/>
       <InfoItem label="Subscription Due Date" value={data.teacher_registrations?.subscription_due_date} isDate/>
       {isEndorsementComplete() && <InfoItem label='Computed Licence Status' value={getLicenseStatus()} isLicenseStatus/>}
@@ -89,10 +88,14 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   const renderEmploymentInfo = () => (
     <InfoCard title='Employment Information' icon={<Briefcase className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Employment Status" value={data.teacher_registrations?.work_status}/>
-      <InfoItem label="Current Institution" value={data.employment_details?.current_institution}/>
-      <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>
-      <InfoItem label="Region" value={data.employment_details?.region}/>
+      <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
+      <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
       <InfoItem label="Experience" value={data.employment_details?.experience_years}/>
+      {/* Visible when section */}
+      {data.teacher_registrations?.work_status?.toLowerCase() === "employed" && <InfoItem label="Current Institution" value={data.employment_details?.current_institution}/>}
+      {data.teacher_registrations?.work_status?.toLowerCase() === "employed" && <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>}
+      {data.teacher_registrations?.work_status?.toLowerCase() === "employed" && <InfoItem label="Region" value={data.employment_details?.region}/>}
+      
     </InfoCard>
   );
 

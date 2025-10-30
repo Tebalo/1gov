@@ -85,23 +85,20 @@ const getStatusDescription = (status: StatusType): string => {
     { id: "sub_category", label: "Sub Category", category: "teacher_preliminary_infos" },
     
     // Educational Professional Qualifications
-    { id: "edu_pro_level", label: "Educational Professional Level", category: "edu_pro_qualifications" },
-    { id: "edu_pro_qualification", label: "Educational Professional Qualification", category: "edu_pro_qualifications" },
-    { id: "edu_pro_institution", label: "Educational Professional Institution", category: "edu_pro_qualifications" },
-    { id: "edu_pro_qualification_year", label: "Educational Professional Qualification Year", category: "edu_pro_qualifications" },
-    { id: "edu_pro_minor_subjects", label: "Educational Professional Minor Subjects", category: "edu_pro_qualifications" },
-    { id: "edu_pro_major_subjects", label: "Educational Professional Major Subjects", category: "edu_pro_qualifications" },
-    { id: "edu_pro_subjects", label: "Educational Professional Subjects", category: "edu_pro_qualifications" },
-    { id: "edu_pro_attachments", label: "Educational Professional Qualification Attachments", category: "edu_pro_qualifications" },
+    { id: "level", label: "Level", category: "edu_pro_qualifications" },
+    { id: "qualification", label: "Qualification", category: "edu_pro_qualifications" },
+    { id: "institution", label: "Institution", category: "edu_pro_qualifications" },
+    { id: "qualification_year", label: "Qualification Year", category: "edu_pro_qualifications" },
+    { id: "major_subjects", label: "Subject Specialization", category: "edu_pro_qualifications" },
     
     // Other Qualifications
-    { id: "other_level", label: "Other Qualification Level", category: "other_qualifications" },
-    { id: "other_qualification", label: "Other Qualification", category: "other_qualifications" },
-    { id: "other_institution", label: "Other Qualification Institution", category: "other_qualifications" },
-    { id: "other_qualification_year", label: "Other Qualification Year", category: "other_qualifications" },
-    { id: "other_minor_subjects", label: "Other Minor Subjects", category: "other_qualifications" },
-    { id: "other_major_subjects", label: "Other Major Subjects", category: "other_qualifications" },
-    { id: "other_attachments", label: "Other Qualification Attachments", category: "other_qualifications" },
+    // { id: "other_level", label: "Other Qualification Level", category: "other_qualifications" },
+    // { id: "other_qualification", label: "Other Qualification", category: "other_qualifications" },
+    // { id: "other_institution", label: "Other Qualification Institution", category: "other_qualifications" },
+    // { id: "other_qualification_year", label: "Other Qualification Year", category: "other_qualifications" },
+    // { id: "other_minor_subjects", label: "Other Minor Subjects", category: "other_qualifications" },
+    // { id: "other_major_subjects", label: "Other Major Subjects", category: "other_qualifications" },
+    // { id: "other_attachments", label: "Other Qualification Attachments", category: "other_qualifications" },
     
     // Declarations
     { id: "agreement", label: "Agreement", category: "declarations" },
