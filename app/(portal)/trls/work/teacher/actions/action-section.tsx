@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, GitBranch, Tags } from "lucide-react";
+import { AlertCircle, ChevronDown, GitBranch, Tags } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getAuthData } from "@/app/staff/login/components/email-login";
 import { updateTeacherStatus } from "../api/update-status";
@@ -20,9 +20,9 @@ import ProgressIndicator from "../../student-teacher/actions/progress-indicator"
 import { useAuditTrail } from "@/lib/hooks/useAuditTrail";
 import { AuditActionType, UserInfo } from "@/lib/audit-trail-service";
 import { getAccessGroups } from "@/app/auth/auth";
-import { generateTeacherLicenseQR } from "./generate-teacher-license";
-import { saveQRCodeToRepository } from "./save-qr-code-to-repository";
 import { generateAndUploadTeacherLicenseQR } from "./generate-and-upload-QR";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface ActionSectionProps {
     recordId: string;
@@ -53,15 +53,91 @@ const getStatusDescription = (status: StatusType): string => {
     return descriptions[status];
   };
   
-  const items = [
-    { id: "national_id_copy", label: "National ID attachment" },
-    { id: "misconduct_flag_details", label: "Misconduct flag attachment" },
-    { id: "student_related_offence_attachments", label: "Student related offence attachment" },
-    { id: "drug_related_offence_attachments", label: "Drug related offence attachment" },
-    { id: "license_flag_details", label: "Licence flag attachment" },
-    { id: "attachments", label: "Mandatory qualification attachment" },
-    { id: "alt_attachments", label: "Additional qualification attachment" },
-  ] as const;
+  // const items = [
+  //   { id: "national_id_copy", label: "National ID attachment", category:""},
+  //   { id: "misconduct_flag_details", label: "Misconduct flag attachment" },
+  //   { id: "student_related_offence_attachments", label: "Student related offence attachment" },
+  //   { id: "drug_related_offence_attachments", label: "Drug related offence attachment" },
+  //   { id: "license_flag_details", label: "Licence flag attachment" },
+  //   { id: "attachments", label: "Mandatory qualification attachment" },
+  //   { id: "alt_attachments", label: "Additional qualification attachment" },
+  // ] as const;
+const items = [
+  // Bio Data / Personal Information
+  { id: "surname", label: "Surname", category: "bio_data" },
+  { id: "forenames", label: "Forenames", category: "bio_data" },
+  { id: "dob", label: "Date of Birth", category: "bio_data" },
+  { id: "pob", label: "Place of Birth", category: "bio_data" },
+  { id: "gender", label: "Gender", category: "bio_data" },
+  { id: "nationality", label: "Nationality", category: "bio_data" },
+  { id: "postal_address", label: "Postal Address", category: "bio_data" },
+  { id: "physical_address", label: "Physical Address", category: "bio_data" },
+  { id: "email", label: "Email Address", category: "bio_data" },
+  { id: "mobile", label: "Mobile Number", category: "bio_data" },
+  { id: "marital_status", label: "Marital Status", category: "bio_data" },
+  // { id: "next_of_kin_name", label: "Next of Kin Name", category: "bio_data" },
+  // { id: "next_of_kin_relation", label: "Next of Kin Relation", category: "bio_data" },
+  // { id: "next_of_kin_contact", label: "Next of Kin Contact", category: "bio_data" },
+  { id: "disability", label: "Disability Status", category: "bio_data" },
+  { id: "disability_description", label: "Disability Description", category: "bio_data" },
+  
+  // Teacher Preliminary Information
+  { id: "citizen_status", label: "Citizen Status", category: "preliminary_info" },
+  { id: "practice_category", label: "Practice Category", category: "preliminary_info" },
+  { id: "sub_category", label: "Sub Category", category: "preliminary_info" },
+  
+  // Educational Professional Qualifications
+  { id: "edu_pro_level", label: "Educational Professional Level", category: "edu_pro_qualifications" },
+  { id: "edu_pro_qualification", label: "Educational Professional Qualification", category: "edu_pro_qualifications" },
+  { id: "edu_pro_institution", label: "Educational Professional Institution", category: "edu_pro_qualifications" },
+  { id: "edu_pro_qualification_year", label: "Educational Professional Qualification Year", category: "edu_pro_qualifications" },
+  { id: "edu_pro_minor_subjects", label: "Educational Professional Minor Subjects", category: "edu_pro_qualifications" },
+  { id: "edu_pro_major_subjects", label: "Educational Professional Major Subjects", category: "edu_pro_qualifications" },
+  { id: "edu_pro_subjects", label: "Educational Professional Subjects", category: "edu_pro_qualifications" },
+  
+  // Other Qualifications
+  { id: "other_level", label: "Other Qualification Level", category: "other_qualifications" },
+  { id: "other_qualification", label: "Other Qualification", category: "other_qualifications" },
+  { id: "other_institution", label: "Other Qualification Institution", category: "other_qualifications" },
+  { id: "other_qualification_year", label: "Other Qualification Year", category: "other_qualifications" },
+  { id: "other_minor_subjects", label: "Other Minor Subjects", category: "other_qualifications" },
+  { id: "other_major_subjects", label: "Other Major Subjects", category: "other_qualifications" },
+  
+  // Declarations
+  { id: "agreement", label: "Agreement", category: "declarations" },
+  { id: "signature", label: "Signature", category: "declarations" },
+  
+  // Offence Convictions
+  { id: "student_related_offence", label: "Student Related Offence", category: "offence_convictions" },
+  { id: "student_related_offence_details", label: "Student Related Offence Details", category: "offence_convictions" },
+  { id: "drug_related_offence", label: "Drug Related Offence", category: "offence_convictions" },
+  { id: "drug_related_offence_details", label: "Drug Related Offence Details", category: "offence_convictions" },
+  { id: "license_flag", label: "License Flag", category: "offence_convictions" },
+  { id: "license_flag_details", label: "License Flag Details", category: "offence_convictions" },
+  { id: "misconduct_flag", label: "Misconduct Flag", category: "offence_convictions" },
+  { id: "misconduct_flag_details", label: "Misconduct Flag Details", category: "offence_convictions" },
+  
+  // Employment Details
+  { id: "experience_years", label: "Years of Experience", category: "employment_details" },
+  { id: "current_institution", label: "Current Institution", category: "employment_details" },
+  { id: "institution_type", label: "Institution Type", category: "employment_details" },
+  { id: "region", label: "Region", category: "employment_details" },
+  { id: "city_or_town", label: "City or Town", category: "employment_details" },
+  
+  // Attachments/Documents
+  { id: "national_id_copy", label: "National ID Copy", category: "attachments" },
+  { id: "qualification_copy", label: "Qualification Copy", category: "attachments" },
+  { id: "work_permit", label: "Work Permit", category: "attachments" },
+  { id: "proof_of_payment", label: "Proof of Payment", category: "attachments" },
+  { id: "invoice", label: "Invoice", category: "attachments" },
+  { id: "student_related_offence_attachments", label: "Student Related Offence Attachments", category: "attachments" },
+  { id: "drug_related_offence_attachments", label: "Drug Related Offence Attachments", category: "attachments" },
+  { id: "edu_pro_attachments", label: "Educational Professional Qualification Attachments", category: "attachments" },
+  { id: "other_attachments", label: "Other Qualification Attachments", category: "attachments" },
+  
+  // System Fields
+  { id: "national_id", label: "National ID", category: "system" },
+] as const;
 
   const formSchema = z.object({
     status: z.enum([
@@ -223,132 +299,181 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
     
     return(
         <div>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button variant="default" className="flex items-center gap-2">
-                        <GitBranch className="w-4 h-4"/>
-                        Actions
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    {hasPermission && isAllowedRole && nextStatus && nextStatus.length > 0 ? (
-                      <>
-                        <DialogHeader>
-                            <DialogTitle>Flow Action</DialogTitle>
-                            <DialogDescription>
-                                Make status updates to the case here. Click submit when you&#39;re done.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <Form {...form}>
-                            <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                                <FormField
-                                    control={form.control}
-                                    name="status"
-                                    render={({ field }) => (
-                                        <FormItem className="space-y-3">
-                                            <FormLabel>Choose action to proceed</FormLabel>
-                                            <FormControl>
-                                                <RadioGroup 
-                                                    onValueChange={field.onChange}
-                                                    value={field.value} 
-                                                    className="flex flex-col space-y-1"
-                                                >
-                                                    {nextStatus?.map((status) => (
-                                                        <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100">
-                                                            <RadioGroupItem value={status} id={status} />
-                                                            <div>
-                                                                <FormLabel className="cursor-pointer" htmlFor={status}>{getStatusDescription(status.toLocaleUpperCase() as StatusType)}</FormLabel>
-                                                                <FormDescription className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>   
-                                                                    <Tags className="w-4 h-4 text-gray-500" />
-                                                                    <p className='text-purple-500 font-semibold text-sm'>{status.replace(/-/g, ' ')}  </p> 
-                                                                </FormDescription>
-                                                            </div>     
-                                                        </div>
-                                                    ))}
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                {showFields && <FormField
-                                  control={form.control}
-                                  name="items"
-                                  render={() => (
-                                    <FormItem>
-                                      <div className="mb-4">
-                                        <FormLabel className="text-base">Fields</FormLabel>
-                                        <FormDescription>
-                                          Select the fields you want the customer to edit/fix.
-                                        </FormDescription>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default" className="flex items-center gap-2">
+                <GitBranch className="w-4 h-4"/>
+                Actions
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
+              {hasPermission && isAllowedRole && nextStatus && nextStatus.length > 0 ? (
+                <>
+                  <DialogHeader className="flex-shrink-0">
+                    <DialogTitle>Flow Action</DialogTitle>
+                    <DialogDescription>
+                      Make status updates to the case here. Click submit when you&lsquo;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="flex-1 overflow-hidden">
+                    <Form {...form}>
+                      <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)} className="h-full flex flex-col">
+                        <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                          <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                              <FormItem className="space-y-3">
+                                <FormLabel>Choose action to proceed</FormLabel>
+                                <FormControl>
+                                  <RadioGroup 
+                                    onValueChange={field.onChange}
+                                    value={field.value} 
+                                    className="flex flex-col space-y-1"
+                                  >
+                                    {nextStatus?.map((status) => (
+                                      <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100">
+                                        <RadioGroupItem value={status} id={status} />
+                                        <div>
+                                          <FormLabel className="cursor-pointer" htmlFor={status}>
+                                            {getStatusDescription(status.toLocaleUpperCase() as StatusType)}
+                                          </FormLabel>
+                                          <FormDescription className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>   
+                                            <Tags className="w-4 h-4 text-gray-500" />
+                                            <p className='text-purple-500 font-semibold text-sm'>
+                                              {status.replace(/-/g, ' ')}
+                                            </p> 
+                                          </FormDescription>
+                                        </div>     
                                       </div>
-                                      {items.map((item) => (
-                                        <FormField
-                                          key={item.id}
-                                          control={form.control}
-                                          name="items"
-                                          render={({ field }) => {
-                                            return (
-                                              <FormItem
-                                                key={item.id}
-                                                className="flex flex-row items-start space-x-3 space-y-0"
-                                              >
-                                                <FormControl>
-                                                  <Checkbox
-                                                    checked={field.value?.includes(item.id)}
-                                                    onCheckedChange={(checked) => {
-                                                      return checked
-                                                        ? field.onChange([...(field.value ?? []), item.id])
-                                                        : field.onChange(
-                                                            field.value?.filter(
-                                                              (value) => value !== item.id
-                                                            )
-                                                          )
-                                                    }}
-                                                  />
-                                                </FormControl>
-                                                <FormLabel className="text-sm font-normal">
-                                                  {item.label}
-                                                </FormLabel>
-                                              </FormItem>
-                                            )
-                                          }}
-                                        />
+                                    ))}
+                                  </RadioGroup>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          {showFields && (
+                            <FormField
+                              control={form.control}
+                              name="items"
+                              render={() => (
+                                <FormItem>
+                                  <div className="mb-4">
+                                    <FormLabel className="text-base">Fields</FormLabel>
+                                    <FormDescription>
+                                      Select the fields you want the customer to edit/fix.
+                                    </FormDescription>
+                                  </div>
+                                  
+                                  {/* Scrollable container for the accordion */}
+                                  <div className="max-h-[300px] overflow-y-auto border rounded-md">
+                                    <Accordion type="multiple" className="w-full">
+                                      {Object.entries(
+                                        items.reduce((acc, item) => {
+                                          const category = item.category;
+                                          if (!acc[category]) {
+                                            acc[category] = [];
+                                          }
+                                          acc[category].push(item);
+                                          return acc;
+                                        }, {} as Record<string, Array<typeof items[number]>>)
+                                      ).map(([category, categoryItems]) => (
+                                        <AccordionItem key={category} value={category} className="px-4">
+                                          <AccordionTrigger className="text-sm font-medium hover:no-underline">
+                                            <div className="flex items-center justify-between w-full">
+                                              <span className="capitalize">{category.replace(/_/g, ' ')}</span>
+                                              <span className="ml-2 text-xs text-muted-foreground">
+                                                ({categoryItems.length} fields)
+                                              </span>
+                                            </div>
+                                          </AccordionTrigger>
+                                          <AccordionContent className="pt-2 pb-4">
+                                            <div className="space-y-3">
+                                              {categoryItems.map((item) => (
+                                                <FormField
+                                                  key={item.id}
+                                                  control={form.control}
+                                                  name="items"
+                                                  render={({ field }) => {
+                                                    return (
+                                                      <FormItem
+                                                        key={item.id}
+                                                        className="flex flex-row items-start space-x-3 space-y-0"
+                                                      >
+                                                        <FormControl>
+                                                          <Checkbox
+                                                            checked={field.value?.includes(item.id)}
+                                                            onCheckedChange={(checked) => {
+                                                              return checked
+                                                                ? field.onChange([...(field.value ?? []), item.id])
+                                                                : field.onChange(
+                                                                    field.value?.filter(
+                                                                      (value) => value !== item.id
+                                                                    )
+                                                                  )
+                                                            }}
+                                                          />
+                                                        </FormControl>
+                                                        <FormLabel className="text-sm font-normal cursor-pointer">
+                                                          {item.label}
+                                                        </FormLabel>
+                                                      </FormItem>
+                                                    )
+                                                  }}
+                                                />
+                                              ))}
+                                            </div>
+                                          </AccordionContent>
+                                        </AccordionItem>
                                       ))}
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />}
-                                {isSubmitting && (
-                                  <ProgressIndicator 
-                                    isLoading={isSubmitting} 
-                                    totalDuration={60000} // 1 minute in milliseconds
-                                  />
-                                )}
-                                <DialogFooter>
-                                    <Button 
-                                        type="submit" 
-                                        className="w-full" 
-                                        disabled={isSubmitting}
-                                    >
-                                        {isSubmitting ? progress : 'Submit'}
-                                    </Button>
-                                </DialogFooter>
-                            </form> 
-                        </Form>
-                      </>
-                    ):(
-                    <>
-                      <Alert variant="destructive" className="my-4">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Heads up!</AlertTitle>
-                        <AlertDescription>
-                          {"It looks like you don't have the necessary permissions to move this case forward or change its status. If you think this might be a mistake, reach out to your administrator who can help resolve this."}
-                        </AlertDescription>
-                      </Alert>
-                    </>)}
-                </DialogContent>
-            </Dialog>
+                                    </Accordion>
+                                  </div>
+                                  
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+                        </div>
+                        
+                        {/* Fixed footer section */}
+                        <div className="flex-shrink-0 pt-4 border-t">
+                          {isSubmitting && (
+                            <ProgressIndicator 
+                              isLoading={isSubmitting} 
+                              totalDuration={60000} // 1 minute in milliseconds
+                            />
+                          )}
+                          <DialogFooter>
+                            <Button 
+                              type="submit" 
+                              className="w-full" 
+                              disabled={isSubmitting}
+                            >
+                              {isSubmitting ? progress : 'Submit'}
+                            </Button>
+                          </DialogFooter>
+                        </div>
+                      </form> 
+                    </Form>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Alert variant="destructive" className="my-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Heads up!</AlertTitle>
+                    <AlertDescription>
+                      {"It looks like you don't have the necessary permissions to move this case forward or change its status. If you think this might be a mistake, reach out to your administrator who can help resolve this."}
+                    </AlertDescription>
+                  </Alert>
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
     )
 }

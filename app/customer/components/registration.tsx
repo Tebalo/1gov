@@ -418,7 +418,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
 
               {shouldInvoiceButton(registrationData) && (
                 <div className='flex space-x-2'>
-                <Link
+                {/* <Link
                   href={`https://docs.google.com/viewer?url=${encodeURIComponent(registrationData.invoice ?? '')}&embedded=true`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -426,7 +426,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   View Invoice
-                </Link>
+                </Link> */}
                 <Link
                   href={`${registrationData.invoice ?? ''}`}
                   target="_self"
