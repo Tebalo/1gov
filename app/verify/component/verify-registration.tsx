@@ -77,7 +77,7 @@ const VerifyRegistrationStatus: React.FC<{userId:string}> = ({userId}) => {
     try {
       setLoading(true);
 
-      const USE_SAMPLE_DATA = true; // Set to true to use sample data for testing
+      const USE_SAMPLE_DATA = false; // Set to true to use sample data for testing
 
       if (USE_SAMPLE_DATA) {
         // Simulate network delay
