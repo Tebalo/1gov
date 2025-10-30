@@ -289,177 +289,177 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
     
     return(
         <div>
-<Dialog open={open} onOpenChange={setOpen}>
-  <DialogTrigger asChild>
-    <Button variant="default" className="flex items-center gap-2">
-      <GitBranch className="w-4 h-4"/>
-      Actions
-    </Button>
-  </DialogTrigger>
-  <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-hidden">
-    {hasPermission && isAllowedRole && nextStatus && nextStatus.length > 0 ? (
-      <>
-        <DialogHeader>
-          <DialogTitle>Flow Action</DialogTitle>
-          <DialogDescription>
-            Make status updates to the case here. Click submit when you&lsquo;re done.
-          </DialogDescription>
-        </DialogHeader>
-        
-        {/* Scrollable container for the entire form content */}
-        <div className="max-h-[50vh] overflow-y-auto pr-2">
-          <Form {...form}>
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Choose action to proceed</FormLabel>
-                    <FormControl>
-                      <RadioGroup 
-                        onValueChange={field.onChange}
-                        value={field.value} 
-                        className="flex flex-col space-y-1"
-                      >
-                        {nextStatus?.map((status) => (
-                          <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100">
-                            <RadioGroupItem value={status} id={status} />
-                            <div>
-                              <FormLabel className="cursor-pointer" htmlFor={status}>
-                                {getStatusDescription(status.toLocaleUpperCase() as StatusType)}
-                              </FormLabel>
-                              <FormDescription className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>   
-                                <Tags className="w-4 h-4 text-gray-500" />
-                                <p className='text-purple-500 font-semibold text-sm'>
-                                  {status.replace(/-/g, ' ')}
-                                </p> 
-                              </FormDescription>
-                            </div>     
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {showFields && (
-                <FormField
-                  control={form.control}
-                  name="items"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel className="text-base">Fields</FormLabel>
-                        <FormDescription>
-                          Select the fields you want the customer to edit/fix.
-                        </FormDescription>
-                      </div>
-                      
-                      <Accordion type="multiple" className="w-full">
-                        {Object.entries(
-                          items.reduce((acc, item) => {
-                            const category = item.category;
-                            if (!acc[category]) {
-                              acc[category] = [];
-                            }
-                            acc[category].push(item);
-                            return acc;
-                          }, {} as Record<string, Array<typeof items[number]>>)
-                        ).map(([category, categoryItems]) => (
-                          <AccordionItem key={category} value={category}>
-                            <AccordionTrigger className="text-sm font-medium">
-                              <span className="capitalize">{category.replace(/_/g, ' ')}</span>
-                              <span className="ml-2 text-xs text-muted-foreground">
-                                ({categoryItems.length} fields)
-                              </span>
-                            </AccordionTrigger>
-                            <AccordionContent className="pt-2">
-                              <div className="space-y-3">
-                                {categoryItems.map((item) => (
-                                  <FormField
-                                    key={item.id}
-                                    control={form.control}
-                                    name="items"
-                                    render={({ field }) => {
-                                      return (
-                                        <FormItem
-                                          key={item.id}
-                                          className="flex flex-row items-start space-x-3 space-y-0"
-                                        >
-                                          <FormControl>
-                                            <Checkbox
-                                              checked={field.value?.includes(item.id)}
-                                              onCheckedChange={(checked) => {
-                                                return checked
-                                                  ? field.onChange([...(field.value ?? []), item.id])
-                                                  : field.onChange(
-                                                      field.value?.filter(
-                                                        (value) => value !== item.id
-                                                      )
-                                                    )
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default" className="flex items-center gap-2">
+                <GitBranch className="w-4 h-4"/>
+                Actions
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-hidden">
+              {hasPermission && isAllowedRole && nextStatus && nextStatus.length > 0 ? (
+                <>
+                  <DialogHeader>
+                    <DialogTitle>Flow Action</DialogTitle>
+                    <DialogDescription>
+                      Make status updates to the case here. Click submit when you&lsquo;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  {/* Scrollable container for the entire form content */}
+                  <div className="max-h-[50vh] overflow-y-auto pr-2">
+                    <Form {...form}>
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="status"
+                          render={({ field }) => (
+                            <FormItem className="space-y-3">
+                              <FormLabel>Choose action to proceed</FormLabel>
+                              <FormControl>
+                                <RadioGroup 
+                                  onValueChange={field.onChange}
+                                  value={field.value} 
+                                  className="flex flex-col space-y-1"
+                                >
+                                  {nextStatus?.map((status) => (
+                                    <div key={status} className="flex items-center space-x-2 border rounded-lg p-2 hover:bg-gray-100">
+                                      <RadioGroupItem value={status} id={status} />
+                                      <div>
+                                        <FormLabel className="cursor-pointer" htmlFor={status}>
+                                          {getStatusDescription(status.toLocaleUpperCase() as StatusType)}
+                                        </FormLabel>
+                                        <FormDescription className='flex items-center space-x-2 bg-slate-500/10 p-1 rounded-md'>   
+                                          <Tags className="w-4 h-4 text-gray-500" />
+                                          <p className='text-purple-500 font-semibold text-sm'>
+                                            {status.replace(/-/g, ' ')}
+                                          </p> 
+                                        </FormDescription>
+                                      </div>     
+                                    </div>
+                                  ))}
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        {showFields && (
+                          <FormField
+                            control={form.control}
+                            name="items"
+                            render={() => (
+                              <FormItem>
+                                <div className="mb-4">
+                                  <FormLabel className="text-base">Fields</FormLabel>
+                                  <FormDescription>
+                                    Select the fields you want the customer to edit/fix.
+                                  </FormDescription>
+                                </div>
+                                
+                                <Accordion type="multiple" className="w-full">
+                                  {Object.entries(
+                                    items.reduce((acc, item) => {
+                                      const category = item.category;
+                                      if (!acc[category]) {
+                                        acc[category] = [];
+                                      }
+                                      acc[category].push(item);
+                                      return acc;
+                                    }, {} as Record<string, Array<typeof items[number]>>)
+                                  ).map(([category, categoryItems]) => (
+                                    <AccordionItem key={category} value={category}>
+                                      <AccordionTrigger className="text-sm font-medium">
+                                        <span className="capitalize">{category.replace(/_/g, ' ')}</span>
+                                        <span className="ml-2 text-xs text-muted-foreground">
+                                          ({categoryItems.length} fields)
+                                        </span>
+                                      </AccordionTrigger>
+                                      <AccordionContent className="pt-2">
+                                        <div className="space-y-3">
+                                          {categoryItems.map((item) => (
+                                            <FormField
+                                              key={item.id}
+                                              control={form.control}
+                                              name="items"
+                                              render={({ field }) => {
+                                                return (
+                                                  <FormItem
+                                                    key={item.id}
+                                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                                  >
+                                                    <FormControl>
+                                                      <Checkbox
+                                                        checked={field.value?.includes(item.id)}
+                                                        onCheckedChange={(checked) => {
+                                                          return checked
+                                                            ? field.onChange([...(field.value ?? []), item.id])
+                                                            : field.onChange(
+                                                                field.value?.filter(
+                                                                  (value) => value !== item.id
+                                                                )
+                                                              )
+                                                        }}
+                                                      />
+                                                    </FormControl>
+                                                    <FormLabel className="text-sm font-normal">
+                                                      {item.label}
+                                                    </FormLabel>
+                                                  </FormItem>
+                                                )
                                               }}
                                             />
-                                          </FormControl>
-                                          <FormLabel className="text-sm font-normal">
-                                            {item.label}
-                                          </FormLabel>
-                                        </FormItem>
-                                      )
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
-                      
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                          ))}
+                                        </div>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  ))}
+                                </Accordion>
+                                
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                      </div>
+                    </Form>
+                  </div>
+                  
+                  {/* Submit button area - always visible */}
+                  <Form {...form}>
+                    <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)}>
+                      {isSubmitting && (
+                        <ProgressIndicator 
+                          isLoading={isSubmitting} 
+                          totalDuration={60000} // 1 minute in milliseconds
+                        />
+                      )}
+                      <DialogFooter className="mt-4 pt-4 border-t">
+                        <Button 
+                          type="submit" 
+                          className="w-full" 
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? progress : 'Submit'}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </>
+              ) : (
+                <>
+                  <Alert variant="destructive" className="my-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Heads up!</AlertTitle>
+                    <AlertDescription>
+                      {"It looks like you don't have the necessary permissions to move this case forward or change its status. If you think this might be a mistake, reach out to your administrator who can help resolve this."}
+                    </AlertDescription>
+                  </Alert>
+                </>
               )}
-            </div>
-          </Form>
-        </div>
-        
-        {/* Submit button area - always visible */}
-        <Form {...form}>
-          <form id="flow-action-form" onSubmit={form.handleSubmit(onSubmit)}>
-            {isSubmitting && (
-              <ProgressIndicator 
-                isLoading={isSubmitting} 
-                totalDuration={60000} // 1 minute in milliseconds
-              />
-            )}
-            <DialogFooter className="mt-4 pt-4 border-t">
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? progress : 'Submit'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </>
-    ) : (
-      <>
-        <Alert variant="destructive" className="my-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
-            {"It looks like you don't have the necessary permissions to move this case forward or change its status. If you think this might be a mistake, reach out to your administrator who can help resolve this."}
-          </AlertDescription>
-        </Alert>
-      </>
-    )}
-  </DialogContent>
-</Dialog>
+            </DialogContent>
+          </Dialog>
         </div>
     )
 }

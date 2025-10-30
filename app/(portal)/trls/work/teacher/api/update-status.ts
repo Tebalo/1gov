@@ -37,7 +37,7 @@ export async function updateTeacherStatus(
           //params.append('endorsement_status', status);
           key='endorsement_status'
         } 
-        console.log(`${apiUrl}/teacher_registrations/${id}?${key}=${status}&qr_link=${qr_link}&rejection_reason=${rejection_reason}`)
+        // console.log(`${apiUrl}/teacher_registrations/${id}?${key}=${status}&qr_link=${qr_link}&rejection_reason=${rejection_reason}`)
         const response = await fetch(
           `${apiUrl}/teacher_registrations/${id}?${key}=${status}&qr_link=${qr_link}&rejection_reason=${rejection_reason}`,
           {
