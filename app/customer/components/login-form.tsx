@@ -19,11 +19,18 @@ import { storeAuthData } from "@/app/staff/login/components/email-login"
 import { ToastAction } from "@/components/ui/toast" // import { toast } from "sonner"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { OneGovAuth } from "./1gov-login"
+import { trlsIAM } from "@/app/lib/store"
+
 
 // Auth API configuration
-const AUTH_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/login/"
-const DECODE_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/decode-token/"
-const RESET_PASSWORD_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/reset-password/"
+
+//const AUTH_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/login/"
+const AUTH_API_URL = `${trlsIAM}/api/auth_microservice/login/`
+const DECODE_API_URL = `${trlsIAM}/api/auth_microservice/decode-token/`
+const RESET_PASSWORD_API_URL = `${trlsIAM}/api/auth_microservice/reset-password/`
+
+//const DECODE_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/decode-token/"
+//const RESET_PASSWORD_API_URL = "https://twosixdigitalbw.com/v1/api/auth_microservice/reset-password/"
 
 interface LocalAuthResponse {
   access: string
