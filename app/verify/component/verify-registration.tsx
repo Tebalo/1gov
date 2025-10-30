@@ -77,7 +77,7 @@ const VerifyRegistrationStatus: React.FC<{userId:string}> = ({userId}) => {
     try {
       setLoading(true);
 
-      const USE_SAMPLE_DATA = false; // Set to true to use sample data for testing
+      const USE_SAMPLE_DATA = true; // Set to true to use sample data for testing
 
       if (USE_SAMPLE_DATA) {
         // Simulate network delay
@@ -199,12 +199,12 @@ const VerifyRegistrationStatus: React.FC<{userId:string}> = ({userId}) => {
   const verificationInfo = getVerificationStatus(registrationData);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4">
+    <div className="min-h-screen bg-gray-50 md:py-6 md:px-4">
       <div className="max-w-4xl mx-auto">
         
         {/* Header Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="p-6">
+          <div className="md:p-6">
             {/* <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Teacher Registration Verification</h1>
               <p className="text-gray-600">Ministry of Education, Botswana</p>
