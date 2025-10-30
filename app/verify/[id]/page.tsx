@@ -10,7 +10,7 @@ export default async function Verify({
   const { id } = await params;
 
   return (
-    <main className="min-h-auto bg-gray-50 m-2 md:m-10">
+    <main className="min-h-auto bg-gray-50 m-10 md:m-2">
       <Card className="shadow-sm border-gray-200">
         <CardContent className="pt-6">
           <VerifyRegistrationStatus userId={id} />
