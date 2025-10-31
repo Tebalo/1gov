@@ -370,7 +370,7 @@ const RegistrationStatusComponent: React.FC<{userId:string}> = ({userId}) => {
                   className="inline-flex items-center px-4 py-2 text-sm bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors"
                 >
                   <CreditCard className="h-4 w-4 mr-2" />
-                  Make Payment ({registrationData.payment_amount ? formatCurrency(registrationData.payment_amount) : 'BWP 50.00'})
+                  Make Payment 
                 </a>
               )}
 
