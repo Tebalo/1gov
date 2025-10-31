@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, Check, Eye, EyeOff, CalendarIcon, Search } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Eye, EyeOff, CalendarIcon, Search, X, CheckCircle, XCircle } from "lucide-react"
 // import { toast } from "sonner"
 import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast"
@@ -161,6 +161,55 @@ const COUNTRIES = [
   "Vatican City", "Venezuela", "Vietnam", "Yemen"
 ]
 
+// Password validation rules
+interface PasswordValidation {
+  isValid: boolean;
+  errors: string[];
+  requirements: {
+    minLength: boolean;
+    hasUpperCase: boolean;
+    hasLowerCase: boolean;
+    hasNumber: boolean;
+    hasSpecialChar: boolean;
+    noSpaces: boolean;
+    noCommonPatterns: boolean;
+    noRepeatedChars: boolean;
+    noSequentialChars: boolean;
+  };
+}
+
+const validatePassword = (password: string): PasswordValidation => {
+  const requirements = {
+    minLength: password.length >= 8,
+    hasUpperCase: /[A-Z]/.test(password),
+    hasLowerCase: /[a-z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    noSpaces: !/\s/.test(password),
+    noCommonPatterns: !/(123456|password|qwerty|admin|welcome|letmein|monkey|sunshine|password1|123456789)/i.test(password),
+    noRepeatedChars: !/(.)\1{3,}/.test(password),
+    noSequentialChars: !/(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(password)
+  };
+
+  const errors: string[] = [];
+  
+  if (!requirements.minLength) errors.push("Password must be at least 8 characters long");
+  if (!requirements.hasUpperCase) errors.push("Password must contain at least one uppercase letter (A-Z)");
+  if (!requirements.hasLowerCase) errors.push("Password must contain at least one lowercase letter (a-z)");
+  if (!requirements.hasNumber) errors.push("Password must contain at least one number (0-9)");
+  if (!requirements.hasSpecialChar) errors.push("Password must contain at least one special character (!@#$%^&*() etc.)");
+  if (!requirements.noSpaces) errors.push("Password must not contain spaces");
+  if (!requirements.noCommonPatterns) errors.push("Password contains common words or patterns that are not allowed");
+  if (!requirements.noRepeatedChars) errors.push("Password must not contain the same character repeated 4 or more times in a row");
+  if (!requirements.noSequentialChars) errors.push("Password must not contain sequential characters (abc, 123, etc.)");
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    requirements
+  };
+};
+
 export function RegistrationForm({ className, ...props }: RegistrationFormProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
@@ -173,6 +222,21 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
   const [dateOfBirthOpen, setDateOfBirthOpen] = useState(false)
   const [emailSuggestion, setEmailSuggestion] = useState<string>("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [passwordValidation, setPasswordValidation] = useState<PasswordValidation>({
+    isValid: false,
+    errors: [],
+    requirements: {
+      minLength: false,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasNumber: false,
+      hasSpecialChar: false,
+      noSpaces: true,
+      noCommonPatterns: true,
+      noRepeatedChars: true,
+      noSequentialChars: true
+    }
+  })
   const [formData, setFormData] = useState({
     // Basic credentials
     username: "",
@@ -344,7 +408,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (!formData.username.trim()) stepOneErrors.push("Username is required")
         if (!formData.email.trim()) stepOneErrors.push("Email is required")
         if (!formData.password.trim()) stepOneErrors.push("Password is required")
-        if (formData.password.length < 8) stepOneErrors.push("Password must be at least 8 characters long")
+        
+        // Enhanced password validation
+        const passwordValidationResult = validatePassword(formData.password)
+        if (!passwordValidationResult.isValid) {
+          stepOneErrors.push(...passwordValidationResult.errors)
+        }
+        
         if (formData.password !== formData.confirmPassword) stepOneErrors.push("Passwords do not match")
         
         // Validate that email and username are the same
@@ -536,6 +606,12 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
       }))
     }
 
+    // Validate password and update validation state
+    if (field === "password" && typeof value === "string") {
+      const validation = validatePassword(value)
+      setPasswordValidation(validation)
+    }
+
     // Clear email suggestion when email field is modified
     if (field === "email") {
       setEmailSuggestion("")
@@ -718,6 +794,18 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
     return ((currentStep - 1) / (STEPS.length - 1)) * 100
   }
 
+  // Password requirement component
+  const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
+    <div className="flex items-center gap-2 text-xs">
+      {met ? (
+        <CheckCircle className="h-3 w-3 text-green-500" />
+      ) : (
+        <XCircle className="h-3 w-3 text-red-500" />
+      )}
+      <span className={met ? "text-green-600" : "text-red-600"}>{text}</span>
+    </div>
+  )
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -782,7 +870,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 <div className="relative">
                   <Input
                     id="password"
-                    placeholder="Create a strong password"
+                    placeholder="Create a very strong password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
                     disabled={isLoading}
@@ -798,8 +886,60 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                
+                {/* Password Requirements */}
+                {formData.password && (
+                  <div className="p-3 bg-muted rounded-md space-y-2">
+              
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.minLength} 
+                        text="At least 8 characters" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.hasUpperCase} 
+                        text="One uppercase letter (A-Z)" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.hasLowerCase} 
+                        text="One lowercase letter (a-z)" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.hasNumber} 
+                        text="One number (0-9)" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.hasSpecialChar} 
+                        text="One special character" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.noSpaces} 
+                        text="No spaces" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.noCommonPatterns} 
+                        text="No common patterns" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.noRepeatedChars} 
+                        text="No repeated characters (4+)" 
+                      />
+                      <PasswordRequirement 
+                        met={passwordValidation.requirements.noSequentialChars} 
+                        text="No sequential characters" 
+                      />
+                    </div>
+                    {passwordValidation.isValid && (
+                      <div className="flex items-center gap-2 text-green-600 text-sm">
+                       
+                        
+                      </div>
+                    )}
+                  </div>
+                )}
+                
                 <p className="text-xs text-muted-foreground">
-                  Password must be at least 8 characters long
+                  Create a very strong password with at least 8 characters including uppercase, lowercase, numbers, and special characters
                 </p>
               </div>
 
@@ -808,13 +948,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    placeholder="Confirm your password"
+                    placeholder="Confirm your strong password"
                     type={showConfirmPassword ? "text" : "password"}
                     autoComplete="new-password"
                     disabled={isLoading}
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                    className="pr-10"
+                    className={formData.confirmPassword && formData.password !== formData.confirmPassword ? "border-destructive pr-10" : "pr-10"}
                   />
                   <button
                     type="button"
@@ -824,6 +964,18 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <X className="h-3 w-3" />
+                    Passwords do not match
+                  </p>
+                )}
+                {formData.confirmPassword && formData.password === formData.confirmPassword && passwordValidation.isValid && (
+                  <p className="text-xs text-green-600 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    Passwords match
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1178,7 +1330,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     disabled={isLoading || citizenship === "Citizen"}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
+                      <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
                       {citizenship === "Non-citizen" && (
