@@ -238,7 +238,9 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
               //return; // Uncomment this line to stop the submission if the status has already been changed
             }
           }
-          if(values.status == "Endorsement-Complete"){
+          console.log('🔍 DEBUG values.status:', JSON.stringify(values.status));
+          console.log('🔍 DEBUG comparison:', values.status == "Endorsement-Complete");
+          if(values.status?.trim().toLowerCase() === "endorsement-complete"){
             setProgress("Generating QR Code...");
             // Generate QR-CODE
             // const qrResult = await generateTeacherLicenseQR(recordId)
@@ -246,7 +248,7 @@ const TeacherActions: React.FC<ActionSectionProps> = ({ recordId, userRole, curr
           }
     
           if(!error){
-            if(values.status == "Endorsement-Complete"){
+            if(values.status?.trim().toLowerCase() === "endorsement-complete"){
               setProgress("Generating teacher license...");
             }
             const authData = getAuthData();
