@@ -1,3 +1,5 @@
+// Updated generateAndUploadTeacherLicenseQR - Based on Working UAT Patterns
+
 "use client"
 import { baseURL, fileUploadUrl } from '@/app/lib/store';
 import QRCode from 'qrcode';
@@ -15,9 +17,9 @@ export interface CombinedQRResult {
   error?: string;
 }
 
-// Helper function to convert dataURL to Blob (browser compatible)
-function dataURLtoBlob(dataURL: string): Blob {
-  const arr = dataURL.split(',');
+// Use the EXACT same helper function from working component
+const dataURLtoFile = (dataUrl: string, filename: string): File => {
+  const arr = dataUrl.split(',');
   const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
   const bstr = atob(arr[1]);
   let n = bstr.length;
@@ -27,8 +29,8 @@ function dataURLtoBlob(dataURL: string): Blob {
     u8arr[n] = bstr.charCodeAt(n);
   }
   
-  return new Blob([u8arr], { type: mime });
-}
+  return new File([u8arr], filename, { type: mime });
+};
 
 export async function generateAndUploadTeacherLicenseQR(
   teacherId: string,
@@ -39,58 +41,57 @@ export async function generateAndUploadTeacherLicenseQR(
     errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
   } = {}
 ): Promise<CombinedQRResult> {
-  console.log('🚀 Client-side QR Generation Started for teacherId:', teacherId);
+  console.log('🚀 Automated QR Generation Started for teacherId:', teacherId);
   console.log('📊 Environment check:');
   console.log('   - baseURL:', baseURL);
   console.log('   - fileUploadUrl:', fileUploadUrl);
   
   try {
-    // Step 1: Generate the verification URL
+    // Step 1: Generate the verification URL (automated - no form field needed)
     const verificationUrl = `${baseURL}/verify/${teacherId}`;
     console.log('🔗 Generated verification URL:', verificationUrl);
 
-    const baseQrOptions = {
+    // Step 2: Use EXACT same QR options as working component
+    const options_fixed = {
       width: options.size || 256,
       margin: 2,
       color: {
         dark: options.darkColor || '#000000',
         light: options.lightColor || '#FFFFFF',
       },
-      errorCorrectionLevel: options.errorCorrectionLevel || 'H',
+      errorCorrectionLevel: options.errorCorrectionLevel || 'M', // ← Changed to 'M' like working component
       type: 'image/png' as const,
     };
 
-    console.log('📱 Starting QR code generation (client-side)...');
+    console.log('📱 Starting QR code generation (automated)...');
     
-    // Step 2: Generate QR code as dataURL only (browser compatible)
-    const qrDataUrl = await QRCode.toDataURL(verificationUrl, baseQrOptions);
+    // Step 3: Generate QR code (same as working component)
+    const qrDataUrl = await QRCode.toDataURL(verificationUrl, options_fixed);
     console.log('✅ QR code generated successfully');
     console.log('   - DataURL length:', qrDataUrl.length);
 
-    // Step 3: Convert dataURL to Blob for upload
-    console.log('🔄 Converting dataURL to Blob...');
-    const qrBlob = dataURLtoBlob(qrDataUrl);
-    console.log('✅ Blob created:', qrBlob.size, 'bytes');
-
-    // Step 4: Upload the QR code to repository
-    console.log('📁 Preparing file for upload...');
+    // Step 4: Use EXACT same file conversion as working component
+    console.log('🔄 Converting dataURL to File...');
     const filename = `teacher_license_qr_${teacherId}_${Date.now()}.png`;
-    const file = new File([qrBlob], filename, { type: 'image/png' });
+    const file = dataURLtoFile(qrDataUrl, filename); // ← Using working component's method
     
     console.log('📄 File created:');
     console.log('   - Filename:', filename);
     console.log('   - File size:', file.size, 'bytes');
 
+    // Step 5: Use EXACT same FormData as working component
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('type', 'image/png');
-    formData.append('name', filename);
-    formData.append('description', `TRLS Teacher License QR Code for ID: ${teacherId}`);
+    formData.append('type', file.type || 'application/octet-stream'); // ← Same as working component
+    formData.append('name', file.name);
+    formData.append('description', 'TRLS'); // ← Shorter description like working component
 
     console.log('📦 FormData prepared, attempting upload...');
     console.log('🌐 Upload URL:', fileUploadUrl);
 
     const uploadStartTime = Date.now();
+    
+    // Step 6: Use EXACT same fetch as working component
     const response = await fetch(fileUploadUrl, {
       method: 'POST',
       headers: {
@@ -114,15 +115,15 @@ export async function generateAndUploadTeacherLicenseQR(
     const uploadResponse = await response.json();
     console.log('✅ Upload successful:', uploadResponse);
 
-    // Validate response structure
+    // Validate response structure (same as working component)
     if (!uploadResponse || !uploadResponse['original-name'] || !uploadResponse.key) {
       console.error('❌ Invalid response structure:', uploadResponse);
       throw new Error('Invalid response from upload server');
     }
 
-    console.log('🎉 Client-side QR generation and upload completed successfully!');
+    console.log('🎉 Automated QR generation and upload completed successfully!');
 
-    // Step 5: Return combined success result
+    // Step 7: Return combined success result
     return {
       success: true,
       qrDataUrl,
@@ -130,7 +131,7 @@ export async function generateAndUploadTeacherLicenseQR(
     };
 
   } catch (error) {
-    console.error('❌ Client-side QR generation and upload FAILED:', error);
+    console.error('❌ Automated QR generation and upload FAILED:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'QR generation and upload failed'
