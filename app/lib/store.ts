@@ -69,7 +69,7 @@ export const validateUrl = `${currentBaseURLs.iamAuthBaseURL}/auth/validate/otp`
 export const authUrl = `${currentBaseURLs.iamAuthBaseURL}/auth/login/sms`;
 export const emailauthUrl = `${currentBaseURLs.iamBaseUrl}/auth/login`;
 export const iamBaseUrl = currentBaseURLs.iamBaseUrl
-export const version = 'v2.1.59';
+export const version = 'v3.0.0';
 
 /**
  * ADMIN IAM URLs

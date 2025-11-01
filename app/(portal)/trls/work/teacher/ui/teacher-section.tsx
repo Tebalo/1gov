@@ -38,10 +38,12 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="National ID" value={data.bio_datas?.national_id}/>
       <InfoItem label="Date of Birth" value={data.bio_datas?.dob} isDate/>
       <InfoItem label="Gender" value={data.bio_datas?.gender}/>
+      <InfoItem label="Citizen Status" value={data.teacher_preliminary_infos?.citizen_status}/>
+      <InfoItem label="Nationality" value={data.bio_datas?.nationality}/>
       <InfoItem label="Email" value={data.bio_datas?.email}/>
       <InfoItem label="Mobile" value={data.bio_datas?.mobile}/>
       <InfoItem label="Disability" value={data.bio_datas?.disability}/>
-      <InfoItem label="Disability Description" value={data.bio_datas?.disability_description}/>
+      {data.bio_datas?.disability?.toUpperCase() === 'YES' && <InfoItem label="Disability Description" value={data.bio_datas?.disability_description}/>}
     </InfoCard>
   );
 
@@ -66,7 +68,7 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       <InfoItem label="Payment Ref" value={data.teacher_registrations?.payment_ref}/>
       <InfoItem 
         label="Payment Amount" 
-        value={`P ${data.teacher_registrations?.payment_amount ?? "0"}.00`}
+        value={`P ${data.teacher_registrations?.payment_amount ?? "0"}`}
       />
       <InfoItem 
         label="Payment Name" 
@@ -74,12 +76,9 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       />
       <InfoLink label="Payment Link" paymentUrl={data.teacher_registrations?.paid_at ?? ''} className=""/>
       <InfoItem label="Registration Type" value={data.teacher_registrations?.registration_type}/>
-      <InfoItem label="Citizen Status" value={data.teacher_preliminary_infos?.citizen_status}/>
       <InfoItem label="SLA" value={data.teacher_registrations?.created_at} isSLA/>
       <InfoItem label="Institution Verification" value={data.teacher_registrations?.institution_verification}/>
       <InfoItem label="Course Verification" value={data.teacher_registrations?.course_verification}/>
-      <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
-      <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
       <InfoItem label="Licence Expiry Date" value={data.teacher_registrations?.license_expiry_date} isDate/>
       <InfoItem label="Subscription Due Date" value={data.teacher_registrations?.subscription_due_date} isDate/>
       {isEndorsementComplete() && <InfoItem label='Computed Licence Status' value={getLicenseStatus()} isLicenseStatus/>}
@@ -89,10 +88,14 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
   const renderEmploymentInfo = () => (
     <InfoCard title='Employment Information' icon={<Briefcase className="w-6 h-6 text-blue-500"/>} columns={2}>
       <InfoItem label="Employment Status" value={data.teacher_registrations?.work_status}/>
-      <InfoItem label="Current Institution" value={data.employment_details?.current_institution}/>
-      <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>
-      <InfoItem label="Region" value={data.employment_details?.region}/>
+      <InfoItem label="Practice Category" value={data.teacher_preliminary_infos?.practice_category}/>
+      <InfoItem label="Sub Category" value={data.teacher_preliminary_infos?.sub_category}/>
       <InfoItem label="Experience" value={data.employment_details?.experience_years}/>
+      {/* Visible when section */}
+      {data.teacher_registrations?.work_status?.toLowerCase() === "employed" && <InfoItem label="Current Institution" value={data.employment_details?.current_institution}/>}
+      {data.teacher_registrations?.work_status?.toLowerCase() === "employed" && <InfoItem label="Institution Type" value={data.employment_details?.institution_type}/>}
+      {data.teacher_registrations?.work_status?.toLowerCase() === "employed" && <InfoItem label="Region" value={data.employment_details?.region}/>}
+      
     </InfoCard>
   );
 
@@ -118,45 +121,6 @@ const TeacherRegistrationViewer: React.FC<TeacherViewerProps> = ({ data, userRol
       )}
     </InfoCard>
   );
-
-  // const renderMandatoryQualifications = () => (
-  //   <InfoCard 
-  //     title='Mandatory Qualification' 
-  //     icon={<GraduationCap className="w-6 h-6 text-blue-500"/>}
-  //     columns={1}
-  //   >
-  //     {data?.edu_pro_qualifications ? (
-  //       <Table>
-  //         <TableHeader>
-  //           <TableRow>
-  //             <TableHead>Level</TableHead>
-  //             <TableHead>Qualification</TableHead>
-  //             <TableHead>Institution</TableHead>
-  //             <TableHead>Year</TableHead>
-  //             <TableHead>Subject Specialisation</TableHead>
-  //             <TableHead>Attachment</TableHead>
-  //           </TableRow>
-  //         </TableHeader>
-  //         <TableBody>
-  //           <TableRow>
-  //             <TableCell>{data.edu_pro_qualifications.level ?? '-'}</TableCell>
-  //             <TableCell>{data.edu_pro_qualifications.qualification ?? '-'}</TableCell>
-  //             <TableCell>{data.edu_pro_qualifications.institution ?? '-'}</TableCell>
-  //             <TableCell>{data.edu_pro_qualifications.qualification_year ?? '-'}</TableCell>
-  //             <TableCell>{data.edu_pro_qualifications.major_subjects ?? '-'}</TableCell>
-  //             <TableCell>
-  //               <InfoItem label="" value={data.edu_pro_qualifications.attachments ?? ''}/>
-  //             </TableCell>
-  //           </TableRow>
-  //         </TableBody>
-  //       </Table>
-  //     ) : (
-  //       <div className="flex items-center justify-center p-4 text-muted-foreground">
-  //         No mandatory qualification data available
-  //       </div>
-  //     )}
-  //   </InfoCard>
-  // );
 
   const renderQualifications = () => (
     <InfoCard title='Additional Qualifications' icon={<School className="w-6 h-6 text-blue-500"/>} columns={1}>
