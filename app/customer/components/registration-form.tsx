@@ -452,6 +452,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (!formData.dateOfBirth.trim()) stepTwoErrors.push("Date of birth is required")
         if (!formData.gender.trim()) stepTwoErrors.push("Gender is required")
         if (!citizenship) stepTwoErrors.push("Citizenship status is required")
+        if (!formData.country.trim()) stepTwoErrors.push("Country is required")
         
         // Validate Date of Birth is in the past (not today or future)
         if (formData.dateOfBirth.trim()) {
@@ -502,7 +503,6 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
         if (!formData.phone.trim()) stepThreeErrors.push("Phone number is required")
         if (!formData.postalAddress.trim()) stepThreeErrors.push("Postal address is required")
         if (!formData.physicalAddress.trim()) stepThreeErrors.push("Physical address is required")
-        if (!formData.country.trim()) stepThreeErrors.push("Country is required")
         
         if (stepThreeErrors.length > 0) {
           setErrors(stepThreeErrors)
@@ -1144,6 +1144,46 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 </Select>
               </div>
 
+              {/* Country Field */}
+              <div className="grid gap-2">
+                <Label htmlFor="country">Country *</Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) => handleInputChange("country", value)}
+                  disabled={isLoading || citizenship === "Citizen"}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {citizenship === "Non-citizen" && (
+                      <div className="sticky top-0 bg-background p-2 border-b">
+                        <div className="relative">
+                          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search countries..."
+                            className="pl-8"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {getFilteredCountries().map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                    {citizenship === "Non-citizen" && getFilteredCountries().length === 0 && (
+                      <div className="p-2 text-center text-sm text-muted-foreground">
+                        No countries found
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Conditional ID Fields */}
               {citizenship === "Citizen" && (
                 <div className="grid gap-2">
@@ -1311,52 +1351,52 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="state">State/District</Label>
-                  <Input
-                    id="state"
-                    placeholder="Enter state or district"
-                    type="text"
-                    disabled={isLoading}
+                  <Label htmlFor="state">District</Label>
+                  <Select
                     value={formData.state}
-                    onChange={(e) => handleInputChange("state", e.target.value)}
-                  />
+                    onValueChange={(value) => handleInputChange("state", value)}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="District" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Central">Central</SelectItem>
+                      <SelectItem value="Chobe">Chobe </SelectItem>
+                      <SelectItem value="Ghanzi">Ghanzi</SelectItem>
+                      <SelectItem value="Kgalagadi">Kgalagadi</SelectItem>
+                      <SelectItem value="Kgatleng">Kgatleng</SelectItem>
+                      <SelectItem value="Kweneng">Kweneng </SelectItem>
+                      <SelectItem value="North-East">North-East</SelectItem>
+                      <SelectItem value="North-West">North-West</SelectItem>
+                      <SelectItem value="South-East">South-East</SelectItem>
+                      <SelectItem value="Southern ">Southern</SelectItem>
+                      <SelectItem value="Gaborone">Gaborone</SelectItem>
+                      <SelectItem value="Francistown">Francistown</SelectItem>
+                      <SelectItem value="Lobatse">Lobatse</SelectItem>
+                      <SelectItem value="Jwaneng">Jwaneng</SelectItem>
+                      <SelectItem value="Orapa">Orapa</SelectItem>
+                      <SelectItem value="Sowa">Sowa</SelectItem>
+                      <SelectItem value="Selebi-Phikwe">Selebi-Phikwe</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="country">Country *</Label>
+                  <Label htmlFor="country">Country</Label>
                   <Select
                     value={formData.country}
                     onValueChange={(value) => handleInputChange("country", value)}
-                    disabled={isLoading || citizenship === "Citizen"}
+                    disabled={isLoading}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="" />
+                      <SelectValue placeholder="Botswana" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {citizenship === "Non-citizen" && (
-                        <div className="sticky top-0 bg-background p-2 border-b">
-                          <div className="relative">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              placeholder="Search countries..."
-                              className="pl-8"
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {getFilteredCountries().map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
-                      {citizenship === "Non-citizen" && getFilteredCountries().length === 0 && (
-                        <div className="p-2 text-center text-sm text-muted-foreground">
-                          No countries found
-                        </div>
-                      )}
+                    <SelectContent>
+                      <SelectItem value="Botswana">Botswana</SelectItem>
+                      {/*<SelectItem value="South Africa">South Africa</SelectItem>*/}
+                      {/*<SelectItem value="Namibia">Namibia</SelectItem>*/}
+                     {/*<SelectItem value="Zimbabwe">Zimbabwe</SelectItem>*/}
                     </SelectContent>
                   </Select>
                 </div>
@@ -1505,12 +1545,13 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                     {formData.dateOfBirth && <p>Date of Birth: {formData.dateOfBirth}</p>}
                     {formData.gender && <p>Gender: {formData.gender}</p>}
                     <p>Citizenship: {citizenship}</p>
+                    <p>Country: {formData.country}</p>
                     {formData.nationalId && <p>National ID: {formData.nationalId}</p>}
                     {formData.passportId && <p>Passport ID: {formData.passportId}</p>}
                   </div>
                 </div>
 
-                {(formData.phone || formData.city || formData.country) && (
+                {(formData.phone || formData.city) && (
                   <div className="grid gap-2">
                     <h4 className="font-medium">Contact Information</h4>
                     <div className="text-sm text-muted-foreground space-y-1">
@@ -1520,6 +1561,7 @@ export function RegistrationForm({ className, ...props }: RegistrationFormProps)
                       {formData.city && <p>City: {formData.city}</p>}
                       {formData.state && <p>State/District: {formData.state}</p>}
                       {formData.country && <p>Country: {formData.country}</p>}
+                      {formData.postalCode && <p>Postal Code: {formData.postalCode}</p>}
                     </div>
                   </div>
                 )}
